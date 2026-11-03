@@ -9,7 +9,9 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    strictPort: false,
+    // Fail loudly rather than silently drifting to 5174: the live preview is
+    // wired to 5173, so a quiet port change looks like a dead app.
+    strictPort: true,
     allowedHosts: true,
   },
   preview: {
