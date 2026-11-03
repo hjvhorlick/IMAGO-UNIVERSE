@@ -20,6 +20,7 @@ export interface InspectorCallbacks {
   onCrop: (node: SceneNode) => void;
   onReplace: (node: SceneNode) => void;
   onSoloAnimation: (node: SceneNode | null) => void;
+  onSoloLayer: (layer: SceneNode['layer'] | null) => void;
 }
 
 const GENERIC_ANIMS: AnimationType[] = ['float', 'spin', 'pulse', 'grass-wind', 'stem-bend', 'water-flow', 'ripple', 'flag-wave'];
@@ -332,9 +333,11 @@ export class Inspector {
     const solo = this.section('Preview');
     const b = el(`<button class="btn small block">${icon('play', 12)} Preview this animation only</button>`);
     on(b, 'click', () => this.cb.onSoloAnimation(node));
+    const bl = el(`<button class="btn small block" style="margin-top:6px">${icon('layers', 12)} Preview this layer only</button>`);
+    on(bl, 'click', () => this.cb.onSoloLayer(node.layer));
     const b2 = el(`<button class="btn small block" style="margin-top:6px">${icon('layers', 12)} Show all layers</button>`);
     on(b2, 'click', () => this.cb.onSoloAnimation(null));
-    solo.append(b, b2);
+    solo.append(b, bl, b2);
     frag.appendChild(solo);
     return frag;
   }
@@ -442,9 +445,11 @@ export class Inspector {
     const solo = this.section('Preview');
     const b = el(`<button class="btn small block">${icon('play', 12)} Preview this effect only</button>`);
     on(b, 'click', () => this.cb.onSoloAnimation(node));
+    const bl = el(`<button class="btn small block" style="margin-top:6px">${icon('layers', 12)} Preview this layer only</button>`);
+    on(bl, 'click', () => this.cb.onSoloLayer(node.layer));
     const b2 = el(`<button class="btn small block" style="margin-top:6px">${icon('layers', 12)} Show all layers</button>`);
     on(b2, 'click', () => this.cb.onSoloAnimation(null));
-    solo.append(b, b2);
+    solo.append(b, bl, b2);
     frag.appendChild(solo);
     return frag;
   }

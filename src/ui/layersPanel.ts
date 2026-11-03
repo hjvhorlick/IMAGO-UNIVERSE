@@ -1,26 +1,46 @@
-/** RIGHT PANEL / Layers - the four-layer stack, always visible as four groups. */
+/**
+ * RAIL / On canvas - what is actually in the scene, grouped by layer.
+ *
+ * Deliberately NOT a Photoshop layer stack. There are no eye or padlock columns:
+ * objects are placed by dragging, moved and scaled directly on the canvas, and
+ * removed with Delete. Lock/hide/reorder still exist, but behind a right-click
+ * (or the `...` button) because they are occasional, not per-row decisions.
+ */
 import type { AssetLibrary } from '../assets/library';
 import type { Store } from '../core/store';
 import type { LayerId, SceneNode } from '../core/types';
 import { LAYER_LABEL, LAYER_ORDER } from '../core/types';
 import { EFFECT_MAP } from '../animation/effects';
 import { layerNodes, reorderNode } from '../scene/sceneModel';
-import { escapeHtml, icon, on, qsa } from './dom';
+import { contextMenu } from './menubar';
+import type { MenuItem } from './menubar';
+import { escapeHtml, icon, on, qsa, qs } from './dom';
+
+export interface LayersPanelCallbacks {
+  /** Open the properties/animation section for this object. */
+  onInspect?: (node: SceneNode) => void;
+}
 
 export class LayersPanel {
   active = false;
   private collapsed = new Set<LayerId>();
 
-  constructor(private root: HTMLElement, private store: Store, private library: AssetLibrary) {
-    this.render();
+  constructor(
+    private root: HTMLElement,
+    private store: Store,
+    private library: AssetLibrary,
+    private cb: LayersPanelCallbacks = {},
+  ) {
     store.on('scene', () => { if (this.active) this.render(); });
     store.on('selection', () => { if (this.active) this.render(); });
   }
 
+  get count() { return this.store.scene.nodes.length; }
+
   render() {
     const scroll = this.root.scrollTop;
     const scene = this.store.scene;
-    this.root.innerHTML = LAYER_ORDER.slice().reverse().map((layer) => {
+    this.root.innerHTML = `<div class="rail-pad tight">` + LAYER_ORDER.slice().reverse().map((layer) => {
       const idx = LAYER_ORDER.indexOf(layer) + 1;
       const nodes = layerNodes(scene, layer).slice().reverse();
       const collapsed = this.collapsed.has(layer);
@@ -34,10 +54,10 @@ export class LayersPanel {
           </div>
           ${collapsed ? '' : `<div class="layer-items">
             ${nodes.length ? nodes.map((n) => this.item(n)).join('')
-              : `<div class="empty-state" style="padding:12px">Nothing in this layer yet.</div>`}
+              : `<div class="layer-empty">Nothing here yet - drag something in.</div>`}
           </div>`}
         </div>`;
-    }).join('');
+    }).join('') + `</div>`;
 
     qsa<HTMLElement>('[data-toggle]', this.root).forEach((h) => on(h, 'click', () => {
       const l = h.dataset.toggle as LayerId;
@@ -48,16 +68,59 @@ export class LayersPanel {
     qsa<HTMLElement>('.layer-item', this.root).forEach((item) => {
       const id = item.dataset.id!;
       on(item, 'click', (e) => {
-        const target = e.target as HTMLElement;
-        if (target.closest('[data-act]')) return;
+        if ((e.target as HTMLElement).closest('[data-more]')) return;
         this.store.select(id, (e as MouseEvent).shiftKey);
       });
-      qsa<HTMLElement>('[data-act]', item).forEach((btn) => on(btn, 'click', (e) => {
+      on(item, 'dblclick', () => {
+        const n = this.store.node(id);
+        if (n) this.cb.onInspect?.(n);
+      });
+      on(item, 'contextmenu', (e) => {
+        e.preventDefault();
+        this.store.select(id);
+        const r = (e as MouseEvent);
+        this.menuFor(id, r.clientX, r.clientY);
+      });
+      on(qs('[data-more]', item), 'click', (e) => {
         e.stopPropagation();
-        this.action(id, btn.dataset.act!);
-      }));
+        this.store.select(id);
+        const r = (e.target as HTMLElement).getBoundingClientRect();
+        this.menuFor(id, r.left - 150, r.bottom + 4);
+      });
     });
     this.root.scrollTop = scroll;
+  }
+
+  private menuFor(id: string, x: number, y: number) {
+    const n = this.store.node(id);
+    if (!n) return;
+    const items: MenuItem[] = [
+      { label: n.name, heading: true },
+      { label: 'Edit properties', icon: 'settings', action: () => this.cb.onInspect?.(n) },
+      { label: 'Duplicate', icon: 'copy', shortcut: 'Ctrl+D', action: () => this.store.duplicateSelected() },
+      { separator: true },
+      { label: 'Bring forward', icon: 'up', disabled: n.locked, action: () => this.reorder(n, 'up') },
+      { label: 'Send backward', icon: 'down', disabled: n.locked, action: () => this.reorder(n, 'down') },
+      { label: 'Bring to front', icon: 'bring', disabled: n.locked, action: () => this.reorder(n, 'front') },
+      { label: 'Send to back', icon: 'send', disabled: n.locked, action: () => this.reorder(n, 'back') },
+      { separator: true },
+      { label: n.visible ? 'Hide' : 'Show', icon: n.visible ? 'eyeOff' : 'eye', shortcut: 'H', checked: !n.visible, action: () => this.toggle(n, 'visible') },
+      { label: n.locked ? 'Unlock' : 'Lock', icon: n.locked ? 'unlock' : 'lock', shortcut: 'L', checked: n.locked, action: () => this.toggle(n, 'locked') },
+      { separator: true },
+      { label: 'Delete', icon: 'trash', shortcut: 'Del', action: () => this.store.removeSelected() },
+    ];
+    contextMenu(x, y, items);
+  }
+
+  private reorder(node: SceneNode, dir: 'up' | 'down' | 'front' | 'back') {
+    if (node.locked) { this.store.status('Unlock the object before reordering it.', 'warn'); return; }
+    this.store.mutate((s) => reorderNode(s, node, dir), 'Reorder');
+  }
+
+  private toggle(node: SceneNode, key: 'locked' | 'visible') {
+    const value = !node[key];
+    this.store.mutate(() => { node[key] = value; },
+      key === 'locked' ? (value ? 'Lock' : 'Unlock') : (value ? 'Show' : 'Hide'));
   }
 
   private item(n: SceneNode): string {
@@ -65,32 +128,21 @@ export class LayersPanel {
     const selected = this.store.selection.includes(n.id);
     const animated = n.kind === 'effect' ? true : !!n.animation?.enabled;
     const thumb = n.kind === 'effect'
-      ? `<span class="layer-item-effect">${icon('sparkles', 11)}</span>`
+      ? `<span class="li-thumb li-effect">${icon('sparkles', 16)}</span>`
       : meta
-        ? `<img class="layer-item-thumb" src="${this.library.url(meta, true)}" alt="">`
-        : `<span class="layer-item-thumb"></span>`;
+        ? `<img class="li-thumb" loading="lazy" src="${this.library.url(meta, true)}" alt="">`
+        : `<span class="li-thumb"></span>`;
     const label = n.kind === 'effect' ? (EFFECT_MAP.get(n.effect!.effectId)?.name ?? n.name) : n.name;
+    const flags = [
+      n.locked ? `<span class="li-flag" title="Locked">${icon('lock', 10)}</span>` : '',
+      !n.visible ? `<span class="li-flag" title="Hidden">${icon('eyeOff', 10)}</span>` : '',
+      animated ? `<span class="anim-dot" title="Animated"></span>` : '',
+    ].join('');
     return `<div class="layer-item${selected ? ' selected' : ''}${n.visible ? '' : ' hidden-node'}" data-id="${n.id}">
       ${thumb}
-      <span class="layer-item-name" title="${escapeHtml(label)}">${escapeHtml(label)}</span>
-      ${animated ? '<span class="anim-dot" title="Animated"></span>' : ''}
-      <button class="mini-btn${n.visible ? '' : ' on'}" data-act="visibility" title="${n.visible ? 'Hide' : 'Show'}">${icon(n.visible ? 'eye' : 'eyeOff', 12)}</button>
-      <button class="mini-btn${n.locked ? ' locked' : ''}" data-act="lock" title="${n.locked ? 'Unlock' : 'Lock'}">${icon(n.locked ? 'lock' : 'unlock', 12)}</button>
-      <button class="mini-btn" data-act="up" title="Bring forward">${icon('up', 12)}</button>
-      <button class="mini-btn" data-act="down" title="Send backward">${icon('down', 12)}</button>
+      <span class="li-name" title="${escapeHtml(label)}">${escapeHtml(label)}</span>
+      ${flags}
+      <button class="li-more" data-more title="More actions">${icon('settings', 12)}</button>
     </div>`;
-  }
-
-  private action(id: string, act: string) {
-    const node = this.store.node(id);
-    if (!node) return;
-    if (act === 'visibility') {
-      this.store.mutate(() => { node.visible = !node.visible; }, node.visible ? 'Hide object' : 'Show object');
-    } else if (act === 'lock') {
-      this.store.mutate(() => { node.locked = !node.locked; }, node.locked ? 'Unlock object' : 'Lock object');
-    } else if (act === 'up' || act === 'down') {
-      if (node.locked) { this.store.status('Unlock the object before reordering it.', 'warn'); return; }
-      this.store.mutate((s) => reorderNode(s, node, act), act === 'up' ? 'Bring forward' : 'Send backward');
-    }
   }
 }

@@ -25,7 +25,7 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 81 unit / integration / UI tests (Vitest) |
+| `npm test` | 94 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library from `assets-src/` (needs Pillow + numpy) |
@@ -52,7 +52,7 @@ there are no style-conflict dialogs, because the conflict cannot be created in t
 
 ## What is implemented
 
-**Asset library** — 25 individual transparent assets across 2 complete styles, each with rich
+**Asset library** — 37 individual transparent assets across 3 complete styles, each with rich
 metadata (dimensions, alpha, depth, perspective, ground-contact point, lighting direction, palette,
 animation capabilities, rig, variants). Visual browser with categories, search, theme filters,
 thumbnails, favourites, preview, import and remove. Imported files are stored in IndexedDB and
@@ -67,6 +67,7 @@ moved or replaced** by any automatic operation.
 duplicate, delete, hide, lock, opacity, blend, layer reordering, undo/redo with a named history.
 Two genuinely different crops: *image crop* (which part of the asset is used) and *canvas
 overflow* (whether the scene clips at its own bounds). All editing is non-destructive.
+Solo preview auditions a single animation or effect on its own, or one whole layer.
 
 **Animation** — 15 techniques chosen per asset type, evaluated independently of the compositor:
 canopy sway with a planted trunk and desynchronised branches, grass deformation, stem bending,
@@ -113,13 +114,14 @@ seamless loop it cannot deliver.
 ## Verification
 
 ```
-npm test              81 passed (7 files)
+npm test              94 passed (7 files)
 npm run typecheck     clean, strict
-npm run build         193 kB JS (62 kB gz), 23 kB CSS (5.5 kB gz)
+npm run build         195 kB JS (63 kB gz), 23 kB CSS (5.5 kB gz)
 npm run render-check  loop boundary: 0 differing subpixels
                       mid-cycle motion: 10.96% of pixels
                       all 22 effects exactly periodic
                       no chroma-key residue in any asset
+                      7 composed environments, one per background
 ```
 
 `tools/render_check.ts` runs the **real** compositor, animation engine, Loop Manager and effect
@@ -160,6 +162,6 @@ src/
 assets-src/    source artwork plates (pipeline input)
 public/library/  runtime WebP assets + thumbnails + manifest.json
 tools/         asset preparation pipeline, headless render verification
-tests/         81 tests across 7 files
+tests/         103 tests across 8 files
 docs/          architecture, assets, limitations
 ```

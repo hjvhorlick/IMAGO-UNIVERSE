@@ -17,7 +17,8 @@ import { LoopManager } from '../src/animation/loopManager';
 import { buildDemoScene } from '../src/scene/demoScene';
 import { EFFECTS } from '../src/animation/effects';
 import { makeEffectNode } from '../src/ui/inspector';
-import { createScene } from '../src/scene/sceneModel';
+import { createScene, fitBackground } from '../src/scene/sceneModel';
+import { autoCompose, DEFAULT_COMPOSE } from '../src/scene/composition';
 import type { AssetMeta } from '../src/core/types';
 
 /* -------------------------------------------------- browser API shims */
@@ -101,6 +102,45 @@ async function main() {
   for (let i = 0; i < a.length; i += 4) if (Math.abs(a[i] - mid[i]) > 6) moved++;
   console.log(`MOTION: ${((moved / (a.length / 4)) * 100).toFixed(2)}% of pixels changed mid-cycle`);
   if (moved / (a.length / 4) < 0.005) { console.error('FAIL: nothing appears to animate'); process.exitCode = 1; }
+
+  /* ---- one composed world per background plate ---- */
+  // Proves auto-composition produces a coherent scene for every environment,
+  // not just the one the demo happens to open on.
+  const backgrounds = lib.assets.filter((x) => x.layer === 'background');
+  const wcols = 2, ww = 640, wh = 360;
+  const wrows = Math.ceil(backgrounds.length / wcols);
+  const worldSheet = createCanvas(wcols * ww, wrows * wh);
+  const wctx = worldSheet.getContext('2d');
+  for (let i = 0; i < backgrounds.length; i++) {
+    const bgMeta = backgrounds[i];
+    const ws = buildDemoScene(lib, { styleId: bgMeta.style, withEffects: true });
+    const bgNode = ws.nodes.find((n) => n.layer === 'background');
+    if (bgNode) {
+      await images.ensure([bgMeta.id]);
+      const entry = images.peek(bgMeta.id)!;
+      bgNode.assetId = bgMeta.id;
+      bgNode.name = bgMeta.name;
+      fitBackground(bgNode, ws, entry.width, entry.height);
+      // Re-compose around the swapped plate. The background is locked, so it
+      // survives; everything else is re-grounded against the new ground line.
+      autoCompose(ws, lib, { ...DEFAULT_COMPOSE, seed: 20261103, density: 'balanced', foreground: 0.62 });
+    }
+    await images.ensure(ws.nodes.map((n) => n.assetId));
+    loops.invalidate();
+    const wscale = ww / ws.canvas.width;
+    const cv = createCanvas(ww, wh);
+    comp.render(cv.getContext('2d') as never, ws, {
+      scale: wscale, quality: 'export', time: 0, masterCycle: loops.analyse(ws).master,
+    });
+    wctx.drawImage(cv as never, (i % wcols) * ww, Math.floor(i / wcols) * wh);
+    wctx.fillStyle = 'rgba(0,0,0,0.55)';
+    wctx.fillRect((i % wcols) * ww, Math.floor(i / wcols) * wh, ww, 22);
+    wctx.fillStyle = '#fff';
+    wctx.font = '13px sans-serif';
+    wctx.fillText(`${bgMeta.style} / ${bgMeta.name}  (${ws.nodes.length} nodes)`, (i % wcols) * ww + 8, Math.floor(i / wcols) * wh + 15);
+  }
+  fs.writeFileSync(path.join(OUT, 'worlds.png'), worldSheet.toBuffer('image/png'));
+  console.log(`rendered worlds.png (${backgrounds.length} composed environments)`);
 
   /* ---- effect contact sheet ---- */
   const cols = 4, cw = 320, ch = 200;

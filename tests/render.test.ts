@@ -14,7 +14,7 @@ import { LoopManager } from '../src/animation/loopManager';
 import { Compositor } from '../src/render/compositor';
 import { meshWarp } from '../src/render/deform';
 import { AssetLibrary } from '../src/assets/library';
-import { createScene } from '../src/scene/sceneModel';
+import { createScene, createAssetNode, fitBackground } from '../src/scene/sceneModel';
 import { buildDemoScene } from '../src/scene/demoScene';
 import { makeEffectNode } from '../src/ui/inspector';
 import { DEFAULT_LOOP, makeAnimation } from '../src/core/types';
@@ -156,6 +156,9 @@ describe('animation engine', () => {
           }
         }
         if (a.scroll || b.scroll) moved = true;
+        // Falling water carries its motion in a masked streak field, not in a
+        // transform or a warp of the artwork.
+        if (a.fall || b.fall) moved = true;
         if (moved) break;
       }
       expect(moved, `${type} never moves`).toBe(true);
@@ -329,4 +332,154 @@ describe('mesh warp locality', () => {
     expect(Buffer.from(pixels({ cv, ctx })).equals(
       Buffer.from(pixels({ cv: ref, ctx: ref.getContext('2d') })))).toBe(true);
   });
+});
+
+describe('solo preview isolation', () => {
+  /**
+   * The inspector offers "Preview this effect only". That must isolate ONE node,
+   * not its whole layer - otherwise the control does not do what it says.
+   */
+  function rig() {
+    const lib = testLibrary();
+    const scene = createScene('enchanted');
+    const a = makeEffectNode('sparkles', scene, 0);
+    const b = makeEffectNode('fireflies', scene, 1);
+    const c = makeEffectNode('snow', scene, 2);
+    scene.nodes.push(a, b, c);
+    const loops = new LoopManager();
+    const images = { peek: () => null, ensure: async () => {}, stats: { count: 0, bytes: 0, pending: 0 } };
+    const comp = new Compositor(lib, images as never, loops);
+    return { lib, scene, loops, comp, a, b, c };
+  }
+
+  const draw = (comp: Compositor, scene: Scene, extra: Record<string, unknown> = {}) => {
+    const { cv, ctx } = ctx2d(200, 112);
+    comp.render(ctx as never, scene, {
+      scale: 200 / scene.canvas.width, quality: 'preview', time: 2, skipLighting: true, ...extra,
+    });
+    return Buffer.from(pixels({ cv, ctx }));
+  };
+
+  it('renders exactly the soloed node and nothing else', () => {
+    const { scene, comp, b } = rig();
+    const solo = draw(comp, scene, { onlyNode: b.id });
+
+    const alone = { ...scene, nodes: [b] };
+    const expected = draw(comp, alone as Scene);
+    expect(solo.equals(expected)).toBe(true);
+  });
+
+  it('a soloed node differs from the full scene and from a different solo', () => {
+    const { scene, comp, a, b } = rig();
+    const all = draw(comp, scene);
+    const soloA = draw(comp, scene, { onlyNode: a.id });
+    const soloB = draw(comp, scene, { onlyNode: b.id });
+    expect(soloA.equals(all)).toBe(false);
+    expect(soloA.equals(soloB)).toBe(false);
+  });
+
+  it('takes precedence over a layer filter', () => {
+    const { scene, comp, b } = rig();
+    // Ask for the foreground layer but solo an atmosphere node: the node wins.
+    const withBoth = draw(comp, scene, { onlyNode: b.id, layers: ['foreground'] });
+    const justNode = draw(comp, scene, { onlyNode: b.id });
+    expect(withBoth.equals(justNode)).toBe(true);
+  });
+
+  it('overrides the hidden flag, because the user explicitly asked to see it', () => {
+    const { scene, comp, b } = rig();
+    b.visible = false;
+    const hiddenSolo = draw(comp, scene, { onlyNode: b.id });
+    b.visible = true;
+    const shownSolo = draw(comp, scene, { onlyNode: b.id });
+    expect(hiddenSolo.equals(shownSolo)).toBe(true);
+  });
+
+  it('an unknown solo id draws the empty backdrop rather than the whole scene', () => {
+    const { scene, comp } = rig();
+    const bogus = draw(comp, scene, { onlyNode: 'does-not-exist' });
+    const empty = draw(comp, { ...scene, nodes: [] } as Scene);
+    expect(bogus.equals(empty)).toBe(true);
+  });
+
+  it('a layer solo still shows every node in that layer', () => {
+    const { scene, comp } = rig();
+    const layerSolo = draw(comp, scene, { layers: ['atmosphere'] });
+    const all = draw(comp, scene);
+    // All three nodes are atmosphere, so a layer solo equals the full scene here.
+    expect(layerSolo.equals(all)).toBe(true);
+  });
+});
+
+describe('background water regions', () => {
+  /**
+   * Every background that declares a water region must shimmer ONLY there.
+   * This is the regression guard for the sky-seam bug: a whole-plate mesh warp
+   * used to disturb foliage and sky that were never meant to move.
+   */
+  it('keeps every declared-region background still outside its water', async () => {
+    const lib = new AssetLibrary();
+    lib.manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/library/manifest.json'), 'utf8'));
+    const loops = new LoopManager();
+    const cache = new Map<string, { bitmap: unknown; width: number; height: number }>();
+    const images = {
+      peek: (id: string | undefined) => (id ? cache.get(id) ?? null : null),
+      ensure: async () => {},
+      stats: { count: 0, bytes: 0, pending: 0 },
+    };
+    const comp = new Compositor(lib, images as never, loops);
+
+    const backgrounds = lib.assets.filter((a) => a.layer === 'background' && a.rig?.region);
+    expect(backgrounds.length).toBeGreaterThanOrEqual(2);
+
+    for (const meta of backgrounds) {
+      const img = await loadImage(path.join(ROOT, 'public/library', meta.file));
+      cache.set(meta.id, { bitmap: img, width: img.width, height: img.height });
+
+      const scene = createScene(meta.style);
+      const node = createAssetNode(meta, scene);
+      fitBackground(node, scene, img.width, img.height);
+      node.animation = makeAnimation('water-shimmer', 8);
+      node.animation.enabled = true;
+      node.animation.amplitude = 1;
+      node.animation.loop = 8;
+      scene.nodes = [node];
+
+      const W = 480, H = 270;
+      const scale = W / scene.canvas.width;
+      const draw = (t: number) => {
+        const { cv, ctx } = ctx2d(W, H);
+        comp.render(ctx as never, scene, { scale, quality: 'export', time: t, skipLighting: true });
+        return pixels({ cv, ctx });
+      };
+      const a = draw(0), b = draw(3.1);
+
+      // Map the asset's normalised region into canvas rows.
+      const [, ry, , rh] = meta.rig!.region as number[];
+      const top = node.y - node.height / 2;
+      const y0 = Math.max(0, Math.floor((top + ry * node.height) * scale));
+      const y1 = Math.min(H, Math.ceil((top + (ry + rh) * node.height) * scale));
+
+      // Outside the water nothing may move. A +/-1 rounding difference on the
+      // antialiased boundary row is unavoidable; anything larger is real motion.
+      let outside = 0, maxOutside = 0;
+      for (let y = 0; y < H; y++) {
+        if (y >= y0 && y < y1) continue;
+        for (let x = 0; x < W * 4; x++) {
+          const d = Math.abs(a[y * W * 4 + x] - b[y * W * 4 + x]);
+          if (d > maxOutside) maxOutside = d;
+          if (d > 2) outside++;
+        }
+      }
+      expect(outside, `${meta.id} moved outside its water region (max delta ${maxOutside})`).toBe(0);
+
+      let inside = 0;
+      for (let y = y0; y < y1; y++) {
+        for (let x = 0; x < W * 4; x += 4) {
+          if (Math.abs(a[y * W * 4 + x] - b[y * W * 4 + x]) > 4) inside++;
+        }
+      }
+      expect(inside, `${meta.id} water did not move at all`).toBeGreaterThan(50);
+    }
+  }, 120_000);
 });

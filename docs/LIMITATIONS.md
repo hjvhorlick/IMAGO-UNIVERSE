@@ -18,12 +18,14 @@ animation engine, Loop Manager and effect library were exercised headlessly.
 | Trees stay planted | trunk-base displacement asserted < 0.001 in tests |
 | Grass roots do not slide | base-row `dx` < 0.001 |
 | Warping is local | sky above a shimmering lake is **pixel-identical** to the unwarped plate |
+| Water shimmer stays in the water | max delta **1/255** outside every background's declared region, 182/255 inside |
+| Every style composes | one rendered world per background plate → `.render-check/worlds.png` |
 | Rendering never mutates the scene | deep-equality assertion before/after render |
-| The UI really works | 12 jsdom tests mount the real `App` and drive it |
+| The UI really works | 14 jsdom tests mount the real `App` and drive it |
 | Still export produces a real file | 640×360 PNG > 5 kB asserted in the UI test |
 | Projects round-trip | scene → ZIP → scene, including embedded asset bytes |
 
-`npm test` → **81 passed** across 7 files. `npm run typecheck` → clean under `strict`,
+`npm test` → **94 passed** across 7 files. `npm run typecheck` → clean under `strict`,
 `noUnusedLocals` and `noUnusedParameters`. `npm run build` → succeeds.
 
 ## What was NOT verified — video export
@@ -58,10 +60,12 @@ rather than a broken file — but that error path itself is untested against a r
 
 ## Known functional constraints
 
-**Library size.** 25 assets across 2 styles, and the second style is a colour grade of the first.
-Backgrounds are at 4 of the 5 the brief asked for. There are no painted flower or fern plates —
-those foreground plants are procedurally composed from foliage chips. This is enough to build
-varied scenes but is not a large commercial library.
+**Library size.** 37 assets across 3 styles (7 backgrounds / 13 middle / 17 foreground), which meets
+the brief's starter targets. But `moonlit` and `autumn` are colour grades of `enchanted`, not
+independently painted bodies of work, and there are no painted flower or fern plates — those
+foreground plants are procedurally composed from foliage chips. This is enough to build varied
+scenes but is not a large commercial library. Adding a genuinely independent style means
+commissioning or painting a new plate set, not more grading.
 
 **Master cycle cap.** The LCM of all animation cycles is capped at 60 s. With many co-prime cycle
 lengths the true LCM can exceed this; the Loop Manager snaps cycles to a 0.5 s grid to keep the LCM
@@ -123,3 +127,56 @@ These were real bugs found by looking at output, not by reading code:
    and undistorted rows were still drawn as antialiased triangles (faint grid lines across the sky).
    Fixed with a smooth `regionMask` and a flat-band fast path in `meshWarp`; the sky is now
    pixel-identical to the unwarped plate.
+9. **Mesh bands straddling the region edge** — a band whose top row was inside the water and bottom
+   row outside dragged stationary foliage along. Fixed by passing the region edges as `breaks` so
+   they land exactly on mesh row lines.
+10. **Phase-dependent slice boundaries** — the flat-band test used the instantaneous displacement, so
+   a band passing through zero flipped between triangle and slice rendering, shifting the slice
+   boundary and re-resampling the still foreground (max delta 43/255 where nothing should move).
+   Fixed by declaring an `active` v-range and deciding the split on geometry alone. Outside the
+   water region the max delta is now 1/255.
+11. **"Preview this effect only" previewed the whole layer** — the control did not do what it said.
+   Added `RenderOptions.onlyNode` for true single-node isolation, kept layer solo as a separate
+   button, made solo override the hidden flag, and dropped a solo whose subject gets deleted.
+
+
+## Falling water (rewritten)
+
+The original `waterfall-flow` scrolled the painted region vertically. Two things
+were wrong with that, both visible to the eye:
+
+1. **It flowed upwards.** The scroll subtracted the phase offset, so increasing
+   time moved the texture toward negative y. `RegionScroll` now carries an
+   explicit `direction`, and `+1` means along the positive axis (down for y).
+2. **It was a picture of a waterfall, not water.** Sliding the painted region
+   dragged the lip, the rocks and the pool along with it and marched a tiling
+   seam through the artwork. A lateral mesh warp made this worse: `regionMask`
+   only gates *vertically*, so the wobble smeared rock and foliage across the
+   full width of the plate in horizontal bands.
+
+`waterfall-flow` now leaves the painting completely still and renders falling
+water over it:
+
+- A **water mask** is derived from the artwork itself (bright + desaturated),
+  blurred, and cached per asset/region/size. Without it the streaks fell over
+  sky, rock and foliage and read as rain.
+- The mask also yields a **per-row centre and half-width**, so streaks follow
+  the real column as it narrows and shifts instead of ruling straight lines
+  down a bounding box.
+- Streaks carry a **dark trough and a lit crest** composited with `overlay`;
+  additive white alone is invisible on water that is already near-white.
+- The region is **supersampled to a 260px floor**, because a narrow fall can be
+  ~35x99 px at preview size and a sub-pixel streak washes out into a flat haze.
+- **One fall speed** for the whole field. Water reaches terminal velocity, and
+  two superimposed speeds cancel into a static shimmer rather than reading as
+  falling.
+
+Verified by measurement, not by eye alone (`tests/waterfall.test.ts`): 2D optical
+flow is downward at every sampled phase, the loop returns to byte-identical
+pixels, and nothing outside the region moves by more than antialiasing (<=2).
+
+**Known limitation:** if an imported waterfall's water is dark or strongly
+tinted, the mask finds nothing and the effect falls back to the declared region
+rectangle rather than switching itself off. Such artwork will look less
+convincing than the shipped falls; a per-asset painted mask would be the proper
+fix.

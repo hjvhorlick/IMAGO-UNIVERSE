@@ -145,6 +145,29 @@ export interface ExportSettings {
   stillQuality: number;
 }
 
+/**
+ * A user-imported sound track. The application ships no audio of its own - this
+ * only ever describes a file the user brought in, which is embedded in the
+ * .sceneproject so the project stays portable.
+ */
+export interface SceneAudio {
+  /** Blob key in the library's imported-audio store. */
+  id: string;
+  name: string;
+  /** Seconds, reported by the decoder; 0 if unknown. */
+  duration: number;
+  /** 0..1 */
+  volume: number;
+  /** Repeat for the whole video rather than stopping at the end. */
+  loop: boolean;
+  /** Seconds to crossfade across the loop join. 0 = plain repeat (audible join). */
+  crossfade: number;
+  /** Start this far into the track. */
+  offset: number;
+  mime: string;
+  bytes: number;
+}
+
 export interface Scene {
   id: string;
   name: string;
@@ -153,6 +176,8 @@ export interface Scene {
   canvas: CanvasSettings;
   nodes: SceneNode[];
   lighting: Lighting;
+  /** Optional imported music. Absent = silent, which is the default. */
+  audio?: SceneAudio | null;
   exportSettings: ExportSettings;
   createdAt: string;
   updatedAt: string;

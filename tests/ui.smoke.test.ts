@@ -105,6 +105,21 @@ const click = (el: Element | null) => {
   el!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 };
 
+/** Open one accordion section in the right rail (exclusive). */
+const openSection = (id: string) => click(document.querySelector(`[data-head="${id}"]`));
+/** The persistent body element a rail panel renders into. */
+const body = (id: string) => document.querySelector(`[data-body="${id}"]`);
+/** Open a top-bar dropdown and click one of its items by label. */
+const menuClick = (menu: string, label: string) => {
+  click(document.querySelector(`[data-menu="${menu}"]`));
+  const item = Array.from(document.querySelectorAll('.menu-pop .menu-item'))
+    .find((b) => b.textContent?.trim().startsWith(label)) ?? null;
+  expect(item, `menu ${menu} has no item "${label}"`).toBeTruthy();
+  click(item);
+};
+const press = (key: string, init: KeyboardEventInit = {}) =>
+  window.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
+
 describe('application shell', () => {
   it('mounts without errors and opens on a real composed world', async () => {
     const errors: unknown[] = [];
@@ -118,7 +133,15 @@ describe('application shell', () => {
     expect(app.library.styles.length).toBeGreaterThanOrEqual(2);
     // four layer buttons, always
     expect(document.querySelectorAll('.layer-tab').length).toBe(4);
+    // The rail is an exclusive accordion: only the open section has content.
+    expect(document.querySelectorAll('.rail-section').length).toBeGreaterThanOrEqual(6);
+    openSection('canvas');
     expect(document.querySelectorAll('.layer-group').length).toBe(4);
+    // Chrome that used to cost canvas space must be gone.
+    expect(document.querySelector('.transport')).toBeNull();
+    expect(document.querySelector('.statusbar')).toBeNull();
+    expect(document.querySelector('.stage-toolbar')).toBeNull();
+    expect(document.querySelector('.panel-left')).toBeNull();
     expect(errors, JSON.stringify(errors)).toEqual([]);
     spy.mockRestore();
     app.dispose();
@@ -126,9 +149,9 @@ describe('application shell', () => {
 
   it('every panel tab renders and every layer switches the library', async () => {
     const app = await mountApp();
-    for (const tab of ['layers', 'object', 'animate', 'scene']) {
-      click(document.querySelector(`[data-rtab="${tab}"]`));
-      expect(document.querySelector('#right-body')!.children.length).toBeGreaterThan(0);
+    for (const section of ['canvas', 'object', 'animate', 'scene', 'sound']) {
+      openSection(section);
+      expect(body(section)!.children.length, `section ${section} rendered nothing`).toBeGreaterThan(0);
     }
     for (const layer of ['background', 'middle', 'foreground', 'atmosphere']) {
       click(document.querySelector(`.layer-tab[data-layer="${layer}"]`));
@@ -158,16 +181,18 @@ describe('application shell', () => {
     app.store.redo();
     expect(app.store.node(node.id)!.x).toBe(x0 + 50);
 
-    click(document.querySelector('#btn-dup'));
+    menuClick('edit', 'Duplicate');
     expect(app.store.scene.nodes.length).toBe(before + 2);
-    click(document.querySelector('#btn-lock'));
+    // Lock/hide are no longer per-row columns; they are keys and a context menu.
+    press('l');
     expect(app.store.primary!.locked).toBe(true);
-    click(document.querySelector('#btn-lock'));
+    press('l');
     expect(app.store.primary!.locked).toBe(false);
-    click(document.querySelector('#btn-hide'));
+    press('h');
     expect(app.store.primary!.visible).toBe(false);
-    click(document.querySelector('#btn-hide'));
-    click(document.querySelector('#btn-del'));
+    press('h');
+    expect(app.store.primary!.visible).toBe(true);
+    press('Delete');
     expect(app.store.scene.nodes.length).toBe(before + 1);
     app.dispose();
   }, 60_000);
@@ -181,18 +206,68 @@ describe('application shell', () => {
     const node = app.store.primary!;
     expect(node.kind).toBe('effect');
     expect(node.layer).toBe('atmosphere');
-    // Animate tab is selected automatically for a new effect
-    const labels = Array.from(document.querySelectorAll('#right-body .field-label')).map((n) => n.textContent ?? '');
+    // Placement keeps the library open so you can place several in a row;
+    // editing is one click away in the Animation section.
+    openSection('animate');
+    const labels = Array.from(document.querySelectorAll('[data-body="animate"] .field-label')).map((n) => n.textContent ?? '');
     expect(labels.some((l) => l.includes('Rotations per cycle'))).toBe(true);
     expect(labels.some((l) => l.includes('Glyph count'))).toBe(true);
     expect(labels.some((l) => l.includes('Brightness'))).toBe(false);   // not an image control
     expect(labels.some((l) => l.includes('Cycle length'))).toBe(true);
 
     // a slider really changes the effect
-    const range = document.querySelector('#right-body input[type="range"]') as HTMLInputElement;
+    const range = document.querySelector('[data-body="animate"] input[type="range"]') as HTMLInputElement;
     range.value = String(Number(range.max));
     range.dispatchEvent(new Event('input', { bubbles: true }));
     expect(Object.values(node.effect!.params)).toContain(Number(range.max));
+    app.dispose();
+  }, 60_000);
+
+  it('solo preview isolates one effect, then one layer, then everything', async () => {
+    const app = await mountApp();
+    const fx = app.store.scene.nodes.filter((n) => n.kind === 'effect');
+    expect(fx.length).toBeGreaterThan(1);
+    const target = fx[0];
+    app.store.select(target.id);
+    openSection('animate');
+
+    const btn = (text: string) => Array.from(document.querySelectorAll('[data-body="animate"] button'))
+      .find((b) => b.textContent?.includes(text)) ?? null;
+
+    // "Preview this effect only" must isolate ONE node, not its whole layer.
+    click(btn('Preview this effect only'));
+    expect(app.preview.soloNode).toBe(target.id);
+    expect(app.preview.soloLayer).toBeNull();
+    expect(document.querySelector('#stage-hud')?.textContent).toContain('SOLO');
+    expect(document.querySelector('#stage-hud')?.textContent).toContain(target.name);
+
+    // "Preview this layer only" switches to layer mode.
+    click(btn('Preview this layer only'));
+    expect(app.preview.soloNode).toBeNull();
+    expect(app.preview.soloLayer).toBe(target.layer);
+
+    // "Show all layers" clears both.
+    click(btn('Show all layers'));
+    expect(app.preview.soloNode).toBeNull();
+    expect(app.preview.soloLayer).toBeNull();
+    expect(document.querySelector('#stage-hud')?.textContent).not.toContain('SOLO');
+    app.dispose();
+  }, 60_000);
+
+  it('drops a solo preview when its subject is deleted', async () => {
+    const app = await mountApp();
+    const target = app.store.scene.nodes.find((n) => n.kind === 'effect')!;
+    app.store.select(target.id);
+    openSection('animate');
+    const soloBtn = Array.from(document.querySelectorAll('[data-body="animate"] button'))
+      .find((b) => b.textContent?.includes('Preview this effect only'))!;
+    click(soloBtn);
+    expect(app.preview.soloNode).toBe(target.id);
+
+    press('Delete');
+    // Must not leave the canvas permanently empty.
+    expect(app.preview.soloNode).toBeNull();
+    expect(app.store.node(target.id)).toBeUndefined();
     app.dispose();
   }, 60_000);
 
@@ -200,12 +275,12 @@ describe('application shell', () => {
     const app = await mountApp();
     const tree = app.store.scene.nodes.find((n) => app.library.get(n.assetId)?.category === 'trees')!;
     app.store.select(tree.id);
-    click(document.querySelector('[data-rtab="animate"]'));
-    const toggle = document.querySelector('#right-body input[type="checkbox"]') as HTMLInputElement;
+    openSection('animate');
+    const toggle = document.querySelector('[data-body="animate"] input[type="checkbox"]') as HTMLInputElement;
     toggle.checked = true;
     toggle.dispatchEvent(new Event('change', { bubbles: true }));
     expect(app.store.node(tree.id)!.animation!.enabled).toBe(true);
-    const labels = Array.from(document.querySelectorAll('#right-body .field-label')).map((n) => n.textContent ?? '');
+    const labels = Array.from(document.querySelectorAll('[data-body="animate"] .field-label')).map((n) => n.textContent ?? '');
     expect(labels.some((l) => l.includes('Cycle length'))).toBe(true);
     expect(labels.some((l) => l.includes('Organic variation'))).toBe(true);
     app.dispose();
@@ -214,7 +289,8 @@ describe('application shell', () => {
   it('applies a theme collection and keeps it editable', async () => {
     const app = await mountApp();
     const before = app.store.scene.nodes.filter((n) => n.kind === 'effect').length;
-    click(document.querySelector('.panel-tab[data-tab="themes"]'));
+    click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
+    openSection('collections');
     const cards = document.querySelectorAll('.theme-card');
     expect(cards.length).toBeGreaterThanOrEqual(6);
     click(cards[0]);
@@ -227,12 +303,69 @@ describe('application shell', () => {
     const app = await mountApp();
     const locked = app.store.scene.nodes.filter((n) => n.locked).map((n) => ({ id: n.id, x: n.x, y: n.y }));
     expect(locked.length).toBeGreaterThan(0);
-    click(document.querySelector('#btn-regen'));
+    menuClick('world', 'Rearrange unlocked');
     for (const l of locked) {
       const n = app.store.node(l.id)!;
       expect(n.x).toBe(l.x);
       expect(n.y).toBe(l.y);
     }
+    app.dispose();
+  }, 60_000);
+
+  it('advances to the middle layer after a background is placed', async () => {
+    const app = await mountApp();
+    click(document.querySelector('.layer-tab[data-layer="background"]'));
+    const cards = Array.from(document.querySelectorAll('#asset-grid .asset-card'));
+    expect(cards.length).toBeGreaterThan(0);
+    click(cards[0]);
+    // Guided flow: a background is placed once, so move straight on to layer 2.
+    expect(app.layer).toBe('middle');
+    expect(document.querySelector('.layer-tab[data-layer="middle"]')?.classList.contains('active')).toBe(true);
+    expect(document.querySelectorAll('#asset-grid .asset-card').length).toBeGreaterThan(0);
+    // Going back is always one click.
+    click(document.querySelector('.layer-tab[data-layer="background"]'));
+    expect(app.layer).toBe('background');
+    app.dispose();
+  }, 60_000);
+
+  it('collapses the whole rail to give the canvas the full width', async () => {
+    const app = await mountApp();
+    const shell = document.querySelector('.app')!;
+    expect(shell.classList.contains('rail-hidden')).toBe(false);
+    click(document.querySelector('#btn-rail'));
+    expect(shell.classList.contains('rail-hidden')).toBe(true);
+    press('\\');
+    expect(shell.classList.contains('rail-hidden')).toBe(false);
+    app.dispose();
+  }, 60_000);
+
+  it('ships no sound and offers an import slot instead of a music library', async () => {
+    const app = await mountApp();
+    // The demo world must be silent: no bundled audio anywhere.
+    expect(app.store.scene.audio ?? null).toBeNull();
+    openSection('sound');
+    const text = body('sound')!.textContent ?? '';
+    expect(text).toMatch(/No sound/);
+    expect(text).toMatch(/ships no music/i);
+    expect(body('sound')!.querySelector('[data-import]')).toBeTruthy();
+    // Nothing resembling a browsable track list.
+    expect(body('sound')!.querySelectorAll('.asset-card').length).toBe(0);
+    app.dispose();
+  }, 60_000);
+
+  it('keeps the library open while placing, and opens editing on double-click', async () => {
+    const app = await mountApp();
+    click(document.querySelector('.layer-tab[data-layer="foreground"]'));
+    click(document.querySelector('#asset-grid .asset-card'));
+    // Placing several in a row must not keep slamming the properties panel open.
+    expect(app.store.primary).toBeTruthy();
+    openSection('canvas');
+    const row = document.querySelector('.layer-item.selected')!;
+    expect(row).toBeTruthy();
+    // No eye or padlock columns in the list any more.
+    expect(row.querySelectorAll('.mini-btn').length).toBe(0);
+    row.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+    expect(document.querySelector('[data-section="object"]')?.classList.contains('open')).toBe(true);
     app.dispose();
   }, 60_000);
 

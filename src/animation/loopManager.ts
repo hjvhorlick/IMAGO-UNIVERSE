@@ -41,8 +41,13 @@ export const LOOP_GRID = 0.5;
 /** Above this we prefer snapping over an exact-but-unusable master cycle. */
 export const MAX_MASTER = 60;
 
-export function isActive(n: SceneNode, time?: number): boolean {
-  if (!n.visible) return false;
+/**
+ * @param audition ignore the hidden flag. Set when the user has explicitly asked
+ *   to preview this one node on its own - a hidden object should still animate
+ *   when it is the subject of a solo preview.
+ */
+export function isActive(n: SceneNode, time?: number, audition = false): boolean {
+  if (!n.visible && !audition) return false;
   if (n.kind === 'effect') {
     const e = n.effect!;
     return withinWindow(time, e.start, e.end);
