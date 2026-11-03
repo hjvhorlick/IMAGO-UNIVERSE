@@ -1,0 +1,1341 @@
+{
+ "schema": "imago.asset-library/1",
+ "generatedBy": "tools/prepare_assets.py",
+ "styles": [
+  {
+   "id": "enchanted",
+   "name": "Enchanted Realms",
+   "subtitle": "Highly detailed fantasy",
+   "description": "Rich painterly fantasy artwork: emerald and teal foliage, warm amber key light from the upper left, crisp silhouettes and detailed texture.",
+   "swatches": [
+    "#123a2e",
+    "#2f7d55",
+    "#8fc27a",
+    "#e8c07a",
+    "#f6e7c6"
+   ],
+   "lighting": "upper-left",
+   "reference": {
+    "background": "enchanted.background.enchanted-lake",
+    "tree": "enchanted.middle.ancient-oak",
+    "structure": "enchanted.middle.garden-pavilion",
+    "plant": "enchanted.foreground.wildflowers",
+    "ground": "enchanted.foreground.pebble-scatter"
+   },
+   "complete": true
+  },
+  {
+   "id": "moonlit",
+   "name": "Moonlit Reverie",
+   "subtitle": "Nocturnal fantasy",
+   "description": "The same painting technique art-directed for night: cool silver-blue key light, deep indigo shadows and reduced saturation. Every asset in this collection is graded identically so the scene stays coherent.",
+   "swatches": [
+    "#0a1430",
+    "#1d3a63",
+    "#4f7fae",
+    "#9fc4e8",
+    "#e6f0ff"
+   ],
+   "lighting": "upper-right",
+   "reference": {
+    "background": "moonlit.background.moonlit-glade",
+    "tree": "moonlit.middle.silver-oak",
+    "structure": "moonlit.middle.night-pavilion",
+    "plant": "moonlit.foreground.night-fern",
+    "ground": "moonlit.foreground.night-grass"
+   },
+   "complete": true
+  }
+ ],
+ "assets": [
+  {
+   "id": "enchanted.background.enchanted-lake",
+   "name": "Enchanted Lake Valley",
+   "style": "enchanted",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "forest",
+    "water",
+    "day"
+   ],
+   "tags": [
+    "background",
+    "vista"
+   ],
+   "origin": "painted",
+   "file": "enchanted/enchanted-lake.webp",
+   "thumb": "enchanted/thumbs/enchanted-lake.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0b0",
+    "#103030",
+    "#f0f0b0",
+    "#f0d0b0",
+    "#305030"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 172012
+  },
+  {
+   "id": "enchanted.background.crystal-highlands",
+   "name": "Sunrise Highlands",
+   "style": "enchanted",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "meadow",
+    "dawn",
+    "kingdom"
+   ],
+   "tags": [
+    "background",
+    "vista"
+   ],
+   "origin": "painted",
+   "file": "enchanted/crystal-highlands.webp",
+   "thumb": "enchanted/thumbs/crystal-highlands.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#105050",
+    "#f0d0b0",
+    "#103030",
+    "#107050",
+    "#105030"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 114628
+  },
+  {
+   "id": "enchanted.middle.ancient-oak",
+   "name": "Ancient Oak",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "forest",
+    "enchanted"
+   ],
+   "tags": [
+    "tree",
+    "oak",
+    "hero"
+   ],
+   "origin": "painted",
+   "file": "enchanted/ancient-oak.webp",
+   "thumb": "enchanted/thumbs/ancient-oak.webp",
+   "format": "image/webp",
+   "width": 755,
+   "height": 1275,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103010",
+    "#303010",
+    "#103030",
+    "#101010",
+    "#105030"
+   ],
+   "defaultScale": 0.72,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway",
+    "leaf-shed"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.66,
+    "stiffness": 0.72,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 218382
+  },
+  {
+   "id": "enchanted.middle.weeping-willow",
+   "name": "Weeping Willow",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "forest",
+    "water"
+   ],
+   "tags": [
+    "tree",
+    "willow"
+   ],
+   "origin": "painted",
+   "file": "enchanted/weeping-willow.webp",
+   "thumb": "enchanted/thumbs/weeping-willow.webp",
+   "format": "image/webp",
+   "width": 768,
+   "height": 1264,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#707050",
+    "#707030",
+    "#705030",
+    "#907030"
+   ],
+   "defaultScale": 0.62,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway",
+    "leaf-shed"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.66,
+    "stiffness": 0.72,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 282812
+  },
+  {
+   "id": "enchanted.middle.stone-bridge",
+   "name": "Mossy Stone Bridge",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "garden",
+    "water"
+   ],
+   "tags": [
+    "bridge",
+    "structure"
+   ],
+   "origin": "painted",
+   "file": "enchanted/stone-bridge.webp",
+   "thumb": "enchanted/thumbs/stone-bridge.webp",
+   "format": "image/webp",
+   "width": 1200,
+   "height": 621,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#305030",
+    "#505030",
+    "#105030",
+    "#105050"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 164514
+  },
+  {
+   "id": "enchanted.middle.garden-pavilion",
+   "name": "Elven Garden Pavilion",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "garden",
+    "kingdom"
+   ],
+   "tags": [
+    "gazebo",
+    "structure",
+    "lantern"
+   ],
+   "origin": "painted",
+   "file": "enchanted/garden-pavilion.webp",
+   "thumb": "enchanted/thumbs/garden-pavilion.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 743,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#105050",
+    "#503010",
+    "#303030",
+    "#301010"
+   ],
+   "defaultScale": 0.36,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "lantern-glow"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 254228
+  },
+  {
+   "id": "enchanted.middle.mossy-boulders",
+   "name": "Mossy Boulders",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "rocks",
+   "themes": [
+    "forest",
+    "water"
+   ],
+   "tags": [
+    "rock",
+    "stone"
+   ],
+   "origin": "painted",
+   "file": "enchanted/mossy-boulders.webp",
+   "thumb": "enchanted/thumbs/mossy-boulders.webp",
+   "format": "image/webp",
+   "width": 907,
+   "height": 624,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103010",
+    "#103030",
+    "#105050",
+    "#303030",
+    "#505050"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 246780
+  },
+  {
+   "id": "enchanted.middle.waterfall",
+   "name": "Forest Waterfall",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "water",
+   "themes": [
+    "water",
+    "forest"
+   ],
+   "tags": [
+    "waterfall",
+    "cliff",
+    "pool"
+   ],
+   "origin": "painted",
+   "file": "enchanted/waterfall.webp",
+   "thumb": "enchanted/thumbs/waterfall.webp",
+   "format": "image/webp",
+   "width": 849,
+   "height": 658,
+   "alpha": true,
+   "depth": 0.4,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#305030",
+    "#103010",
+    "#303010",
+    "#303030"
+   ],
+   "defaultScale": 0.5,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "waterfall-flow",
+    "ripple"
+   ],
+   "rig": {
+    "type": "fall",
+    "region": [
+     0.3,
+     0.06,
+     0.42,
+     0.8
+    ],
+    "speed": 1.0
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 127864
+  },
+  {
+   "id": "enchanted.foreground.grass-tuft",
+   "name": "Lush Grass Tuft",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "grass",
+   "themes": [
+    "meadow",
+    "forest"
+   ],
+   "tags": [
+    "grass",
+    "ground"
+   ],
+   "origin": "painted",
+   "file": "enchanted/grass-tuft.webp",
+   "thumb": "enchanted/thumbs/grass-tuft.webp",
+   "format": "image/webp",
+   "width": 645,
+   "height": 1000,
+   "alpha": true,
+   "depth": 0.85,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#105030",
+    "#105050",
+    "#305030",
+    "#307050"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [
+    "enchanted.foreground.grass-golden",
+    "enchanted.foreground.grass-clump"
+   ],
+   "notes": "",
+   "bytes": 197452
+  },
+  {
+   "id": "enchanted.foreground.grass-clump",
+   "name": "Grass Clump (narrow)",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "grass",
+   "themes": [
+    "meadow"
+   ],
+   "tags": [
+    "grass",
+    "small"
+   ],
+   "origin": "derived",
+   "file": "enchanted/grass-clump.webp",
+   "thumb": "enchanted/thumbs/grass-clump.webp",
+   "format": "image/webp",
+   "width": 302,
+   "height": 800,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#105030",
+    "#305030",
+    "#705030",
+    "#b07030"
+   ],
+   "defaultScale": 0.18,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 101112
+  },
+  {
+   "id": "enchanted.foreground.grass-sweep",
+   "name": "Grass Sweep (mirrored)",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "grass",
+   "themes": [
+    "meadow"
+   ],
+   "tags": [
+    "grass",
+    "wide"
+   ],
+   "origin": "derived",
+   "file": "enchanted/grass-sweep.webp",
+   "thumb": "enchanted/thumbs/grass-sweep.webp",
+   "format": "image/webp",
+   "width": 360,
+   "height": 900,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#105030",
+    "#105050",
+    "#107050",
+    "#307050"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 114918
+  },
+  {
+   "id": "enchanted.foreground.grass-golden",
+   "name": "Golden Harvest Grass",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "grass",
+   "themes": [
+    "autumn",
+    "meadow"
+   ],
+   "tags": [
+    "grass",
+    "warm"
+   ],
+   "origin": "derived",
+   "file": "enchanted/grass-golden.webp",
+   "thumb": "enchanted/thumbs/grass-golden.webp",
+   "format": "image/webp",
+   "width": 580,
+   "height": 900,
+   "alpha": true,
+   "depth": 0.86,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103010",
+    "#305030",
+    "#105030",
+    "#307030",
+    "#303010"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 172660
+  },
+  {
+   "id": "enchanted.foreground.wildflowers",
+   "name": "Wildflower Cluster",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "flowers",
+    "blossom"
+   ],
+   "origin": "composed",
+   "file": "enchanted/wildflowers.webp",
+   "thumb": "enchanted/thumbs/wildflowers.webp",
+   "format": "image/webp",
+   "width": 575,
+   "height": 875,
+   "alpha": true,
+   "depth": 0.84,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103010",
+    "#d0d0f0",
+    "#101010",
+    "#103030",
+    "#105030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 169528
+  },
+  {
+   "id": "enchanted.foreground.fern-sprig",
+   "name": "Woodland Fern",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "forest"
+   ],
+   "tags": [
+    "fern",
+    "undergrowth"
+   ],
+   "origin": "composed",
+   "file": "enchanted/fern-sprig.webp",
+   "thumb": "enchanted/thumbs/fern-sprig.webp",
+   "format": "image/webp",
+   "width": 519,
+   "height": 587,
+   "alpha": true,
+   "depth": 0.86,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103010",
+    "#103030",
+    "#105030",
+    "#101010",
+    "#305030"
+   ],
+   "defaultScale": 0.28,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 95514
+  },
+  {
+   "id": "enchanted.foreground.leafy-bush",
+   "name": "Leafy Bush",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "forest",
+    "garden"
+   ],
+   "tags": [
+    "bush",
+    "shrub"
+   ],
+   "origin": "composed",
+   "file": "enchanted/leafy-bush.webp",
+   "thumb": "enchanted/thumbs/leafy-bush.webp",
+   "format": "image/webp",
+   "width": 900,
+   "height": 640,
+   "alpha": true,
+   "depth": 0.8,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103010",
+    "#101010",
+    "#103030",
+    "#105030",
+    "#303010"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 116012
+  },
+  {
+   "id": "enchanted.foreground.ground-ivy",
+   "name": "Ground Ivy Trail",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "ground",
+   "themes": [
+    "forest"
+   ],
+   "tags": [
+    "ivy",
+    "groundcover"
+   ],
+   "origin": "composed",
+   "file": "enchanted/ground-ivy.webp",
+   "thumb": "enchanted/thumbs/ground-ivy.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 345,
+   "alpha": true,
+   "depth": 0.93,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103010",
+    "#103030",
+    "#101010",
+    "#105030",
+    "#303010"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 91884
+  },
+  {
+   "id": "enchanted.foreground.pebble-scatter",
+   "name": "Pebble Scatter",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "ground",
+   "themes": [
+    "water",
+    "path"
+   ],
+   "tags": [
+    "stones",
+    "gravel",
+    "ground"
+   ],
+   "origin": "composed",
+   "file": "enchanted/pebble-scatter.webp",
+   "thumb": "enchanted/thumbs/pebble-scatter.webp",
+   "format": "image/webp",
+   "width": 1000,
+   "height": 297,
+   "alpha": true,
+   "depth": 0.94,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#505030",
+    "#303010",
+    "#505050",
+    "#103010"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 95142
+  },
+  {
+   "id": "moonlit.background.moonlit-glade",
+   "name": "Moonlit Forest Glade",
+   "style": "moonlit",
+   "layer": "background",
+   "category": "night",
+   "themes": [
+    "night",
+    "forest",
+    "celestial"
+   ],
+   "tags": [
+    "moon",
+    "night"
+   ],
+   "origin": "painted",
+   "file": "moonlit/moonlit-glade.webp",
+   "thumb": "moonlit/thumbs/moonlit-glade.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#305050",
+    "#303030",
+    "#305070",
+    "#507090"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 112960
+  },
+  {
+   "id": "moonlit.background.night-valley",
+   "name": "Night Lake Valley",
+   "style": "moonlit",
+   "layer": "background",
+   "category": "night",
+   "themes": [
+    "night",
+    "water"
+   ],
+   "tags": [
+    "lake",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/night-valley.webp",
+   "thumb": "moonlit/thumbs/night-valley.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#305070",
+    "#103030",
+    "#103050",
+    "#305050"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 98226
+  },
+  {
+   "id": "moonlit.middle.silver-oak",
+   "name": "Silver Oak",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "night",
+    "forest"
+   ],
+   "tags": [
+    "trees",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/silver-oak.webp",
+   "thumb": "moonlit/thumbs/silver-oak.webp",
+   "format": "image/webp",
+   "width": 755,
+   "height": 1275,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#101030",
+    "#303030",
+    "#103050",
+    "#303050"
+   ],
+   "defaultScale": 0.72,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway",
+    "leaf-shed"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.66,
+    "stiffness": 0.72,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 140676
+  },
+  {
+   "id": "moonlit.middle.night-pavilion",
+   "name": "Lantern Pavilion",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "night",
+    "forest"
+   ],
+   "tags": [
+    "structures",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/night-pavilion.webp",
+   "thumb": "moonlit/thumbs/night-pavilion.webp",
+   "format": "image/webp",
+   "width": 1137,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101030",
+    "#103030",
+    "#103050",
+    "#303030",
+    "#303050"
+   ],
+   "defaultScale": 0.36,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "lantern-glow"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 145364
+  },
+  {
+   "id": "moonlit.middle.dark-boulders",
+   "name": "Moonlit Boulders",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "rocks",
+   "themes": [
+    "night",
+    "forest"
+   ],
+   "tags": [
+    "rocks",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/dark-boulders.webp",
+   "thumb": "moonlit/thumbs/dark-boulders.webp",
+   "format": "image/webp",
+   "width": 907,
+   "height": 624,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#103050",
+    "#101030",
+    "#303050",
+    "#505070"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 165778
+  },
+  {
+   "id": "moonlit.foreground.night-grass",
+   "name": "Moonlit Grass",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "grass",
+   "themes": [
+    "night"
+   ],
+   "tags": [
+    "grass",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/night-grass.webp",
+   "thumb": "moonlit/thumbs/night-grass.webp",
+   "format": "image/webp",
+   "width": 645,
+   "height": 1000,
+   "alpha": true,
+   "depth": 0.86,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#103050",
+    "#303050",
+    "#505050",
+    "#101030"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 159306
+  },
+  {
+   "id": "moonlit.foreground.night-fern",
+   "name": "Night Fern",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "night"
+   ],
+   "tags": [
+    "plants",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/night-fern.webp",
+   "thumb": "moonlit/thumbs/night-fern.webp",
+   "format": "image/webp",
+   "width": 519,
+   "height": 682,
+   "alpha": true,
+   "depth": 0.86,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#101030",
+    "#103050",
+    "#303050",
+    "#303030"
+   ],
+   "defaultScale": 0.28,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 80278
+  },
+  {
+   "id": "moonlit.foreground.night-bush",
+   "name": "Shadow Bush",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "night"
+   ],
+   "tags": [
+    "plants",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/night-bush.webp",
+   "thumb": "moonlit/thumbs/night-bush.webp",
+   "format": "image/webp",
+   "width": 900,
+   "height": 640,
+   "alpha": true,
+   "depth": 0.86,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101030",
+    "#103030",
+    "#103050",
+    "#303030",
+    "#101010"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 87824
+  }
+ ]
+}
