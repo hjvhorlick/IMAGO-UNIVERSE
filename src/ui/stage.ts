@@ -14,6 +14,15 @@ import { on, qs } from './dom';
 
 type HandleId = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'rot';
 
+/** Corners read as diagonal (proportional); edges as single-axis (stretch). */
+function handleCursor(h: HandleId): string {
+  if (h === 'rot') return 'grab';
+  if (h === 'nw' || h === 'se') return 'nwse-resize';
+  if (h === 'ne' || h === 'sw') return 'nesw-resize';
+  if (h === 'n' || h === 's') return 'ns-resize';
+  return 'ew-resize';
+}
+
 interface DragState {
   mode: 'move' | 'resize' | 'rotate' | 'pan';
   startPointer: { x: number; y: number };
@@ -269,6 +278,14 @@ export class Stage {
     if (!this.drag) {
       if (this.container.matches(':hover')) {
         const p = this.screenToScene(e.clientX, e.clientY);
+        // Handle cursor first: a corner must announce that it scales in
+        // proportion, an edge that it stretches one axis.
+        const hh = this.hitHandle(p.x, p.y);
+        if (hh) {
+          this.sceneCanvas.style.cursor = handleCursor(hh.handle);
+        } else {
+          this.sceneCanvas.style.cursor = '';
+        }
         const hit = this.hitTest(p.x, p.y);
         const id = hit?.id ?? null;
         if (id !== this.hoverId) { this.hoverId = id; this.drawOverlay(); }
@@ -381,14 +398,30 @@ export class Stage {
       ctx.beginPath(); ctx.moveTo(top.x, top.y); ctx.lineTo(rot.x, rot.y); ctx.stroke();
       ctx.fillStyle = '#0b1017';
       ctx.beginPath(); ctx.arc(rot.x, rot.y, size * 1.15, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      // Corners scale IN PROPORTION and are drawn bigger and solid so the
+      // difference is visible before you grab one. Edge handles are small and
+      // hollow: they stretch a single axis. Hold Alt on a corner to stretch it.
       for (const h of handles) {
         if (h.id === 'rot') continue;
-        ctx.fillStyle = '#0b1017';
-        ctx.strokeStyle = colour;
+        const corner = h.id.length === 2;
+        const s = corner ? size * 1.5 : size * 0.72;
         ctx.lineWidth = px * 1.4;
+        ctx.strokeStyle = colour;
+        ctx.fillStyle = corner ? colour : '#0b1017';
         ctx.beginPath();
-        ctx.rect(h.x - size, h.y - size, size * 2, size * 2);
+        ctx.rect(h.x - s, h.y - s, s * 2, s * 2);
         ctx.fill(); ctx.stroke();
+        if (corner) {
+          // A tiny diagonal tick reads as "drag me outward".
+          const dx = h.id.includes('w') ? -1 : 1;
+          const dy = h.id.includes('n') ? -1 : 1;
+          ctx.strokeStyle = '#0b1017';
+          ctx.lineWidth = px * 1.5;
+          ctx.beginPath();
+          ctx.moveTo(h.x - dx * s * 0.42, h.y - dy * s * 0.42);
+          ctx.lineTo(h.x + dx * s * 0.42, h.y + dy * s * 0.42);
+          ctx.stroke();
+        }
       }
     }
     ctx.restore();

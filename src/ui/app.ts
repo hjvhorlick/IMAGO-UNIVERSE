@@ -3,13 +3,19 @@
  * =================
  * Builds the interface and wires the independent modules together. Nothing in
  * here contains rendering, animation or export logic - it only connects them.
+ *
+ * Layout philosophy: the canvas is the product. Chrome that can live behind a
+ * click does. There is no left panel, no second toolbar row, no status bar and
+ * no timeline strip - the motion is looping, so there is nothing to scrub to.
+ * Commands live in top-bar menus; the four layers are tabs across the top; the
+ * right rail is an exclusive accordion showing only the section in use.
  */
 import { AssetLibrary } from '../assets/library';
 import { Store } from '../core/store';
 import type { StatusMessage } from '../core/store';
-import type { AssetMeta, Scene, SceneNode } from '../core/types';
+import type { AssetMeta, LayerId, Scene, SceneNode } from '../core/types';
 import { LAYER_LABEL } from '../core/types';
-import { clamp, downloadBlob, formatTime } from '../core/util';
+import { clamp, downloadBlob } from '../core/util';
 import { ImageCache } from '../render/imageCache';
 import { Compositor } from '../render/compositor';
 import { PreviewRenderer } from '../render/previewRenderer';
@@ -21,140 +27,90 @@ import { autoCompose, DEFAULT_COMPOSE, regenerate } from '../scene/composition';
 import { createAssetNode, createScene } from '../scene/sceneModel';
 import { buildDemoScene } from '../scene/demoScene';
 import { switchStyle } from '../scene/styleManager';
-import { AssetPanel } from './assetPanel';
+import { AssetPanel, ThemesPanel } from './assetPanel';
 import { LayersPanel } from './layersPanel';
 import { Inspector, makeEffectNode } from './inspector';
 import { ScenePanel } from './scenePanel';
+import { SoundPanel } from './soundPanel';
 import { Stage } from './stage';
+import { MenuBar } from './menubar';
+import type { MenuDef } from './menubar';
+import { Rail } from './rail';
 import { el, escapeHtml, icon, on, qs, qsa } from './dom';
 import {
   aboutDialog, changeStyleDialog, composeDialog, cropDialog, exportDialog, historyDialog,
   importDialog, newWorldDialog, projectsDialog, replaceDialog,
 } from './dialogs';
 
+const LAYERS: LayerId[] = ['background', 'middle', 'foreground', 'atmosphere'];
+const LAYER_SHORT = ['Background', 'Middle', 'Foreground', 'Atmosphere'];
+
 const SHELL = `
 <div class="app">
   <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark"></div>
-      <div class="brand-text">
-        <span class="brand-title">IMAGO UNIVERSE</span>
-        <span class="brand-sub">Create worlds</span>
-      </div>
+    <div class="brand-mark" title="Imago Universe - create worlds, bring them to life"></div>
+    <nav class="menubar" id="menubar"></nav>
+    <input class="project-name" id="project-name" value="Untitled world" spellcheck="false" aria-label="Project name">
+    <div class="layer-tabs" id="layer-tabs" role="tablist">
+      ${LAYERS.map((id, i) => `<button class="layer-tab${i === 0 ? ' active' : ''}" data-layer="${id}"
+        role="tab" title="${escapeHtml(LAYER_LABEL[id])}">
+        <span class="layer-num">${i + 1}</span><span class="layer-name">${LAYER_SHORT[i]}</span>
+      </button>`).join('')}
     </div>
-    <div class="project-meta">
-      <input class="project-name" id="project-name" value="Untitled world" spellcheck="false" aria-label="Project name">
-      <button class="style-chip" id="style-chip" title="Change artistic style"></button>
-    </div>
-    <div class="topbar-actions">
-      <button class="btn icon" id="btn-undo" title="Undo (Ctrl+Z)">${icon('undo')}</button>
-      <button class="btn icon" id="btn-redo" title="Redo (Ctrl+Y)">${icon('redo')}</button>
-      <button class="btn icon" id="btn-history" title="History">${icon('history')}</button>
-      <span class="divider"></span>
-      <button class="btn" id="btn-new" title="New world">${icon('plus', 13)} New</button>
-      <button class="btn" id="btn-open" title="Open project">${icon('folder', 13)} Open</button>
-      <button class="btn" id="btn-save" title="Save project file (Ctrl+S)">${icon('save', 13)} Save</button>
-      <button class="btn" id="btn-saveas" title="Save a copy under a new name">${icon('copy', 13)} Save As</button>
-      <span class="divider"></span>
-      <button class="btn primary" id="btn-export">${icon('download', 13)} Export</button>
-      <button class="btn icon ghost" id="btn-about" title="About and shortcuts">${icon('info')}</button>
-    </div>
+    <span class="topbar-spacer"></span>
+    <button class="loop-chip" id="loop-chip" title="Loop analysis"><span class="loop-dot"></span><span id="loop-text">Loop</span></button>
+    <button class="btn icon" id="btn-play" title="Play / pause (Space)">${icon('play', 14)}</button>
+    <button class="btn icon" id="btn-restart" title="Restart from the beginning">${icon('restart', 14)}</button>
+    <button class="btn icon" id="btn-rail" title="Show / hide the side panel (\\)">${icon('right', 14)}</button>
+    <button class="btn primary" id="btn-export">${icon('download', 13)} Export</button>
   </header>
 
   <main class="workspace">
-    <aside class="panel panel-left" id="panel-left"></aside>
-
     <section class="stage-wrap">
-      <div class="stage-toolbar">
-        <div class="tool-group">
-          <button class="btn small" id="btn-compose">${icon('wand', 12)} Auto-compose</button>
-          <button class="btn small" id="btn-regen" title="Rearrange everything that is not locked">${icon('dice', 12)} Rearrange</button>
-        </div>
-        <span class="divider"></span>
-        <div class="tool-group">
-          <button class="btn icon small" id="btn-zoom-out" title="Zoom out">${icon('zoomOut', 12)}</button>
-          <span class="zoom-value" id="zoom-value">100%</span>
-          <button class="btn icon small" id="btn-zoom-in" title="Zoom in">${icon('zoomIn', 12)}</button>
-          <button class="btn small" id="btn-fit" title="Fit to view">${icon('fit', 12)} Fit</button>
-        </div>
-        <span class="divider"></span>
-        <div class="tool-group">
-          <button class="btn small active" id="btn-clip" title="Canvas cropping: cut oversized objects at the canvas edge">${icon('crop', 12)} Clip to canvas</button>
-          <button class="btn small" id="btn-solo-off" title="Show every layer">${icon('layers', 12)} All layers</button>
-        </div>
-        <span class="divider"></span>
-        <div class="tool-group">
-          <span class="tool-label">Selection</span>
-          <button class="btn icon small" id="btn-dup" title="Duplicate (Ctrl+D)">${icon('copy', 12)}</button>
-          <button class="btn icon small" id="btn-lock" title="Lock / unlock (L)">${icon('lock', 12)}</button>
-          <button class="btn icon small" id="btn-hide" title="Hide / show (H)">${icon('eye', 12)}</button>
-          <button class="btn icon small" id="btn-del" title="Delete (Del)">${icon('trash', 12)}</button>
-        </div>
-      </div>
-
       <div class="stage">
         <div class="canvas-holder">
           <canvas id="scene-canvas"></canvas>
           <canvas id="overlay-canvas"></canvas>
         </div>
         <div class="stage-hud" id="stage-hud"></div>
-      </div>
-
-      <div class="transport">
-        <div class="transport-buttons">
-          <button class="play-btn" id="btn-play" title="Play / pause (Space)">${icon('play', 15)}</button>
-          <button class="btn icon" id="btn-restart" title="Restart">${icon('restart', 13)}</button>
+        <div class="zoom-pill">
+          <button class="zp-btn" id="btn-zoom-out" title="Zoom out">${icon('zoomOut', 12)}</button>
+          <span class="zp-value" id="zoom-value">100%</span>
+          <button class="zp-btn" id="btn-zoom-in" title="Zoom in">${icon('zoomIn', 12)}</button>
+          <button class="zp-btn wide" id="btn-fit" title="Fit to view (F)">Fit</button>
         </div>
-        <span class="time-readout" id="time-readout">0:00.0</span>
-        <div class="scrub">
-          <input type="range" id="scrubber" min="0" max="60" step="0.05" value="0" aria-label="Timeline">
-        </div>
-        <div class="loop-info" id="loop-info"><span class="loop-dot"></span><span id="loop-text">Loop ready</span></div>
       </div>
     </section>
-
-    <aside class="panel panel-right">
-      <div class="panel-tabs">
-        <button class="panel-tab active" data-rtab="layers">Layers</button>
-        <button class="panel-tab" data-rtab="object">Object</button>
-        <button class="panel-tab" data-rtab="animate">Animate</button>
-        <button class="panel-tab" data-rtab="scene">Scene</button>
-      </div>
-      <div class="panel-body" id="right-body"></div>
-    </aside>
+    <aside class="panel-rail" id="rail"></aside>
   </main>
-
-  <div class="statusbar">
-    <span class="status-item" id="status-style"></span>
-    <span class="status-item" id="status-canvas"></span>
-    <span class="status-item" id="status-objects"></span>
-    <span class="spacer"></span>
-    <span class="status-item" id="status-perf"></span>
-    <span class="status-item" id="status-saved"></span>
-  </div>
 </div>
 <div class="modal-root"></div>
 <div class="toast-root"></div>
 `;
 
 export class App {
-  store!: Store;
   library = new AssetLibrary();
+  store!: Store;
   images!: ImageCache;
-  loops: LoopManager = loopManager;
   compositor!: Compositor;
   preview!: PreviewRenderer;
-  stage!: Stage;
   exports!: ExportManager;
   shelf!: ProjectShelf;
+  stage!: Stage;
+  loops: LoopManager = loopManager;
 
   private assetPanel!: AssetPanel;
+  private themesPanel!: ThemesPanel;
   private layersPanel!: LayersPanel;
-  private inspector!: Inspector;
+  private objectPanel!: Inspector;
+  private animatePanel!: Inspector;
   private scenePanel!: ScenePanel;
-  private rightTab: 'layers' | 'object' | 'animate' | 'scene' = 'layers';
-  private rightBody!: HTMLElement;
+  private soundPanel!: SoundPanel;
+  private rail!: Rail;
+  private menubar!: MenuBar;
+  private activeLayer: LayerId = 'background';
   private autosaveTimer = 0;
+  private hudTimer = 0;
   private soloNode: string | null = null;
 
   async mount(root: HTMLElement) {
@@ -171,11 +127,10 @@ export class App {
     this.shelf = new ProjectShelf(this.library);
     await this.shelf.init();
 
-    this.rightBody = qs<HTMLElement>('#right-body', root)!;
-    this.buildPanels(root);
+    this.buildRail(root);
+    this.buildMenus(root);
     this.buildStage(root);
-    this.wireToolbar(root);
-    this.wireTransport(root);
+    this.wireTopbar(root);
     this.wireKeyboard();
     this.wireStore(root);
 
@@ -186,143 +141,252 @@ export class App {
     this.preview.play();
 
     this.autosaveTimer = window.setInterval(() => { void this.autosave(); }, 45_000);
+    this.hudTimer = window.setInterval(() => this.updateHud(), 500);
     window.addEventListener('beforeunload', (e) => {
       if (this.store.dirty) { e.preventDefault(); e.returnValue = ''; }
     });
-    setInterval(() => this.updateHud(), 500);
   }
 
-  /* --------------------------------------------------------------- panels */
+  /* ----------------------------------------------------------------- rail */
 
-  private buildPanels(root: HTMLElement) {
-    this.assetPanel = new AssetPanel(qs<HTMLElement>('#panel-left', root)!, this.store, this.library, {
+  private buildRail(root: HTMLElement) {
+    this.rail = new Rail(qs<HTMLElement>('#rail', root)!);
+
+    const assetsBody = this.rail.add({
+      id: 'assets',
+      icon: 'image',
+      title: 'Artwork',
+      titleFn: () => `${LAYERS.indexOf(this.activeLayer) + 1} · ${LAYER_SHORT[LAYERS.indexOf(this.activeLayer)]}`,
+      badge: () => this.activeLayer === 'atmosphere' ? '22 effects' : `${this.library.forStyle(this.store.scene.styleId, this.activeLayer).length}`,
+      onToggle: (open) => { this.assetPanel.active = open; if (open) this.assetPanel.render(); },
+    });
+    this.assetPanel = new AssetPanel(assetsBody, this.store, this.library, {
       onAddAsset: (id) => this.addAsset(id),
       onAddEffect: (id) => this.addEffect(id),
-      onApplyTheme: (id) => this.applyTheme(id),
       onImport: () => importDialog(this.library, this.store.scene.styleId, (meta) => {
         this.store.emit('library');
         this.store.status(`Imported "${meta.name}" into ${LAYER_LABEL[meta.layer]}.`, 'success');
       }),
-      onChangeStyle: () => changeStyleDialog(this.store, this.library, () => this.afterSceneSwap()),
     });
 
-    this.layersPanel = new LayersPanel(this.rightBody, this.store, this.library);
-    this.inspector = new Inspector(this.rightBody, this.store, this.library, {
-      onCrop: (node) => this.openCrop(node),
-      onReplace: (node) => replaceDialog(node, this.store, this.library, (meta) => this.replaceAsset(node, meta)),
-      onSoloAnimation: (node) => this.setSolo(node),
-      onSoloLayer: (layer) => this.setSoloLayer(layer),
+    const themesBody = this.rail.add({
+      id: 'collections',
+      icon: 'sparkles',
+      title: 'Theme collections',
+      hidden: () => this.activeLayer !== 'atmosphere',
+      badge: () => `${THEME_PRESETS.length}`,
+      onToggle: (open) => { this.themesPanel.active = open; if (open) this.themesPanel.render(); },
     });
-    this.scenePanel = new ScenePanel(this.rightBody, this.store, this.library, this.preview, this.images, {
-      onCompose: () => composeDialog(this.store, (opts) => {
-        this.store.pushHistory('Auto-compose');
-        const result = autoCompose(this.store.scene, this.library, opts);
-        this.store.mutate(() => {});
-        this.afterSceneSwap();
-        this.store.status(`Composed ${result.added} objects, kept ${result.kept} locked.`, 'success');
-      }),
+    this.themesPanel = new ThemesPanel(themesBody, (id) => this.applyTheme(id));
+
+    const canvasBody = this.rail.add({
+      id: 'canvas',
+      icon: 'layers',
+      title: 'On canvas',
+      badge: () => `${this.store.scene.nodes.length}`,
+      onToggle: (open) => { this.layersPanel.active = open; if (open) this.layersPanel.render(); },
+    });
+    this.layersPanel = new LayersPanel(canvasBody, this.store, this.library, {
+      onInspect: (node) => this.inspect(node),
+    });
+
+    const inspectorCbs = {
+      onCrop: (node: SceneNode) => this.openCrop(node),
+      onReplace: (node: SceneNode) => replaceDialog(node, this.store, this.library, (meta) => this.replaceAsset(node, meta)),
+      onSoloAnimation: (node: SceneNode | null) => this.setSolo(node),
+      onSoloLayer: (layer: LayerId | null) => this.setSoloLayer(layer),
+    };
+    const objectBody = this.rail.add({
+      id: 'object',
+      icon: 'settings',
+      title: 'Properties',
+      badge: () => this.store.primary?.name ?? 'none selected',
+      onToggle: (open) => { this.objectPanel.active = open; if (open) this.objectPanel.render(); },
+    });
+    this.objectPanel = new Inspector(objectBody, this.store, this.library, inspectorCbs);
+    this.objectPanel.setMode('object');
+
+    const animateBody = this.rail.add({
+      id: 'animate',
+      icon: 'wind',
+      title: 'Animation',
+      badge: () => this.store.primary?.name ?? 'none selected',
+      onToggle: (open) => { this.animatePanel.active = open; if (open) this.animatePanel.render(); },
+    });
+    this.animatePanel = new Inspector(animateBody, this.store, this.library, inspectorCbs);
+    this.animatePanel.setMode('animate');
+
+    const sceneBody = this.rail.add({
+      id: 'scene',
+      icon: 'sun',
+      title: 'World settings',
+      onToggle: (open) => { this.scenePanel.active = open; if (open) this.scenePanel.render(); },
+    });
+    this.scenePanel = new ScenePanel(sceneBody, this.store, this.library, this.preview, this.images, {
+      onCompose: () => this.openCompose(),
       onRegenerate: () => this.doRegenerate(),
     });
 
-    qsa<HTMLElement>('[data-rtab]', root).forEach((b) => on(b, 'click', () => {
-      this.rightTab = b.dataset.rtab as typeof this.rightTab;
-      qsa<HTMLElement>('[data-rtab]', root).forEach((x) => x.classList.toggle('active', x === b));
-      this.renderRight();
-    }));
-    this.renderRight();
-  }
-
-  private renderRight() {
-    this.rightBody.innerHTML = '';
-    // Only the visible panel may react to store events, otherwise all three
-    // would fight over the same container.
-    this.layersPanel.active = this.rightTab === 'layers';
-    this.scenePanel.active = this.rightTab === 'scene';
-    this.inspector.active = this.rightTab === 'object' || this.rightTab === 'animate';
-    if (this.rightTab === 'layers') this.layersPanel.render();
-    else if (this.rightTab === 'scene') this.scenePanel.render();
-    else this.inspector.setMode(this.rightTab === 'animate' ? 'animate' : 'object');
-  }
-
-  private buildStage(root: HTMLElement) {
-    this.stage = new Stage(root, this.store, this.preview, {
-      onDropAsset: (id, x, y) => this.addAsset(id, { x, y }),
-      onDropEffect: (id, x, y) => this.addEffect(id, { x, y }),
-      onDoubleClick: (node) => {
-        if (!node) return;
-        this.rightTab = node.kind === 'effect' ? 'animate' : 'object';
-        qsa<HTMLElement>('[data-rtab]', root).forEach((x) =>
-          x.classList.toggle('active', x.dataset.rtab === this.rightTab));
-        this.renderRight();
-      },
+    const soundBody = this.rail.add({
+      id: 'sound',
+      icon: 'loop',
+      title: 'Sound',
+      badge: () => this.store.scene.audio?.name ?? 'none',
+      onToggle: (open) => { this.soundPanel.active = open; if (open) this.soundPanel.render(); },
     });
+    this.soundPanel = new SoundPanel(soundBody, this.store, this.preview);
+
+    this.rail.build();
+    this.rail.setOpen('assets');
+    this.assetPanel.setLayer(this.activeLayer);
+    this.assetPanel.render();
   }
 
-  /* -------------------------------------------------------------- toolbar */
+  /* ---------------------------------------------------------------- menus */
 
-  private wireToolbar(root: HTMLElement) {
-    const nameInput = qs<HTMLInputElement>('#project-name', root)!;
-    on(nameInput, 'change', () => this.store.mutate((s) => { s.name = nameInput.value || 'Untitled world'; }, 'Rename project'));
-    on(qs('#style-chip', root), 'click', () => changeStyleDialog(this.store, this.library, () => this.afterSceneSwap()));
-    on(qs('#btn-undo', root), 'click', () => { if (!this.store.undo()) this.store.status('Nothing to undo.', 'info'); });
-    on(qs('#btn-redo', root), 'click', () => { if (!this.store.redo()) this.store.status('Nothing to redo.', 'info'); });
-    on(qs('#btn-history', root), 'click', () => historyDialog(this.store));
-    on(qs('#btn-new', root), 'click', () => this.newWorld());
-    on(qs('#btn-open', root), 'click', () => this.openProjects());
-    on(qs('#btn-save', root), 'click', () => { void this.save(false); });
-    on(qs('#btn-saveas', root), 'click', () => { void this.save(true); });
-    on(qs('#btn-export', root), 'click', () => exportDialog(
-      this.store, this.exports, this.shelf, () => this.preview.thumbnail(), () => this.preview.time,
-    ));
-    on(qs('#btn-about', root), 'click', () => aboutDialog());
+  private buildMenus(root: HTMLElement) {
+    const menus: MenuDef[] = [
+      {
+        id: 'file', label: 'File',
+        items: () => [
+          { label: 'New world…', icon: 'plus', action: () => this.newWorld() },
+          { label: 'Open project…', icon: 'folder', shortcut: 'Ctrl+O', action: () => this.openProjects() },
+          { label: 'Open .sceneproject file…', icon: 'file', action: () => this.openFile() },
+          { separator: true },
+          { label: 'Save', icon: 'save', shortcut: 'Ctrl+S', action: () => { void this.save(false); } },
+          { label: 'Save As…', icon: 'copy', shortcut: 'Ctrl+Shift+S', action: () => { void this.save(true); } },
+          { separator: true },
+          { label: 'Export image or video…', icon: 'download', shortcut: 'Ctrl+E', action: () => this.openExport() },
+          { separator: true },
+          { label: 'About & shortcuts', icon: 'info', action: () => aboutDialog() },
+        ],
+      },
+      {
+        id: 'edit', label: 'Edit',
+        items: () => [
+          { label: 'Undo', icon: 'undo', shortcut: 'Ctrl+Z', disabled: !this.store.past.length, action: () => { if (!this.store.undo()) this.store.status('Nothing to undo.', 'info'); } },
+          { label: 'Redo', icon: 'redo', shortcut: 'Ctrl+Y', disabled: !this.store.future.length, action: () => { if (!this.store.redo()) this.store.status('Nothing to redo.', 'info'); } },
+          { label: 'History…', icon: 'history', action: () => historyDialog(this.store) },
+          { separator: true },
+          { label: 'Duplicate', icon: 'copy', shortcut: 'Ctrl+D', disabled: !this.store.selection.length, action: () => this.store.duplicateSelected() },
+          { label: 'Delete', icon: 'trash', shortcut: 'Del', disabled: !this.store.selection.length, action: () => this.store.removeSelected() },
+          { separator: true },
+          { label: 'Select all artwork', shortcut: 'Ctrl+A', action: () => this.store.select(this.store.scene.nodes.filter((n) => !n.locked && n.kind === 'asset').map((n) => n.id)) },
+          { label: 'Deselect', shortcut: 'Esc', action: () => { this.store.select([]); this.setSolo(null); } },
+        ],
+      },
+      {
+        id: 'view', label: 'View',
+        items: () => [
+          { label: 'Zoom in', icon: 'zoomIn', action: () => { this.stage.setZoom(this.stage.zoom * 1.25); this.updateHud(); } },
+          { label: 'Zoom out', icon: 'zoomOut', action: () => { this.stage.setZoom(this.stage.zoom / 1.25); this.updateHud(); } },
+          { label: 'Fit to view', icon: 'fit', shortcut: 'F', action: () => { this.stage.resetView(); this.stage.refit(); this.updateHud(); } },
+          { separator: true },
+          { label: 'Clip to canvas', icon: 'crop', checked: this.store.scene.canvas.clipToCanvas, action: () => { this.store.mutate((s) => { s.canvas.clipToCanvas = !s.canvas.clipToCanvas; }, 'Toggle canvas clipping'); this.refreshChrome(); } },
+          { label: 'Show all layers', icon: 'layers', action: () => this.setSolo(null) },
+          { separator: true },
+          { label: 'Side panel', shortcut: '\\', checked: !this.railCollapsed, action: () => this.toggleRail() },
+        ],
+      },
+      {
+        id: 'world', label: 'World',
+        items: () => [
+          { label: 'Artistic style…', icon: 'grid', action: () => changeStyleDialog(this.store, this.library, () => this.afterSceneSwap()) },
+          { label: 'Auto-compose…', icon: 'wand', action: () => this.openCompose() },
+          { label: 'Rearrange unlocked', icon: 'dice', action: () => this.doRegenerate() },
+          { separator: true },
+          { label: 'Canvas, light & colour', icon: 'sun', action: () => this.rail.setOpen('scene') },
+          { label: 'Sound', icon: 'loop', action: () => this.rail.setOpen('sound') },
+        ],
+      },
+    ];
+    this.menubar = new MenuBar(qs<HTMLElement>('#menubar', root)!, menus);
+  }
 
-    on(qs('#btn-compose', root), 'click', () => composeDialog(this.store, (opts) => {
+  private openCompose() {
+    composeDialog(this.store, (opts) => {
       this.store.pushHistory('Auto-compose');
       const r = autoCompose(this.store.scene, this.library, opts);
       this.store.mutate(() => {});
       this.afterSceneSwap();
       this.store.status(`Composed ${r.added} objects, kept ${r.kept} locked.`, 'success');
+    });
+  }
+
+  private openExport() {
+    exportDialog(this.store, this.exports, this.shelf, () => this.preview.thumbnail(), () => this.preview.time);
+  }
+
+  /* ---------------------------------------------------------------- stage */
+
+  private buildStage(root: HTMLElement) {
+    this.stage = new Stage(root, this.store, this.preview, {
+      onDropAsset: (id, x, y) => this.addAsset(id, { x, y }),
+      onDropEffect: (id, x, y) => this.addEffect(id, { x, y }),
+      onDoubleClick: (node) => { if (node) this.inspect(node); },
+    });
+  }
+
+  /** Open the section that actually edits this object. */
+  private inspect(node: SceneNode) {
+    this.store.select(node.id);
+    this.rail.setOpen(node.kind === 'effect' ? 'animate' : 'object');
+  }
+
+  /* --------------------------------------------------------------- topbar */
+
+  private wireTopbar(root: HTMLElement) {
+    const nameInput = qs<HTMLInputElement>('#project-name', root)!;
+    on(nameInput, 'change', () => this.store.mutate((s) => { s.name = nameInput.value || 'Untitled world'; }, 'Rename project'));
+
+    qsa<HTMLElement>('.layer-tab', root).forEach((b) => on(b, 'click', () => {
+      this.setLayer(b.dataset.layer as LayerId);
     }));
-    on(qs('#btn-regen', root), 'click', () => this.doRegenerate());
+
+    on(qs('#btn-play', root), 'click', () => this.preview.toggle());
+    on(qs('#btn-restart', root), 'click', () => this.preview.restart());
+    on(qs('#btn-rail', root), 'click', () => this.toggleRail());
+    on(qs('#btn-export', root), 'click', () => this.openExport());
+    on(qs('#loop-chip', root), 'click', () => {
+      const r = this.loops.analyse(this.store.scene);
+      this.store.status(r.animated
+        ? `${r.animated} animated objects. Master cycle ${r.master}s - ${r.exact ? 'returns exactly to its start, so it can be tiled seamlessly.' : 'harmonised, not an exact return; long exports render every frame.'}`
+        : 'Nothing is animating yet.', r.exact ? 'info' : 'warn');
+    });
     on(qs('#btn-zoom-in', root), 'click', () => { this.stage.setZoom(this.stage.zoom * 1.25); this.updateHud(); });
     on(qs('#btn-zoom-out', root), 'click', () => { this.stage.setZoom(this.stage.zoom / 1.25); this.updateHud(); });
     on(qs('#btn-fit', root), 'click', () => { this.stage.resetView(); this.stage.refit(); this.updateHud(); });
-    on(qs('#btn-clip', root), 'click', () => {
-      this.store.mutate((s) => { s.canvas.clipToCanvas = !s.canvas.clipToCanvas; }, 'Toggle canvas clipping');
-      this.refreshChrome();
-    });
-    on(qs('#btn-solo-off', root), 'click', () => this.setSolo(null));
-    on(qs('#btn-dup', root), 'click', () => this.store.duplicateSelected());
-    on(qs('#btn-del', root), 'click', () => this.store.removeSelected());
-    on(qs('#btn-lock', root), 'click', () => this.toggleSelected('locked'));
-    on(qs('#btn-hide', root), 'click', () => this.toggleSelected('visible'));
-  }
 
-  private toggleSelected(key: 'locked' | 'visible') {
-    const sel = this.store.selected;
-    if (!sel.length) { this.store.status('Select an object first.', 'info'); return; }
-    const value = !sel[sel.length - 1][key];
-    this.store.mutate(() => { sel.forEach((n) => { n[key] = value; }); },
-      key === 'locked' ? (value ? 'Lock' : 'Unlock') : (value ? 'Show' : 'Hide'));
-  }
-
-  /* ------------------------------------------------------------ transport */
-
-  private wireTransport(root: HTMLElement) {
-    const playBtn = qs<HTMLElement>('#btn-play', root)!;
-    const scrub = qs<HTMLInputElement>('#scrubber', root)!;
-    on(playBtn, 'click', () => this.preview.toggle());
-    on(qs('#btn-restart', root), 'click', () => this.preview.restart());
-    on(scrub, 'input', () => { this.preview.pause(); this.preview.seek(parseFloat(scrub.value)); });
     this.store.on('playback', () => {
-      playBtn.innerHTML = icon(this.preview.playing ? 'pause' : 'play', 15);
-      const report = this.loops.analyse(this.store.scene);
-      const span = Math.max(report.master * 2, 12);
-      scrub.max = String(span);
-      if (document.activeElement !== scrub) scrub.value = String(this.preview.time % span);
-      qs<HTMLElement>('#time-readout', root)!.textContent =
-        `${formatTime(this.preview.time % span)} / ${formatTime(span)}`;
+      const btn = qs<HTMLElement>('#btn-play', root);
+      if (btn) btn.innerHTML = icon(this.preview.playing ? 'pause' : 'play', 14);
     });
+  }
+
+  setLayer(layer: LayerId) {
+    this.activeLayer = layer;
+    qsa<HTMLElement>('.layer-tab').forEach((b) => b.classList.toggle('active', b.dataset.layer === layer));
+    this.assetPanel.setLayer(layer);
+    this.rail.setOpen('assets');
+    this.assetPanel.render();
+    this.rail.sync();
+  }
+
+  get layer() { return this.activeLayer; }
+
+  private get railCollapsed() {
+    return qs('.app')?.classList.contains('rail-hidden') ?? false;
+  }
+
+  toggleRail() {
+    const app = qs<HTMLElement>('.app');
+    if (!app) return;
+    app.classList.toggle('rail-hidden');
+    const hidden = app.classList.contains('rail-hidden');
+    const btn = qs<HTMLElement>('#btn-rail');
+    if (btn) btn.innerHTML = icon(hidden ? 'left' : 'right', 14);
+    // The canvas changed size, so re-fit the view rather than leaving it clipped.
+    requestAnimationFrame(() => { this.stage.refit(); this.preview.invalidate(); this.updateHud(); });
   }
 
   /* ------------------------------------------------------------- keyboard */
@@ -343,18 +407,17 @@ export class App {
       if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); this.store.redo(); return; }
       if (mod && e.key.toLowerCase() === 'd') { e.preventDefault(); this.store.duplicateSelected(); return; }
       if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); void this.save(e.shiftKey); return; }
-      if (mod && e.key.toLowerCase() === 'e') {
-        e.preventDefault();
-        exportDialog(this.store, this.exports, this.shelf, () => this.preview.thumbnail(), () => this.preview.time);
-        return;
-      }
+      if (mod && e.key.toLowerCase() === 'o') { e.preventDefault(); this.openProjects(); return; }
+      if (mod && e.key.toLowerCase() === 'e') { e.preventDefault(); this.openExport(); return; }
       if (mod && e.key.toLowerCase() === 'a') {
         e.preventDefault();
         this.store.select(this.store.scene.nodes.filter((n) => !n.locked && n.kind === 'asset').map((n) => n.id));
         return;
       }
       if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); this.store.removeSelected(); return; }
-      if (e.key === 'Escape') { this.store.select([]); this.setSolo(null); return; }
+      if (e.key === 'Escape') { this.menubar.close(); this.store.select([]); this.setSolo(null); return; }
+      if (e.key === '\\') { e.preventDefault(); this.toggleRail(); return; }
+      if (e.key >= '1' && e.key <= '4') { this.setLayer(LAYERS[Number(e.key) - 1]); return; }
       if (e.key.toLowerCase() === 'l') { this.toggleSelected('locked'); return; }
       if (e.key.toLowerCase() === 'h') { this.toggleSelected('visible'); return; }
       if (e.key.toLowerCase() === 'f') { this.stage.resetView(); this.stage.refit(); this.updateHud(); return; }
@@ -376,12 +439,18 @@ export class App {
     });
   }
 
+  private toggleSelected(key: 'locked' | 'visible') {
+    const sel = this.store.selected;
+    if (!sel.length) { this.store.status('Select an object first.', 'info'); return; }
+    const value = !sel[sel.length - 1][key];
+    this.store.mutate(() => { sel.forEach((n) => { n[key] = value; }); },
+      key === 'locked' ? (value ? 'Lock' : 'Unlock') : (value ? 'Show' : 'Hide'));
+  }
+
   /* ---------------------------------------------------------------- store */
 
   private wireStore(root: HTMLElement) {
     this.store.on('scene', () => {
-      // Drop a solo preview whose subject no longer exists, otherwise the
-      // canvas would silently stay empty after a delete or an undo.
       if (this.soloNode && !this.store.node(this.soloNode)) {
         this.soloNode = null;
         this.preview.soloNode = null;
@@ -389,39 +458,22 @@ export class App {
       }
       this.refreshChrome();
       this.loops.invalidate();
+      this.rail.sync();
     });
     this.store.on('selection', () => {
-      if (this.rightTab === 'object' || this.rightTab === 'animate') this.inspector.render();
+      if (this.objectPanel.active) this.objectPanel.render();
+      if (this.animatePanel.active) this.animatePanel.render();
       this.refreshChrome();
+      this.rail.sync();
     });
-    this.store.on('history', () => {
-      (qs<HTMLButtonElement>('#btn-undo', root)!).disabled = !this.store.past.length;
-      (qs<HTMLButtonElement>('#btn-redo', root)!).disabled = !this.store.future.length;
-    });
-    this.store.on('status', (payload) => {
-      if (payload) this.toast(payload as StatusMessage);
-    });
-    this.store.emit('history');
+    this.store.on('status', (payload) => { if (payload) this.toast(payload as StatusMessage); });
+    void root;
   }
 
   private refreshChrome() {
     const scene = this.store.scene;
-    const style = this.library.style(scene.styleId);
     const nameInput = qs<HTMLInputElement>('#project-name');
     if (nameInput && document.activeElement !== nameInput) nameInput.value = scene.name;
-    const chip = qs<HTMLElement>('#style-chip');
-    if (chip) {
-      chip.innerHTML = `<span class="swatches">${(style?.swatches ?? []).slice(0, 4)
-        .map((c) => `<span class="swatch" style="background:${c}"></span>`).join('')}</span>
-        ${escapeHtml(style?.name ?? scene.styleId)}`;
-    }
-    const clip = qs<HTMLElement>('#btn-clip');
-    clip?.classList.toggle('active', scene.canvas.clipToCanvas);
-    const set = (id: string, text: string) => { const n = qs<HTMLElement>(id); if (n) n.textContent = text; };
-    set('#status-style', `Style: ${style?.name ?? scene.styleId}`);
-    set('#status-canvas', `${scene.canvas.width} x ${scene.canvas.height} (${scene.canvas.aspect})`);
-    set('#status-objects', `${scene.nodes.length} objects`);
-    set('#status-saved', this.store.dirty ? 'Unsaved changes' : 'Saved');
     this.updateHud();
   }
 
@@ -430,21 +482,22 @@ export class App {
     const hud = qs<HTMLElement>('#stage-hud');
     if (hud) {
       const s = this.preview.stats;
-      hud.innerHTML = `<span><b>${this.stage.zoomPercent}%</b> zoom</span>
-        <span><b>${s.renderMs.toFixed(1)}ms</b> frame</span>
+      const style = this.library.style(this.store.scene.styleId);
+      hud.innerHTML = `<span>${escapeHtml(style?.name ?? this.store.scene.styleId)}</span>
+        <span>${this.store.scene.canvas.width}x${this.store.scene.canvas.height}</span>
         <span><b>${this.store.scene.nodes.length}</b> objects</span>
-        ${this.soloLabel() ? `<span style="color:var(--accent)"><b>SOLO</b> ${escapeHtml(this.soloLabel()!)}</span>` : ''}`;
+        <span><b>${s.renderMs.toFixed(1)}ms</b>/frame</span>
+        <span>${this.store.dirty ? 'unsaved' : 'saved'}</span>
+        ${this.soloLabel() ? `<span class="hud-solo"><b>SOLO</b> ${escapeHtml(this.soloLabel()!)}</span>` : ''}`;
     }
-    const perf = qs<HTMLElement>('#status-perf');
-    if (perf) perf.textContent = `${this.preview.stats.renderMs.toFixed(1)} ms/frame - ${this.images.stats.count} assets cached`;
     const loopText = qs<HTMLElement>('#loop-text');
-    const dot = qs<HTMLElement>('#loop-info .loop-dot');
+    const chip = qs<HTMLElement>('#loop-chip');
     if (loopText) {
       loopText.textContent = report.animated
-        ? `${report.master}s master cycle - ${report.animated} animated - ${report.exact ? 'exact loop' : 'harmonised'}`
-        : 'No animation active';
-      dot?.classList.toggle('warn', report.animated > 0 && !report.exact);
+        ? `${report.master}s ${report.exact ? 'exact' : 'harmonised'}`
+        : 'static';
     }
+    chip?.classList.toggle('warn', report.animated > 0 && !report.exact);
     const zoom = qs<HTMLElement>('#zoom-value');
     if (zoom) zoom.textContent = `${this.stage.zoomPercent}%`;
   }
@@ -470,6 +523,9 @@ export class App {
       this.store.select(node.id);
       void this.images.ensure([meta.id]).then(() => this.preview.invalidate());
       this.store.status(`Background set to ${meta.name}${existing.length ? ' (previous unlocked background replaced)' : ''}.`, 'success');
+      // Guided flow: a background is the one thing you only place once, so move
+      // straight on to the middle-ground library.
+      this.setLayer('middle');
       return;
     }
     const node = createAssetNode(meta, scene, at ? { x: at.x, y: at.y + node0Height(meta, scene) / 2 } : undefined);
@@ -489,11 +545,8 @@ export class App {
       node.height = scene.canvas.height * 0.5;
     }
     this.store.addNode(node, `Add ${def.name}`);
-    this.rightTab = 'animate';
-    qsa<HTMLElement>('[data-rtab]').forEach((x) => x.classList.toggle('active', x.dataset.rtab === 'animate'));
-    this.renderRight();
     if (!this.preview.playing) this.preview.play();
-    this.store.status(`${def.name} added to layer 4. Effects work in every artistic style.`, 'success');
+    this.store.status(`${def.name} placed on layer 4. Double-click it to adjust. Effects work in every style.`, 'success');
   }
 
   private applyTheme(themeId: string) {
@@ -510,7 +563,7 @@ export class App {
     }
     this.store.mutate(() => {});
     if (!this.preview.playing) this.preview.play();
-    this.store.status(`${preset.name}: ${preset.effects.length} effects added. Every setting stays editable.`, 'success');
+    this.store.status(`${preset.name}: ${preset.effects.length} effects placed. Every setting stays editable.`, 'success');
   }
 
   private replaceAsset(node: SceneNode, meta: AssetMeta) {
@@ -546,38 +599,28 @@ export class App {
     });
   }
 
-  /** What the HUD should call the current solo mode, or null when showing all. */
   private soloLabel(): string | null {
-    if (this.soloNode) {
-      const n = this.store.node(this.soloNode);
-      return n ? n.name : 'object';
-    }
-    if (this.preview.soloLayer) {
-      return `${LAYER_LABEL[this.preview.soloLayer as SceneNode['layer']]} layer`;
-    }
+    if (this.soloNode) return this.store.node(this.soloNode)?.name ?? 'object';
+    if (this.preview.soloLayer) return `${LAYER_LABEL[this.preview.soloLayer as LayerId]} layer`;
     return null;
   }
 
-  /** Audition one animation or effect on its own, against the canvas backdrop. */
   private setSolo(node: SceneNode | null) {
     this.soloNode = node?.id ?? null;
     this.preview.soloNode = this.soloNode;
     this.preview.soloLayer = null;
     this.preview.invalidate();
     this.updateHud();
-    this.store.status(
-      node ? `Previewing "${node.name}" on its own.` : 'Showing all four layers.', 'info');
+    this.store.status(node ? `Previewing "${node.name}" on its own.` : 'Showing all four layers.', 'info');
   }
 
-  /** Show one whole layer, hiding the other three. */
-  private setSoloLayer(layer: SceneNode['layer'] | null) {
+  private setSoloLayer(layer: LayerId | null) {
     this.soloNode = null;
     this.preview.soloNode = null;
     this.preview.soloLayer = layer;
     this.preview.invalidate();
     this.updateHud();
-    this.store.status(
-      layer ? `Previewing the ${LAYER_LABEL[layer]} layer only.` : 'Showing all four layers.', 'info');
+    this.store.status(layer ? `Previewing the ${LAYER_LABEL[layer]} layer only.` : 'Showing all four layers.', 'info');
   }
 
   private doRegenerate() {
@@ -593,7 +636,11 @@ export class App {
     void this.images.ensure(this.store.scene.nodes.map((n) => n.assetId)).then(() => this.preview.invalidate());
     this.loops.invalidate();
     this.stage.refit();
-    this.renderRight();
+    if (this.layersPanel.active) this.layersPanel.render();
+    if (this.scenePanel.active) this.scenePanel.render();
+    if (this.objectPanel.active) this.objectPanel.render();
+    if (this.animatePanel.active) this.animatePanel.render();
+    this.rail.sync();
     this.refreshChrome();
   }
 
@@ -605,14 +652,12 @@ export class App {
       onCreate: (styleId, aspect, name, seedMode) => {
         const scene = seedMode === 'empty'
           ? createScene(styleId, name, aspect)
-          : buildDemoScene(this.library, {
-            styleId, aspect, name,
-            withEffects: seedMode === 'demo', composed: true,
-          });
+          : buildDemoScene(this.library, { styleId, aspect, name, withEffects: seedMode === 'demo', composed: true });
         scene.name = name;
         this.store.replaceScene(scene);
         this.store.lastSavedName = name;
         this.afterSceneSwap();
+        this.setLayer('background');
         this.preview.restart();
         this.preview.play();
         this.store.status(`"${name}" created.`, 'success');
@@ -675,7 +720,6 @@ export class App {
       if (saveAs) {
         const name = window.prompt('Save a copy as:', `${scene.name} v2`);
         if (!name) return;
-        // A new identity keeps the original shelf entry and file untouched.
         const copy = structuredClone(scene);
         copy.id = `scene_${Date.now().toString(36)}`;
         copy.name = name;
@@ -727,6 +771,9 @@ export class App {
 
   dispose() {
     window.clearInterval(this.autosaveTimer);
+    window.clearInterval(this.hudTimer);
+    this.menubar?.dispose();
+    this.soundPanel?.dispose();
     this.preview.dispose();
     this.stage.dispose();
     this.images.clear();
