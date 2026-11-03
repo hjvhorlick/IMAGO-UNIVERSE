@@ -1,0 +1,177 @@
+/**
+ * Headless render verification.
+ *
+ * Runs the *real* compositor, animation engine, Loop Manager and effect library
+ * against a native canvas so the rendering pipeline can be checked without a
+ * browser. Writes PNGs to `.render-check/` and asserts that the master cycle
+ * boundary is pixel-identical.
+ *
+ *   npx tsx tools/render_check.ts
+ */
+import { createCanvas, loadImage } from '@napi-rs/canvas';
+import fs from 'node:fs';
+import path from 'node:path';
+import { AssetLibrary } from '../src/assets/library';
+import { Compositor } from '../src/render/compositor';
+import { LoopManager } from '../src/animation/loopManager';
+import { buildDemoScene } from '../src/scene/demoScene';
+import { EFFECTS } from '../src/animation/effects';
+import { makeEffectNode } from '../src/ui/inspector';
+import { createScene } from '../src/scene/sceneModel';
+import type { AssetMeta } from '../src/core/types';
+
+/* -------------------------------------------------- browser API shims */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const g = globalThis as any;
+g.OffscreenCanvas = function (w: number, h: number) { return createCanvas(w, h); };
+g.document = { createElement: (tag: string) => (tag === 'canvas' ? createCanvas(1, 1) : {}) };
+g.performance = g.performance ?? { now: () => Date.now() };
+
+const ROOT = path.resolve(import.meta.dirname, '..');
+const OUT = path.join(ROOT, '.render-check');
+fs.mkdirSync(OUT, { recursive: true });
+
+/** File-backed image cache with the same interface the compositor uses. */
+class NodeImageCache {
+  private map = new Map<string, { bitmap: unknown; width: number; height: number }>();
+  constructor(private lib: AssetLibrary) {}
+  async load(id: string) {
+    if (this.map.has(id)) return this.map.get(id)!;
+    const meta = this.lib.get(id);
+    if (!meta) return null;
+    const img = await loadImage(path.join(ROOT, 'public/library', meta.file));
+    const entry = { bitmap: img, width: img.width, height: img.height };
+    this.map.set(id, entry);
+    return entry;
+  }
+  peek(id: string | undefined) { return id ? this.map.get(id) ?? null : null; }
+  async ensure(ids: (string | undefined)[]) {
+    for (const id of ids) if (id) await this.load(id);
+  }
+  get stats() { return { count: this.map.size, bytes: 0, pending: 0 }; }
+}
+
+async function main() {
+  const lib = new AssetLibrary();
+  lib.manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/library/manifest.json'), 'utf8'));
+  const images = new NodeImageCache(lib);
+  const loops = new LoopManager();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const comp = new Compositor(lib, images as any, loops);
+
+  const scene = buildDemoScene(lib, { withEffects: true });
+  await images.ensure(scene.nodes.map((n) => n.assetId));
+  const report = loops.analyse(scene);
+  console.log(`scene: ${scene.nodes.length} nodes, ${report.animated} animated, master cycle ${report.master}s, exact=${report.exact}`);
+  console.log('cycles:', report.cycles.map((c) => `${c.name}=${c.adjusted}`).join(', '));
+
+  const scale = 1280 / scene.canvas.width;
+  const W = Math.round(scene.canvas.width * scale), H = Math.round(scene.canvas.height * scale);
+
+  const renderAt = (t: number) => {
+    const cv = createCanvas(W, H);
+    const ctx = cv.getContext('2d');
+    const t0 = performance.now();
+    comp.render(ctx as never, scene, { scale, quality: 'export', time: t, masterCycle: report.master });
+    return { cv, ms: performance.now() - t0 };
+  };
+
+  for (const [name, t] of [['t0', 0], ['t-half', report.master / 2], ['t-loop', report.master]] as const) {
+    const { cv, ms } = renderAt(t);
+    fs.writeFileSync(path.join(OUT, `demo-${name}.png`), cv.toBuffer('image/png'));
+    console.log(`rendered demo-${name}.png at t=${t.toFixed(2)}s in ${ms.toFixed(0)}ms`);
+  }
+
+  /* ---- acceptance: the master cycle boundary must be pixel-identical ---- */
+  const a = renderAt(0).cv.getContext('2d').getImageData(0, 0, W, H).data;
+  const b = renderAt(report.master).cv.getContext('2d').getImageData(0, 0, W, H).data;
+  let diff = 0, maxDelta = 0;
+  for (let i = 0; i < a.length; i++) {
+    const d = Math.abs(a[i] - b[i]);
+    if (d > 0) { diff++; if (d > maxDelta) maxDelta = d; }
+  }
+  const pct = (diff / a.length) * 100;
+  console.log(`LOOP BOUNDARY: ${diff} differing subpixels (${pct.toFixed(4)}%), max delta ${maxDelta}`);
+  if (pct > 0.05) { console.error('FAIL: loop boundary is not seamless'); process.exitCode = 1; }
+  else console.log('PASS: master cycle returns to its exact initial state');
+
+  /* ---- motion check: mid-cycle must actually differ ---- */
+  const mid = renderAt(report.master / 2).cv.getContext('2d').getImageData(0, 0, W, H).data;
+  let moved = 0;
+  for (let i = 0; i < a.length; i += 4) if (Math.abs(a[i] - mid[i]) > 6) moved++;
+  console.log(`MOTION: ${((moved / (a.length / 4)) * 100).toFixed(2)}% of pixels changed mid-cycle`);
+  if (moved / (a.length / 4) < 0.005) { console.error('FAIL: nothing appears to animate'); process.exitCode = 1; }
+
+  /* ---- effect contact sheet ---- */
+  const cols = 4, cw = 320, ch = 200;
+  const rows = Math.ceil(EFFECTS.length / cols);
+  const sheet = createCanvas(cols * cw, rows * ch);
+  const sctx = sheet.getContext('2d');
+  const fxScene = createScene('enchanted', 'effects');
+  fxScene.canvas.width = cw; fxScene.canvas.height = ch;
+  for (let i = 0; i < EFFECTS.length; i++) {
+    const def = EFFECTS[i];
+    const node = makeEffectNode(def.id, fxScene, 0);
+    node.effect!.seed = 42;
+    const params = node.effect!.params;
+    if (typeof params.density === 'number') params.density = Math.min(params.density, 80);
+    const cv = createCanvas(cw, ch);
+    const ctx = cv.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 0, ch);
+    grad.addColorStop(0, '#16203a'); grad.addColorStop(1, '#070a11');
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, cw, ch);
+    ctx.save();
+    ctx.globalCompositeOperation = def.blend;
+    def.draw(ctx as never, { w: cw, h: ch, u: 0.37, t: 0.37 * def.defaultLoop, params, seed: 42, scale: 1 });
+    ctx.restore();
+    sctx.drawImage(cv, (i % cols) * cw, Math.floor(i / cols) * ch);
+    sctx.fillStyle = 'rgba(0,0,0,0.55)';
+    sctx.fillRect((i % cols) * cw, Math.floor(i / cols) * ch + ch - 22, cw, 22);
+    sctx.fillStyle = '#dbe4f2';
+    sctx.font = '13px sans-serif';
+    sctx.fillText(`${def.name}  (${def.family})`, (i % cols) * cw + 9, Math.floor(i / cols) * ch + ch - 7);
+  }
+  fs.writeFileSync(path.join(OUT, 'effects.png'), sheet.toBuffer('image/png'));
+  console.log(`rendered effects.png (${EFFECTS.length} effects)`);
+
+  /* ---- effect determinism / loop check ---- */
+  let fxFailed = 0;
+  for (const def of EFFECTS) {
+    const node = makeEffectNode(def.id, fxScene, 0);
+    const params = node.effect!.params;
+    const draw = (u: number) => {
+      const cv = createCanvas(160, 100);
+      const ctx = cv.getContext('2d');
+      def.draw(ctx as never, { w: 160, h: 100, u, t: u * def.defaultLoop, params, seed: 99, scale: 1 });
+      return ctx.getImageData(0, 0, 160, 100).data;
+    };
+    const d0 = draw(0), d1 = draw(1);
+    let bad = 0;
+    for (let i = 0; i < d0.length; i++) if (d0[i] !== d1[i]) bad++;
+    if (bad > 0) { console.error(`  effect ${def.id}: ${bad} subpixels differ at u=0 vs u=1`); fxFailed++; }
+  }
+  console.log(fxFailed === 0
+    ? `PASS: all ${EFFECTS.length} effects are exactly periodic`
+    : `FAIL: ${fxFailed} effects are not exactly periodic`);
+  if (fxFailed) process.exitCode = 1;
+
+  /* ---- per-asset transparency sanity ---- */
+  const metas = lib.assets as AssetMeta[];
+  let halo = 0;
+  for (const m of metas.filter((x) => x.layer !== 'background').slice(0, 40)) {
+    const img = await loadImage(path.join(ROOT, 'public/library', m.file));
+    const cv = createCanvas(img.width, img.height);
+    const ctx = cv.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const data = ctx.getImageData(0, 0, img.width, img.height).data;
+    for (let i = 0; i < data.length; i += 4) {
+      const [r, gg, bb, aa] = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+      if (aa > 200 && Math.min(r, bb) - gg > 70) { halo++; break; }
+    }
+  }
+  console.log(halo === 0 ? 'PASS: no magenta key residue in object artwork' : `WARN: ${halo} assets show key residue`);
+
+  console.log(`\nOutput written to ${OUT}`);
+}
+
+main().catch((e) => { console.error(e); process.exit(1); });

@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Python virtualenv used only by tools/prepare_assets.py
+.venv/
+__pycache__/
+*.py[cod]
+
+# Headless render-verification output (regenerate with `npm run render-check`)
+.render-check/
+
+# Test / tooling caches
+coverage/
+.vite/
+*.tsbuildinfo
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Local exports and scratch dumps
+*.sceneproject
+exports/
+scratch/

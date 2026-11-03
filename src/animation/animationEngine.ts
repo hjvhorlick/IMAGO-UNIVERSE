@@ -1,0 +1,266 @@
+/**
+ * ANIMATION ENGINE
+ * ================
+ * Turns (node, time) into a description of how that node should be drawn.
+ * It never touches a canvas: the compositor consumes the description. That
+ * separation is what lets the same animation drive the live preview, the
+ * still renderer and the video renderer identically.
+ *
+ * Every motion here is a function of the normalised cycle position `u in 0..1`
+ * built from integer harmonics, so state(u=0) === state(u=1). Different
+ * techniques are used for different materials - there is no single generic
+ * "wiggle" applied to everything.
+ */
+import type { AssetMeta, Scene, SceneNode } from '../core/types';
+import { clamp, frac, periodic, periodic2, rad, smoothstep, TAU } from '../core/util';
+import type { LoopManager } from './loopManager';
+import { isActive } from './loopManager';
+import type { FieldFn } from '../render/deform';
+
+/**
+ * How strongly a vertical position belongs to a rigged region.
+ *
+ * The falloff is deliberately smooth and reaches exactly zero *at* the region
+ * border. A hard 0/1 mask makes the displacement jump between two adjacent mesh
+ * rows, which shows up as a tear across the artwork; and a mask that is still
+ * non-zero on the border row stops the compositor from drawing the surrounding
+ * area as a single clean image.
+ */
+function regionMask(vv: number, ry: number, rh: number, feather = 0.08): number {
+  const f = Math.max(0.01, Math.min(feather, rh / 2));
+  const edge = Math.min((vv - ry) / f, (ry + rh - vv) / f);
+  return smoothstep(clamp(edge, 0, 1));
+}
+
+export interface RegionScroll {
+  axis: 'x' | 'y';
+  region: [number, number, number, number];  // normalised within the node
+  cycles: number;                            // whole tiles per loop (integer)
+  feather: number;                           // 0..0.5 edge softness
+  wobble: number;                            // lateral instability, px fraction
+}
+
+export interface NodeRenderState {
+  offsetX: number;
+  offsetY: number;
+  rotation: number;      // extra degrees
+  scale: number;
+  alpha: number;
+  glow: number;          // 0..1 additive bloom around the object
+  warp: null | { mode: 'strip' | 'mesh'; cols: number; rows: number; field: FieldFn };
+  scroll: RegionScroll | null;
+  animated: boolean;
+}
+
+export type Quality = 'preview' | 'export';
+
+const IDENTITY: NodeRenderState = {
+  offsetX: 0, offsetY: 0, rotation: 0, scale: 1, alpha: 1, glow: 0,
+  warp: null, scroll: null, animated: false,
+};
+
+export class AnimationEngine {
+  /**
+   * @param time  absolute scene time in seconds
+   * @param loops the Loop Manager, which owns cycle harmonisation
+   */
+  evaluate(
+    scene: Scene, node: SceneNode, time: number, loops: LoopManager,
+    meta: AssetMeta | undefined, quality: Quality = 'preview',
+  ): NodeRenderState {
+    if (node.kind === 'effect') return { ...IDENTITY, animated: true };
+    const a = node.animation;
+    if (!a || !a.enabled || a.type === 'none' || !isActive(node, time)) {
+      return { ...IDENTITY };
+    }
+
+    const u = loops.phaseAt(scene, node, time);
+    const amp = clamp(a.amplitude, 0, 1);
+    const turb = clamp(a.turbulence, 0, 1);
+    const seed = a.seed || 1;
+    const w = node.width, h = node.height;
+    const state: NodeRenderState = { ...IDENTITY, animated: true };
+    const detail = quality === 'export' ? 1 : 0.7;
+    const dirX = Math.cos(rad(a.direction - 90));
+    const dirY = Math.sin(rad(a.direction - 90));
+
+    switch (a.type) {
+      /* Trees: the trunk stays planted, the canopy moves, and each branch
+         cluster runs slightly out of phase so it never looks like one rigid
+         object being rotated. */
+      case 'canopy-sway': {
+        const canopyStart = meta?.rig?.canopyStart ?? 0.66;
+        const stiffness = meta?.rig?.stiffness ?? 0.7;
+        const gusts = Math.max(1, Math.round(meta?.rig?.gusts ?? 3));
+        const reach = w * 0.045 * amp;
+        const field: FieldFn = (uu, vv) => {
+          const canopyWeight = vv < canopyStart
+            ? smoothstep(clamp((canopyStart - vv) / Math.max(0.05, canopyStart), 0, 1))
+            : 0;
+          const trunkWeight = (1 - vv) ** 2 * (1 - stiffness) * 0.22;
+          const weight = canopyWeight + trunkWeight;
+          const branch = periodic2(u, uu * 3.1, vv * 2.3, seed, 3);
+          const main = Math.sin(TAU * u) * 0.65 + Math.sin(TAU * gusts * u + 1.1) * 0.22;
+          const sway = main * (1 - turb * 0.55) + branch * turb;
+          return {
+            dx: sway * reach * weight * (dirX >= 0 ? 1 : -1),
+            dy: Math.abs(sway) * reach * 0.16 * weight * -1 + branch * reach * 0.07 * weight,
+          };
+        };
+        state.warp = {
+          mode: 'mesh',
+          cols: Math.max(4, Math.round(7 * detail)),
+          rows: Math.max(5, Math.round(9 * detail)),
+          field,
+        };
+        break;
+      }
+
+      /* Grass and bushes: anchored at the soil, tips travel furthest. */
+      case 'grass-wind': {
+        const reach = w * 0.20 * amp;
+        const gusts = Math.max(1, Math.round(meta?.rig?.gusts ?? 4));
+        const field: FieldFn = (_uu, vv) => {
+          const weight = (1 - vv) ** 1.7;
+          const gust = 0.62 + 0.38 * Math.sin(TAU * gusts * u + 0.7);
+          const organic = periodic(u, seed, 4) * turb;
+          const sway = (Math.sin(TAU * u) * 0.7 + organic * 0.9) * gust;
+          return { dx: sway * reach * weight * (dirX >= 0 ? 1 : -1), dy: -Math.abs(sway) * reach * 0.10 * weight };
+        };
+        state.warp = { mode: 'strip', cols: 1, rows: Math.max(10, Math.round(22 * detail)), field };
+        break;
+      }
+
+      /* Flowers: the stem bends and the head lags behind it. */
+      case 'stem-bend': {
+        const reach = w * 0.16 * amp;
+        const field: FieldFn = (_uu, vv) => {
+          const stem = (1 - vv) ** 2.1;
+          const headLag = vv < 0.3 ? Math.sin(TAU * u - 0.9) * 0.35 : 0;
+          const sway = Math.sin(TAU * u) * 0.75 + periodic(u, seed, 3) * turb * 0.6 + headLag;
+          return {
+            dx: sway * reach * stem * (dirX >= 0 ? 1 : -1),
+            dy: -Math.abs(sway) * reach * 0.14 * stem + Math.sin(TAU * 2 * u) * h * 0.006 * amp * stem,
+          };
+        };
+        state.warp = { mode: 'strip', cols: 1, rows: Math.max(10, Math.round(24 * detail)), field };
+        break;
+      }
+
+      /* Water surfaces: travelling waves, not a sliding picture. */
+      case 'water-flow':
+      case 'water-shimmer': {
+        const reach = w * 0.012 * amp;
+        const region = meta?.rig?.region;
+        const field: FieldFn = (_uu, vv) => {
+          let mask = 1;
+          if (region) {
+            const [, ry, , rh] = region;
+            mask = regionMask(vv, ry, rh);
+          } else if (a.type === 'water-shimmer') {
+            mask = smoothstep(clamp((vv - 0.55) / 0.2, 0, 1));
+          }
+          const wave = Math.sin(TAU * (vv * 7 - u * 2)) + 0.5 * Math.sin(TAU * (vv * 13 - u * 3));
+          return { dx: wave * reach * mask, dy: Math.sin(TAU * (vv * 9 - u)) * reach * 0.25 * mask };
+        };
+        // A grid (not bands) so the displacement is interpolated smoothly and
+        // the surface never tears along a band edge.
+        state.warp = {
+          mode: 'mesh',
+          cols: Math.max(4, Math.round(7 * detail)),
+          rows: Math.max(10, Math.round(22 * detail)),
+          field,
+        };
+        break;
+      }
+
+      case 'waterfall-flow': {
+        const region = (meta?.rig?.region ?? [0.32, 0.08, 0.36, 0.74]) as [number, number, number, number];
+        state.scroll = {
+          axis: 'y', region, cycles: Math.max(1, Math.round(2 * (0.5 + amp))),
+          feather: 0.16, wobble: 0.012 * amp,
+        };
+        const reach = w * 0.006 * amp;
+        state.warp = {
+          mode: 'mesh', cols: Math.max(4, Math.round(6 * detail)), rows: Math.max(8, Math.round(18 * detail)),
+          field: (_uu, vv) => {
+            const [, ry, , rh] = region;
+            const inRegion = regionMask(vv, ry, rh, 0.12);
+            return { dx: Math.sin(TAU * (vv * 5 - u * 2)) * reach * inRegion, dy: 0 };
+          },
+        };
+        break;
+      }
+
+      case 'ripple': {
+        const reach = Math.min(w, h) * 0.02 * amp;
+        const field: FieldFn = (uu, vv) => {
+          const dx0 = uu - 0.5, dy0 = vv - 0.5;
+          const r = Math.hypot(dx0, dy0) * 2;
+          const wave = Math.sin(TAU * (r * 3 - u * 2)) * Math.max(0, 1 - r);
+          return { dx: wave * reach * (dx0 / (r || 1)), dy: wave * reach * (dy0 / (r || 1)) };
+        };
+        state.warp = {
+          mode: 'mesh', cols: Math.max(5, Math.round(9 * detail)), rows: Math.max(5, Math.round(9 * detail)), field,
+        };
+        break;
+      }
+
+      case 'flag-wave': {
+        const reach = h * 0.14 * amp;
+        const field: FieldFn = (uu, vv) => {
+          const anchor = uu ** 1.3;
+          return {
+            dx: 0,
+            dy: Math.sin(TAU * (uu * 2 - u * 2)) * reach * anchor
+              + Math.sin(TAU * (uu * 4 - u * 3)) * reach * 0.3 * anchor * (0.5 + vv * 0.5),
+          };
+        };
+        state.warp = {
+          mode: 'mesh', cols: Math.max(6, Math.round(12 * detail)), rows: Math.max(3, Math.round(5 * detail)), field,
+        };
+        break;
+      }
+
+      case 'float': {
+        const rx = w * 0.05 * amp, ry = h * 0.06 * amp;
+        state.offsetX = Math.sin(TAU * u) * rx + periodic(u, seed, 3) * rx * turb;
+        state.offsetY = Math.sin(TAU * 2 * u + 1.2) * ry * 0.6 + periodic(u, seed + 9, 3) * ry * turb;
+        state.rotation = Math.sin(TAU * u + 0.4) * 2.2 * amp;
+        break;
+      }
+
+      case 'spin':
+        state.rotation = 360 * frac(u) * (dirY >= 0 ? 1 : -1);
+        break;
+
+      case 'pulse':
+        state.scale = 1 + Math.sin(TAU * u) * 0.07 * amp;
+        state.alpha = 1 - (0.5 + 0.5 * Math.sin(TAU * u + Math.PI)) * 0.25 * amp;
+        state.glow = (0.5 + 0.5 * Math.sin(TAU * u)) * amp * 0.6;
+        break;
+
+      case 'lantern-glow':
+        state.glow = (0.55 + 0.45 * Math.sin(TAU * u)) * (0.35 + amp * 0.65);
+        break;
+
+      case 'cloud-drift': {
+        state.scroll = {
+          axis: 'x', region: [0, 0, 1, 0.42], cycles: 1, feather: 0.22, wobble: 0,
+        };
+        break;
+      }
+
+      case 'parallax':
+        state.scale = 1 + Math.sin(TAU * u) * 0.012 * amp + 0.012 * amp;
+        state.offsetY = Math.sin(TAU * u) * h * 0.004 * amp;
+        break;
+
+      default:
+        return { ...IDENTITY };
+    }
+    return state;
+  }
+}
+
+export const animationEngine = new AnimationEngine();
