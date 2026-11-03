@@ -10,11 +10,15 @@ no network call at runtime after the asset manifest and WebP files are fetched f
    see playing is what you get in the file.
 2. **The compositor never draws editor UI.** Handles, guides and selection live on a separate
    overlay canvas. Export reuses the compositor directly, so chrome cannot leak into output.
-3. **Effects hold no inter-frame state.** Every effect is `f(u)` where `u ∈ [0,1)` is the loop phase.
+3. **Solo preview is a render filter, not a scene edit.** `RenderOptions.onlyNode` draws exactly one
+   node (overriding its hidden flag, since the user explicitly asked to see it); `layers` draws one
+   whole layer. Neither mutates the scene, and a solo whose subject is deleted is dropped so the
+   canvas cannot stay silently empty.
+4. **Effects hold no inter-frame state.** Every effect is `f(u)` where `u ∈ [0,1)` is the loop phase.
    Randomness comes from a hash of `(seed, particle index, channel)`, never from a running RNG. This
    is what makes exact looping and frame-accurate seeking possible.
-4. **Originals are never modified.** Crops, tints, warps and grades are all applied at draw time.
-5. **Layer 4 is universal.** Style gating applies to layers 1–3 only.
+5. **Originals are never modified.** Crops, tints, warps and grades are all applied at draw time.
+6. **Layer 4 is universal.** Style gating applies to layers 1–3 only.
 
 ## Module map
 
@@ -97,12 +101,26 @@ visible one rebuilds its DOM.
 - `meshWarp` — a grid of textured triangle pairs. Used for water, canopies and flags where bands
   would tear. Adjacent triangles overlap by ~1.6 device pixels to hide antialiasing seams.
 
-  **Flat-band fast path:** rows whose vertices land exactly where an unwarped draw would put them
-  are coalesced into a single `drawImage`. This is both faster and visually necessary — without it,
-  a water shimmer leaves faint mesh seams across the *sky*, which is not moving at all.
+  **Flat-band fast path:** rows that cannot move are coalesced into a single `drawImage`. This is
+  both faster and visually necessary — without it, a water shimmer leaves faint mesh seams across
+  the *sky*, which is not moving at all.
+
+  Two details make this correct rather than merely fast:
+
+  - **`breaks`** — the caller passes the region's v-edges so they land exactly on a mesh row line.
+    Otherwise a triangle band straddles the boundary and drags stationary artwork along with the
+    moving part.
+  - **`active`** — the caller declares the v-range outside which the field is zero *at every phase*.
+    The slice/triangle split is then decided by geometry alone. If it were decided by the
+    instantaneous displacement, a band whose displacement passes through zero would flip rendering
+    mode between frames, shifting the slice boundary and re-resampling artwork that should be
+    perfectly still — visible as a faint shimmer in the foreground.
 
 - Region masks fade smoothly to exactly zero at the region border (`regionMask`). A hard 0/1 mask
   tears the artwork between two adjacent mesh rows and defeats the flat-band fast path.
+
+Together these give a measured **max delta of 1/255 outside a background's water region** (rounding
+on the antialiased boundary row) against 182/255 inside it.
 
 ### Scratch pooling
 

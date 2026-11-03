@@ -94,14 +94,25 @@ function texturedTriangle(
 export function meshWarp(
   ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   src: CanvasImageSource, s: SrcRect, d: DstRect,
-  cols: number, rows: number, field: FieldFn, bleed = 1.5,
+  cols: number, rows: number, field: FieldFn, bleed = 1.5, breaks?: number[],
+  active?: [number, number],
 ) {
+  // Row positions: a uniform grid, plus any requested break lines so that a
+  // masked region's edges fall exactly on a row boundary.
+  const vs: number[] = [];
+  for (let j = 0; j <= rows; j++) vs.push(j / rows);
+  for (const b of breaks ?? []) {
+    if (b > 1e-4 && b < 1 - 1e-4 && !vs.some((v) => Math.abs(v - b) < 1e-4)) vs.push(b);
+  }
+  vs.sort((a, b) => a - b);
+  const nrows = vs.length - 1;
+
   const px: number[][] = [];
   const py: number[][] = [];
-  for (let j = 0; j <= rows; j++) {
+  for (let j = 0; j <= nrows; j++) {
     px[j] = []; py[j] = [];
     for (let i = 0; i <= cols; i++) {
-      const u = i / cols, v = j / rows;
+      const u = i / cols, v = vs[j];
       const f = field(u, v);
       px[j][i] = d.dx + u * d.dw + f.dx;
       py[j][i] = d.dy + v * d.dh + f.dy;
@@ -117,22 +128,30 @@ export function meshWarp(
   // above a shimmering lake).
   const EPS = 0.02;
   const flatRow: boolean[] = [];
-  for (let j = 0; j <= rows; j++) {
+  for (let j = 0; j <= nrows; j++) {
     let flat = true;
     for (let i = 0; i <= cols; i++) {
-      const ex = d.dx + (i / cols) * d.dw, ey = d.dy + (j / rows) * d.dh;
+      const ex = d.dx + (i / cols) * d.dw, ey = d.dy + vs[j] * d.dh;
       if (Math.abs(px[j][i] - ex) > EPS || Math.abs(py[j][i] - ey) > EPS) { flat = false; break; }
     }
     flatRow[j] = flat;
   }
+  // When the caller declares the active v-range, the split between "plain slice"
+  // and "triangle band" is decided by geometry alone, never by the instantaneous
+  // displacement. Otherwise a band whose displacement happens to pass through
+  // zero at one phase would flip rendering mode, shifting the slice boundary and
+  // re-resampling artwork that is supposed to be perfectly still.
+  const sliceBand = (j: number): boolean => active
+    ? (vs[j + 1] <= active[0] + 1e-6 || vs[j] >= active[1] - 1e-6)
+    : (flatRow[j] && flatRow[j + 1]);
 
   let j = 0;
-  while (j < rows) {
-    if (flatRow[j] && flatRow[j + 1]) {
+  while (j < nrows) {
+    if (sliceBand(j)) {
       // Coalesce the longest run of flat bands into one drawImage.
       let end = j + 1;
-      while (end < rows && flatRow[end + 1]) end++;
-      const v0 = j / rows, v1 = end / rows;
+      while (end < nrows && sliceBand(end)) end++;
+      const v0 = vs[j], v1 = vs[end];
       ctx.drawImage(src,
         s.sx, s.sy + v0 * s.sh, s.sw, (v1 - v0) * s.sh,
         d.dx, d.dy + v0 * d.dh, d.dw, (v1 - v0) * d.dh);
@@ -141,7 +160,7 @@ export function meshWarp(
     }
     for (let i = 0; i < cols; i++) {
       const u0 = s.sx + (i / cols) * s.sw, u1 = s.sx + ((i + 1) / cols) * s.sw;
-      const v0 = s.sy + (j / rows) * s.sh, v1 = s.sy + ((j + 1) / rows) * s.sh;
+      const v0 = s.sy + vs[j] * s.sh, v1 = s.sy + vs[j + 1] * s.sh;
       texturedTriangle(ctx, src, fullW, fullH,
         px[j][i], py[j][i], px[j][i + 1], py[j][i + 1], px[j + 1][i + 1], py[j + 1][i + 1],
         u0, v0, u1, v0, u1, v1, bleed);
