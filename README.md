@@ -162,6 +162,6 @@ src/
 assets-src/    source artwork plates (pipeline input)
 public/library/  runtime WebP assets + thumbnails + manifest.json
 tools/         asset preparation pipeline, headless render verification
-tests/         94 tests across 7 files
+tests/         103 tests across 8 files
 docs/          architecture, assets, limitations
 ```

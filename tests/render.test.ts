@@ -156,6 +156,9 @@ describe('animation engine', () => {
           }
         }
         if (a.scroll || b.scroll) moved = true;
+        // Falling water carries its motion in a masked streak field, not in a
+        // transform or a warp of the artwork.
+        if (a.fall || b.fall) moved = true;
         if (moved) break;
       }
       expect(moved, `${type} never moves`).toBe(true);

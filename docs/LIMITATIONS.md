@@ -138,3 +138,45 @@ These were real bugs found by looking at output, not by reading code:
 11. **"Preview this effect only" previewed the whole layer** — the control did not do what it said.
    Added `RenderOptions.onlyNode` for true single-node isolation, kept layer solo as a separate
    button, made solo override the hidden flag, and dropped a solo whose subject gets deleted.
+
+
+## Falling water (rewritten)
+
+The original `waterfall-flow` scrolled the painted region vertically. Two things
+were wrong with that, both visible to the eye:
+
+1. **It flowed upwards.** The scroll subtracted the phase offset, so increasing
+   time moved the texture toward negative y. `RegionScroll` now carries an
+   explicit `direction`, and `+1` means along the positive axis (down for y).
+2. **It was a picture of a waterfall, not water.** Sliding the painted region
+   dragged the lip, the rocks and the pool along with it and marched a tiling
+   seam through the artwork. A lateral mesh warp made this worse: `regionMask`
+   only gates *vertically*, so the wobble smeared rock and foliage across the
+   full width of the plate in horizontal bands.
+
+`waterfall-flow` now leaves the painting completely still and renders falling
+water over it:
+
+- A **water mask** is derived from the artwork itself (bright + desaturated),
+  blurred, and cached per asset/region/size. Without it the streaks fell over
+  sky, rock and foliage and read as rain.
+- The mask also yields a **per-row centre and half-width**, so streaks follow
+  the real column as it narrows and shifts instead of ruling straight lines
+  down a bounding box.
+- Streaks carry a **dark trough and a lit crest** composited with `overlay`;
+  additive white alone is invisible on water that is already near-white.
+- The region is **supersampled to a 260px floor**, because a narrow fall can be
+  ~35x99 px at preview size and a sub-pixel streak washes out into a flat haze.
+- **One fall speed** for the whole field. Water reaches terminal velocity, and
+  two superimposed speeds cancel into a static shimmer rather than reading as
+  falling.
+
+Verified by measurement, not by eye alone (`tests/waterfall.test.ts`): 2D optical
+flow is downward at every sampled phase, the loop returns to byte-identical
+pixels, and nothing outside the region moves by more than antialiasing (<=2).
+
+**Known limitation:** if an imported waterfall's water is dark or strongly
+tinted, the mask finds nothing and the effect falls back to the declared region
+rectangle rather than switching itself off. Such artwork will look less
+convincing than the shipped falls; a per-asset painted mask would be the proper
+fix.

@@ -38,6 +38,32 @@ export interface RegionScroll {
   cycles: number;                            // whole tiles per loop (integer)
   feather: number;                           // 0..0.5 edge softness
   wobble: number;                            // lateral instability, px fraction
+  /**
+   * +1 travels along the positive axis (DOWN for y, right for x), -1 against it.
+   * Gravity is not optional: a waterfall must fall. Getting this sign wrong
+   * makes water climb, which is immediately obvious to anyone looking at it.
+   */
+  direction: 1 | -1;
+}
+
+/**
+ * Falling water. A painted waterfall already looks like a waterfall; sliding
+ * the whole painted region just drags the lip and the pool along with it and
+ * marches a tiling seam through the picture. What actually reads as falling is
+ * a set of bright streaks travelling DOWN over stationary artwork.
+ *
+ * Every streak completes a whole number of traversals per cycle, so the whole
+ * field returns exactly to its start - the loop is genuinely seamless.
+ */
+export interface FallSpec {
+  region: [number, number, number, number];
+  cycles: number;      // integer traversals per loop
+  density: number;     // streak count
+  length: number;      // streak length, fraction of region height
+  width: number;       // streak width, fraction of region width
+  opacity: number;     // 0..1
+  seed: number;
+  mist: number;        // 0..1 foam/mist pulse at the base
 }
 
 export interface NodeRenderState {
@@ -61,6 +87,7 @@ export interface NodeRenderState {
     active?: [number, number];
   };
   scroll: RegionScroll | null;
+  fall: FallSpec | null;
   animated: boolean;
 }
 
@@ -68,7 +95,7 @@ export type Quality = 'preview' | 'export';
 
 const IDENTITY: NodeRenderState = {
   offsetX: 0, offsetY: 0, rotation: 0, scale: 1, alpha: 1, glow: 0,
-  warp: null, scroll: null, animated: false,
+  warp: null, scroll: null, fall: null, animated: false,
 };
 
 export class AnimationEngine {
@@ -190,21 +217,24 @@ export class AnimationEngine {
 
       case 'waterfall-flow': {
         const region = (meta?.rig?.region ?? [0.32, 0.08, 0.36, 0.74]) as [number, number, number, number];
-        state.scroll = {
-          axis: 'y', region, cycles: Math.max(1, Math.round(2 * (0.5 + amp))),
-          feather: 0.16, wobble: 0.012 * amp,
+        const speed = typeof meta?.rig?.speed === 'number' ? meta.rig.speed : 1;
+        // Streaks falling downward carry the motion. The painted art stays put,
+        // so the lip, the rocks and the pool never slide.
+        state.fall = {
+          region,
+          cycles: Math.max(1, Math.round(3 * speed * (0.6 + amp * 0.7))),
+          density: Math.max(10, Math.round(22 * detail)),
+          length: 0.22,
+          width: 0.02,
+          opacity: clamp(0.42 + amp * 0.45, 0, 0.95),
+          seed: 1337,
+          mist: 0.35 + amp * 0.4,
         };
-        const reach = w * 0.006 * amp;
-        state.warp = {
-          mode: 'mesh', cols: Math.max(4, Math.round(6 * detail)), rows: Math.max(8, Math.round(18 * detail)),
-          breaks: [region[1], region[1] + region[3]],
-          active: [region[1], region[1] + region[3]],
-          field: (_uu, vv) => {
-            const [, ry, , rh] = region;
-            const inRegion = regionMask(vv, ry, rh, 0.12);
-            return { dx: Math.sin(TAU * (vv * 5 - u * 2)) * reach * inRegion, dy: 0 };
-          },
-        };
+        // Deliberately NO mesh warp here. regionMask only gates vertically, so a
+        // lateral wobble smeared rock and foliage across the full width of the
+        // plate in horizontal bands - the artwork visibly slid, which is exactly
+        // what made this read as "a picture of a waterfall" rather than water.
+        // The masked streaks carry all of the motion; the painting stays put.
         break;
       }
 
@@ -263,6 +293,7 @@ export class AnimationEngine {
       case 'cloud-drift': {
         state.scroll = {
           axis: 'x', region: [0, 0, 1, 0.42], cycles: 1, feather: 0.22, wobble: 0,
+          direction: -1,   // clouds drift left; unchanged from before
         };
         break;
       }
