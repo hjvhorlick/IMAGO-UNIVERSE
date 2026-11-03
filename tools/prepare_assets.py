@@ -119,6 +119,20 @@ def night_grade(rgb: np.ndarray) -> np.ndarray:
     return out
 
 
+def autumn_foliage(rgb: np.ndarray) -> np.ndarray:
+    """Shift green foliage to amber/copper while leaving stone, bark and water
+    alone. A flat warm multiply would turn the stone bridge orange too, which
+    reads as a colour cast rather than a season."""
+    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    green = np.clip((g - np.maximum(r, b)) / 34.0, 0, 1)
+    yellowgreen = (np.clip((np.minimum(r, g) - b) / 46.0, 0, 1)
+                   * np.clip((g - r + 26.0) / 52.0, 0, 1))
+    mask = np.clip(np.maximum(green, yellowgreen * 0.85), 0, 1)[..., None]
+    lum = rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
+    warm = np.stack([lum * 1.30 + 34.0, lum * 0.80 + 14.0, lum * 0.32 + 4.0], axis=-1)
+    return rgb * (1.0 - mask) + warm * mask
+
+
 def autumn_grade(rgb: np.ndarray) -> np.ndarray:
     """Warm harvest variant used for foreground variety."""
     lum = rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
@@ -445,6 +459,8 @@ def build(src: str, out: str) -> dict:
     bg_lake = fit(load_bg(f"{S}/bg-enchanted-lake.png"), 1920)
     bg_glade = fit(load_bg(f"{S}/bg-moonlit-glade.png"), 1920)
     bg_high = fit(load_bg(f"{S}/bg-crystal-highlands.png"), 1920)
+    bg_hollow = fit(load_bg(f"{S}/bg-forest-hollow.png"), 1920)
+    bg_autumn = fit(load_bg(f"{S}/bg-autumn-river.png"), 1920)
     oak = load_obj(f"{S}/mid-ancient-oak.png")
     willow = load_obj(f"{S}/mid-willow-tree.png")
     bridge = load_obj(f"{S}/mid-stone-bridge.png")
@@ -460,14 +476,21 @@ def build(src: str, out: str) -> dict:
 
     # ---------------- style: enchanted (highly detailed fantasy) ----------
     E = "enchanted"
-    for aid, name, img, cat, themes in [
-        ("enchanted-lake", "Enchanted Lake Valley", bg_lake, "nature", ["forest", "water", "day"]),
-        ("crystal-highlands", "Sunrise Highlands", bg_high, "fantasy", ["meadow", "dawn", "kingdom"]),
+    # `region` marks the water so the shimmer mesh stays off the sky and the
+    # foliage. Plates without one fall back to a bottom-of-frame mask.
+    for aid, name, img, cat, themes, rig in [
+        ("enchanted-lake", "Enchanted Lake Valley", bg_lake, "nature",
+         ["forest", "water", "day"], {"type": "background"}),
+        ("crystal-highlands", "Sunrise Highlands", bg_high, "fantasy",
+         ["meadow", "dawn", "kingdom"], {"type": "background"}),
+        ("forest-hollow", "Sunlit Forest Hollow", bg_hollow, "nature",
+         ["forest", "water", "day"],
+         {"type": "background", "region": [0.26, 0.56, 0.54, 0.26]}),
     ]:
         p.publish(Asset(f"{E}.background.{aid}", name, E, "background", cat, img,
                         themes=themes, tags=["background", "vista"], depth=0.0,
                         default_scale=1.0, animations=["cloud-drift", "water-shimmer", "parallax"],
-                        rig={"type": "background"}, max_dim=1920))
+                        rig=rig, max_dim=1920))
 
     p.publish(Asset(f"{E}.middle.ancient-oak", "Ancient Oak", E, "middle", "trees", oak,
                     themes=["forest", "enchanted"], tags=["tree", "oak", "hero"],
@@ -568,6 +591,44 @@ def build(src: str, out: str) -> dict:
                         origin="graded", themes=["night"], tags=[cat, "night"], depth=0.86,
                         default_scale=scale, animations=["grass-wind"], rig=bend, max_dim=1000))
 
+    # ---------------- style: autumn (graded sibling collection) -------------
+    A = "autumn"
+    print("building autumn sibling collection ...")
+    autumn_rig = {"type": "background", "region": [0.0, 0.68, 1.0, 0.32]}
+    p.publish(Asset(f"{A}.background.autumn-river", "Autumn River Valley", A, "background", "nature",
+                    bg_autumn, themes=["forest", "water", "autumn", "day"],
+                    tags=["background", "vista", "river"], depth=0.0, default_scale=1.0,
+                    animations=["cloud-drift", "water-shimmer", "parallax"],
+                    rig=autumn_rig, max_dim=1920))
+    p.publish(Asset(f"{A}.background.harvest-hollow", "Harvest Woodland Hollow", A, "background", "nature",
+                    grade(bg_hollow, autumn_foliage), origin="graded",
+                    themes=["forest", "autumn", "day"], tags=["background", "vista", "forest"],
+                    depth=0.0, default_scale=1.0,
+                    animations=["cloud-drift", "water-shimmer", "parallax"],
+                    rig={"type": "background", "region": [0.26, 0.56, 0.54, 0.26]}, max_dim=1920))
+    for aid, name, img, cat, scale, anims, rig in [
+        ("amber-oak", "Amber Oak", oak, "trees", 0.72, ["canopy-sway", "leaf-shed"], canopy),
+        ("copper-willow", "Copper Willow", willow, "trees", 0.66, ["canopy-sway"], canopy),
+        ("harvest-bridge", "Harvest Stone Bridge", bridge, "structures", 0.5, [], {}),
+        ("autumn-boulders", "Autumn Boulders", boulders, "rocks", 0.24, [], {}),
+    ]:
+        p.publish(Asset(f"{A}.middle.{aid}", name, A, "middle", cat, grade(img, autumn_foliage),
+                        origin="graded", themes=["forest", "autumn"], tags=[cat, "autumn"],
+                        depth=0.45, default_scale=scale, animations=anims, rig=rig, max_dim=1300))
+    for aid, name, img, cat, scale, anims in [
+        ("autumn-grass", "Autumn Grass", grass, "grass", 0.26, ["grass-wind"]),
+        ("autumn-fern", "Bracken Fern", compose_sprig(leaf_chips, seed=11), "plants", 0.28, ["stem-bend"]),
+        ("autumn-bush", "Copper Bush", compose_bush(leaf_chips, seed=3), "plants", 0.34, ["grass-wind"]),
+        ("fallen-ivy", "Fallen Ivy Trail", compose_ground_cover(leaf_chips, seed=21), "ground", 0.4, ["grass-wind"]),
+    ]:
+        p.publish(Asset(f"{A}.foreground.{aid}", name, A, "foreground", cat, grade(img, autumn_foliage),
+                        origin="graded", themes=["autumn", "forest"], tags=[cat, "autumn"], depth=0.86,
+                        default_scale=scale, animations=anims, rig=bend, max_dim=1000))
+    p.publish(Asset(f"{A}.foreground.autumn-pebbles", "Autumn Pebble Scatter", A, "foreground", "ground",
+                    grade(compose_pebbles(rock_chips, seed=9), autumn_foliage), origin="graded",
+                    themes=["water", "path", "autumn"], tags=["stones", "ground"], depth=0.94,
+                    default_scale=0.32, animations=[], rig={}, max_dim=1000))
+
     # ---------------- style registry --------------------------------------
     styles = [
         {
@@ -602,6 +663,24 @@ def build(src: str, out: str) -> dict:
                 "structure": f"{M}.middle.night-pavilion",
                 "plant": f"{M}.foreground.night-fern",
                 "ground": f"{M}.foreground.night-grass",
+            },
+            "complete": True,
+        },
+        {
+            "id": A,
+            "name": "Harvest Season",
+            "subtitle": "Autumnal fantasy",
+            "description": "The same painterly technique art-directed for autumn: foliage shifted "
+                           "to amber, copper and rust while stone, bark and water keep their "
+                           "natural colour, under the same warm upper-left key light.",
+            "swatches": ["#3a2412", "#7d4a1e", "#c8862f", "#e8b45c", "#f7e3bd"],
+            "lighting": "upper-left",
+            "reference": {
+                "background": f"{A}.background.autumn-river",
+                "tree": f"{A}.middle.amber-oak",
+                "structure": f"{A}.middle.harvest-bridge",
+                "plant": f"{A}.foreground.autumn-fern",
+                "ground": f"{A}.foreground.autumn-grass",
             },
             "complete": True,
         },

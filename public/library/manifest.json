@@ -45,6 +45,28 @@
     "ground": "moonlit.foreground.night-grass"
    },
    "complete": true
+  },
+  {
+   "id": "autumn",
+   "name": "Harvest Season",
+   "subtitle": "Autumnal fantasy",
+   "description": "The same painterly technique art-directed for autumn: foliage shifted to amber, copper and rust while stone, bark and water keep their natural colour, under the same warm upper-left key light.",
+   "swatches": [
+    "#3a2412",
+    "#7d4a1e",
+    "#c8862f",
+    "#e8b45c",
+    "#f7e3bd"
+   ],
+   "lighting": "upper-left",
+   "reference": {
+    "background": "autumn.background.autumn-river",
+    "tree": "autumn.middle.amber-oak",
+    "structure": "autumn.middle.harvest-bridge",
+    "plant": "autumn.foreground.autumn-fern",
+    "ground": "autumn.foreground.autumn-grass"
+   },
+   "complete": true
   }
  ],
  "assets": [
@@ -149,6 +171,63 @@
    "variants": [],
    "notes": "",
    "bytes": 114628
+  },
+  {
+   "id": "enchanted.background.forest-hollow",
+   "name": "Sunlit Forest Hollow",
+   "style": "enchanted",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "forest",
+    "water",
+    "day"
+   ],
+   "tags": [
+    "background",
+    "vista"
+   ],
+   "origin": "painted",
+   "file": "enchanted/forest-hollow.webp",
+   "thumb": "enchanted/thumbs/forest-hollow.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#303010",
+    "#103010",
+    "#305030",
+    "#303030"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.26,
+     0.56,
+     0.54,
+     0.26
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 214486
   },
   {
    "id": "enchanted.middle.ancient-oak",
@@ -1336,6 +1415,583 @@
    "variants": [],
    "notes": "",
    "bytes": 87824
+  },
+  {
+   "id": "autumn.background.autumn-river",
+   "name": "Autumn River Valley",
+   "style": "autumn",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "forest",
+    "water",
+    "autumn",
+    "day"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "river"
+   ],
+   "origin": "painted",
+   "file": "autumn/autumn-river.webp",
+   "thumb": "autumn/thumbs/autumn-river.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0d090",
+    "#d0b090",
+    "#503010",
+    "#303010",
+    "#f0f0b0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.68,
+     1.0,
+     0.32
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 181756
+  },
+  {
+   "id": "autumn.background.harvest-hollow",
+   "name": "Harvest Woodland Hollow",
+   "style": "autumn",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "forest",
+    "autumn",
+    "day"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "forest"
+   ],
+   "origin": "graded",
+   "file": "autumn/harvest-hollow.webp",
+   "thumb": "autumn/thumbs/harvest-hollow.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#101010",
+    "#503010",
+    "#705030",
+    "#907030"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.26,
+     0.56,
+     0.54,
+     0.26
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 232076
+  },
+  {
+   "id": "autumn.middle.amber-oak",
+   "name": "Amber Oak",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "forest",
+    "autumn"
+   ],
+   "tags": [
+    "trees",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/amber-oak.webp",
+   "thumb": "autumn/thumbs/amber-oak.webp",
+   "format": "image/webp",
+   "width": 755,
+   "height": 1275,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#503010",
+    "#101010",
+    "#705030",
+    "#303030"
+   ],
+   "defaultScale": 0.72,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway",
+    "leaf-shed"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.66,
+    "stiffness": 0.72,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 215774
+  },
+  {
+   "id": "autumn.middle.copper-willow",
+   "name": "Copper Willow",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "forest",
+    "autumn"
+   ],
+   "tags": [
+    "trees",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/copper-willow.webp",
+   "thumb": "autumn/thumbs/copper-willow.webp",
+   "format": "image/webp",
+   "width": 768,
+   "height": 1264,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#907030",
+    "#b09050",
+    "#d0b050",
+    "#f0d070"
+   ],
+   "defaultScale": 0.66,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.66,
+    "stiffness": 0.72,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 275834
+  },
+  {
+   "id": "autumn.middle.harvest-bridge",
+   "name": "Harvest Stone Bridge",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "forest",
+    "autumn"
+   ],
+   "tags": [
+    "structures",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/harvest-bridge.webp",
+   "thumb": "autumn/thumbs/harvest-bridge.webp",
+   "format": "image/webp",
+   "width": 1225,
+   "height": 634,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#705030",
+    "#503010",
+    "#303010",
+    "#303030"
+   ],
+   "defaultScale": 0.5,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 226566
+  },
+  {
+   "id": "autumn.middle.autumn-boulders",
+   "name": "Autumn Boulders",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "rocks",
+   "themes": [
+    "forest",
+    "autumn"
+   ],
+   "tags": [
+    "rocks",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/autumn-boulders.webp",
+   "thumb": "autumn/thumbs/autumn-boulders.webp",
+   "format": "image/webp",
+   "width": 907,
+   "height": 624,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#303030",
+    "#503010",
+    "#103030",
+    "#105050"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 241292
+  },
+  {
+   "id": "autumn.foreground.autumn-grass",
+   "name": "Autumn Grass",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "grass",
+   "themes": [
+    "autumn",
+    "forest"
+   ],
+   "tags": [
+    "grass",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/autumn-grass.webp",
+   "thumb": "autumn/thumbs/autumn-grass.webp",
+   "format": "image/webp",
+   "width": 645,
+   "height": 1000,
+   "alpha": true,
+   "depth": 0.86,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#705030",
+    "#505030",
+    "#905030",
+    "#103010"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 202884
+  },
+  {
+   "id": "autumn.foreground.autumn-fern",
+   "name": "Bracken Fern",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "autumn",
+    "forest"
+   ],
+   "tags": [
+    "plants",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/autumn-fern.webp",
+   "thumb": "autumn/thumbs/autumn-fern.webp",
+   "format": "image/webp",
+   "width": 519,
+   "height": 587,
+   "alpha": true,
+   "depth": 0.86,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#503010",
+    "#101010",
+    "#705010",
+    "#505030"
+   ],
+   "defaultScale": 0.28,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 100110
+  },
+  {
+   "id": "autumn.foreground.autumn-bush",
+   "name": "Copper Bush",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "autumn",
+    "forest"
+   ],
+   "tags": [
+    "plants",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/autumn-bush.webp",
+   "thumb": "autumn/thumbs/autumn-bush.webp",
+   "format": "image/webp",
+   "width": 900,
+   "height": 640,
+   "alpha": true,
+   "depth": 0.86,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#101010",
+    "#503010",
+    "#103010",
+    "#301010"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 123394
+  },
+  {
+   "id": "autumn.foreground.fallen-ivy",
+   "name": "Fallen Ivy Trail",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "ground",
+   "themes": [
+    "autumn",
+    "forest"
+   ],
+   "tags": [
+    "ground",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/fallen-ivy.webp",
+   "thumb": "autumn/thumbs/fallen-ivy.webp",
+   "format": "image/webp",
+   "width": 1000,
+   "height": 314,
+   "alpha": true,
+   "depth": 0.86,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#503010",
+    "#101010",
+    "#505030",
+    "#303030"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 89088
+  },
+  {
+   "id": "autumn.foreground.autumn-pebbles",
+   "name": "Autumn Pebble Scatter",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "ground",
+   "themes": [
+    "water",
+    "path",
+    "autumn"
+   ],
+   "tags": [
+    "stones",
+    "ground"
+   ],
+   "origin": "graded",
+   "file": "autumn/autumn-pebbles.webp",
+   "thumb": "autumn/thumbs/autumn-pebbles.webp",
+   "format": "image/webp",
+   "width": 1000,
+   "height": 297,
+   "alpha": true,
+   "depth": 0.94,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#303010",
+    "#303030",
+    "#705030",
+    "#503010"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 97680
   }
  ]
 }

@@ -6,6 +6,9 @@ import { autoCompose, DEFAULT_COMPOSE } from '../src/scene/composition';
 import { makeEffectNode } from '../src/ui/inspector';
 import { EFFECTS, THEME_PRESETS, effectDefaults } from '../src/animation/effects';
 import { testLibrary } from './helpers';
+import { AssetLibrary } from '../src/assets/library';
+import fs from 'node:fs';
+import path from 'node:path';
 
 describe('style manager', () => {
   it('exposes a five-piece reference collection for every style', () => {
@@ -120,5 +123,81 @@ describe('layer 4 universality', () => {
     expect(findStyleClashes(scene, lib)).toHaveLength(0);
     switchStyle(scene, lib, 'moonlit');
     expect(scene.nodes.filter((n) => n.kind === 'effect')).toHaveLength(1);
+  });
+});
+
+/**
+ * The tests above use a synthetic library so they stay fast. These check the
+ * library that actually ships, because a broken manifest entry is exactly the
+ * kind of thing a synthetic fixture cannot catch.
+ */
+describe('the published library', () => {
+  function shipped() {
+    const lib = new AssetLibrary();
+    lib.manifest = JSON.parse(fs.readFileSync(
+      path.join(path.resolve(import.meta.dirname, '..'), 'public/library/manifest.json'), 'utf8'));
+    return lib;
+  }
+
+  it('every registered style is complete and internally consistent', () => {
+    const lib = shipped();
+    expect(lib.styles.length).toBeGreaterThanOrEqual(3);
+    for (const style of lib.styles) {
+      expect(style.complete, `${style.id} is registered but incomplete`).toBe(true);
+      const refs = referenceCollection(lib, style);
+      expect(refs, `${style.id} reference collection`).toHaveLength(5);
+      expect(refs.every((r) => r.style === style.id)).toBe(true);
+      expect(refs.map((r) => r.layer)).toEqual(
+        ['background', 'middle', 'middle', 'foreground', 'foreground']);
+      // Every declared reference id must resolve, and to the right style.
+      for (const id of Object.values(style.reference)) {
+        const asset = lib.get(id as string);
+        expect(asset, `${style.id} reference ${id} is missing`).toBeTruthy();
+        expect(asset!.style).toBe(style.id);
+      }
+      const stats = styleStats(lib, style.id);
+      expect(stats.background, `${style.id} backgrounds`).toBeGreaterThanOrEqual(1);
+      expect(stats.middle, `${style.id} middle-ground`).toBeGreaterThanOrEqual(3);
+      expect(stats.foreground, `${style.id} foreground`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it('meets the starter library targets', () => {
+    const lib = shipped();
+    const count = (layer: string) => lib.assets.filter((a) => a.layer === layer).length;
+    expect(count('background')).toBeGreaterThanOrEqual(5);
+    expect(count('middle')).toBeGreaterThanOrEqual(8);
+    expect(count('foreground')).toBeGreaterThanOrEqual(8);
+    expect(EFFECTS.length).toBeGreaterThanOrEqual(10);
+  });
+
+  it('every asset declares a known origin and points at a real file', () => {
+    const lib = shipped();
+    const root = path.resolve(import.meta.dirname, '..');
+    const origins = new Set(['painted', 'graded', 'composed', 'derived', 'imported']);
+    for (const a of lib.assets) {
+      expect(origins.has(a.origin), `${a.id} has unknown origin "${a.origin}"`).toBe(true);
+      expect(fs.existsSync(path.join(root, 'public/library', a.file)), `${a.id} file missing`).toBe(true);
+      expect(fs.existsSync(path.join(root, 'public/library', a.thumb)), `${a.id} thumb missing`).toBe(true);
+      expect(a.width).toBeGreaterThan(0);
+      expect(a.height).toBeGreaterThan(0);
+    }
+  });
+
+  it('auto-composes a coherent scene in every shipped style', () => {
+    const lib = shipped();
+    for (const style of lib.styles) {
+      const scene = createScene(style.id);
+      autoCompose(scene, lib, { ...DEFAULT_COMPOSE, seed: 4242 });
+      expect(scene.nodes.length, `${style.id} composed nothing`).toBeGreaterThan(5);
+      expect(findStyleClashes(scene, lib)).toEqual([]);
+      expect(scene.nodes.filter((n) => n.layer === 'background')).toHaveLength(1);
+      // Grounded objects must actually sit on the ground, not float.
+      for (const n of scene.nodes) {
+        const meta = lib.get(n.assetId);
+        if (!meta || meta.layer === 'background') continue;
+        expect(Number.isFinite(n.x) && Number.isFinite(n.y), `${meta.id} NaN position`).toBe(true);
+      }
+    }
   });
 });
