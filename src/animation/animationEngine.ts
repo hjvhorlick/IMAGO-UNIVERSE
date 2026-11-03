@@ -47,7 +47,19 @@ export interface NodeRenderState {
   scale: number;
   alpha: number;
   glow: number;          // 0..1 additive bloom around the object
-  warp: null | { mode: 'strip' | 'mesh'; cols: number; rows: number; field: FieldFn };
+  warp: null | {
+    mode: 'strip' | 'mesh'; cols: number; rows: number; field: FieldFn;
+    /** Normalised v positions that must land exactly on a mesh row line. Put the
+     *  edges of a masked region here so no triangle band straddles the boundary
+     *  and drags stationary artwork along with the moving part. */
+    breaks?: number[];
+    /** Normalised v range outside which the field is guaranteed to be zero at
+     *  every phase. Declaring it makes the stationary bands deterministic: a
+     *  band must not flip between triangle and plain-slice rendering as the
+     *  displacement passes through zero, or the still artwork re-resamples and
+     *  appears to shimmer. */
+    active?: [number, number];
+  };
   scroll: RegionScroll | null;
   animated: boolean;
 }
@@ -66,11 +78,11 @@ export class AnimationEngine {
    */
   evaluate(
     scene: Scene, node: SceneNode, time: number, loops: LoopManager,
-    meta: AssetMeta | undefined, quality: Quality = 'preview',
+    meta: AssetMeta | undefined, quality: Quality = 'preview', audition = false,
   ): NodeRenderState {
     if (node.kind === 'effect') return { ...IDENTITY, animated: true };
     const a = node.animation;
-    if (!a || !a.enabled || a.type === 'none' || !isActive(node, time)) {
+    if (!a || !a.enabled || a.type === 'none' || !isActive(node, time, audition)) {
       return { ...IDENTITY };
     }
 
@@ -170,6 +182,8 @@ export class AnimationEngine {
           cols: Math.max(4, Math.round(7 * detail)),
           rows: Math.max(10, Math.round(22 * detail)),
           field,
+          breaks: region ? [region[1], region[1] + region[3]] : undefined,
+          active: region ? [region[1], region[1] + region[3]] : [0.55, 1],
         };
         break;
       }
@@ -183,6 +197,8 @@ export class AnimationEngine {
         const reach = w * 0.006 * amp;
         state.warp = {
           mode: 'mesh', cols: Math.max(4, Math.round(6 * detail)), rows: Math.max(8, Math.round(18 * detail)),
+          breaks: [region[1], region[1] + region[3]],
+          active: [region[1], region[1] + region[3]],
           field: (_uu, vv) => {
             const [, ry, , rh] = region;
             const inRegion = regionMask(vv, ry, rh, 0.12);

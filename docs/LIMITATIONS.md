@@ -18,12 +18,14 @@ animation engine, Loop Manager and effect library were exercised headlessly.
 | Trees stay planted | trunk-base displacement asserted < 0.001 in tests |
 | Grass roots do not slide | base-row `dx` < 0.001 |
 | Warping is local | sky above a shimmering lake is **pixel-identical** to the unwarped plate |
+| Water shimmer stays in the water | max delta **1/255** outside every background's declared region, 182/255 inside |
+| Every style composes | one rendered world per background plate → `.render-check/worlds.png` |
 | Rendering never mutates the scene | deep-equality assertion before/after render |
-| The UI really works | 12 jsdom tests mount the real `App` and drive it |
+| The UI really works | 14 jsdom tests mount the real `App` and drive it |
 | Still export produces a real file | 640×360 PNG > 5 kB asserted in the UI test |
 | Projects round-trip | scene → ZIP → scene, including embedded asset bytes |
 
-`npm test` → **81 passed** across 7 files. `npm run typecheck` → clean under `strict`,
+`npm test` → **94 passed** across 7 files. `npm run typecheck` → clean under `strict`,
 `noUnusedLocals` and `noUnusedParameters`. `npm run build` → succeeds.
 
 ## What was NOT verified — video export
@@ -58,10 +60,12 @@ rather than a broken file — but that error path itself is untested against a r
 
 ## Known functional constraints
 
-**Library size.** 25 assets across 2 styles, and the second style is a colour grade of the first.
-Backgrounds are at 4 of the 5 the brief asked for. There are no painted flower or fern plates —
-those foreground plants are procedurally composed from foliage chips. This is enough to build
-varied scenes but is not a large commercial library.
+**Library size.** 37 assets across 3 styles (7 backgrounds / 13 middle / 17 foreground), which meets
+the brief's starter targets. But `moonlit` and `autumn` are colour grades of `enchanted`, not
+independently painted bodies of work, and there are no painted flower or fern plates — those
+foreground plants are procedurally composed from foliage chips. This is enough to build varied
+scenes but is not a large commercial library. Adding a genuinely independent style means
+commissioning or painting a new plate set, not more grading.
 
 **Master cycle cap.** The LCM of all animation cycles is capped at 60 s. With many co-prime cycle
 lengths the true LCM can exceed this; the Loop Manager snaps cycles to a 0.5 s grid to keep the LCM
@@ -123,3 +127,14 @@ These were real bugs found by looking at output, not by reading code:
    and undistorted rows were still drawn as antialiased triangles (faint grid lines across the sky).
    Fixed with a smooth `regionMask` and a flat-band fast path in `meshWarp`; the sky is now
    pixel-identical to the unwarped plate.
+9. **Mesh bands straddling the region edge** — a band whose top row was inside the water and bottom
+   row outside dragged stationary foliage along. Fixed by passing the region edges as `breaks` so
+   they land exactly on mesh row lines.
+10. **Phase-dependent slice boundaries** — the flat-band test used the instantaneous displacement, so
+   a band passing through zero flipped between triangle and slice rendering, shifting the slice
+   boundary and re-resampling the still foreground (max delta 43/255 where nothing should move).
+   Fixed by declaring an `active` v-range and deciding the split on geometry alone. Outside the
+   water region the max delta is now 1/255.
+11. **"Preview this effect only" previewed the whole layer** — the control did not do what it said.
+   Added `RenderOptions.onlyNode` for true single-node isolation, kept layer solo as a separate
+   button, made solo override the hidden flag, and dropped a solo whose subject gets deleted.

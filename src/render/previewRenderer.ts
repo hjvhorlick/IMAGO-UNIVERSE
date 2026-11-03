@@ -28,6 +28,7 @@ export class PreviewRenderer {
   quality: 'preview' | 'export' = 'preview';
   stats: PreviewStats = { fps: 0, renderMs: 0, width: 0, height: 0, scale: 1 };
   soloLayer: string | null = null;
+  soloNode: string | null = null;
 
   private ctx: CanvasRenderingContext2D;
   private raf = 0;
@@ -122,6 +123,7 @@ export class PreviewRenderer {
       quality: this.quality,
       time: this.time,
       layers: this.soloLayer ? [this.soloLayer as never] : undefined,
+      onlyNode: this.soloNode ?? undefined,
       onMissingAsset: (id) => this.pendingLoads.add(id),
     });
     const ms = performance.now() - t0;

@@ -196,6 +196,54 @@ describe('application shell', () => {
     app.dispose();
   }, 60_000);
 
+  it('solo preview isolates one effect, then one layer, then everything', async () => {
+    const app = await mountApp();
+    const fx = app.store.scene.nodes.filter((n) => n.kind === 'effect');
+    expect(fx.length).toBeGreaterThan(1);
+    const target = fx[0];
+    app.store.select(target.id);
+    click(document.querySelector('[data-rtab="animate"]'));
+
+    const btn = (text: string) => Array.from(document.querySelectorAll('#right-body button'))
+      .find((b) => b.textContent?.includes(text)) ?? null;
+
+    // "Preview this effect only" must isolate ONE node, not its whole layer.
+    click(btn('Preview this effect only'));
+    expect(app.preview.soloNode).toBe(target.id);
+    expect(app.preview.soloLayer).toBeNull();
+    expect(document.querySelector('#stage-hud')?.textContent).toContain('SOLO');
+    expect(document.querySelector('#stage-hud')?.textContent).toContain(target.name);
+
+    // "Preview this layer only" switches to layer mode.
+    click(btn('Preview this layer only'));
+    expect(app.preview.soloNode).toBeNull();
+    expect(app.preview.soloLayer).toBe(target.layer);
+
+    // "Show all layers" clears both.
+    click(btn('Show all layers'));
+    expect(app.preview.soloNode).toBeNull();
+    expect(app.preview.soloLayer).toBeNull();
+    expect(document.querySelector('#stage-hud')?.textContent).not.toContain('SOLO');
+    app.dispose();
+  }, 60_000);
+
+  it('drops a solo preview when its subject is deleted', async () => {
+    const app = await mountApp();
+    const target = app.store.scene.nodes.find((n) => n.kind === 'effect')!;
+    app.store.select(target.id);
+    click(document.querySelector('[data-rtab="animate"]'));
+    const soloBtn = Array.from(document.querySelectorAll('#right-body button'))
+      .find((b) => b.textContent?.includes('Preview this effect only'))!;
+    click(soloBtn);
+    expect(app.preview.soloNode).toBe(target.id);
+
+    click(document.querySelector('#btn-del'));
+    // Must not leave the canvas permanently empty.
+    expect(app.preview.soloNode).toBeNull();
+    expect(app.store.node(target.id)).toBeUndefined();
+    app.dispose();
+  }, 60_000);
+
   it('enables object animation from the Animate tab', async () => {
     const app = await mountApp();
     const tree = app.store.scene.nodes.find((n) => app.library.get(n.assetId)?.category === 'trees')!;

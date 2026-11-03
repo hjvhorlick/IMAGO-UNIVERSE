@@ -27,8 +27,11 @@ export interface RenderOptions {
   time: number;
   /** Skip the global grade (used by the lighting debug view). */
   skipLighting?: boolean;
-  /** Only render these layers - used for solo previews. */
+  /** Only render these layers - used for layer solo previews. */
   layers?: SceneNode['layer'][];
+  /** Only render this one node - used to audition a single animation or effect
+   *  in isolation. Takes precedence over `layers`. */
+  onlyNode?: string;
   /** Master cycle in seconds; global time-based effects lock to this so the
    *  whole frame - including the lighting grade - is exactly periodic. */
   masterCycle?: number;
@@ -64,8 +67,14 @@ export class Compositor {
     ctx.scale(scale, scale);
 
     for (const node of paintOrder(scene)) {
-      if (!node.visible) continue;
-      if (opts.layers && !opts.layers.includes(node.layer)) continue;
+      if (opts.onlyNode) {
+        // Auditioning a node overrides its hidden flag - the user explicitly
+        // asked to see this one thing, even if it is hidden in the full scene.
+        if (node.id !== opts.onlyNode) continue;
+      } else {
+        if (!node.visible) continue;
+        if (opts.layers && !opts.layers.includes(node.layer)) continue;
+      }
       if (node.kind === 'effect') this.drawEffect(ctx, scene, node, opts);
       else this.drawAsset(ctx, scene, node, opts);
     }
@@ -86,7 +95,8 @@ export class Compositor {
       if (node.assetId) opts.onMissingAsset?.(node.assetId);
       return;
     }
-    const state = animationEngine.evaluate(scene, node, opts.time, this.loops, meta, opts.quality);
+    const state = animationEngine.evaluate(scene, node, opts.time, this.loops, meta, opts.quality,
+      opts.onlyNode === node.id);
     const src = entry.bitmap;
     const iw = entry.width, ih = entry.height;
     const crop = node.crop;
@@ -132,9 +142,9 @@ export class Compositor {
     const dest = { dx: 0, dy: 0, dw, dh };
 
     if (state.warp) {
-      const { mode, cols, rows, field } = state.warp;
+      const { mode, cols, rows, field, breaks, active } = state.warp;
       if (mode === 'strip') stripWarp(ctx, source, rect, dest, rows, (v) => field(0.5, v));
-      else meshWarp(ctx, source, rect, dest, cols, rows, field, Math.max(1, 1.6 / opts.scale));
+      else meshWarp(ctx, source, rect, dest, cols, rows, field, Math.max(1, 1.6 / opts.scale), breaks, active);
     } else {
       ctx.drawImage(source, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, dw, dh);
     }
@@ -251,7 +261,7 @@ export class Compositor {
     if (!inst) return;
     const def = EFFECT_MAP.get(inst.effectId);
     if (!def) return;
-    if (!isActive(node, opts.time)) return;
+    if (!isActive(node, opts.time, opts.onlyNode === node.id)) return;
     const u = this.loops.phaseAt(scene, node, opts.time);
     ctx.save();
     ctx.globalAlpha = clamp(node.opacity, 0, 1);

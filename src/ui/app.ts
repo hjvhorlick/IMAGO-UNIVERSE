@@ -211,6 +211,7 @@ export class App {
       onCrop: (node) => this.openCrop(node),
       onReplace: (node) => replaceDialog(node, this.store, this.library, (meta) => this.replaceAsset(node, meta)),
       onSoloAnimation: (node) => this.setSolo(node),
+      onSoloLayer: (layer) => this.setSoloLayer(layer),
     });
     this.scenePanel = new ScenePanel(this.rightBody, this.store, this.library, this.preview, this.images, {
       onCompose: () => composeDialog(this.store, (opts) => {
@@ -378,7 +379,17 @@ export class App {
   /* ---------------------------------------------------------------- store */
 
   private wireStore(root: HTMLElement) {
-    this.store.on('scene', () => { this.refreshChrome(); this.loops.invalidate(); });
+    this.store.on('scene', () => {
+      // Drop a solo preview whose subject no longer exists, otherwise the
+      // canvas would silently stay empty after a delete or an undo.
+      if (this.soloNode && !this.store.node(this.soloNode)) {
+        this.soloNode = null;
+        this.preview.soloNode = null;
+        this.preview.invalidate();
+      }
+      this.refreshChrome();
+      this.loops.invalidate();
+    });
     this.store.on('selection', () => {
       if (this.rightTab === 'object' || this.rightTab === 'animate') this.inspector.render();
       this.refreshChrome();
@@ -422,7 +433,7 @@ export class App {
       hud.innerHTML = `<span><b>${this.stage.zoomPercent}%</b> zoom</span>
         <span><b>${s.renderMs.toFixed(1)}ms</b> frame</span>
         <span><b>${this.store.scene.nodes.length}</b> objects</span>
-        ${this.soloNode ? '<span style="color:var(--accent)"><b>SOLO</b> preview</span>' : ''}`;
+        ${this.soloLabel() ? `<span style="color:var(--accent)"><b>SOLO</b> ${escapeHtml(this.soloLabel()!)}</span>` : ''}`;
     }
     const perf = qs<HTMLElement>('#status-perf');
     if (perf) perf.textContent = `${this.preview.stats.renderMs.toFixed(1)} ms/frame - ${this.images.stats.count} assets cached`;
@@ -535,12 +546,38 @@ export class App {
     });
   }
 
+  /** What the HUD should call the current solo mode, or null when showing all. */
+  private soloLabel(): string | null {
+    if (this.soloNode) {
+      const n = this.store.node(this.soloNode);
+      return n ? n.name : 'object';
+    }
+    if (this.preview.soloLayer) {
+      return `${LAYER_LABEL[this.preview.soloLayer as SceneNode['layer']]} layer`;
+    }
+    return null;
+  }
+
+  /** Audition one animation or effect on its own, against the canvas backdrop. */
   private setSolo(node: SceneNode | null) {
     this.soloNode = node?.id ?? null;
-    this.preview.soloLayer = node ? node.layer : null;
+    this.preview.soloNode = this.soloNode;
+    this.preview.soloLayer = null;
     this.preview.invalidate();
     this.updateHud();
-    this.store.status(node ? `Previewing ${LAYER_LABEL[node.layer]} only.` : 'Showing all four layers.', 'info');
+    this.store.status(
+      node ? `Previewing "${node.name}" on its own.` : 'Showing all four layers.', 'info');
+  }
+
+  /** Show one whole layer, hiding the other three. */
+  private setSoloLayer(layer: SceneNode['layer'] | null) {
+    this.soloNode = null;
+    this.preview.soloNode = null;
+    this.preview.soloLayer = layer;
+    this.preview.invalidate();
+    this.updateHud();
+    this.store.status(
+      layer ? `Previewing the ${LAYER_LABEL[layer]} layer only.` : 'Showing all four layers.', 'info');
   }
 
   private doRegenerate() {
