@@ -58,12 +58,13 @@ export interface RegionScroll {
 export interface FallSpec {
   region: [number, number, number, number];
   cycles: number;      // integer traversals per loop
-  density: number;     // streak count
-  length: number;      // streak length, fraction of region height
-  width: number;       // streak width, fraction of region width
-  opacity: number;     // 0..1
+  density: number;     // water curtain count
+  length: number;      // curtain length, fraction of cascade height
+  width: number;       // curtain width, fraction of region width
+  opacity: number;     // 0..1 water contrast
   seed: number;
-  mist: number;        // 0..1 foam/mist pulse at the base
+  splash: number;      // 0..1.2 plunge boil, leaping droplets & pool ripples
+  mist: number;        // 0..1.2 big rising & drifting mist plumes
 }
 
 export interface NodeRenderState {
@@ -216,25 +217,28 @@ export class AnimationEngine {
       }
 
       case 'waterfall-flow': {
-        const region = (meta?.rig?.region ?? [0.32, 0.08, 0.36, 0.74]) as [number, number, number, number];
+        const region = (meta?.rig?.region ?? [0.16, 0.10, 0.68, 0.85]) as [number, number, number, number];
         const speed = typeof meta?.rig?.speed === 'number' ? meta.rig.speed : 1;
-        // Streaks falling downward carry the motion. The painted art stays put,
-        // so the lip, the rocks and the pool never slide.
+        // Multi-stage falling water: rushing curtains and droplets plunging down
+        // the cascades, whitewater splash & ballistic spray at the impact line,
+        // expanding plunge-pool ripples, and big billowing mist clouds rising
+        // and drifting across the canyon. The painted rock and foliage stay put.
         state.fall = {
           region,
-          cycles: Math.max(1, Math.round(3 * speed * (0.6 + amp * 0.7))),
-          density: Math.max(10, Math.round(22 * detail)),
-          length: 0.22,
-          width: 0.02,
-          opacity: clamp(0.42 + amp * 0.45, 0, 0.95),
-          seed: 1337,
-          mist: 0.35 + amp * 0.4,
+          cycles: Math.max(2, Math.round(3 * speed * (0.65 + amp * 0.65))),
+          // Dense enough to read as continuously moving water at preview size.
+          density: Math.max(48, Math.round(76 * detail)),
+          length: 0.25,
+          width: 0.032,
+          opacity: clamp(0.55 + amp * 0.42, 0, 0.98),
+          seed: a.seed || 1337,
+          splash: clamp((0.45 + amp * 0.55) * (0.55 + turb * 0.65), 0, 1.2),
+          mist: clamp((0.50 + amp * 0.50) * (0.55 + turb * 0.70), 0, 1.25),
         };
         // Deliberately NO mesh warp here. regionMask only gates vertically, so a
         // lateral wobble smeared rock and foliage across the full width of the
         // plate in horizontal bands - the artwork visibly slid, which is exactly
         // what made this read as "a picture of a waterfall" rather than water.
-        // The masked streaks carry all of the motion; the painting stays put.
         break;
       }
 

@@ -82,10 +82,16 @@ export function createAssetNode(
 function defaultAnimationFor(meta: AssetMeta): SceneNode['animation'] {
   const first = meta.animations[0] as AnimationType | undefined;
   if (!first) return null;
-  // Objects arrive static; the user opts in to motion. We still record the
-  // recommended animation so the Animate panel can offer it in one click.
   const a = makeAnimation(first, Math.floor(Math.random() * 1e6));
-  a.enabled = false;
+  // Waterfalls are inherently in motion, so they arrive flowing right out of
+  // the library; still objects (trees, plants) stay static until opted in.
+  if (first === 'waterfall-flow') {
+    a.enabled = true;
+    a.amplitude = 0.85;
+    a.turbulence = 0.7;
+  } else {
+    a.enabled = false;
+  }
   return a;
 }
 

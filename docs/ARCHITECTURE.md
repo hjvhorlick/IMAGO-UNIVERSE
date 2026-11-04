@@ -40,7 +40,7 @@ scene/
 animation/
   loopManager.ts    Cycle analysis, grid snapping, LCM master cycle, exactness report, plan()
   animationEngine.ts  evaluate(scene, node, t) -> NodeRenderState (transform + warp + scroll + glow)
-  effects.ts        22 effect definitions, parameter schemas, 6 theme presets
+  effects.ts        27 effect definitions, parameter schemas, 8 theme presets
   effectPrimitives.ts  Deterministic per-particle randomness, shapes, life envelopes
 
 render/

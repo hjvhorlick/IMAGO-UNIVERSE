@@ -77,6 +77,24 @@ describe('atmospheric effects', () => {
     }
   });
 
+  it('renders every mythic emblem variation as its own periodic motif', () => {
+    const def = EFFECTS.find((e) => e.id === 'mythic-emblem')!;
+    const motifs = ['fae-seal', 'norse-compass', 'chinese-knot', 'japanese-torii'];
+    const frames = motifs.map((motif) => {
+      const params = { ...effectDefaults(def.id), motif };
+      const draw = (u: number) => {
+        const { cv, ctx } = ctx2d(220, 160);
+        def.draw(ctx as never, { w: 220, h: 160, u, t: u * def.defaultLoop, params, seed: 87, scale: 1 });
+        return pixels({ cv, ctx });
+      };
+      const a = draw(0), b = draw(1);
+      expect(Buffer.from(a).equals(Buffer.from(b)), `${motif} loop boundary`).toBe(true);
+      expect(a.filter((_, i) => i % 4 === 3 && a[i] > 8).length).toBeGreaterThan(20);
+      return Buffer.from(draw(0.43)).toString('base64');
+    });
+    expect(new Set(frames).size).toBe(motifs.length);
+  });
+
   it('different seeds give different particle arrangements', () => {
     const def = EFFECTS.find((e) => e.id === 'fairy-dust')!;
     const run = (seed: number) => {
@@ -253,6 +271,42 @@ describe('compositor', () => {
     for (let i = 0; i < a.length; i += 4) if (Math.abs(a[i] - mid[i]) > 6) changed++;
     expect(changed / (a.length / 4)).toBeGreaterThan(0.005);
   }, 120_000);
+
+  it('shows the current world through the transparent lounge-window overlay', async () => {
+    const lib = new AssetLibrary();
+    lib.manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/library/manifest.json'), 'utf8'));
+    const bg = lib.get('enchanted.background.enchanted-lake')!;
+    const room = lib.get('enchanted.foreground.lounge-window')!;
+    const bgImage = await loadImage(path.join(ROOT, 'public/library', bg.file));
+    const roomImage = await loadImage(path.join(ROOT, 'public/library', room.file));
+    const cache = new Map([
+      [bg.id, { bitmap: bgImage, width: bgImage.width, height: bgImage.height }],
+      [room.id, { bitmap: roomImage, width: roomImage.width, height: roomImage.height }],
+    ]);
+    const images = {
+      peek: (id: string | undefined) => (id ? cache.get(id) ?? null : null),
+      ensure: async () => {}, stats: { count: cache.size, bytes: 0, pending: 0 },
+    };
+    const scene = createScene('enchanted');
+    const bgNode = createAssetNode(bg, scene);
+    fitBackground(bgNode, scene, bgImage.width, bgImage.height);
+    bgNode.locked = true;
+    const roomNode = createAssetNode(room, scene);
+    scene.nodes = [bgNode, roomNode];
+    const comp = new Compositor(lib, images as never, new LoopManager());
+    const render = () => {
+      const { cv, ctx } = ctx2d(400, 225);
+      comp.render(ctx as never, scene, { scale: 400 / scene.canvas.width, quality: 'export', time: 0, skipLighting: true });
+      return pixels({ cv, ctx });
+    };
+    const withRoom = render();
+    scene.nodes = [bgNode];
+    const worldOnly = render();
+    const center = (Math.floor(112.5) * 400 + 200) * 4;
+    const wall = (Math.floor(112.5) * 400 + 8) * 4;
+    expect(Array.from(withRoom.slice(center, center + 3))).toEqual(Array.from(worldOnly.slice(center, center + 3)));
+    expect(Array.from(withRoom.slice(wall, wall + 3))).not.toEqual(Array.from(worldOnly.slice(wall, wall + 3)));
+  });
 
   it('does not mutate the scene while rendering', () => {
     const lib = testLibrary();

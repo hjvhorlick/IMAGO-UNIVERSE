@@ -17,7 +17,7 @@ import { LoopManager } from '../src/animation/loopManager';
 import { buildDemoScene } from '../src/scene/demoScene';
 import { EFFECTS } from '../src/animation/effects';
 import { makeEffectNode } from '../src/ui/inspector';
-import { createScene, fitBackground } from '../src/scene/sceneModel';
+import { createAssetNode, createScene, fitBackground } from '../src/scene/sceneModel';
 import { autoCompose, DEFAULT_COMPOSE } from '../src/scene/composition';
 import type { AssetMeta } from '../src/core/types';
 
@@ -81,6 +81,18 @@ async function main() {
     const { cv, ms } = renderAt(t);
     fs.writeFileSync(path.join(OUT, `demo-${name}.png`), cv.toBuffer('image/png'));
     console.log(`rendered demo-${name}.png at t=${t.toFixed(2)}s in ${ms.toFixed(0)}ms`);
+  }
+
+  // A transparent foreground room frame should reveal the user's world through
+  // its window while replacing the surrounding canvas with an interior view.
+  const roomMeta = lib.get(`${scene.styleId}.foreground.lounge-window`);
+  if (roomMeta) {
+    await images.ensure([roomMeta.id]);
+    scene.nodes.push(createAssetNode(roomMeta, scene));
+    const { cv } = renderAt(0);
+    fs.writeFileSync(path.join(OUT, 'lounge-window-view.png'), cv.toBuffer('image/png'));
+    scene.nodes.pop();
+    console.log('rendered lounge-window-view.png with the composed world visible through the window');
   }
 
   /* ---- acceptance: the master cycle boundary must be pixel-identical ---- */

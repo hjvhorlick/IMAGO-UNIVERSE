@@ -461,18 +461,31 @@ def build(src: str, out: str) -> dict:
     bg_high = fit(load_bg(f"{S}/bg-crystal-highlands.png"), 1920)
     bg_hollow = fit(load_bg(f"{S}/bg-forest-hollow.png"), 1920)
     bg_autumn = fit(load_bg(f"{S}/bg-autumn-river.png"), 1920)
+    bg_fairy = fit(load_bg(f"{S}/bg-fairy-court.png"), 1920)
+    bg_norse = fit(load_bg(f"{S}/bg-norse-worldtree.png"), 1920)
+    bg_chinese = fit(load_bg(f"{S}/bg-chinese-mist-mountains.png"), 1920)
+    bg_japanese = fit(load_bg(f"{S}/bg-japanese-moon-garden.png"), 1920)
     oak = load_obj(f"{S}/mid-ancient-oak.png")
     willow = load_obj(f"{S}/mid-willow-tree.png")
     bridge = load_obj(f"{S}/mid-stone-bridge.png")
     pavilion = load_obj(f"{S}/mid-garden-pavilion.png")
     boulders = load_obj(f"{S}/mid-mossy-boulders.png")
     waterfall = load_obj(f"{S}/mid-waterfall.png")
+    lounge_window = load_obj(f"{S}/fg-lounge-window.png")
+    fairy_mushrooms = load_obj(f"{S}/fg-fae-mushroom-cluster.png")
+    norse_frost_pine = load_obj(f"{S}/fg-norse-frost-pine.png")
+    chinese_peach = load_obj(f"{S}/fg-chinese-peach-blossoms.png")
+    japanese_moon_moss = load_obj(f"{S}/fg-japanese-moon-moss.png")
+    fairy_tree = load_obj(f"{S}/mid-fairy-tree.png")
+    norse_stones = load_obj(f"{S}/mid-norse-rune-stones.png")
+    chinese_pavilion = load_obj(f"{S}/mid-chinese-pavilion.png")
+    japanese_torii = load_obj(f"{S}/mid-japanese-torii-gate.png")
     grass = load_obj(f"{S}/fg-grass-tuft.png")
 
     canopy = {"type": "canopy", "anchor": [0.5, 1.0], "canopyStart": 0.66,
               "stiffness": 0.72, "gusts": 3}
     bend = {"type": "bend", "anchor": [0.5, 1.0], "stiffness": 0.18, "gusts": 4}
-    fall = {"type": "fall", "region": [0.30, 0.06, 0.42, 0.80], "speed": 1.0}
+    fall = {"type": "fall", "region": [0.16, 0.10, 0.68, 0.85], "speed": 1.0}
 
     # ---------------- style: enchanted (highly detailed fantasy) ----------
     E = "enchanted"
@@ -486,6 +499,14 @@ def build(src: str, out: str) -> dict:
         ("forest-hollow", "Sunlit Forest Hollow", bg_hollow, "nature",
          ["forest", "water", "day"],
          {"type": "background", "region": [0.26, 0.56, 0.54, 0.26]}),
+        ("fairy-court", "Fairy Court Glade", bg_fairy, "fantasy",
+         ["fairy", "forest", "water"], {"type": "background", "region": [0.0, 0.76, 1.0, 0.24]}),
+        ("norse-worldtree", "Norse Worldtree Fjord", bg_norse, "fantasy",
+         ["norse", "worldtree", "night"], {"type": "background"}),
+        ("chinese-mist-mountains", "Chinese-Inspired Mist Mountains", bg_chinese, "fantasy",
+         ["chinese", "mountains", "mist"], {"type": "background"}),
+        ("japanese-moon-garden", "Japanese Moon Garden", bg_japanese, "fantasy",
+         ["japanese", "moon", "garden"], {"type": "background"}),
     ]:
         p.publish(Asset(f"{E}.background.{aid}", name, E, "background", cat, img,
                         themes=themes, tags=["background", "vista"], depth=0.0,
@@ -509,10 +530,22 @@ def build(src: str, out: str) -> dict:
     p.publish(Asset(f"{E}.middle.mossy-boulders", "Mossy Boulders", E, "middle", "rocks", boulders,
                     themes=["forest", "water"], tags=["rock", "stone"],
                     depth=0.6, default_scale=0.24, animations=[], rig={}, max_dim=1000))
-    p.publish(Asset(f"{E}.middle.waterfall", "Forest Waterfall", E, "middle", "water", waterfall,
-                    themes=["water", "forest"], tags=["waterfall", "cliff", "pool"],
-                    depth=0.4, default_scale=0.5,
-                    animations=["waterfall-flow", "ripple"], rig=fall, max_dim=1200))
+    p.publish(Asset(f"{E}.middle.waterfall", "Grand Forest Waterfall", E, "middle", "water", waterfall,
+                    themes=["water", "forest"], tags=["waterfall", "cliff", "pool", "cascade"],
+                    depth=0.42, default_scale=0.66,
+                    animations=["waterfall-flow", "ripple"], rig=fall, max_dim=1300))
+    p.publish(Asset(f"{E}.middle.fairy-tree", "Fae Court Willow", E, "middle", "trees", fairy_tree,
+                    themes=["fairy", "forest", "enchanted"], tags=["fairy", "willow", "glowing tree"],
+                    depth=0.43, default_scale=0.76, animations=["canopy-sway"], rig=canopy, max_dim=1500))
+    p.publish(Asset(f"{E}.middle.norse-rune-stones", "Norse-Inspired Rune Stones", E, "middle", "landmarks", norse_stones,
+                    themes=["norse", "worldtree", "runes"], tags=["standing stones", "runes", "mythic landmark"],
+                    depth=0.56, default_scale=0.38, animations=[], rig={}, max_dim=1200))
+    p.publish(Asset(f"{E}.middle.chinese-pavilion", "Mountain Lantern Pavilion", E, "middle", "landmarks", chinese_pavilion,
+                    themes=["chinese", "mountains", "lanterns"], tags=["pavilion", "lantern", "mythic landmark"],
+                    depth=0.55, default_scale=0.43, animations=[], rig={}, max_dim=1300))
+    p.publish(Asset(f"{E}.middle.japanese-torii", "Moon Garden Torii Gate", E, "middle", "landmarks", japanese_torii,
+                    themes=["japanese", "moon", "garden"], tags=["torii", "gate", "mythic landmark"],
+                    depth=0.54, default_scale=0.42, animations=[], rig={}, max_dim=1200))
 
     # ---------------- foreground: painted grass + derived plant assembly --
     p.publish(Asset(f"{E}.foreground.grass-tuft", "Lush Grass Tuft", E, "foreground", "grass", grass,
@@ -560,6 +593,24 @@ def build(src: str, out: str) -> dict:
                     compose_pebbles(rock_chips, seed=9), origin="composed",
                     themes=["water", "path"], tags=["stones", "gravel", "ground"], depth=0.94,
                     default_scale=0.32, animations=[], rig={}, max_dim=1000))
+    p.publish(Asset(f"{E}.foreground.fae-mushrooms", "Fae Lantern Mushrooms", E, "foreground", "plants", fairy_mushrooms,
+                    themes=["fairy", "forest", "enchanted"], tags=["mushrooms", "glow", "woodland"],
+                    depth=0.9, default_scale=0.3, animations=["grass-wind"], rig=bend, max_dim=1100))
+    p.publish(Asset(f"{E}.foreground.norse-frost-pine", "Frost-Kissed Juniper", E, "foreground", "plants", norse_frost_pine,
+                    themes=["norse", "night", "winter"], tags=["pine", "frost", "juniper"],
+                    depth=0.9, default_scale=0.3, animations=["grass-wind"], rig=bend, max_dim=1100))
+    p.publish(Asset(f"{E}.foreground.chinese-peach-blossoms", "Peach Blossom Garden Cluster", E, "foreground", "flowers", chinese_peach,
+                    themes=["chinese", "garden", "flowers"], tags=["peach blossom", "flowers", "garden"],
+                    depth=0.88, default_scale=0.32, animations=["stem-bend"], rig=bend, max_dim=1100))
+    p.publish(Asset(f"{E}.foreground.japanese-moon-moss", "Moon Garden Moss and Sakura", E, "foreground", "flowers", japanese_moon_moss,
+                    themes=["japanese", "moon", "garden"], tags=["sakura", "moss", "stepping stones"],
+                    depth=0.89, default_scale=0.3, animations=["stem-bend"], rig=bend, max_dim=1100))
+    p.publish(Asset(f"{E}.foreground.lounge-window", "Lounge Window View", E, "foreground", "interiors",
+                    lounge_window, themes=["interior", "lounge", "window"],
+                    tags=["room", "window", "living room", "view frame"], depth=0.98,
+                    default_scale=0.82, animations=[], rig={"type": "window-overlay"},
+                    notes="Transparent window opening reveals the current composed scene behind this foreground room overlay.",
+                    max_dim=1400))
 
     # ---------------- style: moonlit (graded sibling collection) ----------
     M = "moonlit"
@@ -578,9 +629,11 @@ def build(src: str, out: str) -> dict:
         ("silver-oak", "Silver Oak", oak, "trees", 0.72, ["canopy-sway", "leaf-shed"], canopy),
         ("night-pavilion", "Lantern Pavilion", pavilion, "structures", 0.36, ["lantern-glow"], {}),
         ("dark-boulders", "Moonlit Boulders", boulders, "rocks", 0.24, [], {}),
+        ("moonlit-waterfall", "Moonlit Waterfall", waterfall, "water", 0.66, ["waterfall-flow", "ripple"], fall),
     ]:
         p.publish(Asset(f"{M}.middle.{aid}", name, M, "middle", cat, grade(img, night_grade),
-                        origin="graded", themes=["night", "forest"], tags=[cat, "night"],
+                        origin="graded", themes=["night", "forest"] + (["water"] if cat == "water" else []),
+                        tags=[cat, "night"] + (["waterfall", "cascade"] if cat == "water" else []),
                         depth=0.45, default_scale=scale, animations=anims, rig=rig, max_dim=1300))
     for aid, name, img, cat, scale in [
         ("night-grass", "Moonlit Grass", grass, "grass", 0.26),
@@ -590,6 +643,13 @@ def build(src: str, out: str) -> dict:
         p.publish(Asset(f"{M}.foreground.{aid}", name, M, "foreground", cat, grade(img, night_grade),
                         origin="graded", themes=["night"], tags=[cat, "night"], depth=0.86,
                         default_scale=scale, animations=["grass-wind"], rig=bend, max_dim=1000))
+    p.publish(Asset(f"{M}.foreground.lounge-window", "Moonlit Lounge Window View", M, "foreground", "interiors",
+                    grade(lounge_window, night_grade), origin="graded",
+                    themes=["interior", "lounge", "window", "night"],
+                    tags=["room", "window", "living room", "view frame", "night"], depth=0.98,
+                    default_scale=0.82, animations=[], rig={"type": "window-overlay"},
+                    notes="Transparent window opening reveals the current composed scene behind this foreground room overlay.",
+                    max_dim=1400))
 
     # ---------------- style: autumn (graded sibling collection) -------------
     A = "autumn"
@@ -611,9 +671,11 @@ def build(src: str, out: str) -> dict:
         ("copper-willow", "Copper Willow", willow, "trees", 0.66, ["canopy-sway"], canopy),
         ("harvest-bridge", "Harvest Stone Bridge", bridge, "structures", 0.5, [], {}),
         ("autumn-boulders", "Autumn Boulders", boulders, "rocks", 0.24, [], {}),
+        ("autumn-waterfall", "Autumn Waterfall", waterfall, "water", 0.66, ["waterfall-flow", "ripple"], fall),
     ]:
         p.publish(Asset(f"{A}.middle.{aid}", name, A, "middle", cat, grade(img, autumn_foliage),
-                        origin="graded", themes=["forest", "autumn"], tags=[cat, "autumn"],
+                        origin="graded", themes=["forest", "autumn"] + (["water"] if cat == "water" else []),
+                        tags=[cat, "autumn"] + (["waterfall", "cascade"] if cat == "water" else []),
                         depth=0.45, default_scale=scale, animations=anims, rig=rig, max_dim=1300))
     for aid, name, img, cat, scale, anims in [
         ("autumn-grass", "Autumn Grass", grass, "grass", 0.26, ["grass-wind"]),
@@ -628,6 +690,13 @@ def build(src: str, out: str) -> dict:
                     grade(compose_pebbles(rock_chips, seed=9), autumn_foliage), origin="graded",
                     themes=["water", "path", "autumn"], tags=["stones", "ground"], depth=0.94,
                     default_scale=0.32, animations=[], rig={}, max_dim=1000))
+    p.publish(Asset(f"{A}.foreground.lounge-window", "Harvest Lounge Window View", A, "foreground", "interiors",
+                    grade(lounge_window, autumn_foliage), origin="graded",
+                    themes=["interior", "lounge", "window", "autumn"],
+                    tags=["room", "window", "living room", "view frame", "autumn"], depth=0.98,
+                    default_scale=0.82, animations=[], rig={"type": "window-overlay"},
+                    notes="Transparent window opening reveals the current composed scene behind this foreground room overlay.",
+                    max_dim=1400))
 
     # ---------------- style registry --------------------------------------
     styles = [
