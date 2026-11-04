@@ -23,6 +23,8 @@ import { LoopManager, loopManager } from '../animation/loopManager';
 import { EFFECT_MAP, THEME_PRESETS, effectDefaults } from '../animation/effects';
 import { ExportManager } from '../export/exportManager';
 import { ProjectShelf, openProjectFromFile, saveProjectToFile } from '../project/projectShelf';
+import type { LoadedProject } from '../project/projectFormat';
+import { registerAudioBlob } from '../audio/audioStore';
 import { autoCompose, DEFAULT_COMPOSE, regenerate } from '../scene/composition';
 import { createAssetNode, createScene } from '../scene/sceneModel';
 import { buildDemoScene } from '../scene/demoScene';
@@ -671,7 +673,7 @@ export class App {
         try {
           const loaded = await this.shelf.open(id);
           if (!loaded) { this.store.status('That project could not be found.', 'error'); return; }
-          this.adoptProject(loaded.scene, loaded.missingAssets, loaded.warnings);
+          await this.adoptProject(loaded);
         } catch (err) {
           this.store.status(`Could not open project: ${(err as Error).message}`, 'error');
         }
@@ -694,7 +696,7 @@ export class App {
       if (!file) return;
       try {
         const loaded = await openProjectFromFile(file, this.library);
-        this.adoptProject(loaded.scene, loaded.missingAssets, loaded.warnings);
+        await this.adoptProject(loaded);
       } catch (err) {
         this.store.status(`Could not open file: ${(err as Error).message}`, 'error');
       }
@@ -702,7 +704,11 @@ export class App {
     input.click();
   }
 
-  private adoptProject(scene: Scene, missing: string[], warnings: string[]) {
+  private async adoptProject(loaded: LoadedProject) {
+    const { scene, missingAssets: missing, warnings } = loaded;
+    // Put the embedded sound where the preview player looks for it, before the
+    // scene swap triggers the player to load it.
+    if (loaded.sound && scene.audio) await registerAudioBlob(scene.audio, loaded.sound);
     this.store.replaceScene(scene);
     this.afterSceneSwap();
     this.preview.restart();
