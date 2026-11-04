@@ -294,6 +294,12 @@ export class Inspector {
         target: 'animation', hint: 'Adds out-of-phase gusts so nothing moves mechanically.',
       });
     }
+    if (anim.type === 'waterfall-flow') {
+      this.slider(m, node, 'Splash & mist', 'turbulence', 0, 1, 0.01, {
+        target: 'animation', format: (v) => `${Math.round(v * 100)}%`,
+        hint: 'Controls plunge-pool whitewater boil, leaping spray droplets and rising canyon mist.',
+      });
+    }
     if (['canopy-sway', 'grass-wind', 'stem-bend', 'float', 'spin'].includes(anim.type)) {
       this.slider(m, node, 'Direction', 'direction', 0, 360, 1, { target: 'animation', unit: 'deg' });
     }
@@ -461,7 +467,7 @@ function techniqueHint(t: AnimationType): string {
     case 'grass-wind': return 'Segmented bending anchored at the soil, with gusts. Tips travel furthest.';
     case 'stem-bend': return 'Stem deformation plus a lagging flower head.';
     case 'water-flow': return 'Travelling surface waves rather than a sliding texture.';
-    case 'waterfall-flow': return 'The water region scrolls as a seamlessly tiling band with feathered edges.';
+    case 'waterfall-flow': return 'Multi-stream rushing water curtains, falling droplets, plunge-pool splash spray and rising billowing mist over stationary cliffs.';
     case 'ripple': return 'Radial displacement falling off with distance from the centre.';
     case 'flag-wave': return 'Cloth-style wave anchored along one edge.';
     case 'float': return 'Closed curved drift path - returns exactly to its start.';

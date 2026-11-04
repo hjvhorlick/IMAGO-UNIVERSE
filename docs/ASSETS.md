@@ -10,17 +10,17 @@ generator, then processed by a conventional Python pipeline. This is disclosed b
 brief forbids generative AI *in the product*, and it matters that the distinction is clear:
 
 - **In the product:** conventional rendering, composition, deformation, particles, grading. No AI.
-- **In the art supply chain:** 10 painted plates were generated once, offline, and are now static
-  files indistinguishable from commissioned artwork. Replace them with licensed or hand-painted
-  art and nothing in the application changes.
+- **In the art supply chain:** painted plates were generated offline and are now static files.
+  The lounge-window overlays use a chroma-keyed opening so the current scene shows through. Replace
+  these with licensed or hand-painted artwork and nothing in the application changes.
 
 Every asset records its own `origin` in the manifest, so provenance is auditable per asset rather
 than buried in a README.
 
 | `origin` | Count | Meaning |
 | --- | --- | --- |
-| `painted` | 12 | A dedicated source plate exists in `assets-src/` |
-| `graded` | 17 | Colour-graded from a painted plate to build the sibling styles |
+| `painted` | 25 | A dedicated source plate exists in `assets-src/` |
+| `graded` | 21 | Colour-graded from a painted plate to build the sibling styles |
 | `composed` | 5 | Built procedurally by the pipeline from extracted artwork chips |
 | `derived` | 3 | Geometric/colour variant of another asset (mirror, narrow, golden) |
 
@@ -37,9 +37,9 @@ composition in that style is coherent.
 
 | Style | Character | Light | Assets |
 | --- | --- | --- | --- |
-| `enchanted` | Warm sunlit fantasy — golden hour, lush greens, soft god rays | upper-left | 18 |
-| `moonlit` | Cool nocturnal sibling — silver foliage, deep teals, lantern warmth | upper-right | 8 |
-| `autumn` | Harvest sibling — amber, copper and rust foliage, stone kept neutral | upper-left | 11 |
+| `enchanted` | Warm sunlit fantasy plus fairy, Norse, Chinese-inspired and Japanese-inspired vistas | upper-left | 31 |
+| `moonlit` | Cool nocturnal sibling — silver foliage, deep teals, lantern warmth | upper-right | 10 |
+| `autumn` | Harvest sibling — amber, copper and rust foliage, stone kept neutral | upper-left | 13 |
 
 `moonlit` and `autumn` are graded siblings of `enchanted`, not independently painted styles. They
 demonstrate that the style system, the light-direction metadata and the grading pipeline all work,
@@ -51,35 +51,39 @@ would read as a colour cast rather than a season.
 
 ## Inventory
 
-**Backgrounds (7)** — Enchanted Lake Valley, Sunrise Highlands, Sunlit Forest Hollow, Moonlit Forest
+**Backgrounds (11)** — Enchanted Lake Valley, Sunrise Highlands, Sunlit Forest Hollow, Fairy Court
+Glade, Norse Worldtree Fjord, Chinese-Inspired Mist Mountains, Japanese Moon Garden, Moonlit Forest
 Glade, Night Lake Valley, Autumn River Valley, Harvest Woodland Hollow
-**Middle-ground (13)** — Ancient Oak, Weeping Willow, Mossy Stone Bridge, Elven Garden Pavilion,
-Mossy Boulders, Forest Waterfall, Silver Oak, Lantern Pavilion, Moonlit Boulders, Amber Oak, Copper
-Willow, Harvest Stone Bridge, Autumn Boulders
-**Foreground (17)** — Lush Grass Tuft, Grass Clump (narrow), Grass Sweep (mirrored), Golden Harvest
-Grass, Wildflower Cluster, Woodland Fern, Leafy Bush, Ground Ivy Trail, Pebble Scatter, Moonlit
-Grass, Night Fern, Shadow Bush, Autumn Grass, Bracken Fern, Copper Bush, Fallen Ivy Trail, Autumn
-Pebble Scatter
-**Atmosphere (22 effects)** — procedural, not assets; see below.
+**Middle-ground (19)** — Ancient Oak, Weeping Willow, Mossy Stone Bridge, Elven Garden Pavilion,
+Mossy Boulders, Grand Forest Waterfall, Fae Court Willow, Norse-Inspired Rune Stones, Mountain
+Lantern Pavilion, Moon Garden Torii Gate, Silver Oak, Lantern Pavilion, Moonlit Boulders,
+Moonlit Waterfall, Amber Oak, Copper Willow, Harvest Stone Bridge, Autumn Boulders, Autumn Waterfall
+**Foreground (24)** — Lush Grass Tuft, Grass Clump (narrow), Grass Sweep (mirrored), Golden Harvest
+Grass, Wildflower Cluster, Woodland Fern, Leafy Bush, Ground Ivy Trail, Pebble Scatter, Fae Lantern
+Mushrooms, Frost-Kissed Juniper, Peach Blossom Garden Cluster, Moon Garden Moss and Sakura,
+Moonlit Grass, Night Fern, Shadow Bush, Autumn Grass, Bracken Fern, Copper Bush, Fallen Ivy Trail,
+Autumn Pebble Scatter, and the three Lounge Window Views (enchanted, moonlit, harvest)
+**Atmosphere (27 effects)** — procedural, not assets; see below.
 
 The brief's starter targets were 5 backgrounds / 8 middle / 8 foreground / 10 effects. **All four
-targets are met or exceeded** (7 / 13 / 17 / 22). `npm run render-check` composes and renders one
+targets are met or exceeded** (11 / 19 / 24 / 27). `npm run render-check` composes and renders one
 world per background plate to `.render-check/worlds.png` so the variety is verifiable at a glance.
 
 ## Atmospheric effects
 
-Layer 4 is procedural and never style-gated. 22 effects in 6 families:
+Layer 4 is procedural and never style-gated. 27 effects in 6 families:
 
 - **Magical:** fairy-dust, sparkles, glowing-orbs, light-beams, energy-rings
-- **Symbols:** magic-circle, mandala, floating-runes, glowing-symbols
-- **Celestial:** constellation, starfield, shooting-stars, aurora
-- **Fantasy:** butterflies, drifting-petals, feathers
-- **Natural:** fireflies, falling-leaves, bubbles
-- **Weather:** mist, snow, rain
+- **Symbols:** magic-circle, mandala, floating-runes, glowing-symbols, mythic-emblem
+- **Celestial:** constellation, starfield, shooting-stars, aurora, zodiac-wheel
+- **Fantasy:** butterflies, drifting-petals, feathers, floating-lanterns
+- **Natural:** fireflies, falling-leaves, bubbles, wind-currents
+- **Weather:** mist, snow, rain, rising-mist
 
-Six theme presets (Norse, Greek, Chinese fantasy, Gothic, fairy tale, meditation/celestial) select
-and tune subsets of these effects. They are **artistic interpretations, not claims of cultural
-authenticity**.
+Eight theme presets include Norse, Greek, Chinese-inspired fantasy, Japanese moonlit garden, Gothic,
+fairy tale, meditation/celestial, and Mythic Zodiac. They are **artistic interpretations, not claims
+of cultural authenticity**. A layered lounge-window foreground overlay lets any current composition
+show through a large transparent window opening.
 
 ## Metadata
 
@@ -97,8 +101,10 @@ makes grounding work for a tuft of grass versus a boulder versus a tree.
 { "anchor": [0.5, 1], "canopyStart": 0.66, "stiffness": 0.72, "gusts": 3 }
 // grass / stem
 { "stiffness": 0.18, "gusts": 4 }
-// waterfall — the sub-rectangle that may scroll
-{ "region": [0.30, 0.06, 0.42, 0.80] }
+// waterfall — cascades, splash and mist animate inside this region
+{ "type": "fall", "region": [0.16, 0.10, 0.68, 0.85], "speed": 1.0 }
+// lounge view — alpha opening reveals the composed scene behind the frame
+{ "type": "window-overlay" }
 ```
 
 An asset with no rig can still translate, rotate, scale, pulse and glow, but will not be warped.
@@ -126,7 +132,7 @@ python3 -m venv .venv
 7. **Encode** to WebP (quality 90, method 6, exact) plus 256 px thumbnails, and write
    `public/library/manifest.json` (`imago.asset-library/1`).
 
-Output: 37 assets, ~5.9 MB of WebP (6.6 MB on disk with thumbnails).
+Output: 54 assets, ~9.6 MB of main WebP (about 10.4 MB including thumbnails).
 
 ## Adding a style
 

@@ -90,10 +90,10 @@ export function autoCompose(scene: Scene, library: AssetLibrary, opts: ComposeOp
     !occupied.some((o) => Math.abs(o.depth - depth) < 0.12 && Math.abs(o.x - x) < (o.w + w) * 0.42);
 
   const place = (
-    meta: AssetMeta, xNorm: number, depth: number, scaleJitter = 1,
+    meta: AssetMeta, xNorm: number, depth: number, scaleJitter = 1, baseScale = 1,
   ): SceneNode | null => {
     const jitterX = (r() - 0.5) * 0.08 * opts.jitterPosition;
-    const scale = 1 + (r() - 0.5) * 0.5 * opts.jitterSize * scaleJitter;
+    const scale = baseScale * (1 + (r() - 0.5) * 0.5 * opts.jitterSize * scaleJitter);
     const node = createAssetNode(meta, scene, {
       x: clamp(xNorm + jitterX, -0.2, 1.2) * cw,
       depth, scale,
@@ -110,32 +110,54 @@ export function autoCompose(scene: Scene, library: AssetLibrary, opts: ComposeOp
     return node;
   };
 
-  const pick = (list: AssetMeta[]): AssetMeta | undefined =>
-    list.length ? list[Math.floor(r() * list.length)] : undefined;
+  const storyTheme = bgMeta?.themes.find((theme) => ['fairy', 'norse', 'chinese', 'japanese'].includes(theme));
+  const pick = (list: AssetMeta[]): AssetMeta | undefined => {
+    if (!list.length) return undefined;
+    // Cultural/fantasy set pieces are picked to match their backdrop instead of
+    // being mixed randomly into an unrelated story-world composition.
+    const themed = storyTheme ? list.filter((asset) => asset.themes.includes(storyTheme)) : [];
+    const candidates = themed.length ? themed : list;
+    return candidates[Math.floor(r() * candidates.length)];
+  };
 
   /* ------------------------------------------------------------ layer 2 */
   const mid = pool.filter((a) => a.layer === 'middle');
   const trees = mid.filter((a) => a.category === 'trees');
-  const structures = mid.filter((a) => a.category === 'structures');
+  const structures = mid.filter((a) => a.category === 'structures' || a.category === 'landmarks');
   const rocks = mid.filter((a) => a.category === 'rocks');
   const water = mid.filter((a) => a.category === 'water');
 
-  const heroSide = r() > 0.5 ? 0.22 : 0.78;
+  // Treat a waterfall as a scene-scale focal point, not a small prop tucked to
+  // one side. Its broad water curtain stays centered and enlarged; supporting
+  // scenery is pushed to the margins and foreground is kept out of its pool.
+  const placedWater = opts.water && hasWater
+    ? (water.find((a) => a.rig?.type === 'fall') ?? pick(water))
+    : undefined;
+  const waterfallHero = placedWater?.rig?.type === 'fall';
+  const heroSide = waterfallHero
+    ? (r() > 0.5 ? 0.08 : 0.92)
+    : (r() > 0.5 ? 0.22 : 0.78);
   const hero = pick(trees);
   if (hero && !locked.some((n) => n.layer === 'middle' && library.get(n.assetId)?.category === 'trees')) {
     place(hero, heroSide, 0.42, 0.6);
   }
-  if (opts.structures) {
+  if (waterfallHero) {
+    const wNode = place(placedWater!, 0.5, 0.46, 0.2, 1.32);
+    if (wNode) wNode.rotation = 0;
+  } else if (placedWater) {
+    const wNode = place(placedWater, heroSide > 0.5 ? 0.27 : 0.73, 0.46, 0.3);
+    if (wNode) wNode.rotation = 0;
+  }
+  // A bridge or pavilion across the impact line defeats the entire waterfall
+  // focal point. Omit structures in automatic waterfall showcases.
+  if (opts.structures && !waterfallHero) {
     const s = pick(structures);
     if (s && !locked.some((n) => library.get(n.assetId)?.category === 'structures')) {
-      place(s, heroSide > 0.5 ? 0.34 : 0.66, 0.5);
+      const sx = placedWater ? (heroSide > 0.5 ? 0.62 : 0.38) : (heroSide > 0.5 ? 0.34 : 0.66);
+      place(s, sx, 0.52);
     }
   }
-  if (opts.water && hasWater) {
-    const w = pick(water);
-    if (w) place(w, heroSide > 0.5 ? 0.16 : 0.84, 0.3, 0.5);
-  }
-  const extraTrees = Math.round(1 * mult);
+  const extraTrees = waterfallHero ? 0 : Math.round(1 * mult);
   for (let i = 0; i < extraTrees; i++) {
     const t = pick(trees);
     if (!t) break;
@@ -143,7 +165,7 @@ export function autoCompose(scene: Scene, library: AssetLibrary, opts: ComposeOp
     const depth = 0.2 + r() * 0.2;
     if (isFree(x * cw, depth, cw * 0.2)) place(t, x, depth, 1);
   }
-  const rockCount = Math.round((1 + r() * 2) * mult);
+  const rockCount = waterfallHero ? 0 : Math.round((1 + r() * 2) * mult);
   for (let i = 0; i < rockCount; i++) {
     const rk = pick(rocks);
     if (!rk) break;
@@ -170,7 +192,9 @@ export function autoCompose(scene: Scene, library: AssetLibrary, opts: ComposeOp
     // let a good share of them run off the canvas entirely.
     const edgeBias = r();
     let x: number;
-    if (edgeBias < 0.34) x = -0.08 + r() * 0.3;
+    if (waterfallHero) {
+      x = edgeBias < 0.5 ? -0.12 + r() * 0.22 : 0.90 + r() * 0.22;
+    } else if (edgeBias < 0.34) x = -0.08 + r() * 0.3;
     else if (edgeBias < 0.68) x = 0.78 + r() * 0.3;
     else x = 0.15 + r() * 0.7;
     const depth = 0.78 + r() * 0.22;
@@ -183,9 +207,19 @@ export function autoCompose(scene: Scene, library: AssetLibrary, opts: ComposeOp
   }
   // A continuous ground line of ivy / stones right at the bottom edge.
   const groundMeta = pick(ground);
-  if (groundMeta) {
+  if (groundMeta && !waterfallHero) {
     for (let i = 0; i < Math.round(2 * mult); i++) {
       place(groundMeta, 0.1 + i * 0.45 + r() * 0.1, 0.99, 0.8);
+    }
+  }
+
+  // Give story-world backdrops one unmistakable matching foreground accent,
+  // then paint it last so it frames rather than disappears under generic foliage.
+  if (storyTheme) {
+    const storyAccent = pick(fg.filter((asset) => asset.themes.includes(storyTheme)));
+    if (storyAccent) {
+      const x = storyTheme === 'norse' || storyTheme === 'chinese' ? 0.16 : 0.84;
+      place(storyAccent, x, 0.9, 0.25, 1.05);
     }
   }
 

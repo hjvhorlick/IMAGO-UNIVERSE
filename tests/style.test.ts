@@ -1,7 +1,7 @@
 /** Acceptance tests for style consistency across layers 1-3 and universality of layer 4. */
 import { describe, expect, it } from 'vitest';
 import { findStyleClashes, referenceCollection, styleStats, switchStyle } from '../src/scene/styleManager';
-import { createScene } from '../src/scene/sceneModel';
+import { createAssetNode, createScene } from '../src/scene/sceneModel';
 import { autoCompose, DEFAULT_COMPOSE } from '../src/scene/composition';
 import { makeEffectNode } from '../src/ui/inspector';
 import { EFFECTS, THEME_PRESETS, effectDefaults } from '../src/animation/effects';
@@ -109,10 +109,31 @@ describe('layer 4 universality', () => {
 
   it('ships at least ten atmospheric effects and six theme collections', () => {
     expect(EFFECTS.length).toBeGreaterThanOrEqual(10);
-    expect(THEME_PRESETS.length).toBeGreaterThanOrEqual(6);
+    expect(THEME_PRESETS.length).toBeGreaterThanOrEqual(8);
+    expect(EFFECTS.some((e) => e.id === 'zodiac-wheel')).toBe(true);
+    expect(EFFECTS.some((e) => e.id === 'floating-lanterns')).toBe(true);
+    expect(THEME_PRESETS.some((t) => t.id === 'japanese')).toBe(true);
+    expect(THEME_PRESETS.some((t) => t.id === 'mythic-zodiac')).toBe(true);
     for (const t of THEME_PRESETS) {
       expect(t.effects.length).toBeGreaterThan(1);
       for (const e of t.effects) expect(EFFECTS.some((x) => x.id === e.id)).toBe(true);
+    }
+  });
+
+  it('keeps each themed scenario inside the selected effects’ real controls', () => {
+    for (const theme of THEME_PRESETS) {
+      for (const entry of theme.effects) {
+        const effect = EFFECTS.find((x) => x.id === entry.id)!;
+        for (const [key, value] of Object.entries(entry.params ?? {})) {
+          const param = effect.params.find((p) => p.key === key);
+          expect(param, `${theme.id}.${entry.id} has no ${key} control`).toBeTruthy();
+          if (param?.type === 'range') {
+            expect(Number(value), `${theme.id}.${entry.id}.${key}`).toBeGreaterThanOrEqual(param.min!);
+            expect(Number(value), `${theme.id}.${entry.id}.${key}`).toBeLessThanOrEqual(param.max!);
+          }
+          if (param?.type === 'color') expect(String(value)).toMatch(/^#[0-9a-f]{6}$/i);
+        }
+      }
     }
   });
 
@@ -162,13 +183,20 @@ describe('the published library', () => {
     }
   });
 
-  it('meets the starter library targets', () => {
+  it('meets the starter library targets and includes room-view overlays in every style', () => {
     const lib = shipped();
     const count = (layer: string) => lib.assets.filter((a) => a.layer === layer).length;
     expect(count('background')).toBeGreaterThanOrEqual(5);
     expect(count('middle')).toBeGreaterThanOrEqual(8);
     expect(count('foreground')).toBeGreaterThanOrEqual(8);
     expect(EFFECTS.length).toBeGreaterThanOrEqual(10);
+    for (const style of lib.styles) {
+      const room = lib.get(`${style.id}.foreground.lounge-window`);
+      expect(room, `${style.id} lounge window`).toBeTruthy();
+      expect(room!.alpha).toBe(true);
+      expect(room!.rig?.type).toBe('window-overlay');
+      expect(room!.tags).toContain('window');
+    }
   });
 
   it('every asset declares a known origin and points at a real file', () => {
@@ -181,6 +209,27 @@ describe('the published library', () => {
       expect(fs.existsSync(path.join(root, 'public/library', a.thumb)), `${a.id} thumb missing`).toBe(true);
       expect(a.width).toBeGreaterThan(0);
       expect(a.height).toBeGreaterThan(0);
+    }
+  });
+
+  it('keeps landmark sets paired with their fairy, Norse, Chinese and Japanese backdrops', () => {
+    const lib = shipped();
+    const stories = [
+      ['enchanted.background.fairy-court', 'fairy', 'enchanted.middle.fairy-tree', 'enchanted.foreground.fae-mushrooms'],
+      ['enchanted.background.norse-worldtree', 'norse', 'enchanted.middle.norse-rune-stones', 'enchanted.foreground.norse-frost-pine'],
+      ['enchanted.background.chinese-mist-mountains', 'chinese', 'enchanted.middle.chinese-pavilion', 'enchanted.foreground.chinese-peach-blossoms'],
+      ['enchanted.background.japanese-moon-garden', 'japanese', 'enchanted.middle.japanese-torii', 'enchanted.foreground.japanese-moon-moss'],
+    ] as const;
+    for (const [backgroundId, story, expectedId, expectedForegroundId] of stories) {
+      const scene = createScene('enchanted');
+      const bg = lib.get(backgroundId)!;
+      const bgNode = createAssetNode(bg, scene);
+      bgNode.locked = true;
+      scene.nodes.push(bgNode);
+      autoCompose(scene, lib, { ...DEFAULT_COMPOSE, seed: 4242, setBackground: false });
+      expect(scene.nodes.some((node) => node.assetId === expectedId), `${story} landmark missing`).toBe(true);
+      expect(scene.nodes.some((node) => node.assetId === expectedForegroundId), `${story} foreground accent missing`).toBe(true);
+      expect(findStyleClashes(scene, lib)).toEqual([]);
     }
   });
 

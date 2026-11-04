@@ -34,9 +34,9 @@ export function buildDemoScene(library: AssetLibrary, opts: {
   sortByDepth(scene);
 
   /* Wake up a handful of objects with the technique that suits each material. */
-  const wanted: { category: string; type: AnimationType; count: number; amplitude: number }[] = [
+  const wanted: { category: string; type: AnimationType; count: number; amplitude: number; turbulence?: number }[] = [
     { category: 'trees', type: 'canopy-sway', count: 3, amplitude: 0.55 },
-    { category: 'water', type: 'waterfall-flow', count: 1, amplitude: 0.7 },
+    { category: 'water', type: 'waterfall-flow', count: 1, amplitude: 0.9, turbulence: 0.78 },
     { category: 'grass', type: 'grass-wind', count: 6, amplitude: 0.6 },
     { category: 'flowers', type: 'stem-bend', count: 3, amplitude: 0.55 },
     { category: 'plants', type: 'grass-wind', count: 4, amplitude: 0.45 },
@@ -52,7 +52,7 @@ export function buildDemoScene(library: AssetLibrary, opts: {
       a.amplitude = w.amplitude;
       a.loop = DEFAULT_LOOP[w.type];
       a.phase = (i * 0.17) % 1;
-      a.turbulence = 0.5;
+      a.turbulence = w.turbulence ?? 0.5;
       n.animation = a;
     });
   }

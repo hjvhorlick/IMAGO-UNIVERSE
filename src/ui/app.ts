@@ -20,7 +20,7 @@ import { ImageCache } from '../render/imageCache';
 import { Compositor } from '../render/compositor';
 import { PreviewRenderer } from '../render/previewRenderer';
 import { LoopManager, loopManager } from '../animation/loopManager';
-import { EFFECT_MAP, THEME_PRESETS, effectDefaults } from '../animation/effects';
+import { EFFECTS, EFFECT_MAP, THEME_PRESETS, effectDefaults } from '../animation/effects';
 import { ExportManager } from '../export/exportManager';
 import { ProjectShelf, openProjectFromFile, saveProjectToFile } from '../project/projectShelf';
 import { autoCompose, DEFAULT_COMPOSE, regenerate } from '../scene/composition';
@@ -157,7 +157,7 @@ export class App {
       icon: 'image',
       title: 'Artwork',
       titleFn: () => `${LAYERS.indexOf(this.activeLayer) + 1} · ${LAYER_SHORT[LAYERS.indexOf(this.activeLayer)]}`,
-      badge: () => this.activeLayer === 'atmosphere' ? '22 effects' : `${this.library.forStyle(this.store.scene.styleId, this.activeLayer).length}`,
+      badge: () => this.activeLayer === 'atmosphere' ? `${EFFECTS.length} effects` : `${this.library.forStyle(this.store.scene.styleId, this.activeLayer).length}`,
       onToggle: (open) => { this.assetPanel.active = open; if (open) this.assetPanel.render(); },
     });
     this.assetPanel = new AssetPanel(assetsBody, this.store, this.library, {
@@ -530,6 +530,7 @@ export class App {
     }
     const node = createAssetNode(meta, scene, at ? { x: at.x, y: at.y + node0Height(meta, scene) / 2 } : undefined);
     this.store.addNode(node, `Add ${meta.name}`);
+    if (node.animation?.enabled && !this.preview.playing) this.preview.play();
     void this.images.ensure([meta.id]).then(() => this.preview.invalidate());
   }
 

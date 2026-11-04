@@ -25,7 +25,7 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 94 unit / integration / UI tests (Vitest) |
+| `npm test` | 109 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library from `assets-src/` (needs Pillow + numpy) |
@@ -52,8 +52,10 @@ there are no style-conflict dialogs, because the conflict cannot be created in t
 
 ## What is implemented
 
-**Asset library** — 37 individual transparent assets across 3 complete styles, each with rich
-metadata (dimensions, alpha, depth, perspective, ground-contact point, lighting direction, palette,
+**Asset library** — 54 assets across 3 complete styles, with four fairy/Norse/Chinese/Japanese-
+inspired vistas, matching landmarks and foreground accents, plus lounge-window overlays that reveal
+the current composition through the room. Rich metadata includes
+dimensions, alpha, depth, perspective, ground-contact point, lighting direction, palette,
 animation capabilities, rig, variants). Visual browser with categories, search, theme filters,
 thumbnails, favourites, preview, import and remove. Imported files are stored in IndexedDB and
 survive reloads.
@@ -71,7 +73,7 @@ Solo preview auditions a single animation or effect on its own, or one whole lay
 
 **Animation** — 15 techniques chosen per asset type, evaluated independently of the compositor:
 canopy sway with a planted trunk and desynchronised branches, grass deformation, stem bending,
-water shimmer and flow, waterfall scroll, cloud drift, ripples, flag waves, floating, spinning,
+water shimmer and flow, waterfall cascades with splash and rising mist, cloud drift, ripples, flag waves, floating, spinning,
 pulsing, glow and parallax. A tree is never rotated as a whole.
 
 **Loop Manager** — a dedicated module that analyses every animated node, snaps cycle lengths to a
@@ -79,9 +81,9 @@ pulsing, glow and parallax. A tree is never rotated as a whole.
 honestly whether the scene returns *exactly* to its initial state. Video duration is completely
 decoupled from cycle length.
 
-**Effects** — 22 atmospheric effects in 6 families, plus 6 theme presets (Norse, Greek, Chinese
-fantasy, Gothic, fairy tale, meditation/celestial). These are artistic interpretations, not claims
-of cultural authenticity. Every effect exposes only its own relevant controls.
+**Effects** — 27 atmospheric effects in 6 families, plus 8 theme presets, including Norse, Greek,
+Chinese-inspired fantasy, a Japanese moon garden, fairy tale, and a mythic zodiac. These are artistic
+interpretations, not claims of cultural authenticity. Every effect exposes only relevant controls.
 
 **Export** — PNG / JPEG / WebP stills with zero editor UI in the output. MP4 (H.264) and WebM video
 via WebCodecs with a MediaRecorder fallback. 16:9, 9:16, 1:1, 4:3, 21:9 and custom aspect ratios;
@@ -114,12 +116,12 @@ seamless loop it cannot deliver.
 ## Verification
 
 ```
-npm test              94 passed (7 files)
+npm test              run the full Vitest suite
 npm run typecheck     clean, strict
-npm run build         195 kB JS (63 kB gz), 23 kB CSS (5.5 kB gz)
+npm run build         current production build succeeds
 npm run render-check  loop boundary: 0 differing subpixels
-                      mid-cycle motion: 10.96% of pixels
-                      all 22 effects exactly periodic
+                      mid-cycle motion: about 10.9% of pixels
+                      all effects exactly periodic
                       no chroma-key residue in any asset
                       7 composed environments, one per background
 ```
