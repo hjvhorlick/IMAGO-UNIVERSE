@@ -190,7 +190,19 @@ describe('the published library', () => {
     expect(count('middle')).toBeGreaterThanOrEqual(8);
     expect(count('foreground')).toBeGreaterThanOrEqual(8);
     expect(EFFECTS.length).toBeGreaterThanOrEqual(10);
+    // Clearwater is photographic; a photoreal room has to be photographed, not
+    // recoloured, so this look deliberately ships no interiors yet. Anything
+    // added to this list must be justified in docs/LIMITATIONS.md.
+    const NO_INTERIORS = new Set(['realistic']);
     for (const style of lib.styles) {
+      if (NO_INTERIORS.has(style.id)) {
+        // Still has to be usable: enough outdoor foreground to build a scene.
+        const outdoor = lib.forStyle(style.id).filter((a) => a.layer === 'foreground');
+        expect(outdoor.length, `${style.id} outdoor foreground`).toBeGreaterThanOrEqual(4);
+        expect(lib.forStyle(style.id).filter((a) => a.category === 'interiors'),
+          `${style.id} claims to have no interiors but does`).toHaveLength(0);
+        continue;
+      }
       const room = lib.get(`${style.id}.foreground.lounge-window`);
       expect(room, `${style.id} lounge window`).toBeTruthy();
       expect(room!.alpha).toBe(true);

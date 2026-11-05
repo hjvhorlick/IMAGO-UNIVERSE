@@ -285,6 +285,42 @@ async function main() {
   fs.writeFileSync(path.join(OUT, 'winter-world.png'), winterCv.toBuffer('image/png'));
   console.log(`rendered winter-world.png with ${winter.nodes.length} painted winter objects`);
 
+  // The realistic look, and a look at the sparkle on its own.
+  const real = createScene('realistic');
+  autoCompose(real, lib, { ...DEFAULT_COMPOSE, seed: 7 });
+  for (const node of real.nodes) {
+    if (node.kind === 'effect' || !node.animation) continue;
+    const meta = lib.get(node.assetId);
+    if (meta?.animations.includes('sparkle')) { node.animation.enabled = true; node.animation.type = 'sparkle'; }
+  }
+  await images.ensure(real.nodes.map((n) => n.assetId));
+  loops.invalidate();
+  const realCv = createCanvas(W, H);
+  comp.render(realCv.getContext('2d') as never, real, {
+    scale, quality: 'export', time: 1.05, masterCycle: loops.analyse(real).master,
+  });
+  fs.writeFileSync(path.join(OUT, 'clearwater-world.png'), realCv.toBuffer('image/png'));
+
+  const glint = createScene('realistic');
+  const surface = lib.get('realistic.foreground.water-surface')!;
+  await images.ensure([surface.id]);
+  const gNode = createAssetNode(surface, glint);
+  gNode.x = glint.canvas.width / 2; gNode.y = glint.canvas.height * 0.78;
+  gNode.height = glint.canvas.height * 0.62; gNode.width = gNode.height * surface.width / surface.height;
+  gNode.animation!.enabled = true;
+  gNode.animation!.type = 'sparkle';
+  gNode.animation!.amplitude = 1;
+  glint.nodes = [gNode];
+  loops.invalidate();
+  for (const [name, t] of [['sparkle-a', 0.9], ['sparkle-b', 1.6]] as const) {
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, glint, {
+      scale, quality: 'export', time: t, masterCycle: loops.analyse(glint).master,
+    });
+    fs.writeFileSync(path.join(OUT, `${name}.png`), cv.toBuffer('image/png'));
+  }
+  console.log('rendered clearwater-world.png with sparkle, and two sparkle phases');
+
   /* ---- acceptance: the master cycle boundary must be pixel-identical ---- */
   const a = renderAt(0).cv.getContext('2d').getImageData(0, 0, W, H).data;
   const b = renderAt(report.master).cv.getContext('2d').getImageData(0, 0, W, H).data;

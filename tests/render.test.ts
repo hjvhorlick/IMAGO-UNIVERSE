@@ -236,6 +236,8 @@ describe('animation engine', () => {
         if (a.fall || b.fall) moved = true;
         if (a.flame && b.flame && a.flame.phase !== b.flame.phase) moved = true;
         if (a.steam && b.steam && a.steam.phase !== b.steam.phase) moved = true;
+        // Sparkle lives in a glint field driven by the cycle position.
+        if (a.sparkle && b.sparkle && a.sparkle.phase !== b.sparkle.phase) moved = true;
         if (moved) break;
       }
       expect(moved, `${type} never moves`).toBe(true);

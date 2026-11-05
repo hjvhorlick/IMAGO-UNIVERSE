@@ -13,7 +13,7 @@ import type { AssetLibrary } from '../assets/library';
 import type { Scene, SceneNode } from '../core/types';
 import { clamp, frac, rng, rad, rgba, TAU } from '../core/util';
 import { animationEngine } from '../animation/animationEngine';
-import type { LocalAtmosphereSpec, NodeRenderState, Quality } from '../animation/animationEngine';
+import type { LocalAtmosphereSpec, NodeRenderState, Quality, SparkleSpec } from '../animation/animationEngine';
 import { isActive, LoopManager } from '../animation/loopManager';
 import { EFFECT_MAP } from '../animation/effects';
 import type { EffectDrawContext } from '../animation/effectPrimitives';
@@ -178,6 +178,7 @@ export class Compositor {
     }
     if (state.flame) this.drawHearthFire(ctx, source, rect, dest, crop, state.flame, opts.scale);
     if (state.steam) this.drawCoffeeSteam(ctx, dest, crop, state.steam, opts.scale);
+    if (state.sparkle) this.drawSparkle(ctx, dest, crop, state.sparkle, opts);
     if (state.glow > 0.01) {
       ctx.globalCompositeOperation = 'lighter';
       const g = ctx.createRadialGradient(dw / 2, dh * 0.42, 0, dw / 2, dh * 0.42, Math.max(dw, dh) * 0.42);
@@ -246,6 +247,70 @@ export class Compositor {
     ctx.fillRect(dest.dw * x0, dest.dh * y0, dw, dh);
     ctx.restore();
     releaseScratch(scratch);
+  }
+
+  /**
+   * Specular glints on water.
+   *
+   * A real sunlit surface is covered in tiny mirrors that flash as the water
+   * tilts under them. So this is not a brightness pulse over the artwork: it
+   * is a field of small additive flares, each winking on its own integer
+   * harmonic of the cycle. Every glint therefore completes a whole number of
+   * flashes per loop and the field is bit-identical at the boundary.
+   *
+   * Positions and rates come from a hash of (seed, index), so the pattern is
+   * stable across frames, across reloads and between the preview and the
+   * exported video - but no two seeds produce the same patch of glitter.
+   */
+  private drawSparkle(
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    dest: { dx: number; dy: number; dw: number; dh: number },
+    crop: { x: number; y: number; w: number; h: number },
+    sparkle: SparkleSpec, opts: { scale: number; quality: Quality },
+  ) {
+    const [rx, ry, rw, rh] = sparkle.region;
+    const x0 = (rx - crop.x) / crop.w * dest.dw;
+    const y0 = (ry - crop.y) / crop.h * dest.dh;
+    const w = rw / crop.w * dest.dw, h = rh / crop.h * dest.dh;
+    if (w <= 1 || h <= 1) return;
+    const detail = opts.quality === 'export' ? 1 : 0.62;
+    const count = Math.max(16, Math.min(120, Math.round((w * h) / 3000 * detail)));
+    // A tight power curve turns a sine into a flash: most of the cycle dark,
+    // a brief hot spike at the peak. That is what reads as a glint.
+    const hash = (n: number) => frac(Math.sin(n * 12.9898 + sparkle.seed * 0.017) * 43758.5453);
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < count; i++) {
+      const gx = x0 + hash(i * 2 + 1) * w;
+      const gy = y0 + hash(i * 2 + 2) * h;
+      const offset = hash(i * 3 + 3);
+      // 1..4 flashes per cycle; turbulence widens the spread of rates.
+      const flashes = 1 + Math.floor(hash(i * 5 + 5) * (1 + sparkle.turbulence * 3));
+      const wave = Math.sin(TAU * flashes * (sparkle.phase + offset));
+      const bright = wave > 0 ? wave ** 8 : 0;
+      if (bright < 0.02) continue;
+      const alpha = bright * sparkle.amplitude * 0.92;
+      const r = (1.7 + 3.3 * hash(i * 7 + 7)) * Math.max(0.5, opts.scale) * (0.55 + 0.45 * bright);
+      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+      g.addColorStop(0, `rgba(255,255,255,${alpha})`);
+      g.addColorStop(0.28, `rgba(255,253,244,${alpha * 0.42})`);
+      g.addColorStop(1, 'rgba(255,250,236,0)');
+      ctx.save();
+      ctx.translate(gx, gy);
+      ctx.fillStyle = g;
+      // Core, plus the crossed flare a real specular highlight throws.
+      for (const [sx, sy] of [[r * 2.1, r * 2.1], [r * 6.5, r * 0.42], [r * 0.42, r * 6.5]]) {
+        ctx.save();
+        ctx.scale(sx, sy);
+        ctx.beginPath();
+        ctx.arc(0, 0, 1, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+    ctx.restore();
   }
 
   /** Three soft, independently rising wisps start at the cup's coffee surface. */

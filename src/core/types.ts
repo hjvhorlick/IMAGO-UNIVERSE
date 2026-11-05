@@ -68,7 +68,8 @@ export type AnimationType =
   | 'parallax'
   | 'creature-breathe'
   | 'flutter'
-  | 'swim';
+  | 'swim'
+  | 'sparkle';
 
 export interface AnimationSettings {
   type: AnimationType;
@@ -310,6 +311,7 @@ export const DEFAULT_LOOP: Record<AnimationType, number> = {
   'creature-breathe': 5,
   flutter: 6,
   swim: 10,
+  sparkle: 8,
 };
 
 export const ANIMATION_LABEL: Record<AnimationType, string> = {
@@ -333,4 +335,5 @@ export const ANIMATION_LABEL: Record<AnimationType, string> = {
   'creature-breathe': 'Breathing animal',
   flutter: 'Wing flutter',
   swim: 'Swimming drift',
+  sparkle: 'Water sparkle & glints',
 };

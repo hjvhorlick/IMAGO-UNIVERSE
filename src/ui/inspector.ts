@@ -24,7 +24,7 @@ export interface InspectorCallbacks {
 }
 
 const GENERIC_ANIMS: AnimationType[] = ['float', 'spin', 'pulse', 'grass-wind', 'stem-bend', 'water-flow', 'ripple',
-  'flag-wave', 'creature-breathe', 'flutter', 'swim'];
+  'flag-wave', 'creature-breathe', 'flutter', 'swim', 'sparkle'];
 const BLEND_OPTIONS = [
   { value: 'source-over', label: 'Normal' },
   { value: 'lighter', label: 'Add (glow)' },
@@ -484,6 +484,7 @@ function techniqueHint(t: AnimationType): string {
     case 'creature-breathe': return 'Ribcage rise and fall with a weight shift between the legs, anchored at the feet.';
     case 'flutter': return 'Fast shallow wing beats over a slow wandering flight path.';
     case 'swim': return 'Body-length travelling wave plus a slow drift, as if carried by a current.';
+    case 'sparkle': return 'A field of specular glints that wink in and out across the wet region. Raise Strength for more sparkle, and Organic variation to vary how fast each glint flashes.';
     default: return 'No motion applied.';
   }
 }

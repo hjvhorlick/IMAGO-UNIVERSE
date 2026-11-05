@@ -67,6 +67,16 @@ export interface FallSpec {
   mist: number;        // 0..1.2 big rising & drifting mist plumes
 }
 
+/** Specular glints twinkling across a wet or water surface. */
+export interface SparkleSpec {
+  /** Normalised region within the node that is water or wet. */
+  region: [number, number, number, number];
+  phase: number;          // 0..1 position in the cycle
+  amplitude: number;      // 0..1
+  turbulence: number;     // 0..1 spread of twinkle rates
+  seed: number;
+}
+
 export interface LocalAtmosphereSpec {
   /** Fireplace: x, y, width, height. Steam: origin x/y, width and rise height. */
   region: [number, number, number, number];
@@ -100,6 +110,7 @@ export interface NodeRenderState {
   fall: FallSpec | null;
   flame: LocalAtmosphereSpec | null;
   steam: LocalAtmosphereSpec | null;
+  sparkle: SparkleSpec | null;
   animated: boolean;
 }
 
@@ -107,7 +118,7 @@ export type Quality = 'preview' | 'export';
 
 const IDENTITY: NodeRenderState = {
   offsetX: 0, offsetY: 0, rotation: 0, scale: 1, alpha: 1, glow: 0,
-  warp: null, scroll: null, fall: null, flame: null, steam: null, animated: false,
+  warp: null, scroll: null, fall: null, flame: null, steam: null, sparkle: null, animated: false,
 };
 
 export class AnimationEngine {
@@ -325,6 +336,16 @@ export class AnimationEngine {
         };
         break;
       }
+
+      /* Sunlight on moving water is a set of specular glints winking in and
+         out, not a brightness pulse. Each glint flashes on its own integer
+         harmonic, so the whole field returns exactly to its start. */
+      case 'sparkle':
+        state.sparkle = {
+          region: meta?.rig?.region ?? [0, 0, 1, 1],
+          phase: u, amplitude: amp, turbulence: turb, seed,
+        };
+        break;
 
       case 'parallax':
         state.scale = 1 + Math.sin(TAU * u) * 0.012 * amp + 0.012 * amp;

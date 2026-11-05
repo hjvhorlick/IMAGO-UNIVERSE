@@ -690,6 +690,74 @@ def publish_winter(p: Publisher, src: str, style: str):
                         animations=anims, rig=rig, max_dim=1400, quality=93))
 
 
+def publish_realistic(p: Publisher, src: str, style: str):
+    """An ultra-realistic water collection - photographic, not painterly.
+
+    Water is blue-green and its highlights are white, so a magenta key
+    separates it cleanly where a blue key would dissolve the water itself.
+    """
+    R = os.path.join(src, "style-realistic")
+    bend = {"type": "bend", "anchor": [0.5, 1.0], "stiffness": 0.18, "gusts": 4}
+
+    def bg(name: str) -> Image.Image:
+        return Image.open(os.path.join(R, f"bg-{name}.png")).convert("RGB").convert("RGBA")
+
+    def obj(name: str) -> Image.Image:
+        return clean_edges(autocrop(key_magenta(Image.open(os.path.join(R, f"{name}.png")))))
+
+    for aid, name, img, themes, tags, region in [
+        ("clearwater-lake", "Clearwater Lake", bg("clearwater-lake"), ["water", "forest"],
+         ["background", "vista", "lake", "clear water", "photoreal"], [0.0, 0.34, 1.0, 0.66]),
+        ("forest-stream", "Forest Stream", bg("forest-stream"), ["water", "forest"],
+         ["background", "vista", "stream", "caustics", "photoreal"], [0.0, 0.22, 1.0, 0.78]),
+    ]:
+        p.publish(Asset(f"{style}.background.{aid}", name, style, "background", "nature", img,
+                        themes=themes + ["photoreal"], tags=tags, depth=0.0, default_scale=1.0,
+                        animations=["water-shimmer", "sparkle", "cloud-drift", "parallax"],
+                        rig={"type": "background", "region": region},
+                        notes="Photographic clear water with refraction and caustics.",
+                        max_dim=1920, quality=93))
+
+    for aid, name, img, cat, themes, tags, depth, scale, region, anims in [
+        ("water-rocks", "Rocks in Clear Water", obj("mid-water-rocks"), "rocks",
+         ["water", "forest"], ["rocks", "granite", "wet", "ripples", "photoreal"], 0.56, 0.46,
+         [0.0, 0.42, 1.0, 0.58], ["water-shimmer", "sparkle"]),
+        ("driftwood", "Half-Submerged Driftwood", obj("mid-driftwood"), "nature",
+         ["water", "forest"], ["driftwood", "wood", "refraction", "photoreal"], 0.54, 0.44,
+         [0.0, 0.30, 1.0, 0.70], ["water-shimmer", "sparkle"]),
+        ("lily-pads", "Water Lily Pads", obj("mid-lily-pads"), "plants",
+         ["water", "garden"], ["lily", "pads", "floating", "pond", "photoreal"], 0.58, 0.40,
+         [0.0, 0.28, 1.0, 0.72], ["float", "water-shimmer", "sparkle"]),
+    ]:
+        p.publish(Asset(f"{style}.middle.{aid}", name, style, "middle", cat, img,
+                        themes=themes + ["photoreal"], tags=tags, depth=depth, default_scale=scale,
+                        animations=anims, rig={"type": "water", "region": region},
+                        max_dim=1600, quality=94))
+
+    for aid, name, img, cat, themes, tags, depth, scale, anims, rig in [
+        ("water-surface", "Clear Water Surface", obj("fg-water-surface"), "water",
+         ["water"], ["water", "surface", "sparkle", "ripples", "close-up", "photoreal"],
+         0.94, 0.46, ["sparkle", "water-flow", "water-shimmer"], {"type": "water", "region": [0, 0, 1, 1]}),
+        ("shallow-ripples", "Shallow Ripples and Caustics", obj("fg-shallow-ripples"), "water",
+         ["water"], ["water", "caustics", "pebbles", "ripples", "close-up", "photoreal"],
+         0.93, 0.44, ["sparkle", "water-flow"], {"type": "water", "region": [0, 0, 1, 1]}),
+        ("river-stones", "Wet River Stones", obj("fg-river-stones"), "rocks",
+         ["water", "forest"], ["stones", "pebbles", "wet", "glistening", "photoreal"],
+         0.90, 0.34, ["sparkle"], {"type": "water", "region": [0, 0, 1, 1]}),
+        ("reeds", "Reeds at the Water's Edge", obj("fg-reeds"), "plants",
+         ["water", "forest"], ["reeds", "rushes", "waterside", "photoreal"],
+         0.89, 0.34, ["grass-wind"], bend),
+        ("water-droplets", "Water Droplets on Stone", obj("fg-water-droplets"), "water",
+         ["water", "garden"], ["droplets", "dew", "macro", "stone", "photoreal"],
+         0.95, 0.38, ["sparkle"], {"type": "water", "region": [0, 0, 1, 1]}),
+    ]:
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", cat, img,
+                        themes=themes + ["photoreal"], tags=tags, depth=depth, default_scale=scale,
+                        animations=anims, rig=rig,
+                        notes="Photographic water texture; sparkle adds specular glints.",
+                        max_dim=1600, quality=95))
+
+
 def build(src: str, out: str) -> dict:
     p = Publisher(out)
     S = os.path.join(src, "style-fantasy")
@@ -1292,6 +1360,11 @@ def build(src: str, out: str) -> dict:
     # ---------------- style: winter (independently painted) ---------------
     # Every other look is a grade of the fantasy plates. Winter is painted
     # from its own plates, which is the only honest way to get snow.
+    # ---------------- style: realistic (photographic water) ---------------
+    # A different brief entirely: true water optics instead of painted fantasy.
+    R = "realistic"
+    publish_realistic(p, src, R)
+
     W = "winter"
     publish_winter(p, src, W)
     # A room's walls and furniture have no season, so the interiors are shared
@@ -1358,6 +1431,25 @@ def build(src: str, out: str) -> dict:
                 "structure": f"{A}.middle.harvest-bridge",
                 "plant": f"{A}.foreground.autumn-fern",
                 "ground": f"{A}.foreground.autumn-grass",
+            },
+            "complete": True,
+        },
+        {
+            "id": R,
+            "name": "Clearwater",
+            "subtitle": "Ultra-realistic",
+            "description": "Photographic realism rather than painted fantasy: true water optics "
+                           "with refraction, caustics on the bed and specular sparkle on the "
+                           "surface. Painted from its own plates. Ships no room interiors - a "
+                           "photoreal room needs photographing, not recolouring.",
+            "swatches": ["#07222b", "#0f5b6b", "#3fa7b5", "#9fd8dd", "#f2fbff"],
+            "lighting": "upper-left",
+            "reference": {
+                "background": f"{R}.background.clearwater-lake",
+                "tree": f"{R}.middle.water-rocks",
+                "structure": f"{R}.middle.driftwood",
+                "plant": f"{R}.foreground.reeds",
+                "ground": f"{R}.foreground.river-stones",
             },
             "complete": True,
         },

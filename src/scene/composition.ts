@@ -144,7 +144,10 @@ export function autoCompose(scene: Scene, library: AssetLibrary, opts: ComposeOp
   const heroSide = waterfallHero || openWaterHero
     ? (r() > 0.5 ? 0.08 : 0.92)
     : (r() > 0.5 ? 0.22 : 0.78);
-  const hero = pick(trees);
+  // A look does not have to own every category - Clearwater has no trees at
+  // all. Fall back to whatever that layer offers rather than composing a
+  // near-empty scene.
+  const hero = pick(trees) ?? pick(mid);
   if (hero && !locked.some((n) => n.layer === 'middle' && library.get(n.assetId)?.category === 'trees')) {
     place(hero, heroSide, 0.42, 0.6);
   }
@@ -158,7 +161,7 @@ export function autoCompose(scene: Scene, library: AssetLibrary, opts: ComposeOp
   // A bridge or pavilion across the impact line defeats the entire waterfall
   // focal point. Omit structures in automatic waterfall showcases.
   if (opts.structures && !waterfallHero) {
-    const s = pick(structures);
+    const s = pick(structures) ?? pick(mid);
     if (s && !locked.some((n) => library.get(n.assetId)?.category === 'structures')) {
       const sx = watersideHero ? 0.5 : sanctuaryHero ? (heroSide > 0.5 ? 0.18 : 0.82)
         : placedWater ? (heroSide > 0.5 ? 0.62 : 0.38) : (heroSide > 0.5 ? 0.34 : 0.66);
@@ -168,7 +171,7 @@ export function autoCompose(scene: Scene, library: AssetLibrary, opts: ComposeOp
   }
   const extraTrees = waterfallHero || openWaterHero ? 0 : Math.round(1 * mult);
   for (let i = 0; i < extraTrees; i++) {
-    const t = pick(trees);
+    const t = pick(trees) ?? pick(mid);
     if (!t) break;
     const x = 0.1 + r() * 0.8;
     const depth = 0.2 + r() * 0.2;
@@ -193,9 +196,12 @@ export function autoCompose(scene: Scene, library: AssetLibrary, opts: ComposeOp
   const fgCount = Math.round((6 + opts.foreground * 12) * mult * (sanctuaryHero ? 0.45 : 1));
   for (let i = 0; i < fgCount; i++) {
     const roll = r();
-    const meta = roll < 0.5 ? pick(grasses)
-      : roll < 0.68 ? pick(flowers)
-        : roll < 0.88 ? pick(plants) : pick(ground);
+    // Thin category coverage gets the wider pool at half density, so a small
+    // look still composes without burying the scene in repeated plates.
+    const pickOrFallback = (list: typeof grasses) => pick(list) ?? (r() < 0.5 ? pick(fg) : undefined);
+    const meta = roll < 0.5 ? pickOrFallback(grasses)
+      : roll < 0.68 ? pickOrFallback(flowers)
+        : roll < 0.88 ? pickOrFallback(plants) : pickOrFallback(ground);
     if (!meta) continue;
     // Bias towards the edges so the middle of the scene stays readable, and
     // let a good share of them run off the canvas entirely.

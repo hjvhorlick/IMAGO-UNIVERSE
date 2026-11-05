@@ -69,6 +69,28 @@
    "complete": true
   },
   {
+   "id": "realistic",
+   "name": "Clearwater",
+   "subtitle": "Ultra-realistic",
+   "description": "Photographic realism rather than painted fantasy: true water optics with refraction, caustics on the bed and specular sparkle on the surface. Painted from its own plates. Ships no room interiors - a photoreal room needs photographing, not recolouring.",
+   "swatches": [
+    "#07222b",
+    "#0f5b6b",
+    "#3fa7b5",
+    "#9fd8dd",
+    "#f2fbff"
+   ],
+   "lighting": "upper-left",
+   "reference": {
+    "background": "realistic.background.clearwater-lake",
+    "tree": "realistic.middle.water-rocks",
+    "structure": "realistic.middle.driftwood",
+    "plant": "realistic.foreground.reeds",
+    "ground": "realistic.foreground.river-stones"
+   },
+   "complete": true
+  },
+  {
    "id": "winter",
    "name": "Frostfall",
    "subtitle": "Painted winter",
@@ -13386,6 +13408,597 @@
    "variants": [],
    "notes": "Transparent window opening reveals the current composed scene behind this foreground room overlay.",
    "bytes": 322490
+  },
+  {
+   "id": "realistic.background.clearwater-lake",
+   "name": "Clearwater Lake",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "lake",
+    "clear water",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/clearwater-lake.webp",
+   "thumb": "realistic/thumbs/clearwater-lake.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#90b0d0",
+    "#303030",
+    "#505050",
+    "#707070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle",
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.34,
+     1.0,
+     0.66
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic clear water with refraction and caustics.",
+   "bytes": 405554
+  },
+  {
+   "id": "realistic.background.forest-stream",
+   "name": "Forest Stream",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "stream",
+    "caustics",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/forest-stream.webp",
+   "thumb": "realistic/thumbs/forest-stream.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#101010",
+    "#505030",
+    "#707050",
+    "#909070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle",
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.22,
+     1.0,
+     0.78
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic clear water with refraction and caustics.",
+   "bytes": 437652
+  },
+  {
+   "id": "realistic.middle.water-rocks",
+   "name": "Rocks in Clear Water",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "rocks",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "rocks",
+    "granite",
+    "wet",
+    "ripples",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/water-rocks.webp",
+   "thumb": "realistic/thumbs/water-rocks.webp",
+   "format": "image/webp",
+   "width": 1332,
+   "height": 675,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#101010",
+    "#505050",
+    "#909090",
+    "#b09070"
+   ],
+   "defaultScale": 0.46,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0.0,
+     0.42,
+     1.0,
+     0.58
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 572350
+  },
+  {
+   "id": "realistic.middle.driftwood",
+   "name": "Half-Submerged Driftwood",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "nature",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "driftwood",
+    "wood",
+    "refraction",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/driftwood.webp",
+   "thumb": "realistic/thumbs/driftwood.webp",
+   "format": "image/webp",
+   "width": 1290,
+   "height": 629,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#d0d0d0",
+    "#909090",
+    "#505050",
+    "#707070"
+   ],
+   "defaultScale": 0.44,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0.0,
+     0.3,
+     1.0,
+     0.7
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 445450
+  },
+  {
+   "id": "realistic.middle.lily-pads",
+   "name": "Water Lily Pads",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "plants",
+   "themes": [
+    "water",
+    "garden",
+    "photoreal"
+   ],
+   "tags": [
+    "lily",
+    "pads",
+    "floating",
+    "pond",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/lily-pads.webp",
+   "thumb": "realistic/thumbs/lily-pads.webp",
+   "format": "image/webp",
+   "width": 1307,
+   "height": 675,
+   "alpha": true,
+   "depth": 0.58,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#90b090",
+    "#90b070",
+    "#90d090",
+    "#709090",
+    "#70b070"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "float",
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0.0,
+     0.28,
+     1.0,
+     0.72
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 472278
+  },
+  {
+   "id": "realistic.foreground.water-surface",
+   "name": "Clear Water Surface",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "water",
+   "themes": [
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "water",
+    "surface",
+    "sparkle",
+    "ripples",
+    "close-up",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/water-surface.webp",
+   "thumb": "realistic/thumbs/water-surface.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.94,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0d0d0",
+    "#90b0d0",
+    "#707070",
+    "#707050",
+    "#909090"
+   ],
+   "defaultScale": 0.46,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "sparkle",
+    "water-flow",
+    "water-shimmer"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic water texture; sparkle adds specular glints.",
+   "bytes": 481372
+  },
+  {
+   "id": "realistic.foreground.shallow-ripples",
+   "name": "Shallow Ripples and Caustics",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "water",
+   "themes": [
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "water",
+    "caustics",
+    "pebbles",
+    "ripples",
+    "close-up",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/shallow-ripples.webp",
+   "thumb": "realistic/thumbs/shallow-ripples.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.93,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505050",
+    "#707070",
+    "#303030",
+    "#707050",
+    "#909070"
+   ],
+   "defaultScale": 0.44,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "sparkle",
+    "water-flow"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic water texture; sparkle adds specular glints.",
+   "bytes": 567996
+  },
+  {
+   "id": "realistic.foreground.river-stones",
+   "name": "Wet River Stones",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "rocks",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "stones",
+    "pebbles",
+    "wet",
+    "glistening",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/river-stones.webp",
+   "thumb": "realistic/thumbs/river-stones.webp",
+   "format": "image/webp",
+   "width": 1197,
+   "height": 676,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#505030",
+    "#101010",
+    "#505050",
+    "#b0b0b0"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "sparkle"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic water texture; sparkle adds specular glints.",
+   "bytes": 499024
+  },
+  {
+   "id": "realistic.foreground.reeds",
+   "name": "Reeds at the Water's Edge",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "reeds",
+    "rushes",
+    "waterside",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/reeds.webp",
+   "thumb": "realistic/thumbs/reeds.webp",
+   "format": "image/webp",
+   "width": 1055,
+   "height": 749,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#507030",
+    "#707050",
+    "#303010",
+    "#709050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Photographic water texture; sparkle adds specular glints.",
+   "bytes": 461840
+  },
+  {
+   "id": "realistic.foreground.water-droplets",
+   "name": "Water Droplets on Stone",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "water",
+   "themes": [
+    "water",
+    "garden",
+    "photoreal"
+   ],
+   "tags": [
+    "droplets",
+    "dew",
+    "macro",
+    "stone",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/water-droplets.webp",
+   "thumb": "realistic/thumbs/water-droplets.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.95,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505050",
+    "#505070",
+    "#707070",
+    "#707090",
+    "#507070"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "sparkle"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic water texture; sparkle adds specular glints.",
+   "bytes": 490622
   },
   {
    "id": "winter.background.frostfall-valley",
