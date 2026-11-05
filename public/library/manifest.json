@@ -67,6 +67,28 @@
     "ground": "autumn.foreground.autumn-grass"
    },
    "complete": true
+  },
+  {
+   "id": "winter",
+   "name": "Frostfall",
+   "subtitle": "Painted winter",
+   "description": "An independently painted winter collection, not a recolouring: snow-laden conifers, frosted bare branches, ice and low cold light. Outdoor artwork is painted from its own plates; interiors are shared with the Enchanted look because a room has no season.",
+   "swatches": [
+    "#1b2b3a",
+    "#3f5f7a",
+    "#8fb2c9",
+    "#d7e6ef",
+    "#ffffff"
+   ],
+   "lighting": "upper-left",
+   "reference": {
+    "background": "winter.background.frostfall-valley",
+    "tree": "winter.middle.snow-pine",
+    "structure": "winter.middle.ice-pavilion",
+    "plant": "winter.foreground.snowdrops",
+    "ground": "winter.foreground.snow-drift"
+   },
+   "complete": true
   }
  ],
  "assets": [
@@ -13364,6 +13386,1542 @@
    "variants": [],
    "notes": "Transparent window opening reveals the current composed scene behind this foreground room overlay.",
    "bytes": 322490
+  },
+  {
+   "id": "winter.background.frostfall-valley",
+   "name": "Frostfall Valley",
+   "style": "winter",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "forest",
+    "water",
+    "winter"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "snow",
+    "valley"
+   ],
+   "origin": "painted",
+   "file": "winter/frostfall-valley.webp",
+   "thumb": "winter/thumbs/frostfall-valley.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#7090b0",
+    "#505070",
+    "#b0d0d0",
+    "#507090",
+    "#b0b0d0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 303524
+  },
+  {
+   "id": "winter.background.frozen-lake",
+   "name": "Frozen Lake",
+   "style": "winter",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "water",
+    "forest",
+    "winter"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "ice",
+    "lake"
+   ],
+   "origin": "painted",
+   "file": "winter/frozen-lake.webp",
+   "thumb": "winter/thumbs/frozen-lake.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#303050",
+    "#305070",
+    "#9090b0",
+    "#707090"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 239646
+  },
+  {
+   "id": "winter.middle.snow-pine",
+   "name": "Snow-Laden Pine",
+   "style": "winter",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "forest",
+    "meadow",
+    "winter"
+   ],
+   "tags": [
+    "pine",
+    "conifer",
+    "snow",
+    "tree"
+   ],
+   "origin": "painted",
+   "file": "winter/snow-pine.webp",
+   "thumb": "winter/thumbs/snow-pine.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909090",
+    "#707070",
+    "#b0b0b0",
+    "#505050",
+    "#709090"
+   ],
+   "defaultScale": 0.55,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.9,
+    "stiffness": 0.86,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 105660
+  },
+  {
+   "id": "winter.middle.bare-winter-tree",
+   "name": "Frosted Bare Tree",
+   "style": "winter",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "forest",
+    "meadow",
+    "winter"
+   ],
+   "tags": [
+    "tree",
+    "bare",
+    "frost",
+    "winter"
+   ],
+   "origin": "painted",
+   "file": "winter/bare-winter-tree.webp",
+   "thumb": "winter/thumbs/bare-winter-tree.webp",
+   "format": "image/webp",
+   "width": 1229,
+   "height": 758,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#b0b0d0",
+    "#9090b0",
+    "#d0d0d0",
+    "#909090"
+   ],
+   "defaultScale": 0.5,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.45,
+    "stiffness": 0.55,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 679794
+  },
+  {
+   "id": "winter.middle.ice-pavilion",
+   "name": "Frostfall Pavilion",
+   "style": "winter",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "forest",
+    "garden",
+    "winter"
+   ],
+   "tags": [
+    "pavilion",
+    "shelter",
+    "icicles",
+    "snow"
+   ],
+   "origin": "painted",
+   "file": "winter/ice-pavilion.webp",
+   "thumb": "winter/thumbs/ice-pavilion.webp",
+   "format": "image/webp",
+   "width": 1225,
+   "height": 747,
+   "alpha": true,
+   "depth": 0.55,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0f0",
+    "#303030",
+    "#505050",
+    "#d0f0f0",
+    "#d0d0f0"
+   ],
+   "defaultScale": 0.45,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "lantern-glow"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 310510
+  },
+  {
+   "id": "winter.foreground.snow-drift",
+   "name": "Snow Drift",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "ground",
+   "themes": [
+    "meadow",
+    "forest",
+    "water",
+    "garden",
+    "winter"
+   ],
+   "tags": [
+    "snow",
+    "drift",
+    "ground"
+   ],
+   "origin": "painted",
+   "file": "winter/snow-drift.webp",
+   "thumb": "winter/thumbs/snow-drift.webp",
+   "format": "image/webp",
+   "width": 1313,
+   "height": 458,
+   "alpha": true,
+   "depth": 0.95,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0f0",
+    "#b0d0d0",
+    "#d0d0f0",
+    "#b0b0d0",
+    "#d0f0f0"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 74764
+  },
+  {
+   "id": "winter.foreground.snowdrops",
+   "name": "Snowdrops",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "meadow",
+    "forest",
+    "garden",
+    "winter"
+   ],
+   "tags": [
+    "snowdrop",
+    "white",
+    "flower",
+    "winter"
+   ],
+   "origin": "painted",
+   "file": "winter/snowdrops.webp",
+   "thumb": "winter/thumbs/snowdrops.webp",
+   "format": "image/webp",
+   "width": 1400,
+   "height": 764,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#507050",
+    "#709070",
+    "#f0f0f0",
+    "#909070"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 293240
+  },
+  {
+   "id": "winter.foreground.frost-grasses",
+   "name": "Frost Grasses",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "grass",
+   "themes": [
+    "meadow",
+    "forest",
+    "winter"
+   ],
+   "tags": [
+    "grass",
+    "frost",
+    "winter"
+   ],
+   "origin": "painted",
+   "file": "winter/frost-grasses.webp",
+   "thumb": "winter/thumbs/frost-grasses.webp",
+   "format": "image/webp",
+   "width": 674,
+   "height": 695,
+   "alpha": true,
+   "depth": 0.93,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#d0b0b0",
+    "#b0b090",
+    "#b09070",
+    "#f0f0f0"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 338882
+  },
+  {
+   "id": "winter.foreground.winter-berries",
+   "name": "Winter Berry Branch",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "forest",
+    "garden",
+    "winter"
+   ],
+   "tags": [
+    "holly",
+    "berries",
+    "red",
+    "winter"
+   ],
+   "origin": "painted",
+   "file": "winter/winter-berries.webp",
+   "thumb": "winter/thumbs/winter-berries.webp",
+   "format": "image/webp",
+   "width": 1333,
+   "height": 676,
+   "alpha": true,
+   "depth": 0.92,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507050",
+    "#305010",
+    "#709070",
+    "#507030",
+    "#305030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 244050
+  },
+  {
+   "id": "winter.foreground.frost-fern",
+   "name": "Frost Fern",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "forest",
+    "garden",
+    "winter"
+   ],
+   "tags": [
+    "fern",
+    "frost",
+    "winter"
+   ],
+   "origin": "painted",
+   "file": "winter/frost-fern.webp",
+   "thumb": "winter/thumbs/frost-fern.webp",
+   "format": "image/webp",
+   "width": 1326,
+   "height": 666,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0d0d0",
+    "#d0d0f0",
+    "#90b0d0",
+    "#b0b0d0",
+    "#d0f0f0"
+   ],
+   "defaultScale": 0.28,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 302702
+  },
+  {
+   "id": "winter.foreground.hearth-reading-room",
+   "name": "Hearth Reading Room",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "fireplace"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "hearth"
+   ],
+   "origin": "painted",
+   "file": "winter/hearth-reading-room.webp",
+   "thumb": "winter/thumbs/hearth-reading-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#705030",
+    "#905030",
+    "#b07030",
+    "#703010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.165,
+     0.66,
+     0.085,
+     0.14
+    ],
+    "steamRegion": [
+     0.91,
+     0.73,
+     0.045,
+     0.16
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+   "bytes": 222184
+  },
+  {
+   "id": "winter.foreground.window-seat-room",
+   "name": "Window Seat Room",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "fireplace"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "hearth"
+   ],
+   "origin": "painted",
+   "file": "winter/window-seat-room.webp",
+   "thumb": "winter/thumbs/window-seat-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#301010",
+    "#705030",
+    "#703010",
+    "#905030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.755,
+     0.515,
+     0.1,
+     0.19
+    ],
+    "steamRegion": [
+     0.64,
+     0.77,
+     0.045,
+     0.16
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+   "bytes": 260442
+  },
+  {
+   "id": "winter.foreground.modern-penthouse",
+   "name": "Modern Penthouse View",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "modern",
+    "interior",
+    "window"
+   ],
+   "tags": [
+    "modern",
+    "penthouse",
+    "large windows",
+    "living room"
+   ],
+   "origin": "painted",
+   "file": "winter/modern-penthouse.webp",
+   "thumb": "winter/thumbs/modern-penthouse.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#d0d0d0",
+    "#d0b0b0",
+    "#909070",
+    "#b0b090"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+   "bytes": 248962
+  },
+  {
+   "id": "winter.foreground.future-sky-lounge",
+   "name": "Futuristic Sky Lounge",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "futuristic",
+    "interior",
+    "window"
+   ],
+   "tags": [
+    "future",
+    "modern",
+    "large windows",
+    "lounge"
+   ],
+   "origin": "painted",
+   "file": "winter/future-sky-lounge.webp",
+   "thumb": "winter/thumbs/future-sky-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909090",
+    "#b0b0b0",
+    "#707070",
+    "#505050",
+    "#507070"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+   "bytes": 267120
+  },
+  {
+   "id": "winter.foreground.timber-great-room",
+   "name": "Contemporary Timber Great Room",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "wood beams",
+    "wooden door",
+    "tile floor",
+    "fireplace"
+   ],
+   "origin": "painted",
+   "file": "winter/timber-great-room.webp",
+   "thumb": "winter/thumbs/timber-great-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#b09070",
+    "#d0d0d0",
+    "#b09090",
+    "#907050"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.082,
+     0.68,
+     0.07,
+     0.1
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Present-day tiled great room with varnished beams, an animated fireplace and a transparent window.",
+   "bytes": 198130
+  },
+  {
+   "id": "winter.foreground.oak-window-lounge",
+   "name": "Contemporary Oak Window Lounge",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "oak beams",
+    "wooden door",
+    "tile floor",
+    "lounge"
+   ],
+   "origin": "painted",
+   "file": "winter/oak-window-lounge.webp",
+   "thumb": "winter/thumbs/oak-window-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b090",
+    "#d0d0d0",
+    "#b09090",
+    "#d0b0b0",
+    "#b0b0b0"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Present-day oak-beam room with tiled floor and a transparent window onto the composed world.",
+   "bytes": 186342
+  },
+  {
+   "id": "winter.foreground.brick-timber-corner-room",
+   "name": "Asymmetric Brick and Timber Room",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "brick",
+    "wood beams",
+    "slanted roof",
+    "corner windows",
+    "tile floor"
+   ],
+   "origin": "painted",
+   "file": "winter/brick-timber-corner-room.webp",
+   "thumb": "winter/thumbs/brick-timber-corner-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#705050",
+    "#503030",
+    "#703010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Asymmetric brick-and-wood room with a sloping roof and two transparent windows on adjacent walls.",
+   "bytes": 275376
+  },
+  {
+   "id": "winter.foreground.modern-sectional",
+   "name": "Modern Modular Sectional",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern"
+   ],
+   "tags": [
+    "modern",
+    "sofa",
+    "furniture",
+    "sectional"
+   ],
+   "origin": "painted",
+   "file": "winter/modern-sectional.webp",
+   "thumb": "winter/thumbs/modern-sectional.webp",
+   "format": "image/webp",
+   "width": 1226,
+   "height": 421,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#f0f0d0",
+    "#909070",
+    "#907070",
+    "#b09090"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 94708
+  },
+  {
+   "id": "winter.foreground.future-lounge-chair",
+   "name": "Futuristic Lounge Chair",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "futuristic"
+   ],
+   "tags": [
+    "future",
+    "modern",
+    "chair",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "winter/future-lounge-chair.webp",
+   "thumb": "winter/thumbs/future-lounge-chair.webp",
+   "format": "image/webp",
+   "width": 785,
+   "height": 679,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#b0b0b0",
+    "#909090",
+    "#707070",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.25,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 61912
+  },
+  {
+   "id": "winter.foreground.contemporary-oak-door",
+   "name": "Contemporary Oak Door",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "door",
+    "wood",
+    "oak",
+    "modern"
+   ],
+   "origin": "painted",
+   "file": "winter/contemporary-oak-door.webp",
+   "thumb": "winter/thumbs/contemporary-oak-door.webp",
+   "format": "image/webp",
+   "width": 327,
+   "height": 686,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07050",
+    "#d09050",
+    "#d09070",
+    "#b09050",
+    "#b07030"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 24642
+  },
+  {
+   "id": "winter.foreground.contemporary-oak-chair",
+   "name": "Contemporary Oak Lounge Chair",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "chair",
+    "wood",
+    "oak",
+    "modern",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "winter/contemporary-oak-chair.webp",
+   "thumb": "winter/thumbs/contemporary-oak-chair.webp",
+   "format": "image/webp",
+   "width": 848,
+   "height": 684,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#907050",
+    "#d0b090",
+    "#d0d0b0",
+    "#b0b090"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 117674
+  },
+  {
+   "id": "winter.foreground.contemporary-oak-table",
+   "name": "Contemporary Oak Coffee Table",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "table",
+    "wood",
+    "oak",
+    "coffee",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "winter/contemporary-oak-table.webp",
+   "thumb": "winter/thumbs/contemporary-oak-table.webp",
+   "format": "image/webp",
+   "width": 1172,
+   "height": 567,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#d09070",
+    "#705030",
+    "#905030",
+    "#b07050"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 40084
+  },
+  {
+   "id": "winter.foreground.oak-bookshelf",
+   "name": "Contemporary Oak Bookshelf",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "shelves",
+    "books",
+    "wood",
+    "oak",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "winter/oak-bookshelf.webp",
+   "thumb": "winter/thumbs/oak-bookshelf.webp",
+   "format": "image/webp",
+   "width": 485,
+   "height": 667,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#905030",
+    "#b07050",
+    "#703010"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 55980
+  },
+  {
+   "id": "winter.foreground.indoor-fig",
+   "name": "Potted Fiddle-Leaf Fig",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "plant"
+   ],
+   "tags": [
+    "plant",
+    "pot",
+    "foliage",
+    "green",
+    "decor"
+   ],
+   "origin": "painted",
+   "file": "winter/indoor-fig.webp",
+   "thumb": "winter/thumbs/indoor-fig.webp",
+   "format": "image/webp",
+   "width": 441,
+   "height": 692,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305010",
+    "#507030",
+    "#103010",
+    "#303010",
+    "#505010"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 55678
+  },
+  {
+   "id": "winter.foreground.oak-floor-lamp",
+   "name": "Contemporary Oak Floor Lamp",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "lamp",
+    "wood",
+    "oak",
+    "lighting",
+    "decor"
+   ],
+   "origin": "painted",
+   "file": "winter/oak-floor-lamp.webp",
+   "thumb": "winter/thumbs/oak-floor-lamp.webp",
+   "format": "image/webp",
+   "width": 218,
+   "height": 700,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#d0b090",
+    "#f0f0d0",
+    "#d0d0b0",
+    "#b09050"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 18020
+  },
+  {
+   "id": "winter.foreground.modern-fireplace",
+   "name": "Modern Linear Fireplace",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "fireplace"
+   ],
+   "tags": [
+    "modern",
+    "fireplace",
+    "fire",
+    "linear"
+   ],
+   "origin": "painted",
+   "file": "winter/modern-fireplace.webp",
+   "thumb": "winter/thumbs/modern-fireplace.webp",
+   "format": "image/webp",
+   "width": 1133,
+   "height": 592,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#b0b0b0",
+    "#d0d0d0",
+    "#303030",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.25,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.2,
+     0.45,
+     0.58,
+     0.25
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable contemporary fireplace with a locally animated painted fire.",
+   "bytes": 84352
+  },
+  {
+   "id": "winter.foreground.stone-fireplace",
+   "name": "Stone Fireplace",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "fireplace",
+    "hearth"
+   ],
+   "tags": [
+    "fireplace",
+    "fire",
+    "stone"
+   ],
+   "origin": "painted",
+   "file": "winter/stone-fireplace.webp",
+   "thumb": "winter/thumbs/stone-fireplace.webp",
+   "format": "image/webp",
+   "width": 929,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#303010",
+    "#301010",
+    "#503030",
+    "#503010"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.4,
+     0.49,
+     0.2,
+     0.29
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable stone fireplace with a locally animated painted fire.",
+   "bytes": 170654
+  },
+  {
+   "id": "winter.foreground.coffee-cup",
+   "name": "Steaming Coffee Cup",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "coffee",
+    "comfort"
+   ],
+   "tags": [
+    "cup",
+    "coffee",
+    "steam",
+    "table"
+   ],
+   "origin": "painted",
+   "file": "winter/coffee-cup.webp",
+   "thumb": "winter/thumbs/coffee-cup.webp",
+   "format": "image/webp",
+   "width": 716,
+   "height": 569,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b090",
+    "#f0d0b0",
+    "#b09070",
+    "#301010",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.12,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "coffee-steam"
+   ],
+   "rig": {
+    "type": "steam",
+    "region": [
+     0.47,
+     0.14,
+     0.4,
+     0.85
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable cup with soft animated steam rising from the coffee.",
+   "bytes": 105664
+  },
+  {
+   "id": "winter.foreground.lounge-window",
+   "name": "Frostfall Lounge Window View",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "view frame"
+   ],
+   "origin": "painted",
+   "file": "winter/lounge-window.webp",
+   "thumb": "winter/thumbs/lounge-window.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#703010",
+    "#705030",
+    "#707030",
+    "#905010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Transparent window opening reveals the current composed scene behind this foreground room overlay.",
+   "bytes": 332122
   }
  ]
 }

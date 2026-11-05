@@ -26,7 +26,7 @@ animation engine, Loop Manager and effect library were exercised headlessly.
 | Still export produces a real file | 640×360 PNG > 5 kB asserted in the UI test |
 | Projects round-trip | scene → ZIP → scene, including embedded asset bytes |
 
-`npm test` → **150 passed** across 14 files. `npm run typecheck` → clean under `strict`,
+`npm test` → **155 passed** across 15 files. `npm run typecheck` → clean under `strict`,
 `noUnusedLocals` and `noUnusedParameters`. `npm run build` → succeeds.
 
 ## What was NOT verified — video export
@@ -61,11 +61,13 @@ rather than a broken file — but that error path itself is untested against a r
 
 ## Known functional constraints
 
-**Library size.** 252 assets across 3 styles (28 backgrounds / 72 middle / 152 foreground), which
+**Library size.** 281 assets across 4 styles (30 backgrounds / 75 middle / 176 foreground), which
 exceeds the brief's starter targets. Fairy, Norse, Chinese-inspired, Japanese-inspired, celestial
 observatory, waterside and lotus sanctuary vistas, landmarks and foreground accents have Enchanted, Moonlit and Autumn
 palette variants, but the
-latter two remain colour grades rather than independently painted styles. The general fern, bush,
+latter two remain colour grades rather than independently painted styles. Frostfall is the exception: it is
+painted from its own plates, though it is a small collection (10 outdoor pieces) and its room interiors are
+shared with the Enchanted look rather than repainted, since a room has no season. The general fern, bush,
 ivy and pebble ground covers are still procedurally assembled from foliage and rock chips; the story-
 specific foreground accents are painted plates. This is enough to build varied scenes but is not a
 large commercial library. Adding a genuinely independent style means

@@ -273,6 +273,18 @@ async function main() {
   fs.writeFileSync(path.join(OUT, 'wildlife-scene.png'), wildCv.toBuffer('image/png'));
   console.log(`rendered ${CREATURE_PLACEMENTS.length} independently placeable creatures and wildlife-scene.png`);
 
+  // The winter look is painted, not graded, so it gets its own composed sample.
+  const winter = createScene('winter');
+  autoCompose(winter, lib, { ...DEFAULT_COMPOSE, seed: 99 });
+  await images.ensure(winter.nodes.map((n) => n.assetId));
+  loops.invalidate();
+  const winterCv = createCanvas(W, H);
+  comp.render(winterCv.getContext('2d') as never, winter, {
+    scale, quality: 'export', time: 1.2, masterCycle: loops.analyse(winter).master,
+  });
+  fs.writeFileSync(path.join(OUT, 'winter-world.png'), winterCv.toBuffer('image/png'));
+  console.log(`rendered winter-world.png with ${winter.nodes.length} painted winter objects`);
+
   /* ---- acceptance: the master cycle boundary must be pixel-identical ---- */
   const a = renderAt(0).cv.getContext('2d').getImageData(0, 0, W, H).data;
   const b = renderAt(report.master).cv.getContext('2d').getImageData(0, 0, W, H).data;

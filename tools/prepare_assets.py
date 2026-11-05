@@ -624,6 +624,72 @@ def publish_creatures(p: Publisher, src: str, style: str, label: str, transform=
                         max_dim=1500, quality=94))
 
 
+def publish_winter(p: Publisher, src: str, style: str):
+    """A genuinely painted winter collection - not a grade of the fantasy plates.
+
+    Snow is blue-shadowed, so these plates are keyed on magenta: the blue key
+    used for warm petals would erase the snow itself. Plates whose subject is
+    painted against open sky or bare snow key to a wide band of near-zero
+    alpha rather than to clean edges, so those get a crisper matte.
+    """
+    W = os.path.join(src, "style-winter")
+    sway = {"type": "canopy", "anchor": [0.5, 1.0], "canopyStart": 0.66, "stiffness": 0.72, "gusts": 3}
+    bend = {"type": "bend", "anchor": [0.5, 1.0], "stiffness": 0.18, "gusts": 4}
+
+    def bg(name: str) -> Image.Image:
+        # Backgrounds are opaque rectangles: no keying, no alpha channel to key.
+        return Image.open(os.path.join(W, f"bg-{name}.png")).convert("RGB").convert("RGBA")
+
+    def obj(name: str, crisp: tuple | None = None) -> Image.Image:
+        img = clean_edges(autocrop(key_magenta(Image.open(os.path.join(W, f"{name}.png")))))
+        return crisp_alpha(img, *crisp) if crisp else img
+
+    for aid, name, img, themes, tags, depth, scale in [
+        ("frostfall-valley", "Frostfall Valley", bg("frostfall-valley"), ["forest", "water", "winter"],
+         ["background", "vista", "snow", "valley"], 0.0, 1.0),
+        ("frozen-lake", "Frozen Lake", bg("frozen-lake"), ["water", "forest", "winter"],
+         ["background", "vista", "ice", "lake"], 0.0, 1.0),
+    ]:
+        p.publish(Asset(f"{style}.background.{aid}", name, style, "background", "nature", img,
+                        themes=themes, tags=tags, depth=depth, default_scale=scale,
+                        # The water is frozen over: animating it would be wrong.
+                        animations=["cloud-drift", "parallax"], rig={"type": "background"},
+                        max_dim=1920))
+
+    for aid, name, img, cat, themes, tags, depth, scale, anims, rig in [
+        ("snow-pine", "Snow-Laden Pine", obj("mid-snow-pine", (0.25, 0.60)), "trees",
+         ["forest", "meadow", "winter"], ["pine", "conifer", "snow", "tree"], 0.50, 0.55,
+         ["canopy-sway"], {**sway, "canopyStart": 0.90, "stiffness": 0.86}),
+        ("bare-winter-tree", "Frosted Bare Tree", obj("mid-bare-winter-tree", (0.30, 0.70)), "trees",
+         ["forest", "meadow", "winter"], ["tree", "bare", "frost", "winter"], 0.50, 0.50,
+         ["canopy-sway"], {**sway, "canopyStart": 0.45, "stiffness": 0.55}),
+        ("ice-pavilion", "Frostfall Pavilion", obj("mid-ice-pavilion"), "structures",
+         ["forest", "garden", "winter"], ["pavilion", "shelter", "icicles", "snow"], 0.55, 0.45,
+         ["lantern-glow"], {}),
+    ]:
+        p.publish(Asset(f"{style}.middle.{aid}", name, style, "middle", cat, img,
+                        themes=themes, tags=tags, depth=depth, default_scale=scale,
+                        animations=anims, rig=rig, max_dim=1500))
+
+    for aid, name, img, cat, themes, tags, depth, scale, anims, rig in [
+        ("snow-drift", "Snow Drift", obj("fg-snow-drift"), "ground",
+         ["meadow", "forest", "water", "garden", "winter"], ["snow", "drift", "ground"], 0.95, 0.35, [], {}),
+        ("snowdrops", "Snowdrops", obj("fg-snowdrops", (0.45, 0.80)), "flowers",
+         ["meadow", "forest", "garden", "winter"], ["snowdrop", "white", "flower", "winter"], 0.90, 0.26,
+         ["stem-bend"], bend),
+        ("frost-grasses", "Frost Grasses", obj("fg-frost-grasses"), "grass",
+         ["meadow", "forest", "winter"], ["grass", "frost", "winter"], 0.93, 0.22, ["grass-wind"], bend),
+        ("winter-berries", "Winter Berry Branch", obj("fg-winter-berries"), "plants",
+         ["forest", "garden", "winter"], ["holly", "berries", "red", "winter"], 0.92, 0.30,
+         ["stem-bend"], bend),
+        ("frost-fern", "Frost Fern", obj("fg-frost-fern"), "plants",
+         ["forest", "garden", "winter"], ["fern", "frost", "winter"], 0.90, 0.28, ["grass-wind"], bend),
+    ]:
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", cat, img,
+                        themes=themes, tags=tags, depth=depth, default_scale=scale,
+                        animations=anims, rig=rig, max_dim=1400, quality=93))
+
+
 def build(src: str, out: str) -> dict:
     p = Publisher(out)
     S = os.path.join(src, "style-fantasy")
@@ -1223,6 +1289,23 @@ def build(src: str, out: str) -> dict:
                     notes="Transparent window opening reveals the current composed scene behind this foreground room overlay.",
                     max_dim=1400))
 
+    # ---------------- style: winter (independently painted) ---------------
+    # Every other look is a grade of the fantasy plates. Winter is painted
+    # from its own plates, which is the only honest way to get snow.
+    W = "winter"
+    publish_winter(p, src, W)
+    # A room's walls and furniture have no season, so the interiors are shared
+    # with the Enchanted look rather than recoloured. Without them the Frostfall
+    # Rooms tab would be empty, and rooms have to be reachable in every look.
+    publish_interiors(W, "", None)
+    p.publish(Asset(f"{W}.foreground.lounge-window", "Frostfall Lounge Window View", W,
+                    "foreground", "interiors", lounge_window,
+                    themes=["interior", "lounge", "window"],
+                    tags=["room", "window", "living room", "view frame"], depth=0.98,
+                    default_scale=0.82, animations=[], rig={"type": "window-overlay"},
+                    notes="Transparent window opening reveals the current composed scene behind this foreground room overlay.",
+                    max_dim=1400))
+
     # ---------------- style registry --------------------------------------
     styles = [
         {
@@ -1275,6 +1358,25 @@ def build(src: str, out: str) -> dict:
                 "structure": f"{A}.middle.harvest-bridge",
                 "plant": f"{A}.foreground.autumn-fern",
                 "ground": f"{A}.foreground.autumn-grass",
+            },
+            "complete": True,
+        },
+        {
+            "id": W,
+            "name": "Frostfall",
+            "subtitle": "Painted winter",
+            "description": "An independently painted winter collection, not a recolouring: "
+                           "snow-laden conifers, frosted bare branches, ice and low cold light. "
+                           "Outdoor artwork is painted from its own plates; interiors are shared with the "
+"Enchanted look because a room has no season.",
+            "swatches": ["#1b2b3a", "#3f5f7a", "#8fb2c9", "#d7e6ef", "#ffffff"],
+            "lighting": "upper-left",
+            "reference": {
+                "background": f"{W}.background.frostfall-valley",
+                "tree": f"{W}.middle.snow-pine",
+                "structure": f"{W}.middle.ice-pavilion",
+                "plant": f"{W}.foreground.snowdrops",
+                "ground": f"{W}.foreground.snow-drift",
             },
             "complete": True,
         },
