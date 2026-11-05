@@ -90,13 +90,20 @@ beforeAll(() => {
   URL.revokeObjectURL = () => {};
 });
 
-async function mountApp() {
+/**
+ * Mount the app. The app now boots empty, with the world picker open, so by
+ * default this starts the demo world (the legacy tests need effects and objects).
+ * Pass `{ start: null }` to get the bare boot state.
+ */
+async function mountApp(opts: { start?: null | 'composed' | 'demo' } = {}) {
   document.body.innerHTML = '<div id="app"></div><div class="modal-root"></div><div class="toast-root"></div>';
   const { App } = await import('../src/ui/app');
   const app = new App();
   const root = document.getElementById('app')!;
   await app.mount(root);
-  // The shell replaces #app contents, so re-add the overlay roots it expects.
+  if (opts.start !== null) {
+    app.startWorld('enchanted-lake', 'enchanted', '16:9', 'Test world', opts.start ?? 'demo');
+  }
   return app;
 }
 
@@ -121,6 +128,24 @@ const press = (key: string, init: KeyboardEventInit = {}) =>
   window.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
 
 describe('application shell', () => {
+  it('boots with the world picker open and an empty scene', async () => {
+    const app = await mountApp({ start: null });
+    expect(app.store.scene.nodes).toEqual([]);
+    expect(document.querySelector('.modal-root')!.textContent).toMatch(/Choose a world/);
+    expect(document.querySelectorAll('[data-world]').length).toBeGreaterThan(10);
+    app.dispose();
+  }, 60_000);
+
+  it('starting a world leaves only its background in the scene', async () => {
+    const app = await mountApp({ start: null });
+    app.startWorld('enchanted-lake', 'enchanted', '16:9', 'Lake', 'background');
+    const nodes = app.store.scene.nodes;
+    expect(nodes.length).toBe(1);
+    expect(nodes[0].layer).toBe('background');
+    expect(app.store.scene.worldId).toBe('enchanted-lake');
+    app.dispose();
+  }, 60_000);
+
   it('mounts without errors and opens on a real composed world', async () => {
     const errors: unknown[] = [];
     const spy = vi.spyOn(console, 'error').mockImplementation((...a) => { errors.push(a); });

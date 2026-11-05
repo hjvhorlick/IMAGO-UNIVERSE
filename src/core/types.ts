@@ -180,6 +180,8 @@ export interface Scene {
   lighting: Lighting;
   /** Optional imported music. Absent = silent, which is the default. */
   audio?: SceneAudio | null;
+  /** The world this scene was started from (its background's place). Informational. */
+  worldId?: string | null;
   exportSettings: ExportSettings;
   createdAt: string;
   updatedAt: string;

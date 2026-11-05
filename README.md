@@ -25,12 +25,15 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 155 unit / integration / UI tests (Vitest) |
+| `npm test` | 165 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library and `docs/ASSET_CATALOG.md` from `assets-src/` (needs Pillow + numpy, ~11 min) |
 
-The app opens on a fully composed demo world so there is something real to look at immediately.
+The app opens empty with the **world picker** showing. A world is a background type (for example
+"enchanted lake" or "celestial observatory"), grouped into categories. Its looks (enchanted, moonlit,
+autumn) change the palette within that world. Choosing a world puts only its background in the
+scene; you add everything else yourself. The "Demo" starting point still builds the composed sample.
 
 ---
 

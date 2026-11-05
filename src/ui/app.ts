@@ -28,6 +28,7 @@ import { registerAudioBlob } from '../audio/audioStore';
 import { autoCompose, DEFAULT_COMPOSE, regenerate } from '../scene/composition';
 import { createAssetNode, createScene } from '../scene/sceneModel';
 import { buildDemoScene } from '../scene/demoScene';
+import { createWorldScene } from '../scene/worlds';
 import { switchStyle } from '../scene/styleManager';
 import { AssetPanel, ThemesPanel } from './assetPanel';
 import { LayersPanel } from './layersPanel';
@@ -43,6 +44,7 @@ import {
   aboutDialog, changeStyleDialog, composeDialog, cropDialog, exportDialog, historyDialog,
   importDialog, newWorldDialog, projectsDialog, replaceDialog,
 } from './dialogs';
+import type { ModalHandle, StartingPoint } from './dialogs';
 
 const LAYERS: LayerId[] = ['background', 'middle', 'foreground', 'atmosphere'];
 const LAYER_SHORT = ['Background', 'Middle', 'Foreground', 'Atmosphere'];
@@ -115,12 +117,14 @@ export class App {
   private hudTimer = 0;
   private windowListeners: (() => void)[] = [];
   private soloNode: string | null = null;
+  private worldDialog: ModalHandle | null = null;
 
   async mount(root: HTMLElement) {
     root.innerHTML = SHELL;
     await this.library.load();
 
-    const scene = buildDemoScene(this.library, { withEffects: true });
+    // Start empty. The designer chooses a world, and only its background appears.
+    const scene = createScene(this.library.styles[0]?.id ?? 'enchanted', 'Untitled world');
     this.store = new Store(scene);
     this.images = new ImageCache(this.library);
     this.compositor = new Compositor(this.library, this.images, this.loops);
@@ -142,6 +146,7 @@ export class App {
     this.preview.invalidate();
     this.refreshChrome();
     this.preview.play();
+    this.openWorldPicker(true);
 
     this.autosaveTimer = window.setInterval(() => { void this.autosave(); }, 45_000);
     this.hudTimer = window.setInterval(() => this.updateHud(), 500);
@@ -660,23 +665,36 @@ export class App {
 
   /* -------------------------------------------------------------- projects */
 
-  private newWorld() {
-    newWorldDialog(this.library, {
+  private newWorld() { this.openWorldPicker(false); }
+
+  /**
+   * The world picker. On first launch it cannot be dismissed with Escape or a
+   * backdrop click, because the app starts with nothing in it.
+   */
+  private openWorldPicker(first: boolean) {
+    this.worldDialog = newWorldDialog(this.library, {
       currentStyle: this.store.scene.styleId,
-      onCreate: (styleId, aspect, name, seedMode) => {
-        const scene = seedMode === 'empty'
-          ? createScene(styleId, name, aspect)
-          : buildDemoScene(this.library, { styleId, aspect, name, withEffects: seedMode === 'demo', composed: true });
-        scene.name = name;
-        this.store.replaceScene(scene);
-        this.store.lastSavedName = name;
-        this.afterSceneSwap();
-        this.setLayer('background');
-        this.preview.restart();
-        this.preview.play();
-        this.store.status(`"${name}" created.`, 'success');
-      },
+      title: first ? 'Choose a world' : 'New world',
+      subtitle: 'Every world starts with its background only. Add the rest yourself.',
+      dismissable: !first,
+      onCreate: (worldId, styleId, aspect, name, start) => this.startWorld(worldId, styleId, aspect, name, start),
     });
+  }
+
+  /** Replace the scene with a new world. A plain background unless the designer asked for a sketch. */
+  startWorld(worldId: string, styleId: string, aspect: string, name: string, start: StartingPoint = 'background') {
+    const scene = start === 'background'
+      ? createWorldScene(this.library, { worldId, styleId, aspect, name })
+      : buildDemoScene(this.library, { styleId, aspect, name, withEffects: start === 'demo', composed: true, worldId });
+    scene.name = name;
+    this.store.replaceScene(scene);
+    this.store.lastSavedName = name;
+    this.worldDialog?.close();
+    this.worldDialog = null;
+    this.afterSceneSwap();
+    this.setLayer('background');
+    this.preview.restart();
+    this.store.status(`"${name}" started with its background. Add trees, rocks, flowers and effects from the library.`, 'success');
   }
 
   private openProjects() {

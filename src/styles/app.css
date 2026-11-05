@@ -744,3 +744,10 @@ input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px;
 .history-item.ahead { opacity: 0.7; }
 .history-item.ahead:hover { opacity: 1; }
 .history-tag { margin-left: auto; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
+
+/* World picker */
+.world-cat-head { display: flex; align-items: baseline; gap: 10px; font-size: 12px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-dim); margin: 14px 0 8px; }
+.world-cat-head .field-value { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.world-thumb { aspect-ratio: 16 / 9; background: #10151f; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+.world-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.look-chips { display: flex; flex-wrap: wrap; gap: 8px; }

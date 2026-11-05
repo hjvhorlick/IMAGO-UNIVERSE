@@ -217,6 +217,7 @@ function migrate(input: Scene, warnings: string[]): Scene {
     nodes: [],
     lighting: { ...DEFAULT_LIGHTING, ...(input.lighting || {}) },
     audio: migrateAudio(input.audio),
+    worldId: typeof input.worldId === 'string' ? input.worldId : null,
     exportSettings: { ...DEFAULT_EXPORT, ...(input.exportSettings || {}) },
     createdAt: input.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
