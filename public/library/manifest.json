@@ -71,6 +71,1920 @@
  ],
  "assets": [
   {
+   "id": "enchanted.background.celestial-observatory",
+   "name": "Celestial Observatory Garden",
+   "style": "enchanted",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "observatory",
+    "celestial",
+    "garden"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "stars",
+    "observatory"
+   ],
+   "origin": "painted",
+   "file": "enchanted/celestial-observatory.webp",
+   "thumb": "enchanted/thumbs/celestial-observatory.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0d0b0",
+    "#d0d0b0",
+    "#305030",
+    "#103030",
+    "#303030"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 175978
+  },
+  {
+   "id": "enchanted.middle.celestial-arch",
+   "name": "Celestial Astrolabe Arch",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "observatory",
+    "celestial",
+    "ruins"
+   ],
+   "tags": [
+    "arch",
+    "astrolabe",
+    "moon",
+    "stars"
+   ],
+   "origin": "painted",
+   "file": "enchanted/celestial-arch.webp",
+   "thumb": "enchanted/thumbs/celestial-arch.webp",
+   "format": "image/webp",
+   "width": 613,
+   "height": 717,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#907050",
+    "#505030",
+    "#907030",
+    "#b09050"
+   ],
+   "defaultScale": 0.43,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 236430
+  },
+  {
+   "id": "enchanted.foreground.starflowers",
+   "name": "Starflower Cluster",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "observatory",
+    "celestial",
+    "garden"
+   ],
+   "tags": [
+    "flowers",
+    "stars",
+    "moss"
+   ],
+   "origin": "painted",
+   "file": "enchanted/starflowers.webp",
+   "thumb": "enchanted/thumbs/starflowers.webp",
+   "format": "image/webp",
+   "width": 718,
+   "height": 773,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305030",
+    "#507050",
+    "#305050",
+    "#303030",
+    "#505030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 122436
+  },
+  {
+   "id": "enchanted.background.mythic-waterside",
+   "name": "Moonlit Waterside",
+   "style": "enchanted",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "waterside",
+    "water",
+    "night"
+   ],
+   "tags": [
+    "river",
+    "moon",
+    "lanterns",
+    "vista"
+   ],
+   "origin": "painted",
+   "file": "enchanted/mythic-waterside.webp",
+   "thumb": "enchanted/thumbs/mythic-waterside.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#303030",
+    "#305070",
+    "#305050",
+    "#307090"
+   ],
+   "defaultScale": 1,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.83,
+     1.0,
+     0.17
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 141798
+  },
+  {
+   "id": "enchanted.middle.lantern-bridge",
+   "name": "Lantern Bridge",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "waterside",
+    "water",
+    "lanterns"
+   ],
+   "tags": [
+    "bridge",
+    "lantern",
+    "moon"
+   ],
+   "origin": "painted",
+   "file": "enchanted/lantern-bridge.webp",
+   "thumb": "enchanted/thumbs/lantern-bridge.webp",
+   "format": "image/webp",
+   "width": 1224,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.52,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#505030",
+    "#305030",
+    "#705030",
+    "#505050"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "lantern-glow"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 349540
+  },
+  {
+   "id": "enchanted.foreground.river-reeds",
+   "name": "River Reeds",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "waterside",
+    "water",
+    "reeds"
+   ],
+   "tags": [
+    "reeds",
+    "cattails",
+    "river"
+   ],
+   "origin": "painted",
+   "file": "enchanted/river-reeds.webp",
+   "thumb": "enchanted/thumbs/river-reeds.webp",
+   "format": "image/webp",
+   "width": 735,
+   "height": 1011,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305030",
+    "#505030",
+    "#507050",
+    "#307070",
+    "#507030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 189166
+  },
+  {
+   "id": "enchanted.background.lotus-sanctuary",
+   "name": "Lotus Sanctuary Lake",
+   "style": "enchanted",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "lotus-sanctuary",
+    "water",
+    "meditation",
+    "garden"
+   ],
+   "tags": [
+    "lake",
+    "meditation",
+    "mountains",
+    "mist",
+    "sunrise"
+   ],
+   "origin": "painted",
+   "file": "enchanted/lotus-sanctuary.webp",
+   "thumb": "enchanted/thumbs/lotus-sanctuary.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0b0",
+    "#b0b0b0",
+    "#909090",
+    "#b0b090",
+    "#f0d0b0"
+   ],
+   "defaultScale": 1,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.71,
+     1.0,
+     0.29
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 127454
+  },
+  {
+   "id": "enchanted.middle.lotus-pavilion",
+   "name": "Timber Meditation Pavilion",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "lotus-sanctuary",
+    "meditation",
+    "garden"
+   ],
+   "tags": [
+    "pavilion",
+    "timber",
+    "modern",
+    "meditation"
+   ],
+   "origin": "painted",
+   "file": "enchanted/lotus-pavilion.webp",
+   "thumb": "enchanted/thumbs/lotus-pavilion.webp",
+   "format": "image/webp",
+   "width": 992,
+   "height": 660,
+   "alpha": true,
+   "depth": 0.52,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#d09050",
+    "#703010",
+    "#705010"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independently placeable contemporary timber pavilion.",
+   "bytes": 280300
+  },
+  {
+   "id": "enchanted.foreground.lotus-flowers",
+   "name": "Lotus Blossoms and Leaves",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "lotus-sanctuary",
+    "meditation",
+    "garden"
+   ],
+   "tags": [
+    "lotus",
+    "pink",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/lotus-flowers.webp",
+   "thumb": "enchanted/thumbs/lotus-flowers.webp",
+   "format": "image/webp",
+   "width": 880,
+   "height": 615,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#709050",
+    "#90b070",
+    "#507030",
+    "#f0b0b0",
+    "#709070"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed pink lotus blossoms, bud and leaves; full source detail retained.",
+   "bytes": 297524
+  },
+  {
+   "id": "enchanted.middle.chinese-moon-gate",
+   "name": "Chinese-Inspired Moon Gate",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "chinese",
+    "garden"
+   ],
+   "tags": [
+    "gate",
+    "round",
+    "stone",
+    "garden"
+   ],
+   "origin": "painted",
+   "file": "enchanted/chinese-moon-gate.webp",
+   "thumb": "enchanted/thumbs/chinese-moon-gate.webp",
+   "format": "image/webp",
+   "width": 789,
+   "height": 691,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b090",
+    "#f0d0b0",
+    "#b09070",
+    "#505050",
+    "#707050"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A placeable moon gate with a transparent circular opening onto the scene.",
+   "bytes": 97884
+  },
+  {
+   "id": "enchanted.middle.japanese-stone-lantern",
+   "name": "Japanese-Inspired Stone Lantern",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "japanese",
+    "garden"
+   ],
+   "tags": [
+    "lantern",
+    "stone",
+    "moss",
+    "light"
+   ],
+   "origin": "painted",
+   "file": "enchanted/japanese-stone-lantern.webp",
+   "thumb": "enchanted/thumbs/japanese-stone-lantern.webp",
+   "format": "image/webp",
+   "width": 361,
+   "height": 702,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707050",
+    "#505050",
+    "#b0b090",
+    "#909070",
+    "#505030"
+   ],
+   "defaultScale": 0.31,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "lantern-glow"
+   ],
+   "rig": {
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A placeable carved garden lantern with a gently pulsing glow.",
+   "bytes": 36306
+  },
+  {
+   "id": "enchanted.middle.norse-dragon-boat",
+   "name": "Norse-Inspired Dragon Boat",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "norse",
+    "water"
+   ],
+   "tags": [
+    "boat",
+    "dragon",
+    "wood",
+    "water"
+   ],
+   "origin": "painted",
+   "file": "enchanted/norse-dragon-boat.webp",
+   "thumb": "enchanted/thumbs/norse-dragon-boat.webp",
+   "format": "image/webp",
+   "width": 1235,
+   "height": 474,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#705030",
+    "#503030",
+    "#301010",
+    "#905030"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "float"
+   ],
+   "rig": {
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A placeable wooden dragon boat with a transparent, wavy waterline and gentle floating motion.",
+   "bytes": 288708
+  },
+  {
+   "id": "enchanted.foreground.woodland-foxgloves",
+   "name": "Woodland Foxgloves",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "forest",
+    "garden"
+   ],
+   "tags": [
+    "foxglove",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/woodland-foxgloves.webp",
+   "thumb": "enchanted/thumbs/woodland-foxgloves.webp",
+   "format": "image/webp",
+   "width": 698,
+   "height": 1261,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507030",
+    "#707030",
+    "#d0b070",
+    "#709030",
+    "#909050"
+   ],
+   "defaultScale": 0.37,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 327824
+  },
+  {
+   "id": "enchanted.foreground.wild-roses",
+   "name": "Wild Rose Cluster",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "rose",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/wild-roses.webp",
+   "thumb": "enchanted/thumbs/wild-roses.webp",
+   "format": "image/webp",
+   "width": 1226,
+   "height": 583,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0d0b0",
+    "#709050",
+    "#f0f0d0",
+    "#707050",
+    "#f0d090"
+   ],
+   "defaultScale": 0.29,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 468590
+  },
+  {
+   "id": "enchanted.foreground.woodland-anemones",
+   "name": "Woodland Anemones",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "forest",
+    "meadow"
+   ],
+   "tags": [
+    "anemone",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/woodland-anemones.webp",
+   "thumb": "enchanted/thumbs/woodland-anemones.webp",
+   "format": "image/webp",
+   "width": 701,
+   "height": 970,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#303010",
+    "#507030",
+    "#305030",
+    "#f0f0d0"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 251464
+  },
+  {
+   "id": "enchanted.foreground.wild-poppies",
+   "name": "Scarlet Wild Poppies",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "meadow",
+    "garden"
+   ],
+   "tags": [
+    "poppy",
+    "red",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/wild-poppies.webp",
+   "thumb": "enchanted/thumbs/wild-poppies.webp",
+   "format": "image/webp",
+   "width": 704,
+   "height": 964,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507030",
+    "#709050",
+    "#507050",
+    "#505030",
+    "#303010"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 426464
+  },
+  {
+   "id": "enchanted.foreground.rose-peonies",
+   "name": "Rose Peonies",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "blossom"
+   ],
+   "tags": [
+    "peony",
+    "pink",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/rose-peonies.webp",
+   "thumb": "enchanted/thumbs/rose-peonies.webp",
+   "format": "image/webp",
+   "width": 869,
+   "height": 694,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0b0b0",
+    "#d09090",
+    "#507030",
+    "#505030",
+    "#709050"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 348918
+  },
+  {
+   "id": "enchanted.foreground.golden-irises",
+   "name": "Golden Irises",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "water"
+   ],
+   "tags": [
+    "iris",
+    "gold",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/golden-irises.webp",
+   "thumb": "enchanted/thumbs/golden-irises.webp",
+   "format": "image/webp",
+   "width": 646,
+   "height": 1205,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507030",
+    "#305030",
+    "#709050",
+    "#303010",
+    "#d0b030"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 481842
+  },
+  {
+   "id": "enchanted.foreground.hearth-reading-room",
+   "name": "Hearth Reading Room",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "fireplace"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "hearth"
+   ],
+   "origin": "painted",
+   "file": "enchanted/hearth-reading-room.webp",
+   "thumb": "enchanted/thumbs/hearth-reading-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#705030",
+    "#905030",
+    "#b07030",
+    "#703010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.165,
+     0.66,
+     0.085,
+     0.14
+    ],
+    "steamRegion": [
+     0.91,
+     0.73,
+     0.045,
+     0.16
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+   "bytes": 222184
+  },
+  {
+   "id": "enchanted.foreground.window-seat-room",
+   "name": "Window Seat Room",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "fireplace"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "hearth"
+   ],
+   "origin": "painted",
+   "file": "enchanted/window-seat-room.webp",
+   "thumb": "enchanted/thumbs/window-seat-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#301010",
+    "#705030",
+    "#703010",
+    "#905030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.755,
+     0.515,
+     0.1,
+     0.19
+    ],
+    "steamRegion": [
+     0.64,
+     0.77,
+     0.045,
+     0.16
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+   "bytes": 260442
+  },
+  {
+   "id": "enchanted.foreground.modern-penthouse",
+   "name": "Modern Penthouse View",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "modern",
+    "interior",
+    "window"
+   ],
+   "tags": [
+    "modern",
+    "penthouse",
+    "large windows",
+    "living room"
+   ],
+   "origin": "painted",
+   "file": "enchanted/modern-penthouse.webp",
+   "thumb": "enchanted/thumbs/modern-penthouse.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#d0d0d0",
+    "#d0b0b0",
+    "#909070",
+    "#b0b090"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+   "bytes": 248962
+  },
+  {
+   "id": "enchanted.foreground.future-sky-lounge",
+   "name": "Futuristic Sky Lounge",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "futuristic",
+    "interior",
+    "window"
+   ],
+   "tags": [
+    "future",
+    "modern",
+    "large windows",
+    "lounge"
+   ],
+   "origin": "painted",
+   "file": "enchanted/future-sky-lounge.webp",
+   "thumb": "enchanted/thumbs/future-sky-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909090",
+    "#b0b0b0",
+    "#707070",
+    "#505050",
+    "#507070"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+   "bytes": 267120
+  },
+  {
+   "id": "enchanted.foreground.timber-great-room",
+   "name": "Contemporary Timber Great Room",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "wood beams",
+    "wooden door",
+    "tile floor",
+    "fireplace"
+   ],
+   "origin": "painted",
+   "file": "enchanted/timber-great-room.webp",
+   "thumb": "enchanted/thumbs/timber-great-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#b09070",
+    "#d0d0d0",
+    "#b09090",
+    "#907050"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.082,
+     0.68,
+     0.07,
+     0.1
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Present-day tiled great room with varnished beams, an animated fireplace and a transparent window.",
+   "bytes": 198130
+  },
+  {
+   "id": "enchanted.foreground.oak-window-lounge",
+   "name": "Contemporary Oak Window Lounge",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "oak beams",
+    "wooden door",
+    "tile floor",
+    "lounge"
+   ],
+   "origin": "painted",
+   "file": "enchanted/oak-window-lounge.webp",
+   "thumb": "enchanted/thumbs/oak-window-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b090",
+    "#d0d0d0",
+    "#b09090",
+    "#d0b0b0",
+    "#b0b0b0"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Present-day oak-beam room with tiled floor and a transparent window onto the composed world.",
+   "bytes": 186342
+  },
+  {
+   "id": "enchanted.foreground.brick-timber-corner-room",
+   "name": "Asymmetric Brick and Timber Room",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "brick",
+    "wood beams",
+    "slanted roof",
+    "corner windows",
+    "tile floor"
+   ],
+   "origin": "painted",
+   "file": "enchanted/brick-timber-corner-room.webp",
+   "thumb": "enchanted/thumbs/brick-timber-corner-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#705050",
+    "#503030",
+    "#703010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Asymmetric brick-and-wood room with a sloping roof and two transparent windows on adjacent walls.",
+   "bytes": 275376
+  },
+  {
+   "id": "enchanted.foreground.modern-sectional",
+   "name": "Modern Modular Sectional",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern"
+   ],
+   "tags": [
+    "modern",
+    "sofa",
+    "furniture",
+    "sectional"
+   ],
+   "origin": "painted",
+   "file": "enchanted/modern-sectional.webp",
+   "thumb": "enchanted/thumbs/modern-sectional.webp",
+   "format": "image/webp",
+   "width": 1226,
+   "height": 421,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#f0f0d0",
+    "#909070",
+    "#907070",
+    "#b09090"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 94708
+  },
+  {
+   "id": "enchanted.foreground.future-lounge-chair",
+   "name": "Futuristic Lounge Chair",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "futuristic"
+   ],
+   "tags": [
+    "future",
+    "modern",
+    "chair",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "enchanted/future-lounge-chair.webp",
+   "thumb": "enchanted/thumbs/future-lounge-chair.webp",
+   "format": "image/webp",
+   "width": 785,
+   "height": 679,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#b0b0b0",
+    "#909090",
+    "#707070",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.25,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 61912
+  },
+  {
+   "id": "enchanted.foreground.contemporary-oak-door",
+   "name": "Contemporary Oak Door",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "door",
+    "wood",
+    "oak",
+    "modern"
+   ],
+   "origin": "painted",
+   "file": "enchanted/contemporary-oak-door.webp",
+   "thumb": "enchanted/thumbs/contemporary-oak-door.webp",
+   "format": "image/webp",
+   "width": 327,
+   "height": 686,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07050",
+    "#d09050",
+    "#d09070",
+    "#b09050",
+    "#b07030"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 24642
+  },
+  {
+   "id": "enchanted.foreground.contemporary-oak-chair",
+   "name": "Contemporary Oak Lounge Chair",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "chair",
+    "wood",
+    "oak",
+    "modern",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "enchanted/contemporary-oak-chair.webp",
+   "thumb": "enchanted/thumbs/contemporary-oak-chair.webp",
+   "format": "image/webp",
+   "width": 848,
+   "height": 684,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#907050",
+    "#d0b090",
+    "#d0d0b0",
+    "#b0b090"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 117674
+  },
+  {
+   "id": "enchanted.foreground.contemporary-oak-table",
+   "name": "Contemporary Oak Coffee Table",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "table",
+    "wood",
+    "oak",
+    "coffee",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "enchanted/contemporary-oak-table.webp",
+   "thumb": "enchanted/thumbs/contemporary-oak-table.webp",
+   "format": "image/webp",
+   "width": 1172,
+   "height": 567,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#d09070",
+    "#705030",
+    "#905030",
+    "#b07050"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 40084
+  },
+  {
+   "id": "enchanted.foreground.oak-bookshelf",
+   "name": "Contemporary Oak Bookshelf",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "shelves",
+    "books",
+    "wood",
+    "oak",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "enchanted/oak-bookshelf.webp",
+   "thumb": "enchanted/thumbs/oak-bookshelf.webp",
+   "format": "image/webp",
+   "width": 485,
+   "height": 667,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#905030",
+    "#b07050",
+    "#703010"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 55980
+  },
+  {
+   "id": "enchanted.foreground.indoor-fig",
+   "name": "Potted Fiddle-Leaf Fig",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "plant"
+   ],
+   "tags": [
+    "plant",
+    "pot",
+    "foliage",
+    "green",
+    "decor"
+   ],
+   "origin": "painted",
+   "file": "enchanted/indoor-fig.webp",
+   "thumb": "enchanted/thumbs/indoor-fig.webp",
+   "format": "image/webp",
+   "width": 441,
+   "height": 692,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305010",
+    "#507030",
+    "#103010",
+    "#303010",
+    "#505010"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 55678
+  },
+  {
+   "id": "enchanted.foreground.oak-floor-lamp",
+   "name": "Contemporary Oak Floor Lamp",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "lamp",
+    "wood",
+    "oak",
+    "lighting",
+    "decor"
+   ],
+   "origin": "painted",
+   "file": "enchanted/oak-floor-lamp.webp",
+   "thumb": "enchanted/thumbs/oak-floor-lamp.webp",
+   "format": "image/webp",
+   "width": 218,
+   "height": 700,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#d0b090",
+    "#f0f0d0",
+    "#d0d0b0",
+    "#b09050"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 18020
+  },
+  {
+   "id": "enchanted.foreground.modern-fireplace",
+   "name": "Modern Linear Fireplace",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "fireplace"
+   ],
+   "tags": [
+    "modern",
+    "fireplace",
+    "fire",
+    "linear"
+   ],
+   "origin": "painted",
+   "file": "enchanted/modern-fireplace.webp",
+   "thumb": "enchanted/thumbs/modern-fireplace.webp",
+   "format": "image/webp",
+   "width": 1133,
+   "height": 592,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#b0b0b0",
+    "#d0d0d0",
+    "#303030",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.25,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.2,
+     0.45,
+     0.58,
+     0.25
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable contemporary fireplace with a locally animated painted fire.",
+   "bytes": 84352
+  },
+  {
+   "id": "enchanted.foreground.stone-fireplace",
+   "name": "Stone Fireplace",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "fireplace",
+    "hearth"
+   ],
+   "tags": [
+    "fireplace",
+    "fire",
+    "stone"
+   ],
+   "origin": "painted",
+   "file": "enchanted/stone-fireplace.webp",
+   "thumb": "enchanted/thumbs/stone-fireplace.webp",
+   "format": "image/webp",
+   "width": 929,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#303010",
+    "#301010",
+    "#503030",
+    "#503010"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.4,
+     0.49,
+     0.2,
+     0.29
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable stone fireplace with a locally animated painted fire.",
+   "bytes": 170654
+  },
+  {
+   "id": "enchanted.foreground.coffee-cup",
+   "name": "Steaming Coffee Cup",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "coffee",
+    "comfort"
+   ],
+   "tags": [
+    "cup",
+    "coffee",
+    "steam",
+    "table"
+   ],
+   "origin": "painted",
+   "file": "enchanted/coffee-cup.webp",
+   "thumb": "enchanted/thumbs/coffee-cup.webp",
+   "format": "image/webp",
+   "width": 716,
+   "height": 569,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b090",
+    "#f0d0b0",
+    "#b09070",
+    "#301010",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.12,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "coffee-steam"
+   ],
+   "rig": {
+    "type": "steam",
+    "region": [
+     0.47,
+     0.14,
+     0.4,
+     0.85
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable cup with soft animated steam rising from the coffee.",
+   "bytes": 105664
+  },
+  {
    "id": "enchanted.background.enchanted-lake",
    "name": "Enchanted Lake Valley",
    "style": "enchanted",
@@ -228,6 +2142,216 @@
    "variants": [],
    "notes": "",
    "bytes": 214486
+  },
+  {
+   "id": "enchanted.background.fairy-court",
+   "name": "Fairy Court Glade",
+   "style": "enchanted",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "fairy",
+    "forest",
+    "water"
+   ],
+   "tags": [
+    "background",
+    "vista"
+   ],
+   "origin": "painted",
+   "file": "enchanted/fairy-court.webp",
+   "thumb": "enchanted/thumbs/fairy-court.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#101010",
+    "#303010",
+    "#303030",
+    "#305050"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.76,
+     1.0,
+     0.24
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 257710
+  },
+  {
+   "id": "enchanted.background.norse-worldtree",
+   "name": "Norse Worldtree Fjord",
+   "style": "enchanted",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "norse",
+    "worldtree",
+    "night"
+   ],
+   "tags": [
+    "background",
+    "vista"
+   ],
+   "origin": "painted",
+   "file": "enchanted/norse-worldtree.webp",
+   "thumb": "enchanted/thumbs/norse-worldtree.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103050",
+    "#103030",
+    "#105070",
+    "#101030",
+    "#305070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 111520
+  },
+  {
+   "id": "enchanted.background.chinese-mist-mountains",
+   "name": "Chinese-Inspired Mist Mountains",
+   "style": "enchanted",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "chinese",
+    "mountains",
+    "mist"
+   ],
+   "tags": [
+    "background",
+    "vista"
+   ],
+   "origin": "painted",
+   "file": "enchanted/chinese-mist-mountains.webp",
+   "thumb": "enchanted/thumbs/chinese-mist-mountains.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305030",
+    "#d0d0b0",
+    "#f0f0b0",
+    "#505030",
+    "#f0d0b0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 210280
+  },
+  {
+   "id": "enchanted.background.japanese-moon-garden",
+   "name": "Japanese Moon Garden",
+   "style": "enchanted",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "japanese",
+    "moon",
+    "garden"
+   ],
+   "tags": [
+    "background",
+    "vista"
+   ],
+   "origin": "painted",
+   "file": "enchanted/japanese-moon-garden.webp",
+   "thumb": "enchanted/thumbs/japanese-moon-garden.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#5070b0",
+    "#305090",
+    "#7090d0",
+    "#303050"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "water-shimmer",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 201870
   },
   {
    "id": "enchanted.middle.ancient-oak",
@@ -479,7 +2603,7 @@
   },
   {
    "id": "enchanted.middle.waterfall",
-   "name": "Forest Waterfall",
+   "name": "Grand Forest Waterfall",
    "style": "enchanted",
    "layer": "middle",
    "category": "water",
@@ -490,27 +2614,28 @@
    "tags": [
     "waterfall",
     "cliff",
-    "pool"
+    "pool",
+    "cascade"
    ],
    "origin": "painted",
    "file": "enchanted/waterfall.webp",
    "thumb": "enchanted/thumbs/waterfall.webp",
    "format": "image/webp",
-   "width": 849,
-   "height": 658,
+   "width": 1300,
+   "height": 710,
    "alpha": true,
-   "depth": 0.4,
+   "depth": 0.42,
    "groundContact": 1.0,
    "perspective": "eye-level",
    "lighting": "upper-left",
    "palette": [
     "#103030",
-    "#305030",
     "#103010",
-    "#303010",
-    "#303030"
+    "#101010",
+    "#305030",
+    "#303010"
    ],
-   "defaultScale": 0.5,
+   "defaultScale": 0.66,
    "placement": {
     "grounded": true,
     "minDepth": 0.15,
@@ -523,16 +2648,211 @@
    "rig": {
     "type": "fall",
     "region": [
-     0.3,
-     0.06,
-     0.42,
-     0.8
+     0.16,
+     0.1,
+     0.68,
+     0.85
     ],
     "speed": 1.0
    },
    "variants": [],
    "notes": "",
-   "bytes": 127864
+   "bytes": 229338
+  },
+  {
+   "id": "enchanted.middle.fairy-tree",
+   "name": "Fae Court Willow",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "fairy",
+    "forest",
+    "enchanted"
+   ],
+   "tags": [
+    "fairy",
+    "willow",
+    "glowing tree"
+   ],
+   "origin": "painted",
+   "file": "enchanted/fairy-tree.webp",
+   "thumb": "enchanted/thumbs/fairy-tree.webp",
+   "format": "image/webp",
+   "width": 768,
+   "height": 1260,
+   "alpha": true,
+   "depth": 0.43,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#303030",
+    "#505050",
+    "#507070",
+    "#305030"
+   ],
+   "defaultScale": 0.76,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.66,
+    "stiffness": 0.72,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 298464
+  },
+  {
+   "id": "enchanted.middle.norse-rune-stones",
+   "name": "Norse-Inspired Rune Stones",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "norse",
+    "worldtree",
+    "runes"
+   ],
+   "tags": [
+    "standing stones",
+    "runes",
+    "mythic landmark"
+   ],
+   "origin": "painted",
+   "file": "enchanted/norse-rune-stones.webp",
+   "thumb": "enchanted/thumbs/norse-rune-stones.webp",
+   "format": "image/webp",
+   "width": 1005,
+   "height": 725,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#505050",
+    "#305050",
+    "#101010",
+    "#303010"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 147918
+  },
+  {
+   "id": "enchanted.middle.chinese-pavilion",
+   "name": "Mountain Lantern Pavilion",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "chinese",
+    "mountains",
+    "lanterns"
+   ],
+   "tags": [
+    "pavilion",
+    "lantern",
+    "mythic landmark"
+   ],
+   "origin": "painted",
+   "file": "enchanted/chinese-pavilion.webp",
+   "thumb": "enchanted/thumbs/chinese-pavilion.webp",
+   "format": "image/webp",
+   "width": 1134,
+   "height": 757,
+   "alpha": true,
+   "depth": 0.55,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503030",
+    "#301010",
+    "#703010",
+    "#501010",
+    "#b05030"
+   ],
+   "defaultScale": 0.43,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 159320
+  },
+  {
+   "id": "enchanted.middle.japanese-torii",
+   "name": "Moon Garden Torii Gate",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "japanese",
+    "moon",
+    "garden"
+   ],
+   "tags": [
+    "torii",
+    "gate",
+    "mythic landmark"
+   ],
+   "origin": "painted",
+   "file": "enchanted/japanese-torii.webp",
+   "thumb": "enchanted/thumbs/japanese-torii.webp",
+   "format": "image/webp",
+   "width": 715,
+   "height": 725,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503030",
+    "#d05030",
+    "#b03030",
+    "#705030",
+    "#501010"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 52522
   },
   {
    "id": "enchanted.foreground.grass-tuft",
@@ -1011,6 +3331,2208 @@
    "bytes": 95142
   },
   {
+   "id": "enchanted.foreground.fae-mushrooms",
+   "name": "Fae Lantern Mushrooms",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "fairy",
+    "forest",
+    "enchanted"
+   ],
+   "tags": [
+    "mushrooms",
+    "glow",
+    "woodland"
+   ],
+   "origin": "painted",
+   "file": "enchanted/fae-mushrooms.webp",
+   "thumb": "enchanted/thumbs/fae-mushrooms.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 504,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#505030",
+    "#507030",
+    "#305030",
+    "#707030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 194508
+  },
+  {
+   "id": "enchanted.foreground.norse-frost-pine",
+   "name": "Frost-Kissed Juniper",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "norse",
+    "night",
+    "winter"
+   ],
+   "tags": [
+    "pine",
+    "frost",
+    "juniper"
+   ],
+   "origin": "painted",
+   "file": "enchanted/norse-frost-pine.webp",
+   "thumb": "enchanted/thumbs/norse-frost-pine.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 511,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#305050",
+    "#507070",
+    "#103030",
+    "#101010"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 248640
+  },
+  {
+   "id": "enchanted.foreground.chinese-peach-blossoms",
+   "name": "Peach Blossom Garden Cluster",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "chinese",
+    "garden",
+    "flowers"
+   ],
+   "tags": [
+    "peach blossom",
+    "flowers",
+    "garden"
+   ],
+   "origin": "painted",
+   "file": "enchanted/chinese-peach-blossoms.webp",
+   "thumb": "enchanted/thumbs/chinese-peach-blossoms.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 493,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#f09090",
+    "#707050",
+    "#d07070",
+    "#505050"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 174384
+  },
+  {
+   "id": "enchanted.foreground.japanese-moon-moss",
+   "name": "Moon Garden Moss and Sakura",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "japanese",
+    "moon",
+    "garden"
+   ],
+   "tags": [
+    "sakura",
+    "moss",
+    "stepping stones"
+   ],
+   "origin": "painted",
+   "file": "enchanted/japanese-moon-moss.webp",
+   "thumb": "enchanted/thumbs/japanese-moon-moss.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 477,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305030",
+    "#507050",
+    "#709090",
+    "#505050",
+    "#505030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 178644
+  },
+  {
+   "id": "enchanted.foreground.lounge-window",
+   "name": "Lounge Window View",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "view frame"
+   ],
+   "origin": "painted",
+   "file": "enchanted/lounge-window.webp",
+   "thumb": "enchanted/thumbs/lounge-window.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#703010",
+    "#705030",
+    "#707030",
+    "#905010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Transparent window opening reveals the current composed scene behind this foreground room overlay.",
+   "bytes": 332122
+  },
+  {
+   "id": "moonlit.background.celestial-observatory",
+   "name": "Moonlit Celestial Observatory Garden",
+   "style": "moonlit",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "observatory",
+    "celestial",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "stars",
+    "observatory"
+   ],
+   "origin": "graded",
+   "file": "moonlit/celestial-observatory.webp",
+   "thumb": "moonlit/thumbs/celestial-observatory.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#103030",
+    "#305070",
+    "#303050",
+    "#7070b0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 106010
+  },
+  {
+   "id": "moonlit.middle.celestial-arch",
+   "name": "Moonlit Celestial Astrolabe Arch",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "observatory",
+    "celestial",
+    "ruins",
+    "night"
+   ],
+   "tags": [
+    "arch",
+    "astrolabe",
+    "moon",
+    "stars"
+   ],
+   "origin": "graded",
+   "file": "moonlit/celestial-arch.webp",
+   "thumb": "moonlit/thumbs/celestial-arch.webp",
+   "format": "image/webp",
+   "width": 613,
+   "height": 717,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#305050",
+    "#505070",
+    "#507070",
+    "#505050"
+   ],
+   "defaultScale": 0.43,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 167838
+  },
+  {
+   "id": "moonlit.foreground.starflowers",
+   "name": "Moonlit Starflower Cluster",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "observatory",
+    "celestial",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "flowers",
+    "stars",
+    "moss"
+   ],
+   "origin": "graded",
+   "file": "moonlit/starflowers.webp",
+   "thumb": "moonlit/thumbs/starflowers.webp",
+   "format": "image/webp",
+   "width": 718,
+   "height": 773,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#305050",
+    "#103030",
+    "#103050",
+    "#305070"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 81592
+  },
+  {
+   "id": "moonlit.background.mythic-waterside",
+   "name": "Silver Moonlit Waterside",
+   "style": "moonlit",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "waterside",
+    "water",
+    "night"
+   ],
+   "tags": [
+    "river",
+    "moon",
+    "lanterns",
+    "vista"
+   ],
+   "origin": "graded",
+   "file": "moonlit/mythic-waterside.webp",
+   "thumb": "moonlit/thumbs/mythic-waterside.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103050",
+    "#305070",
+    "#103030",
+    "#101030",
+    "#303070"
+   ],
+   "defaultScale": 1,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.83,
+     1.0,
+     0.17
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 88162
+  },
+  {
+   "id": "moonlit.middle.lantern-bridge",
+   "name": "Silver Lantern Bridge",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "waterside",
+    "water",
+    "lanterns"
+   ],
+   "tags": [
+    "bridge",
+    "lantern",
+    "moon"
+   ],
+   "origin": "graded",
+   "file": "moonlit/lantern-bridge.webp",
+   "thumb": "moonlit/thumbs/lantern-bridge.webp",
+   "format": "image/webp",
+   "width": 1224,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.52,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#303050",
+    "#103050",
+    "#305050",
+    "#101030"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "lantern-glow"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 246260
+  },
+  {
+   "id": "moonlit.foreground.river-reeds",
+   "name": "Silver River Reeds",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "waterside",
+    "water",
+    "reeds"
+   ],
+   "tags": [
+    "reeds",
+    "cattails",
+    "river"
+   ],
+   "origin": "graded",
+   "file": "moonlit/river-reeds.webp",
+   "thumb": "moonlit/thumbs/river-reeds.webp",
+   "format": "image/webp",
+   "width": 735,
+   "height": 1011,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#103050",
+    "#103030",
+    "#305050",
+    "#305070"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 129952
+  },
+  {
+   "id": "moonlit.background.lotus-sanctuary",
+   "name": "Moonlit Lotus Sanctuary Lake",
+   "style": "moonlit",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "lotus-sanctuary",
+    "water",
+    "meditation",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "lake",
+    "meditation",
+    "mountains",
+    "mist",
+    "sunrise"
+   ],
+   "origin": "graded",
+   "file": "moonlit/lotus-sanctuary.webp",
+   "thumb": "moonlit/thumbs/lotus-sanctuary.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#305070",
+    "#303050",
+    "#505090",
+    "#305050"
+   ],
+   "defaultScale": 1,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.71,
+     1.0,
+     0.29
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 55914
+  },
+  {
+   "id": "moonlit.middle.lotus-pavilion",
+   "name": "Moonlit Timber Meditation Pavilion",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "lotus-sanctuary",
+    "meditation",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "pavilion",
+    "timber",
+    "modern",
+    "meditation"
+   ],
+   "origin": "graded",
+   "file": "moonlit/lotus-pavilion.webp",
+   "thumb": "moonlit/thumbs/lotus-pavilion.webp",
+   "format": "image/webp",
+   "width": 992,
+   "height": 660,
+   "alpha": true,
+   "depth": 0.52,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#303050",
+    "#505070",
+    "#505050",
+    "#101030"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independently placeable contemporary timber pavilion.",
+   "bytes": 199384
+  },
+  {
+   "id": "moonlit.foreground.lotus-flowers",
+   "name": "Moonlit Lotus Blossoms and Leaves",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "lotus-sanctuary",
+    "meditation",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "lotus",
+    "pink",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/lotus-flowers.webp",
+   "thumb": "moonlit/thumbs/lotus-flowers.webp",
+   "format": "image/webp",
+   "width": 880,
+   "height": 615,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#305070",
+    "#507090",
+    "#505070",
+    "#505090"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed pink lotus blossoms, bud and leaves; full source detail retained.",
+   "bytes": 218730
+  },
+  {
+   "id": "moonlit.middle.chinese-moon-gate",
+   "name": "Moonlit Chinese-Inspired Moon Gate",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "chinese",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "gate",
+    "round",
+    "stone",
+    "garden"
+   ],
+   "origin": "graded",
+   "file": "moonlit/chinese-moon-gate.webp",
+   "thumb": "moonlit/thumbs/chinese-moon-gate.webp",
+   "format": "image/webp",
+   "width": 789,
+   "height": 691,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#303050",
+    "#505070",
+    "#305050",
+    "#305070"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A placeable moon gate with a transparent circular opening onto the scene.",
+   "bytes": 64980
+  },
+  {
+   "id": "moonlit.middle.japanese-stone-lantern",
+   "name": "Moonlit Japanese-Inspired Stone Lantern",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "japanese",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "lantern",
+    "stone",
+    "moss",
+    "light"
+   ],
+   "origin": "graded",
+   "file": "moonlit/japanese-stone-lantern.webp",
+   "thumb": "moonlit/thumbs/japanese-stone-lantern.webp",
+   "format": "image/webp",
+   "width": 361,
+   "height": 702,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#507090",
+    "#305070",
+    "#505070",
+    "#305050"
+   ],
+   "defaultScale": 0.31,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "lantern-glow"
+   ],
+   "rig": {
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A placeable carved garden lantern with a gently pulsing glow.",
+   "bytes": 23332
+  },
+  {
+   "id": "moonlit.middle.norse-dragon-boat",
+   "name": "Moonlit Norse-Inspired Dragon Boat",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "norse",
+    "water",
+    "night"
+   ],
+   "tags": [
+    "boat",
+    "dragon",
+    "wood",
+    "water"
+   ],
+   "origin": "graded",
+   "file": "moonlit/norse-dragon-boat.webp",
+   "thumb": "moonlit/thumbs/norse-dragon-boat.webp",
+   "format": "image/webp",
+   "width": 1235,
+   "height": 474,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#303050",
+    "#103030",
+    "#101030",
+    "#505070"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "float"
+   ],
+   "rig": {
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A placeable wooden dragon boat with a transparent, wavy waterline and gentle floating motion.",
+   "bytes": 204372
+  },
+  {
+   "id": "moonlit.foreground.woodland-foxgloves",
+   "name": "Moonlit Woodland Foxgloves",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "forest",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "foxglove",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/woodland-foxgloves.webp",
+   "thumb": "moonlit/thumbs/woodland-foxgloves.webp",
+   "format": "image/webp",
+   "width": 698,
+   "height": 1261,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#507090",
+    "#505070",
+    "#507070",
+    "#303030"
+   ],
+   "defaultScale": 0.37,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 252158
+  },
+  {
+   "id": "moonlit.foreground.wild-roses",
+   "name": "Moonlit Wild Rose Cluster",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "rose",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/wild-roses.webp",
+   "thumb": "moonlit/thumbs/wild-roses.webp",
+   "format": "image/webp",
+   "width": 1226,
+   "height": 583,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#507090",
+    "#305070",
+    "#303050",
+    "#707090"
+   ],
+   "defaultScale": 0.29,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 360832
+  },
+  {
+   "id": "moonlit.foreground.woodland-anemones",
+   "name": "Moonlit Woodland Anemones",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "forest",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "anemone",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/woodland-anemones.webp",
+   "thumb": "moonlit/thumbs/woodland-anemones.webp",
+   "format": "image/webp",
+   "width": 701,
+   "height": 970,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#303050",
+    "#103030",
+    "#507090",
+    "#303030"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 194300
+  },
+  {
+   "id": "moonlit.foreground.wild-poppies",
+   "name": "Moonlit Scarlet Wild Poppies",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "meadow",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "poppy",
+    "red",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/wild-poppies.webp",
+   "thumb": "moonlit/thumbs/wild-poppies.webp",
+   "format": "image/webp",
+   "width": 704,
+   "height": 964,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#303050",
+    "#303030",
+    "#103030",
+    "#503050"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 302500
+  },
+  {
+   "id": "moonlit.foreground.rose-peonies",
+   "name": "Moonlit Rose Peonies",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "blossom",
+    "night"
+   ],
+   "tags": [
+    "peony",
+    "pink",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/rose-peonies.webp",
+   "thumb": "moonlit/thumbs/rose-peonies.webp",
+   "format": "image/webp",
+   "width": 869,
+   "height": 694,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#505070",
+    "#305050",
+    "#507090",
+    "#505090"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 256010
+  },
+  {
+   "id": "moonlit.foreground.golden-irises",
+   "name": "Moonlit Golden Irises",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "water",
+    "night"
+   ],
+   "tags": [
+    "iris",
+    "gold",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/golden-irises.webp",
+   "thumb": "moonlit/thumbs/golden-irises.webp",
+   "format": "image/webp",
+   "width": 646,
+   "height": 1205,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#505050",
+    "#303050",
+    "#103030",
+    "#507070"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 342412
+  },
+  {
+   "id": "moonlit.foreground.hearth-reading-room",
+   "name": "Moonlit Hearth Reading Room",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "fireplace"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "hearth"
+   ],
+   "origin": "graded",
+   "file": "moonlit/hearth-reading-room.webp",
+   "thumb": "moonlit/thumbs/hearth-reading-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#303050",
+    "#101030",
+    "#103030",
+    "#505050"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.165,
+     0.66,
+     0.085,
+     0.14
+    ],
+    "steamRegion": [
+     0.91,
+     0.73,
+     0.045,
+     0.16
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+   "bytes": 136192
+  },
+  {
+   "id": "moonlit.foreground.window-seat-room",
+   "name": "Moonlit Window Seat Room",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "fireplace"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "hearth"
+   ],
+   "origin": "graded",
+   "file": "moonlit/window-seat-room.webp",
+   "thumb": "moonlit/thumbs/window-seat-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#101030",
+    "#303050",
+    "#103030",
+    "#305050"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.755,
+     0.515,
+     0.1,
+     0.19
+    ],
+    "steamRegion": [
+     0.64,
+     0.77,
+     0.045,
+     0.16
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+   "bytes": 166942
+  },
+  {
+   "id": "moonlit.foreground.modern-penthouse",
+   "name": "Moonlit Modern Penthouse View",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "modern",
+    "interior",
+    "window"
+   ],
+   "tags": [
+    "modern",
+    "penthouse",
+    "large windows",
+    "living room"
+   ],
+   "origin": "graded",
+   "file": "moonlit/modern-penthouse.webp",
+   "thumb": "moonlit/thumbs/modern-penthouse.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#305070",
+    "#505070",
+    "#5070b0",
+    "#505090"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+   "bytes": 174238
+  },
+  {
+   "id": "moonlit.foreground.future-sky-lounge",
+   "name": "Moonlit Futuristic Sky Lounge",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "futuristic",
+    "interior",
+    "window"
+   ],
+   "tags": [
+    "future",
+    "modern",
+    "large windows",
+    "lounge"
+   ],
+   "origin": "graded",
+   "file": "moonlit/future-sky-lounge.webp",
+   "thumb": "moonlit/thumbs/future-sky-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305070",
+    "#507090",
+    "#303050",
+    "#505090",
+    "#5070b0"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+   "bytes": 192766
+  },
+  {
+   "id": "moonlit.foreground.timber-great-room",
+   "name": "Moonlit Contemporary Timber Great Room",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "wood beams",
+    "wooden door",
+    "tile floor",
+    "fireplace"
+   ],
+   "origin": "graded",
+   "file": "moonlit/timber-great-room.webp",
+   "thumb": "moonlit/thumbs/timber-great-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505070",
+    "#507090",
+    "#303050",
+    "#303030",
+    "#101030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.082,
+     0.68,
+     0.07,
+     0.1
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Present-day tiled great room with varnished beams, an animated fireplace and a transparent window.",
+   "bytes": 134280
+  },
+  {
+   "id": "moonlit.foreground.oak-window-lounge",
+   "name": "Moonlit Contemporary Oak Window Lounge",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "oak beams",
+    "wooden door",
+    "tile floor",
+    "lounge"
+   ],
+   "origin": "graded",
+   "file": "moonlit/oak-window-lounge.webp",
+   "thumb": "moonlit/thumbs/oak-window-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#505070",
+    "#5070b0",
+    "#505090",
+    "#303030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Present-day oak-beam room with tiled floor and a transparent window onto the composed world.",
+   "bytes": 126720
+  },
+  {
+   "id": "moonlit.foreground.brick-timber-corner-room",
+   "name": "Moonlit Asymmetric Brick and Timber Room",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "brick",
+    "wood beams",
+    "slanted roof",
+    "corner windows",
+    "tile floor"
+   ],
+   "origin": "graded",
+   "file": "moonlit/brick-timber-corner-room.webp",
+   "thumb": "moonlit/thumbs/brick-timber-corner-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#303030",
+    "#101030",
+    "#305050",
+    "#505070"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Asymmetric brick-and-wood room with a sloping roof and two transparent windows on adjacent walls.",
+   "bytes": 176236
+  },
+  {
+   "id": "moonlit.foreground.modern-sectional",
+   "name": "Moonlit Modern Modular Sectional",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern"
+   ],
+   "tags": [
+    "modern",
+    "sofa",
+    "furniture",
+    "sectional"
+   ],
+   "origin": "graded",
+   "file": "moonlit/modern-sectional.webp",
+   "thumb": "moonlit/thumbs/modern-sectional.webp",
+   "format": "image/webp",
+   "width": 1226,
+   "height": 421,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#305070",
+    "#5070b0",
+    "#505070",
+    "#303050"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 55090
+  },
+  {
+   "id": "moonlit.foreground.future-lounge-chair",
+   "name": "Moonlit Futuristic Lounge Chair",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "futuristic"
+   ],
+   "tags": [
+    "future",
+    "modern",
+    "chair",
+    "furniture"
+   ],
+   "origin": "graded",
+   "file": "moonlit/future-lounge-chair.webp",
+   "thumb": "moonlit/thumbs/future-lounge-chair.webp",
+   "format": "image/webp",
+   "width": 785,
+   "height": 679,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#305070",
+    "#5070b0",
+    "#505090",
+    "#303050"
+   ],
+   "defaultScale": 0.25,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 42750
+  },
+  {
+   "id": "moonlit.foreground.contemporary-oak-door",
+   "name": "Moonlit Contemporary Oak Door",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "door",
+    "wood",
+    "oak",
+    "modern"
+   ],
+   "origin": "graded",
+   "file": "moonlit/contemporary-oak-door.webp",
+   "thumb": "moonlit/thumbs/contemporary-oak-door.webp",
+   "format": "image/webp",
+   "width": 327,
+   "height": 686,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505070",
+    "#505050",
+    "#507090",
+    "#305050",
+    "#507070"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 12202
+  },
+  {
+   "id": "moonlit.foreground.contemporary-oak-chair",
+   "name": "Moonlit Contemporary Oak Lounge Chair",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "chair",
+    "wood",
+    "oak",
+    "modern",
+    "furniture"
+   ],
+   "origin": "graded",
+   "file": "moonlit/contemporary-oak-chair.webp",
+   "thumb": "moonlit/thumbs/contemporary-oak-chair.webp",
+   "format": "image/webp",
+   "width": 848,
+   "height": 684,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505070",
+    "#507090",
+    "#303050",
+    "#305050",
+    "#305070"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 74944
+  },
+  {
+   "id": "moonlit.foreground.contemporary-oak-table",
+   "name": "Moonlit Contemporary Oak Coffee Table",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "table",
+    "wood",
+    "oak",
+    "coffee",
+    "furniture"
+   ],
+   "origin": "graded",
+   "file": "moonlit/contemporary-oak-table.webp",
+   "thumb": "moonlit/thumbs/contemporary-oak-table.webp",
+   "format": "image/webp",
+   "width": 1172,
+   "height": 567,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505070",
+    "#303050",
+    "#303030",
+    "#505050",
+    "#305050"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 24926
+  },
+  {
+   "id": "moonlit.foreground.oak-bookshelf",
+   "name": "Moonlit Contemporary Oak Bookshelf",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "shelves",
+    "books",
+    "wood",
+    "oak",
+    "furniture"
+   ],
+   "origin": "graded",
+   "file": "moonlit/oak-bookshelf.webp",
+   "thumb": "moonlit/thumbs/oak-bookshelf.webp",
+   "format": "image/webp",
+   "width": 485,
+   "height": 667,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#303030",
+    "#505070",
+    "#507090",
+    "#505050"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 37576
+  },
+  {
+   "id": "moonlit.foreground.indoor-fig",
+   "name": "Moonlit Potted Fiddle-Leaf Fig",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "plant"
+   ],
+   "tags": [
+    "plant",
+    "pot",
+    "foliage",
+    "green",
+    "decor"
+   ],
+   "origin": "graded",
+   "file": "moonlit/indoor-fig.webp",
+   "thumb": "moonlit/thumbs/indoor-fig.webp",
+   "format": "image/webp",
+   "width": 441,
+   "height": 692,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#305050",
+    "#303030",
+    "#303050",
+    "#505070"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 37232
+  },
+  {
+   "id": "moonlit.foreground.oak-floor-lamp",
+   "name": "Moonlit Contemporary Oak Floor Lamp",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "lamp",
+    "wood",
+    "oak",
+    "lighting",
+    "decor"
+   ],
+   "origin": "graded",
+   "file": "moonlit/oak-floor-lamp.webp",
+   "thumb": "moonlit/thumbs/oak-floor-lamp.webp",
+   "format": "image/webp",
+   "width": 218,
+   "height": 700,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505070",
+    "#507090",
+    "#303030",
+    "#505050",
+    "#5070b0"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 11342
+  },
+  {
+   "id": "moonlit.foreground.modern-fireplace",
+   "name": "Moonlit Modern Linear Fireplace",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "fireplace"
+   ],
+   "tags": [
+    "modern",
+    "fireplace",
+    "fire",
+    "linear"
+   ],
+   "origin": "graded",
+   "file": "moonlit/modern-fireplace.webp",
+   "thumb": "moonlit/thumbs/modern-fireplace.webp",
+   "format": "image/webp",
+   "width": 1133,
+   "height": 592,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101030",
+    "#507090",
+    "#5070b0",
+    "#103030",
+    "#101010"
+   ],
+   "defaultScale": 0.25,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.2,
+     0.45,
+     0.58,
+     0.25
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable contemporary fireplace with a locally animated painted fire.",
+   "bytes": 53638
+  },
+  {
+   "id": "moonlit.foreground.stone-fireplace",
+   "name": "Moonlit Stone Fireplace",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "fireplace",
+    "hearth"
+   ],
+   "tags": [
+    "fireplace",
+    "fire",
+    "stone"
+   ],
+   "origin": "graded",
+   "file": "moonlit/stone-fireplace.webp",
+   "thumb": "moonlit/thumbs/stone-fireplace.webp",
+   "format": "image/webp",
+   "width": 929,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101030",
+    "#303030",
+    "#103030",
+    "#101010",
+    "#303050"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.4,
+     0.49,
+     0.2,
+     0.29
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable stone fireplace with a locally animated painted fire.",
+   "bytes": 106994
+  },
+  {
+   "id": "moonlit.foreground.coffee-cup",
+   "name": "Moonlit Steaming Coffee Cup",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "coffee",
+    "comfort"
+   ],
+   "tags": [
+    "cup",
+    "coffee",
+    "steam",
+    "table"
+   ],
+   "origin": "graded",
+   "file": "moonlit/coffee-cup.webp",
+   "thumb": "moonlit/thumbs/coffee-cup.webp",
+   "format": "image/webp",
+   "width": 716,
+   "height": 569,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#505070",
+    "#101030",
+    "#707090",
+    "#305050"
+   ],
+   "defaultScale": 0.12,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "coffee-steam"
+   ],
+   "rig": {
+    "type": "steam",
+    "region": [
+     0.47,
+     0.14,
+     0.4,
+     0.85
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable cup with soft animated steam rising from the coffee.",
+   "bytes": 75982
+  },
+  {
    "id": "moonlit.background.moonlit-glade",
    "name": "Moonlit Forest Glade",
    "style": "moonlit",
@@ -1110,6 +5632,224 @@
    "variants": [],
    "notes": "",
    "bytes": 98226
+  },
+  {
+   "id": "moonlit.background.fairy-court",
+   "name": "Moonlit Fairy Court Glade",
+   "style": "moonlit",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "fairy",
+    "forest",
+    "water",
+    "night"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "fairy",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/fairy-court.webp",
+   "thumb": "moonlit/thumbs/fairy-court.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101030",
+    "#103030",
+    "#303050",
+    "#103050",
+    "#305070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax",
+    "water-shimmer"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.76,
+     1.0,
+     0.24
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 161264
+  },
+  {
+   "id": "moonlit.background.norse-worldtree",
+   "name": "Moonlit Norse Worldtree Fjord",
+   "style": "moonlit",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "norse",
+    "worldtree",
+    "night"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "norse",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/norse-worldtree.webp",
+   "thumb": "moonlit/thumbs/norse-worldtree.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103050",
+    "#101030",
+    "#103070",
+    "#305090",
+    "#305070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 69626
+  },
+  {
+   "id": "moonlit.background.chinese-mist-mountains",
+   "name": "Moonlit Chinese-Inspired Mist Mountains",
+   "style": "moonlit",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "chinese",
+    "mountains",
+    "mist",
+    "night"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "chinese",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/chinese-mist-mountains.webp",
+   "thumb": "moonlit/thumbs/chinese-mist-mountains.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#103030",
+    "#305050",
+    "#303050",
+    "#305070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 122244
+  },
+  {
+   "id": "moonlit.background.japanese-moon-garden",
+   "name": "Moonlit Japanese Moon Garden",
+   "style": "moonlit",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "japanese",
+    "moon",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "japanese",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/japanese-moon-garden.webp",
+   "thumb": "moonlit/thumbs/japanese-moon-garden.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303070",
+    "#101030",
+    "#305090",
+    "#103050",
+    "#305070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 129204
   },
   {
    "id": "moonlit.middle.silver-oak",
@@ -1256,6 +5996,264 @@
    "variants": [],
    "notes": "",
    "bytes": 165778
+  },
+  {
+   "id": "moonlit.middle.moonlit-waterfall",
+   "name": "Moonlit Waterfall",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "water",
+   "themes": [
+    "night",
+    "forest",
+    "water"
+   ],
+   "tags": [
+    "water",
+    "night",
+    "waterfall",
+    "cascade"
+   ],
+   "origin": "graded",
+   "file": "moonlit/moonlit-waterfall.webp",
+   "thumb": "moonlit/thumbs/moonlit-waterfall.webp",
+   "format": "image/webp",
+   "width": 1300,
+   "height": 710,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#101030",
+    "#303050",
+    "#305070",
+    "#305050"
+   ],
+   "defaultScale": 0.66,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "waterfall-flow",
+    "ripple"
+   ],
+   "rig": {
+    "type": "fall",
+    "region": [
+     0.16,
+     0.1,
+     0.68,
+     0.85
+    ],
+    "speed": 1.0
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 160940
+  },
+  {
+   "id": "moonlit.middle.fairy-tree",
+   "name": "Moonlit Fae Court Willow",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "fairy",
+    "forest",
+    "enchanted",
+    "night"
+   ],
+   "tags": [
+    "fairy",
+    "willow",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/fairy-tree.webp",
+   "thumb": "moonlit/thumbs/fairy-tree.webp",
+   "format": "image/webp",
+   "width": 768,
+   "height": 1260,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#103050",
+    "#103030",
+    "#305070",
+    "#101030"
+   ],
+   "defaultScale": 0.76,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.66,
+    "stiffness": 0.72,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 222304
+  },
+  {
+   "id": "moonlit.middle.norse-rune-stones",
+   "name": "Moonlit Norse Rune Stones",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "norse",
+    "worldtree",
+    "runes",
+    "night"
+   ],
+   "tags": [
+    "standing stones",
+    "runes",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/norse-rune-stones.webp",
+   "thumb": "moonlit/thumbs/norse-rune-stones.webp",
+   "format": "image/webp",
+   "width": 1005,
+   "height": 725,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#303050",
+    "#101030",
+    "#103050",
+    "#305070"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 94468
+  },
+  {
+   "id": "moonlit.middle.chinese-pavilion",
+   "name": "Moonlit Mountain Lantern Pavilion",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "chinese",
+    "mountains",
+    "lanterns",
+    "night"
+   ],
+   "tags": [
+    "pavilion",
+    "lantern",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/chinese-pavilion.webp",
+   "thumb": "moonlit/thumbs/chinese-pavilion.webp",
+   "format": "image/webp",
+   "width": 1134,
+   "height": 757,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#101030",
+    "#303050",
+    "#305070",
+    "#103030"
+   ],
+   "defaultScale": 0.43,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 102336
+  },
+  {
+   "id": "moonlit.middle.japanese-torii",
+   "name": "Moonlit Moon Garden Torii Gate",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "japanese",
+    "moon",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "torii",
+    "gate",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/japanese-torii.webp",
+   "thumb": "moonlit/thumbs/japanese-torii.webp",
+   "format": "image/webp",
+   "width": 715,
+   "height": 725,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#303050",
+    "#103030",
+    "#503050",
+    "#301030"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 34482
   },
   {
    "id": "moonlit.foreground.night-grass",
@@ -1417,6 +6415,2216 @@
    "bytes": 87824
   },
   {
+   "id": "moonlit.foreground.fae-mushrooms",
+   "name": "Moonlit Fae Lantern Mushrooms",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "fairy",
+    "forest",
+    "enchanted",
+    "night"
+   ],
+   "tags": [
+    "mushrooms",
+    "glow",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/fae-mushrooms.webp",
+   "thumb": "moonlit/thumbs/fae-mushrooms.webp",
+   "format": "image/webp",
+   "width": 1200,
+   "height": 549,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103030",
+    "#305050",
+    "#303050",
+    "#305070",
+    "#303030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 168520
+  },
+  {
+   "id": "moonlit.foreground.norse-frost-pine",
+   "name": "Moonlit Frost-Kissed Juniper",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "norse",
+    "night",
+    "winter"
+   ],
+   "tags": [
+    "pine",
+    "frost",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/norse-frost-pine.webp",
+   "thumb": "moonlit/thumbs/norse-frost-pine.webp",
+   "format": "image/webp",
+   "width": 1200,
+   "height": 558,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103050",
+    "#101030",
+    "#103030",
+    "#305070",
+    "#303050"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 230270
+  },
+  {
+   "id": "moonlit.foreground.chinese-peach-blossoms",
+   "name": "Moonlit Peach Blossom Garden Cluster",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "chinese",
+    "garden",
+    "flowers",
+    "night"
+   ],
+   "tags": [
+    "peach blossom",
+    "flowers",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/chinese-peach-blossoms.webp",
+   "thumb": "moonlit/thumbs/chinese-peach-blossoms.webp",
+   "format": "image/webp",
+   "width": 1200,
+   "height": 537,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305070",
+    "#303050",
+    "#505070",
+    "#305050",
+    "#507090"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 162436
+  },
+  {
+   "id": "moonlit.foreground.japanese-moon-moss",
+   "name": "Moonlit Garden Moss and Sakura",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "japanese",
+    "moon",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "sakura",
+    "moss",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/japanese-moon-moss.webp",
+   "thumb": "moonlit/thumbs/japanese-moon-moss.webp",
+   "format": "image/webp",
+   "width": 1200,
+   "height": 521,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305070",
+    "#303050",
+    "#5070b0",
+    "#507090",
+    "#103030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 156700
+  },
+  {
+   "id": "moonlit.foreground.lounge-window",
+   "name": "Moonlit Lounge Window View",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "night"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "view frame",
+    "night"
+   ],
+   "origin": "graded",
+   "file": "moonlit/lounge-window.webp",
+   "thumb": "moonlit/thumbs/lounge-window.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#303050",
+    "#505050",
+    "#103030",
+    "#305050"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Transparent window opening reveals the current composed scene behind this foreground room overlay.",
+   "bytes": 234188
+  },
+  {
+   "id": "autumn.background.celestial-observatory",
+   "name": "Autumn Celestial Observatory Garden",
+   "style": "autumn",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "observatory",
+    "celestial",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "stars",
+    "observatory"
+   ],
+   "origin": "graded",
+   "file": "autumn/celestial-observatory.webp",
+   "thumb": "autumn/thumbs/celestial-observatory.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0d0b0",
+    "#d0d0b0",
+    "#705030",
+    "#f0f0b0",
+    "#505030"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 202882
+  },
+  {
+   "id": "autumn.middle.celestial-arch",
+   "name": "Autumn Celestial Astrolabe Arch",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "observatory",
+    "celestial",
+    "ruins",
+    "autumn"
+   ],
+   "tags": [
+    "arch",
+    "astrolabe",
+    "moon",
+    "stars"
+   ],
+   "origin": "graded",
+   "file": "autumn/celestial-arch.webp",
+   "thumb": "autumn/thumbs/celestial-arch.webp",
+   "format": "image/webp",
+   "width": 613,
+   "height": 717,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#907030",
+    "#907050",
+    "#b09050",
+    "#505030"
+   ],
+   "defaultScale": 0.43,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 225608
+  },
+  {
+   "id": "autumn.foreground.starflowers",
+   "name": "Autumn Starflower Cluster",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "observatory",
+    "celestial",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "flowers",
+    "stars",
+    "moss"
+   ],
+   "origin": "graded",
+   "file": "autumn/starflowers.webp",
+   "thumb": "autumn/thumbs/starflowers.webp",
+   "format": "image/webp",
+   "width": 718,
+   "height": 773,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#907030",
+    "#505030",
+    "#b09050",
+    "#303030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 121200
+  },
+  {
+   "id": "autumn.background.mythic-waterside",
+   "name": "Autumn Moonlit Waterside",
+   "style": "autumn",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "waterside",
+    "water",
+    "night",
+    "autumn"
+   ],
+   "tags": [
+    "river",
+    "moon",
+    "lanterns",
+    "vista"
+   ],
+   "origin": "graded",
+   "file": "autumn/mythic-waterside.webp",
+   "thumb": "autumn/thumbs/mythic-waterside.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#103030",
+    "#305070",
+    "#307090",
+    "#305050"
+   ],
+   "defaultScale": 1,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.83,
+     1.0,
+     0.17
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 152498
+  },
+  {
+   "id": "autumn.middle.lantern-bridge",
+   "name": "Autumn Lantern Bridge",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "waterside",
+    "water",
+    "lanterns",
+    "autumn"
+   ],
+   "tags": [
+    "bridge",
+    "lantern",
+    "moon"
+   ],
+   "origin": "graded",
+   "file": "autumn/lantern-bridge.webp",
+   "thumb": "autumn/thumbs/lantern-bridge.webp",
+   "format": "image/webp",
+   "width": 1224,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.52,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#505030",
+    "#303030",
+    "#303010",
+    "#103030"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "lantern-glow"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 340708
+  },
+  {
+   "id": "autumn.foreground.river-reeds",
+   "name": "Autumn River Reeds",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "waterside",
+    "water",
+    "reeds",
+    "autumn"
+   ],
+   "tags": [
+    "reeds",
+    "cattails",
+    "river"
+   ],
+   "origin": "graded",
+   "file": "autumn/river-reeds.webp",
+   "thumb": "autumn/thumbs/river-reeds.webp",
+   "format": "image/webp",
+   "width": 735,
+   "height": 1011,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#505030",
+    "#907030",
+    "#305050",
+    "#905030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 189418
+  },
+  {
+   "id": "autumn.background.lotus-sanctuary",
+   "name": "Autumn Lotus Sanctuary Lake",
+   "style": "autumn",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "lotus-sanctuary",
+    "water",
+    "meditation",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "lake",
+    "meditation",
+    "mountains",
+    "mist",
+    "sunrise"
+   ],
+   "origin": "graded",
+   "file": "autumn/lotus-sanctuary.webp",
+   "thumb": "autumn/thumbs/lotus-sanctuary.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b090",
+    "#f0d090",
+    "#b0b090",
+    "#b09070",
+    "#909070"
+   ],
+   "defaultScale": 1,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.71,
+     1.0,
+     0.29
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 151070
+  },
+  {
+   "id": "autumn.middle.lotus-pavilion",
+   "name": "Autumn Timber Meditation Pavilion",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "lotus-sanctuary",
+    "meditation",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "pavilion",
+    "timber",
+    "modern",
+    "meditation"
+   ],
+   "origin": "graded",
+   "file": "autumn/lotus-pavilion.webp",
+   "thumb": "autumn/thumbs/lotus-pavilion.webp",
+   "format": "image/webp",
+   "width": 992,
+   "height": 660,
+   "alpha": true,
+   "depth": 0.52,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#d09050",
+    "#703010",
+    "#705010"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independently placeable contemporary timber pavilion.",
+   "bytes": 267132
+  },
+  {
+   "id": "autumn.foreground.lotus-flowers",
+   "name": "Autumn Lotus Blossoms and Leaves",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "lotus-sanctuary",
+    "meditation",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "lotus",
+    "pink",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/lotus-flowers.webp",
+   "thumb": "autumn/thumbs/lotus-flowers.webp",
+   "format": "image/webp",
+   "width": 880,
+   "height": 615,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07030",
+    "#d07030",
+    "#d09030",
+    "#f09030",
+    "#f0b0b0"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed pink lotus blossoms, bud and leaves; full source detail retained.",
+   "bytes": 288562
+  },
+  {
+   "id": "autumn.middle.chinese-moon-gate",
+   "name": "Autumn Chinese-Inspired Moon Gate",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "chinese",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "gate",
+    "round",
+    "stone",
+    "garden"
+   ],
+   "origin": "graded",
+   "file": "autumn/chinese-moon-gate.webp",
+   "thumb": "autumn/thumbs/chinese-moon-gate.webp",
+   "format": "image/webp",
+   "width": 789,
+   "height": 691,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b090",
+    "#f0d0b0",
+    "#b09070",
+    "#505050",
+    "#907050"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A placeable moon gate with a transparent circular opening onto the scene.",
+   "bytes": 96208
+  },
+  {
+   "id": "autumn.middle.japanese-stone-lantern",
+   "name": "Autumn Japanese-Inspired Stone Lantern",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "japanese",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "lantern",
+    "stone",
+    "moss",
+    "light"
+   ],
+   "origin": "graded",
+   "file": "autumn/japanese-stone-lantern.webp",
+   "thumb": "autumn/thumbs/japanese-stone-lantern.webp",
+   "format": "image/webp",
+   "width": 361,
+   "height": 702,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707050",
+    "#505030",
+    "#d0d0b0",
+    "#909070",
+    "#b0b090"
+   ],
+   "defaultScale": 0.31,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "lantern-glow"
+   ],
+   "rig": {
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A placeable carved garden lantern with a gently pulsing glow.",
+   "bytes": 35162
+  },
+  {
+   "id": "autumn.middle.norse-dragon-boat",
+   "name": "Autumn Norse-Inspired Dragon Boat",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "norse",
+    "water",
+    "autumn"
+   ],
+   "tags": [
+    "boat",
+    "dragon",
+    "wood",
+    "water"
+   ],
+   "origin": "graded",
+   "file": "autumn/norse-dragon-boat.webp",
+   "thumb": "autumn/thumbs/norse-dragon-boat.webp",
+   "format": "image/webp",
+   "width": 1235,
+   "height": 474,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#705030",
+    "#503030",
+    "#301010",
+    "#905030"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "float"
+   ],
+   "rig": {
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A placeable wooden dragon boat with a transparent, wavy waterline and gentle floating motion.",
+   "bytes": 277428
+  },
+  {
+   "id": "autumn.foreground.woodland-foxgloves",
+   "name": "Autumn Woodland Foxgloves",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "forest",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "foxglove",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/woodland-foxgloves.webp",
+   "thumb": "autumn/thumbs/woodland-foxgloves.webp",
+   "format": "image/webp",
+   "width": 698,
+   "height": 1261,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07030",
+    "#d0b070",
+    "#f0d090",
+    "#907030",
+    "#905030"
+   ],
+   "defaultScale": 0.37,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 326582
+  },
+  {
+   "id": "autumn.foreground.wild-roses",
+   "name": "Autumn Wild Rose Cluster",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "rose",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/wild-roses.webp",
+   "thumb": "autumn/thumbs/wild-roses.webp",
+   "format": "image/webp",
+   "width": 1226,
+   "height": 583,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0d0b0",
+    "#b07030",
+    "#f0d090",
+    "#f0f0d0",
+    "#d07030"
+   ],
+   "defaultScale": 0.29,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 452222
+  },
+  {
+   "id": "autumn.foreground.woodland-anemones",
+   "name": "Autumn Woodland Anemones",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "forest",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "anemone",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/woodland-anemones.webp",
+   "thumb": "autumn/thumbs/woodland-anemones.webp",
+   "format": "image/webp",
+   "width": 701,
+   "height": 970,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#907030",
+    "#f0d0b0",
+    "#705010",
+    "#503010"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 252652
+  },
+  {
+   "id": "autumn.foreground.wild-poppies",
+   "name": "Autumn Scarlet Wild Poppies",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "meadow",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "poppy",
+    "red",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/wild-poppies.webp",
+   "thumb": "autumn/thumbs/wild-poppies.webp",
+   "format": "image/webp",
+   "width": 704,
+   "height": 964,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#907030",
+    "#b07030",
+    "#d03010",
+    "#905030"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 402900
+  },
+  {
+   "id": "autumn.foreground.rose-peonies",
+   "name": "Autumn Rose Peonies",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "blossom",
+    "autumn"
+   ],
+   "tags": [
+    "peony",
+    "pink",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/rose-peonies.webp",
+   "thumb": "autumn/thumbs/rose-peonies.webp",
+   "format": "image/webp",
+   "width": 869,
+   "height": 694,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0b0b0",
+    "#705030",
+    "#d09090",
+    "#b07030",
+    "#907030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 336574
+  },
+  {
+   "id": "autumn.foreground.golden-irises",
+   "name": "Autumn Golden Irises",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "water",
+    "autumn"
+   ],
+   "tags": [
+    "iris",
+    "gold",
+    "flowers",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/golden-irises.webp",
+   "thumb": "autumn/thumbs/golden-irises.webp",
+   "format": "image/webp",
+   "width": 646,
+   "height": 1205,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07030",
+    "#907030",
+    "#905030",
+    "#705010",
+    "#d09030"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted foreground flowers; full source resolution retained.",
+   "bytes": 455638
+  },
+  {
+   "id": "autumn.foreground.hearth-reading-room",
+   "name": "Autumn Hearth Reading Room",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "fireplace"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "hearth"
+   ],
+   "origin": "graded",
+   "file": "autumn/hearth-reading-room.webp",
+   "thumb": "autumn/thumbs/hearth-reading-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#705030",
+    "#905030",
+    "#b07030",
+    "#703010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.165,
+     0.66,
+     0.085,
+     0.14
+    ],
+    "steamRegion": [
+     0.91,
+     0.73,
+     0.045,
+     0.16
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+   "bytes": 220734
+  },
+  {
+   "id": "autumn.foreground.window-seat-room",
+   "name": "Autumn Window Seat Room",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "fireplace"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "hearth"
+   ],
+   "origin": "graded",
+   "file": "autumn/window-seat-room.webp",
+   "thumb": "autumn/thumbs/window-seat-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#301010",
+    "#705030",
+    "#703010",
+    "#905030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.755,
+     0.515,
+     0.1,
+     0.19
+    ],
+    "steamRegion": [
+     0.64,
+     0.77,
+     0.045,
+     0.16
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+   "bytes": 254640
+  },
+  {
+   "id": "autumn.foreground.modern-penthouse",
+   "name": "Autumn Modern Penthouse View",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "modern",
+    "interior",
+    "window"
+   ],
+   "tags": [
+    "modern",
+    "penthouse",
+    "large windows",
+    "living room"
+   ],
+   "origin": "graded",
+   "file": "autumn/modern-penthouse.webp",
+   "thumb": "autumn/thumbs/modern-penthouse.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b0b0",
+    "#b0b090",
+    "#909070",
+    "#b09090",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+   "bytes": 244566
+  },
+  {
+   "id": "autumn.foreground.future-sky-lounge",
+   "name": "Autumn Futuristic Sky Lounge",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "futuristic",
+    "interior",
+    "window"
+   ],
+   "tags": [
+    "future",
+    "modern",
+    "large windows",
+    "lounge"
+   ],
+   "origin": "graded",
+   "file": "autumn/future-sky-lounge.webp",
+   "thumb": "autumn/thumbs/future-sky-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909090",
+    "#b0b0b0",
+    "#707070",
+    "#505050",
+    "#303030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+   "bytes": 263570
+  },
+  {
+   "id": "autumn.foreground.timber-great-room",
+   "name": "Autumn Contemporary Timber Great Room",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "wood beams",
+    "wooden door",
+    "tile floor",
+    "fireplace"
+   ],
+   "origin": "graded",
+   "file": "autumn/timber-great-room.webp",
+   "thumb": "autumn/thumbs/timber-great-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#b0b090",
+    "#b09090",
+    "#907050",
+    "#905030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.082,
+     0.68,
+     0.07,
+     0.1
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Present-day tiled great room with varnished beams, an animated fireplace and a transparent window.",
+   "bytes": 195678
+  },
+  {
+   "id": "autumn.foreground.oak-window-lounge",
+   "name": "Autumn Contemporary Oak Window Lounge",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "oak beams",
+    "wooden door",
+    "tile floor",
+    "lounge"
+   ],
+   "origin": "graded",
+   "file": "autumn/oak-window-lounge.webp",
+   "thumb": "autumn/thumbs/oak-window-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b090",
+    "#d0b0b0",
+    "#b09090",
+    "#d0d0d0",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Present-day oak-beam room with tiled floor and a transparent window onto the composed world.",
+   "bytes": 183974
+  },
+  {
+   "id": "autumn.foreground.brick-timber-corner-room",
+   "name": "Autumn Asymmetric Brick and Timber Room",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "brick",
+    "wood beams",
+    "slanted roof",
+    "corner windows",
+    "tile floor"
+   ],
+   "origin": "graded",
+   "file": "autumn/brick-timber-corner-room.webp",
+   "thumb": "autumn/thumbs/brick-timber-corner-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#503030",
+    "#907050",
+    "#703010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Asymmetric brick-and-wood room with a sloping roof and two transparent windows on adjacent walls.",
+   "bytes": 263994
+  },
+  {
+   "id": "autumn.foreground.modern-sectional",
+   "name": "Autumn Modern Modular Sectional",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern"
+   ],
+   "tags": [
+    "modern",
+    "sofa",
+    "furniture",
+    "sectional"
+   ],
+   "origin": "graded",
+   "file": "autumn/modern-sectional.webp",
+   "thumb": "autumn/thumbs/modern-sectional.webp",
+   "format": "image/webp",
+   "width": 1226,
+   "height": 421,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0d0d0",
+    "#907070",
+    "#d0d0b0",
+    "#909070",
+    "#f0f0d0"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 94066
+  },
+  {
+   "id": "autumn.foreground.future-lounge-chair",
+   "name": "Autumn Futuristic Lounge Chair",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "futuristic"
+   ],
+   "tags": [
+    "future",
+    "modern",
+    "chair",
+    "furniture"
+   ],
+   "origin": "graded",
+   "file": "autumn/future-lounge-chair.webp",
+   "thumb": "autumn/thumbs/future-lounge-chair.webp",
+   "format": "image/webp",
+   "width": 785,
+   "height": 679,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909090",
+    "#b0b0b0",
+    "#d0d0d0",
+    "#d0d0b0",
+    "#707070"
+   ],
+   "defaultScale": 0.25,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 61758
+  },
+  {
+   "id": "autumn.foreground.contemporary-oak-door",
+   "name": "Autumn Contemporary Oak Door",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "door",
+    "wood",
+    "oak",
+    "modern"
+   ],
+   "origin": "graded",
+   "file": "autumn/contemporary-oak-door.webp",
+   "thumb": "autumn/thumbs/contemporary-oak-door.webp",
+   "format": "image/webp",
+   "width": 327,
+   "height": 686,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07050",
+    "#d09050",
+    "#d09070",
+    "#b09050",
+    "#b07030"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 25880
+  },
+  {
+   "id": "autumn.foreground.contemporary-oak-chair",
+   "name": "Autumn Contemporary Oak Lounge Chair",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "chair",
+    "wood",
+    "oak",
+    "modern",
+    "furniture"
+   ],
+   "origin": "graded",
+   "file": "autumn/contemporary-oak-chair.webp",
+   "thumb": "autumn/thumbs/contemporary-oak-chair.webp",
+   "format": "image/webp",
+   "width": 848,
+   "height": 684,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#d0b090",
+    "#907050",
+    "#705030",
+    "#b0b090"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 116064
+  },
+  {
+   "id": "autumn.foreground.contemporary-oak-table",
+   "name": "Autumn Contemporary Oak Coffee Table",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "table",
+    "wood",
+    "oak",
+    "coffee",
+    "furniture"
+   ],
+   "origin": "graded",
+   "file": "autumn/contemporary-oak-table.webp",
+   "thumb": "autumn/thumbs/contemporary-oak-table.webp",
+   "format": "image/webp",
+   "width": 1172,
+   "height": 567,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#d09070",
+    "#705030",
+    "#905030",
+    "#b07050"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 37170
+  },
+  {
+   "id": "autumn.foreground.oak-bookshelf",
+   "name": "Autumn Contemporary Oak Bookshelf",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "shelves",
+    "books",
+    "wood",
+    "oak",
+    "furniture"
+   ],
+   "origin": "graded",
+   "file": "autumn/oak-bookshelf.webp",
+   "thumb": "autumn/thumbs/oak-bookshelf.webp",
+   "format": "image/webp",
+   "width": 485,
+   "height": 667,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#705030",
+    "#905030",
+    "#b07050",
+    "#703010"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 54968
+  },
+  {
+   "id": "autumn.foreground.indoor-fig",
+   "name": "Autumn Potted Fiddle-Leaf Fig",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "plant"
+   ],
+   "tags": [
+    "plant",
+    "pot",
+    "foliage",
+    "green",
+    "decor"
+   ],
+   "origin": "graded",
+   "file": "autumn/indoor-fig.webp",
+   "thumb": "autumn/thumbs/indoor-fig.webp",
+   "format": "image/webp",
+   "width": 441,
+   "height": 692,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705010",
+    "#503010",
+    "#b07030",
+    "#905030",
+    "#705030"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 54542
+  },
+  {
+   "id": "autumn.foreground.oak-floor-lamp",
+   "name": "Autumn Contemporary Oak Floor Lamp",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "lamp",
+    "wood",
+    "oak",
+    "lighting",
+    "decor"
+   ],
+   "origin": "graded",
+   "file": "autumn/oak-floor-lamp.webp",
+   "thumb": "autumn/thumbs/oak-floor-lamp.webp",
+   "format": "image/webp",
+   "width": 218,
+   "height": 700,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#d0b090",
+    "#f0d0b0",
+    "#f0d0d0",
+    "#b09050"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 16420
+  },
+  {
+   "id": "autumn.foreground.modern-fireplace",
+   "name": "Autumn Modern Linear Fireplace",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "fireplace"
+   ],
+   "tags": [
+    "modern",
+    "fireplace",
+    "fire",
+    "linear"
+   ],
+   "origin": "graded",
+   "file": "autumn/modern-fireplace.webp",
+   "thumb": "autumn/thumbs/modern-fireplace.webp",
+   "format": "image/webp",
+   "width": 1133,
+   "height": 592,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#b0b0b0",
+    "#303030",
+    "#d0d0b0",
+    "#d0d0d0"
+   ],
+   "defaultScale": 0.25,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.2,
+     0.45,
+     0.58,
+     0.25
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable contemporary fireplace with a locally animated painted fire.",
+   "bytes": 82778
+  },
+  {
+   "id": "autumn.foreground.stone-fireplace",
+   "name": "Autumn Stone Fireplace",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "fireplace",
+    "hearth"
+   ],
+   "tags": [
+    "fireplace",
+    "fire",
+    "stone"
+   ],
+   "origin": "graded",
+   "file": "autumn/stone-fireplace.webp",
+   "thumb": "autumn/thumbs/stone-fireplace.webp",
+   "format": "image/webp",
+   "width": 929,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#301010",
+    "#303010",
+    "#503030",
+    "#503010"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.4,
+     0.49,
+     0.2,
+     0.29
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable stone fireplace with a locally animated painted fire.",
+   "bytes": 164042
+  },
+  {
+   "id": "autumn.foreground.coffee-cup",
+   "name": "Autumn Steaming Coffee Cup",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "coffee",
+    "comfort"
+   ],
+   "tags": [
+    "cup",
+    "coffee",
+    "steam",
+    "table"
+   ],
+   "origin": "graded",
+   "file": "autumn/coffee-cup.webp",
+   "thumb": "autumn/thumbs/coffee-cup.webp",
+   "format": "image/webp",
+   "width": 716,
+   "height": 569,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b090",
+    "#f0d0b0",
+    "#b09070",
+    "#301010",
+    "#b07050"
+   ],
+   "defaultScale": 0.12,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "coffee-steam"
+   ],
+   "rig": {
+    "type": "steam",
+    "region": [
+     0.47,
+     0.14,
+     0.4,
+     0.85
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable cup with soft animated steam rising from the coffee.",
+   "bytes": 103590
+  },
+  {
    "id": "autumn.background.autumn-river",
    "name": "Autumn River Valley",
    "style": "autumn",
@@ -1532,6 +8740,224 @@
    "variants": [],
    "notes": "",
    "bytes": 232076
+  },
+  {
+   "id": "autumn.background.fairy-court",
+   "name": "Autumn Fairy Court Glade",
+   "style": "autumn",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "fairy",
+    "forest",
+    "water",
+    "autumn"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "fairy",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/fairy-court.webp",
+   "thumb": "autumn/thumbs/fairy-court.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#101010",
+    "#303030",
+    "#103030",
+    "#705030"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax",
+    "water-shimmer"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.76,
+     1.0,
+     0.24
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 264980
+  },
+  {
+   "id": "autumn.background.norse-worldtree",
+   "name": "Autumn Norse Worldtree Fjord",
+   "style": "autumn",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "norse",
+    "worldtree",
+    "autumn"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "norse",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/norse-worldtree.webp",
+   "thumb": "autumn/thumbs/norse-worldtree.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#103050",
+    "#103030",
+    "#105070",
+    "#101030",
+    "#305070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 111752
+  },
+  {
+   "id": "autumn.background.chinese-mist-mountains",
+   "name": "Autumn Chinese-Inspired Mist Mountains",
+   "style": "autumn",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "chinese",
+    "mountains",
+    "mist",
+    "autumn"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "chinese",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/chinese-mist-mountains.webp",
+   "thumb": "autumn/thumbs/chinese-mist-mountains.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#f0f0b0",
+    "#f0d090",
+    "#907030",
+    "#f0d0b0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 223108
+  },
+  {
+   "id": "autumn.background.japanese-moon-garden",
+   "name": "Autumn Japanese Moon Garden",
+   "style": "autumn",
+   "layer": "background",
+   "category": "fantasy",
+   "themes": [
+    "japanese",
+    "moon",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "japanese",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/japanese-moon-garden.webp",
+   "thumb": "autumn/thumbs/japanese-moon-garden.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#5070b0",
+    "#305090",
+    "#7090d0",
+    "#303050"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 204896
   },
   {
    "id": "autumn.middle.amber-oak",
@@ -1731,6 +9157,264 @@
    "variants": [],
    "notes": "",
    "bytes": 241292
+  },
+  {
+   "id": "autumn.middle.autumn-waterfall",
+   "name": "Autumn Waterfall",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "water",
+   "themes": [
+    "forest",
+    "autumn",
+    "water"
+   ],
+   "tags": [
+    "water",
+    "autumn",
+    "waterfall",
+    "cascade"
+   ],
+   "origin": "graded",
+   "file": "autumn/autumn-waterfall.webp",
+   "thumb": "autumn/thumbs/autumn-waterfall.webp",
+   "format": "image/webp",
+   "width": 1300,
+   "height": 710,
+   "alpha": true,
+   "depth": 0.45,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#503010",
+    "#103030",
+    "#101010",
+    "#705030"
+   ],
+   "defaultScale": 0.66,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "waterfall-flow",
+    "ripple"
+   ],
+   "rig": {
+    "type": "fall",
+    "region": [
+     0.16,
+     0.1,
+     0.68,
+     0.85
+    ],
+    "speed": 1.0
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 245372
+  },
+  {
+   "id": "autumn.middle.fairy-tree",
+   "name": "Autumn Fae Court Willow",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "fairy",
+    "forest",
+    "enchanted",
+    "autumn"
+   ],
+   "tags": [
+    "fairy",
+    "willow",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/fairy-tree.webp",
+   "thumb": "autumn/thumbs/fairy-tree.webp",
+   "format": "image/webp",
+   "width": 768,
+   "height": 1260,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#505050",
+    "#505030",
+    "#503030",
+    "#705030"
+   ],
+   "defaultScale": 0.76,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.66,
+    "stiffness": 0.72,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 294830
+  },
+  {
+   "id": "autumn.middle.norse-rune-stones",
+   "name": "Autumn Norse Rune Stones",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "norse",
+    "worldtree",
+    "runes",
+    "autumn"
+   ],
+   "tags": [
+    "standing stones",
+    "runes",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/norse-rune-stones.webp",
+   "thumb": "autumn/thumbs/norse-rune-stones.webp",
+   "format": "image/webp",
+   "width": 1005,
+   "height": 725,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#303010",
+    "#505030",
+    "#503030",
+    "#505050"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 148642
+  },
+  {
+   "id": "autumn.middle.chinese-pavilion",
+   "name": "Autumn Mountain Lantern Pavilion",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "chinese",
+    "mountains",
+    "lanterns",
+    "autumn"
+   ],
+   "tags": [
+    "pavilion",
+    "lantern",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/chinese-pavilion.webp",
+   "thumb": "autumn/thumbs/chinese-pavilion.webp",
+   "format": "image/webp",
+   "width": 1134,
+   "height": 757,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503030",
+    "#301010",
+    "#703010",
+    "#501010",
+    "#b05030"
+   ],
+   "defaultScale": 0.43,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 159926
+  },
+  {
+   "id": "autumn.middle.japanese-torii",
+   "name": "Autumn Moon Garden Torii Gate",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "landmarks",
+   "themes": [
+    "japanese",
+    "moon",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "torii",
+    "gate",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/japanese-torii.webp",
+   "thumb": "autumn/thumbs/japanese-torii.webp",
+   "format": "image/webp",
+   "width": 715,
+   "height": 725,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503030",
+    "#d05030",
+    "#b03030",
+    "#705030",
+    "#501010"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 51142
   },
   {
    "id": "autumn.foreground.autumn-grass",
@@ -1949,6 +9633,233 @@
    "bytes": 89088
   },
   {
+   "id": "autumn.foreground.fae-mushrooms",
+   "name": "Autumn Fae Lantern Mushrooms",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "fairy",
+    "forest",
+    "enchanted",
+    "autumn"
+   ],
+   "tags": [
+    "mushrooms",
+    "glow",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/fae-mushrooms.webp",
+   "thumb": "autumn/thumbs/fae-mushrooms.webp",
+   "format": "image/webp",
+   "width": 1200,
+   "height": 549,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#705030",
+    "#907030",
+    "#503010",
+    "#905030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 221288
+  },
+  {
+   "id": "autumn.foreground.norse-frost-pine",
+   "name": "Autumn Frost-Kissed Juniper",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "norse",
+    "autumn",
+    "winter"
+   ],
+   "tags": [
+    "pine",
+    "frost",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/norse-frost-pine.webp",
+   "thumb": "autumn/thumbs/norse-frost-pine.webp",
+   "format": "image/webp",
+   "width": 1200,
+   "height": 558,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#305050",
+    "#507070",
+    "#101010",
+    "#103030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 287004
+  },
+  {
+   "id": "autumn.foreground.chinese-peach-blossoms",
+   "name": "Autumn Peach Blossom Garden Cluster",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "chinese",
+    "garden",
+    "flowers",
+    "autumn"
+   ],
+   "tags": [
+    "peach blossom",
+    "flowers",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/chinese-peach-blossoms.webp",
+   "thumb": "autumn/thumbs/chinese-peach-blossoms.webp",
+   "format": "image/webp",
+   "width": 1200,
+   "height": 537,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#907050",
+    "#f09090",
+    "#705030",
+    "#505030",
+    "#d07070"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 196952
+  },
+  {
+   "id": "autumn.foreground.japanese-moon-moss",
+   "name": "Autumn Garden Moss and Sakura",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "japanese",
+    "moon",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "sakura",
+    "moss",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/japanese-moon-moss.webp",
+   "thumb": "autumn/thumbs/japanese-moon-moss.webp",
+   "format": "image/webp",
+   "width": 1200,
+   "height": 521,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#505030",
+    "#907030",
+    "#b0b0d0",
+    "#d0d0f0"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 204540
+  },
+  {
    "id": "autumn.foreground.autumn-pebbles",
    "name": "Autumn Pebble Scatter",
    "style": "autumn",
@@ -1992,6 +9903,57 @@
    "variants": [],
    "notes": "",
    "bytes": 97680
+  },
+  {
+   "id": "autumn.foreground.lounge-window",
+   "name": "Harvest Lounge Window View",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "autumn"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "view frame",
+    "autumn"
+   ],
+   "origin": "graded",
+   "file": "autumn/lounge-window.webp",
+   "thumb": "autumn/thumbs/lounge-window.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#705030",
+    "#703010",
+    "#907030",
+    "#905010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Transparent window opening reveals the current composed scene behind this foreground room overlay.",
+   "bytes": 322490
   }
  ]
 }

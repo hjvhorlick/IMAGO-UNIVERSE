@@ -1,7 +1,7 @@
 /** Acceptance tests for style consistency across layers 1-3 and universality of layer 4. */
 import { describe, expect, it } from 'vitest';
 import { findStyleClashes, referenceCollection, styleStats, switchStyle } from '../src/scene/styleManager';
-import { createScene } from '../src/scene/sceneModel';
+import { createAssetNode, createScene } from '../src/scene/sceneModel';
 import { autoCompose, DEFAULT_COMPOSE } from '../src/scene/composition';
 import { makeEffectNode } from '../src/ui/inspector';
 import { EFFECTS, THEME_PRESETS, effectDefaults } from '../src/animation/effects';
@@ -109,10 +109,31 @@ describe('layer 4 universality', () => {
 
   it('ships at least ten atmospheric effects and six theme collections', () => {
     expect(EFFECTS.length).toBeGreaterThanOrEqual(10);
-    expect(THEME_PRESETS.length).toBeGreaterThanOrEqual(6);
+    expect(THEME_PRESETS.length).toBeGreaterThanOrEqual(8);
+    expect(EFFECTS.some((e) => e.id === 'zodiac-wheel')).toBe(true);
+    expect(EFFECTS.some((e) => e.id === 'floating-lanterns')).toBe(true);
+    expect(THEME_PRESETS.some((t) => t.id === 'japanese')).toBe(true);
+    expect(THEME_PRESETS.some((t) => t.id === 'mythic-zodiac')).toBe(true);
     for (const t of THEME_PRESETS) {
       expect(t.effects.length).toBeGreaterThan(1);
       for (const e of t.effects) expect(EFFECTS.some((x) => x.id === e.id)).toBe(true);
+    }
+  });
+
+  it('keeps each themed scenario inside the selected effects’ real controls', () => {
+    for (const theme of THEME_PRESETS) {
+      for (const entry of theme.effects) {
+        const effect = EFFECTS.find((x) => x.id === entry.id)!;
+        for (const [key, value] of Object.entries(entry.params ?? {})) {
+          const param = effect.params.find((p) => p.key === key);
+          expect(param, `${theme.id}.${entry.id} has no ${key} control`).toBeTruthy();
+          if (param?.type === 'range') {
+            expect(Number(value), `${theme.id}.${entry.id}.${key}`).toBeGreaterThanOrEqual(param.min!);
+            expect(Number(value), `${theme.id}.${entry.id}.${key}`).toBeLessThanOrEqual(param.max!);
+          }
+          if (param?.type === 'color') expect(String(value)).toMatch(/^#[0-9a-f]{6}$/i);
+        }
+      }
     }
   });
 
@@ -162,13 +183,20 @@ describe('the published library', () => {
     }
   });
 
-  it('meets the starter library targets', () => {
+  it('meets the starter library targets and includes room-view overlays in every style', () => {
     const lib = shipped();
     const count = (layer: string) => lib.assets.filter((a) => a.layer === layer).length;
     expect(count('background')).toBeGreaterThanOrEqual(5);
     expect(count('middle')).toBeGreaterThanOrEqual(8);
     expect(count('foreground')).toBeGreaterThanOrEqual(8);
     expect(EFFECTS.length).toBeGreaterThanOrEqual(10);
+    for (const style of lib.styles) {
+      const room = lib.get(`${style.id}.foreground.lounge-window`);
+      expect(room, `${style.id} lounge window`).toBeTruthy();
+      expect(room!.alpha).toBe(true);
+      expect(room!.rig?.type).toBe('window-overlay');
+      expect(room!.tags).toContain('window');
+    }
   });
 
   it('every asset declares a known origin and points at a real file', () => {
@@ -181,6 +209,87 @@ describe('the published library', () => {
       expect(fs.existsSync(path.join(root, 'public/library', a.thumb)), `${a.id} thumb missing`).toBe(true);
       expect(a.width).toBeGreaterThan(0);
       expect(a.height).toBeGreaterThan(0);
+    }
+  });
+
+  it('keeps detailed close-up flower varieties intact when switching palettes', () => {
+    const lib = shipped();
+    const scene = createScene('enchanted');
+    const ids = ['woodland-foxgloves', 'wild-roses', 'woodland-anemones',
+      'wild-poppies', 'rose-peonies', 'golden-irises', 'lotus-flowers'];
+    for (const id of ids) {
+      const meta = lib.get(`enchanted.foreground.${id}`)!;
+      expect(meta.origin).toBe('painted');
+      expect(meta.width).toBeGreaterThan(600);
+      expect(meta.height).toBeGreaterThan(500);
+      expect(meta.animations).toContain('stem-bend');
+      const node = createAssetNode(meta, scene);
+      node.animation!.enabled = true;
+      scene.nodes.push(node);
+    }
+    for (const style of ['moonlit', 'autumn', 'enchanted']) {
+      switchStyle(scene, lib, style);
+      expect(findStyleClashes(scene, lib)).toEqual([]);
+      for (const id of ids) {
+        const node = scene.nodes.find((n) => n.assetId === `${style}.foreground.${id}`);
+        expect(node, `${style} ${id}`).toBeDefined();
+        expect(node!.animation?.enabled).toBe(true);
+        expect(node!.animation?.type).toBe('stem-bend');
+      }
+    }
+  });
+
+  it('keeps landmark sets paired with their story backdrops across palettes', () => {
+    const lib = shipped();
+    const stories = [
+      ['enchanted.background.fairy-court', 'fairy', 'enchanted.middle.fairy-tree', 'enchanted.foreground.fae-mushrooms'],
+      ['enchanted.background.norse-worldtree', 'norse', 'enchanted.middle.norse-rune-stones', 'enchanted.foreground.norse-frost-pine'],
+      ['enchanted.background.chinese-mist-mountains', 'chinese', 'enchanted.middle.chinese-pavilion', 'enchanted.foreground.chinese-peach-blossoms'],
+      ['enchanted.background.japanese-moon-garden', 'japanese', 'enchanted.middle.japanese-torii', 'enchanted.foreground.japanese-moon-moss'],
+      ['enchanted.background.celestial-observatory', 'observatory', 'enchanted.middle.celestial-arch', 'enchanted.foreground.starflowers'],
+      ['enchanted.background.mythic-waterside', 'waterside', 'enchanted.middle.lantern-bridge', 'enchanted.foreground.river-reeds'],
+      ['enchanted.background.lotus-sanctuary', 'lotus-sanctuary', 'enchanted.middle.lotus-pavilion', 'enchanted.foreground.lotus-flowers'],
+    ] as const;
+    for (const [backgroundId, story, expectedId, expectedForegroundId] of stories) {
+      const scene = createScene('enchanted');
+      const bg = lib.get(backgroundId)!;
+      const bgNode = createAssetNode(bg, scene);
+      bgNode.locked = true;
+      scene.nodes.push(bgNode);
+      autoCompose(scene, lib, { ...DEFAULT_COMPOSE, seed: 4242, setBackground: false });
+      expect(scene.nodes.some((node) => node.assetId === expectedId), `${story} landmark missing`).toBe(true);
+      expect(scene.nodes.some((node) => node.assetId === expectedForegroundId), `${story} foreground accent missing`).toBe(true);
+      expect(findStyleClashes(scene, lib)).toEqual([]);
+      if (story === 'waterside' || story === 'lotus-sanctuary') {
+        expect(bgNode.animation?.type).toBe('water-shimmer');
+        expect(bgNode.animation?.enabled).toBe(true);
+        expect(scene.nodes.some((node) => lib.get(node.assetId)?.rig?.type === 'fall')).toBe(false);
+        const landmark = scene.nodes.find((node) => node.assetId === expectedId)!;
+        if (story === 'waterside') expect(landmark.x / scene.canvas.width).toBeCloseTo(0.5, 1);
+        else {
+          expect(landmark.x / scene.canvas.width < 0.25 || landmark.x / scene.canvas.width > 0.75).toBe(true);
+          expect(scene.nodes.filter((node) => node.layer === 'foreground').every((node) =>
+            landmark.x < scene.canvas.width / 2 ? node.x > scene.canvas.width / 2 : node.x < scene.canvas.width / 2)).toBe(true);
+        }
+        expect(scene.nodes.filter((node) => node.layer === 'foreground').every((node) =>
+          node.x / scene.canvas.width < 0.25 || node.x / scene.canvas.width > 0.75)).toBe(true);
+      }
+      for (const targetStyle of ['moonlit', 'autumn', 'enchanted']) {
+        switchStyle(scene, lib, targetStyle);
+        expect(findStyleClashes(scene, lib), `${story} clashes in ${targetStyle}`).toEqual([]);
+        if (story === 'waterside' || story === 'lotus-sanctuary') {
+          const id = story === 'waterside' ? 'mythic-waterside' : 'lotus-sanctuary';
+          const fresh = createAssetNode(lib.get(`${targetStyle}.background.${id}`)!, scene);
+          expect(fresh.animation?.type).toBe('water-shimmer');
+          expect(fresh.animation?.enabled).toBe(true);
+          expect(bgNode.animation?.enabled).toBe(true);
+        }
+        for (const originalId of [backgroundId, expectedId, expectedForegroundId]) {
+          const counterpartId = originalId.replace('enchanted.', `${targetStyle}.`);
+          expect(scene.nodes.some((node) => node.assetId === counterpartId),
+            `${story} counterpart ${counterpartId} missing`).toBe(true);
+        }
+      }
     }
   });
 

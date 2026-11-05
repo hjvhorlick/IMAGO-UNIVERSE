@@ -119,6 +119,19 @@ function flatFallScene() {
 }
 
 describe('falling water', () => {
+  it('starts flowing automatically when a waterfall asset is placed', () => {
+    const manifestPath = path.join(ROOT, 'public/library/manifest.json');
+    const lib = new AssetLibrary();
+    lib.manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    const m = lib.assets.find((x) => x.animations.includes('waterfall-flow'))!;
+    const scene = createScene(m.style);
+    const node = createAssetNode(m, scene);
+    expect(node.animation?.type).toBe('waterfall-flow');
+    expect(node.animation?.enabled).toBe(true);
+    expect(node.animation!.amplitude).toBeGreaterThan(0.7);
+    expect(node.animation!.turbulence).toBeGreaterThan(0.5);
+  });
+
   it('never slides the painted plate - a picture of a waterfall is not water', () => {
     const { lib, scene, node, loops } = flatFallScene();
     const engine = new AnimationEngine();
@@ -128,6 +141,18 @@ describe('falling water', () => {
     expect(state.fall).not.toBeNull();
     expect(state.fall!.cycles).toBeGreaterThanOrEqual(1);
     expect(Number.isInteger(state.fall!.cycles)).toBe(true);
+  });
+
+  it('turns up both splash and plume strength with turbulence', () => {
+    const { scene, node, loops, m } = flatFallScene();
+    const engine = new AnimationEngine();
+    node.animation!.amplitude = 0.9;
+    node.animation!.turbulence = 0;
+    const calm = engine.evaluate(scene, node, 1.3, loops, m, 'export').fall!;
+    node.animation!.turbulence = 1;
+    const turbulent = engine.evaluate(scene, node, 1.3, loops, m, 'export').fall!;
+    expect(turbulent.splash).toBeGreaterThan(calm.splash);
+    expect(turbulent.mist).toBeGreaterThan(calm.mist);
   });
 
   it('moves DOWNWARD, not upward', () => {
@@ -150,7 +175,10 @@ describe('falling water', () => {
     expect(y1 - y0).toBeGreaterThan(40);
 
     // Sample several phase pairs and require consistent DOWNWARD velocity.
-    const dt = 0.2;
+    // Optical-flow linearisation assumes subpixel-scale temporal steps. At the
+    // waterfall's several-cascade-per-loop speed, 0.2s jumps can cross more
+    // than a full streak width and alias the derivative in either direction.
+    const dt = 0.025;
     const vels: number[] = [];
     for (const t of [0.4, 1.1, 2.3, 3.7, 5.2, 6.6]) {
       const a = lumaPlane(draw(t), W, x0, x1, y0, y1);

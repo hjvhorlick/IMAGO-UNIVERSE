@@ -17,7 +17,7 @@ import { LoopManager } from '../src/animation/loopManager';
 import { buildDemoScene } from '../src/scene/demoScene';
 import { EFFECTS } from '../src/animation/effects';
 import { makeEffectNode } from '../src/ui/inspector';
-import { createScene, fitBackground } from '../src/scene/sceneModel';
+import { createAssetNode, createScene, fitBackground } from '../src/scene/sceneModel';
 import { autoCompose, DEFAULT_COMPOSE } from '../src/scene/composition';
 import type { AssetMeta } from '../src/core/types';
 
@@ -83,6 +83,115 @@ async function main() {
     console.log(`rendered demo-${name}.png at t=${t.toFixed(2)}s in ${ms.toFixed(0)}ms`);
   }
 
+  // A transparent foreground room frame should reveal the user's world through
+  // its window while replacing the surrounding canvas with an interior view.
+  const roomMeta = lib.get(`${scene.styleId}.foreground.lounge-window`);
+  if (roomMeta) {
+    await images.ensure([roomMeta.id]);
+    scene.nodes.push(createAssetNode(roomMeta, scene));
+    const { cv } = renderAt(0);
+    fs.writeFileSync(path.join(OUT, 'lounge-window-view.png'), cv.toBuffer('image/png'));
+    scene.nodes.pop();
+    console.log('rendered lounge-window-view.png with the composed world visible through the window');
+  }
+
+  // Review both new rooms with the composed world visible and a separately
+  // positioned steaming cup on their tables.
+  for (const [id, cupX, cupY] of [
+    ['hearth-reading-room', 0.59, 0.88],
+    ['window-seat-room', 0.64, 0.80],
+  ] as const) {
+    const room = lib.get(`enchanted.foreground.${id}`);
+    const coffee = lib.get('enchanted.foreground.coffee-cup');
+    if (!room || !coffee) continue;
+    const interior = buildDemoScene(lib, { withEffects: false });
+    const roomNode = createAssetNode(room, interior);
+    const cup = createAssetNode(coffee, interior);
+    cup.width = roomNode.width * 0.055;
+    cup.height = cup.width * coffee.height / coffee.width;
+    cup.x = roomNode.x - roomNode.width / 2 + roomNode.width * cupX;
+    cup.y = roomNode.y - roomNode.height / 2 + roomNode.height * cupY;
+    interior.nodes.push(roomNode, cup);
+    await images.ensure(interior.nodes.map((n) => n.assetId));
+    loops.invalidate();
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, interior, {
+      scale, quality: 'export', time: 1.5, masterCycle: loops.analyse(interior).master,
+    });
+    fs.writeFileSync(path.join(OUT, `${id}.png`), cv.toBuffer('image/png'));
+    console.log(`rendered ${id}.png with an animated hearth, coffee and the composed world`);
+  }
+
+  // Review the larger contemporary windows against the same composed world.
+  for (const id of ['modern-penthouse', 'future-sky-lounge', 'timber-great-room', 'oak-window-lounge', 'brick-timber-corner-room']) {
+    const room = lib.get(`enchanted.foreground.${id}`);
+    if (!room) continue;
+    const interior = buildDemoScene(lib, { withEffects: false });
+    interior.nodes.push(createAssetNode(room, interior));
+    await images.ensure(interior.nodes.map((n) => n.assetId));
+    loops.invalidate();
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, interior, {
+      scale, quality: 'export', time: 1.5, masterCycle: loops.analyse(interior).master,
+    });
+    fs.writeFileSync(path.join(OUT, `${id}.png`), cv.toBuffer('image/png'));
+    console.log(`rendered ${id}.png with the composed world through its panoramic window`);
+  }
+
+  // Show the separately movable interior props together in a room.
+  {
+    const interior = buildDemoScene(lib, { withEffects: false });
+    const room = lib.get('enchanted.foreground.oak-window-lounge')!;
+    interior.nodes.push(createAssetNode(room, interior));
+    for (const [id, x, y, h] of [
+      ['oak-bookshelf', 0.13, 0.72, 0.48],
+      ['indoor-fig', 0.31, 0.78, 0.36],
+      ['oak-floor-lamp', 0.96, 0.66, 0.46],
+    ] as const) {
+      const meta = lib.get(`enchanted.foreground.${id}`)!;
+      const node = createAssetNode(meta, interior);
+      node.x = interior.canvas.width * x;
+      node.y = interior.canvas.height * y;
+      node.height = interior.canvas.height * h;
+      node.width = node.height * meta.width / meta.height;
+      interior.nodes.push(node);
+    }
+    await images.ensure(interior.nodes.map((n) => n.assetId));
+    loops.invalidate();
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, interior, {
+      scale, quality: 'export', time: 1.5, masterCycle: loops.analyse(interior).master,
+    });
+    fs.writeFileSync(path.join(OUT, 'interior-loose-furnishings.png'), cv.toBuffer('image/png'));
+    console.log('rendered interior-loose-furnishings.png with three independently placed props');
+  }
+
+  // Inspect the placeable gate, lit lantern and floating boat against their own vistas.
+  for (const [id, bgId, x, y, height] of [
+    ['chinese-moon-gate', 'chinese-mist-mountains', 0.5, 0.56, 0.63],
+    ['japanese-stone-lantern', 'japanese-moon-garden', 0.23, 0.66, 0.58],
+    ['norse-dragon-boat', 'mythic-waterside', 0.50, 0.78, 0.24],
+  ] as const) {
+    const detailScene = createScene('enchanted');
+    const bg = lib.get(`enchanted.background.${bgId}`)!;
+    const detail = lib.get(`enchanted.middle.${id}`)!;
+    await images.ensure([bg.id, detail.id]);
+    const bgNode = createAssetNode(bg, detailScene);
+    fitBackground(bgNode, detailScene, bg.width, bg.height);
+    detailScene.nodes.push(bgNode);
+    const node = createAssetNode(detail, detailScene);
+    node.x = detailScene.canvas.width * x; node.y = detailScene.canvas.height * y;
+    node.height = detailScene.canvas.height * height; node.width = node.height * detail.width / detail.height;
+    detailScene.nodes.push(node);
+    loops.invalidate();
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, detailScene, {
+      scale, quality: 'export', time: 1.5, masterCycle: loops.analyse(detailScene).master,
+    });
+    fs.writeFileSync(path.join(OUT, `${id}.png`), cv.toBuffer('image/png'));
+  }
+  console.log('rendered three independently placeable cultural details');
+
   /* ---- acceptance: the master cycle boundary must be pixel-identical ---- */
   const a = renderAt(0).cv.getContext('2d').getImageData(0, 0, W, H).data;
   const b = renderAt(report.master).cv.getContext('2d').getImageData(0, 0, W, H).data;
@@ -138,6 +247,25 @@ async function main() {
     wctx.fillStyle = '#fff';
     wctx.font = '13px sans-serif';
     wctx.fillText(`${bgMeta.style} / ${bgMeta.name}  (${ws.nodes.length} nodes)`, (i % wcols) * ww + 8, Math.floor(i / wcols) * wh + 15);
+    if (bgMeta.id === 'enchanted.background.lotus-sanctuary') {
+      fs.writeFileSync(path.join(OUT, 'lotus-sanctuary-world.png'), cv.toBuffer('image/png'));
+      console.log('rendered lotus-sanctuary-world.png');
+    }
+    if (bgMeta.id === 'enchanted.background.mythic-waterside') {
+      fs.writeFileSync(path.join(OUT, 'waterside-world.png'), cv.toBuffer('image/png'));
+      const room = lib.get(`${bgMeta.style}.foreground.lounge-window`);
+      if (room) {
+        await images.ensure([room.id]);
+        ws.nodes.push(createAssetNode(room, ws));
+        const roomCanvas = createCanvas(ww, wh);
+        comp.render(roomCanvas.getContext('2d') as never, ws, {
+          scale: wscale, quality: 'export', time: 0, masterCycle: loops.analyse(ws).master,
+        });
+        fs.writeFileSync(path.join(OUT, 'waterside-lounge.png'), roomCanvas.toBuffer('image/png'));
+        ws.nodes.pop();
+        console.log('rendered waterside-world.png and waterside-lounge.png');
+      }
+    }
   }
   fs.writeFileSync(path.join(OUT, 'worlds.png'), worldSheet.toBuffer('image/png'));
   console.log(`rendered worlds.png (${backgrounds.length} composed environments)`);
@@ -198,7 +326,9 @@ async function main() {
   /* ---- per-asset transparency sanity ---- */
   const metas = lib.assets as AssetMeta[];
   let halo = 0;
-  for (const m of metas.filter((x) => x.layer !== 'background').slice(0, 40)) {
+  const blueKeyed = new Set(['wild-poppies', 'rose-peonies', 'golden-irises']);
+  for (const m of metas.filter((x) => x.layer !== 'background')) {
+    const isBlueKeyed = blueKeyed.has(m.id.split('.').at(-1)!);
     const img = await loadImage(path.join(ROOT, 'public/library', m.file));
     const cv = createCanvas(img.width, img.height);
     const ctx = cv.getContext('2d');
@@ -206,10 +336,11 @@ async function main() {
     const data = ctx.getImageData(0, 0, img.width, img.height).data;
     for (let i = 0; i < data.length; i += 4) {
       const [r, gg, bb, aa] = [data[i], data[i + 1], data[i + 2], data[i + 3]];
-      if (aa > 200 && Math.min(r, bb) - gg > 70) { halo++; break; }
+      const keyResidue = isBlueKeyed ? bb - Math.max(r, gg) > 70 : Math.min(r, bb) - gg > 70;
+      if (aa > 200 && keyResidue) { halo++; break; }
     }
   }
-  console.log(halo === 0 ? 'PASS: no magenta key residue in object artwork' : `WARN: ${halo} assets show key residue`);
+  console.log(halo === 0 ? 'PASS: no studio key residue in object artwork' : `WARN: ${halo} assets show key residue`);
 
   console.log(`\nOutput written to ${OUT}`);
 }

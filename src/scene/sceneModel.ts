@@ -57,6 +57,13 @@ export function createAssetNode(
     width = meta.width * cover;
     height = meta.height * cover;
     x = cw / 2; y = ch / 2;
+  } else if (meta.rig?.type === 'window-overlay') {
+    // A room is a full-frame view, not a ground-level prop. Cover the canvas
+    // so the outdoor world appears only through its transparent window.
+    const cover = Math.max(cw / meta.width, ch / meta.height) * (opts.scale ?? 1);
+    width = meta.width * cover;
+    height = meta.height * cover;
+    x = opts.x ?? cw / 2; y = opts.y ?? ch / 2;
   } else {
     // Depth scaling: near objects are larger, distant ones smaller.
     const depthScale = lerp(0.62, 1.25, clamp(depth, 0, 1));
@@ -82,10 +89,17 @@ export function createAssetNode(
 function defaultAnimationFor(meta: AssetMeta): SceneNode['animation'] {
   const first = meta.animations[0] as AnimationType | undefined;
   if (!first) return null;
-  // Objects arrive static; the user opts in to motion. We still record the
-  // recommended animation so the Animate panel can offer it in one click.
   const a = makeAnimation(first, Math.floor(Math.random() * 1e6));
-  a.enabled = false;
+  // Waterfalls are inherently in motion, so they arrive flowing right out of
+  // the library; still objects (trees, plants) stay static until opted in.
+  if (first === 'waterfall-flow') {
+    a.enabled = true;
+    a.amplitude = 0.85;
+    a.turbulence = 0.7;
+  } else {
+    a.enabled = meta.rig?.autoplay === true;
+    if (a.enabled && (first === 'hearth-fire' || first === 'coffee-steam')) a.amplitude = 0.8;
+  }
   return a;
 }
 

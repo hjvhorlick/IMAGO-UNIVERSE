@@ -14,8 +14,9 @@ import {
   num, petalShape, pr, runeGlyph, snowflake, sparkleStar, str, withAlpha,
 } from './effectPrimitives';
 import type { Ctx2D, EffectDrawContext } from './effectPrimitives';
+import { SPIRITUAL_EFFECTS } from './spiritualOverlays';
 
-export type EffectFamily = 'magical' | 'symbols' | 'celestial' | 'fantasy' | 'natural' | 'weather';
+export type EffectFamily = 'magical' | 'symbols' | 'celestial' | 'fantasy' | 'natural' | 'weather' | 'spiritual';
 
 export interface ParamDef {
   key: string;
@@ -32,6 +33,7 @@ export interface EffectDef {
   id: string;
   name: string;
   family: EffectFamily;
+  subcategory?: string;
   description: string;
   defaultLoop: number;
   blend: GlobalCompositeOperation;
@@ -633,6 +635,64 @@ export const EFFECTS: EffectDef[] = [
   },
 
   {
+    id: 'rising-mist', name: 'Waterfall Mist & Spray', family: 'weather', defaultLoop: 12, blend: 'source-over',
+    description: 'Billowing vapor plumes and fine spray rising upward and drifting outward from turbulent water.',
+    params: [
+      R('density', 'Plume count', 4, 60, 1, 24),
+      R('spray', 'Spray droplets', 0, 160, 1, 55),
+      R('size', 'Plume size', 0.05, 0.8, 0.01, 0.24),
+      R('rise', 'Rise height', 0.1, 0.9, 0.01, 0.46),
+      R('spread', 'Lateral billow', 0.02, 0.8, 0.01, 0.34),
+      R('baseY', 'Source height', 0.2, 1, 0.01, 0.78),
+      R('opacity', 'Thickness', 0.05, 0.8, 0.01, 0.32),
+      C('color', 'Mist colour', '#e8f6ff'),
+    ],
+    draw(ctx, d) {
+      const n = Math.round(num(d.params, 'density', 24));
+      const spray = Math.round(num(d.params, 'spray', 55));
+      const baseSize = num(d.params, 'size', 0.24) * Math.min(d.w, d.h);
+      const rise = num(d.params, 'rise', 0.46);
+      const spread = num(d.params, 'spread', 0.34);
+      const baseY = num(d.params, 'baseY', 0.78);
+      const alpha = num(d.params, 'opacity', 0.32);
+      const col = str(d.params, 'color', '#e8f6ff');
+
+      for (let i = 0; i < n; i++) {
+        const cycles = i % 3 === 0 ? 2 : 1;
+        const p = life(d.u, pr(d.seed, i, 1), cycles);
+        const a = envelope(p, 0.22, 0.38) * alpha;
+        if (a < 0.004) continue;
+        const ox = 0.22 + pr(d.seed, i, 2) * 0.56;
+        const oy = baseY + (pr(d.seed, i, 3) - 0.5) * 0.08;
+        const drift = ((ox - 0.5) * 1.1 + (pr(d.seed, i, 4) - 0.5) * 0.9) * spread;
+        const swirl = Math.sin(TAU * (d.u * cycles + pr(d.seed, i, 5))) * 0.04;
+        const x = (ox + drift * p + swirl * Math.sin(Math.PI * p)) * d.w;
+        const y = (oy - rise * (0.65 + 0.6 * pr(d.seed, i, 6)) * p) * d.h;
+        const r = baseSize * (0.55 + pr(d.seed, i, 7) * 0.6) * (0.7 + 1.15 * p);
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(1.65, 0.72);
+        glowDot(ctx, 0, 0, r, col, a);
+        ctx.restore();
+      }
+
+      for (let i = 0; i < spray; i++) {
+        const p = life(d.u, pr(d.seed, i + 500, 1), 3);
+        const a = envelope(p, 0.12, 0.35) * Math.min(1, alpha * 2.2);
+        if (a < 0.01) continue;
+        const ox = 0.25 + pr(d.seed, i + 500, 2) * 0.5;
+        const vx = (pr(d.seed, i + 500, 3) - 0.5) * spread * 0.9;
+        const vy = 0.14 + 0.18 * pr(d.seed, i + 500, 4);
+        const g = vy * 2.35;
+        const x = (ox + vx * p) * d.w;
+        const y = (baseY - vy * p + 0.5 * g * p * p) * d.h;
+        const r = Math.max(1.1, Math.min(d.w, d.h) * (0.0022 + 0.0028 * pr(d.seed, i + 500, 5)));
+        coreDot(ctx, x, y, r, '#ffffff', a * 0.9);
+      }
+    },
+  },
+
+  {
     id: 'energy-rings', name: 'Energy Waves', family: 'magical', defaultLoop: 8, blend: 'lighter',
     description: 'Glowing rings expanding outward and dissolving.',
     params: [
@@ -1010,6 +1070,258 @@ export const EFFECTS: EffectDef[] = [
       }
     },
   },
+
+  {
+    id: 'mythic-emblem', name: 'Mythic Emblems', family: 'symbols', defaultLoop: 20, blend: 'lighter',
+    description: 'An animated fantasy seal with selectable fae, Norse-inspired, Chinese-knot-inspired, or Japanese-garden motifs.',
+    params: [
+      S('motif', 'Motif', 'fae-seal', [
+        ['fae-seal', 'Fae crescent'], ['norse-compass', 'Norse compass'],
+        ['chinese-knot', 'Chinese knot'], ['japanese-torii', 'Japanese torii'],
+      ]),
+      R('size', 'Seal size', 0.1, 1.2, 0.01, 0.42),
+      R('cx', 'Centre X', 0, 1, 0.01, 0.5), R('cy', 'Centre Y', 0, 1, 0.01, 0.5),
+      R('rotations', 'Turns per cycle', -2, 2, 1, 1),
+      R('pulse', 'Breathing glow', 0, 0.5, 0.01, 0.12),
+      C('color', 'Main colour', '#f2d59a'), C('color2', 'Accent colour', '#b8d8ff'),
+    ],
+    draw(ctx, d) {
+      const motif = str(d.params, 'motif', 'fae-seal');
+      const col = str(d.params, 'color', '#f2d59a');
+      const col2 = str(d.params, 'color2', '#b8d8ff');
+      const radius = Math.min(d.w, d.h) * 0.28 * num(d.params, 'size', 0.42);
+      const turn = TAU * frac(Math.round(num(d.params, 'rotations', 1)) * d.u);
+      const pulse = 1 + num(d.params, 'pulse', 0.12) * Math.sin(TAU * d.u);
+      ctx.save();
+      ctx.translate(num(d.params, 'cx', 0.5) * d.w, num(d.params, 'cy', 0.5) * d.h);
+      ctx.rotate(turn);
+      ctx.scale(pulse, pulse);
+      ctx.strokeStyle = withAlpha(col2, 0.7);
+      ctx.lineWidth = Math.max(1.2, radius * 0.018);
+      ctx.beginPath(); ctx.arc(0, 0, radius, 0, TAU); ctx.stroke();
+      if (motif === 'norse-compass') {
+        for (let i = 0; i < 8; i++) {
+          ctx.save(); ctx.rotate(i * TAU / 8);
+          ctx.beginPath(); ctx.moveTo(0, radius * 0.18); ctx.lineTo(0, radius * 0.92);
+          ctx.moveTo(-radius * 0.08, radius * 0.63); ctx.lineTo(0, radius * 0.92);
+          ctx.lineTo(radius * 0.08, radius * 0.63); ctx.stroke();
+          ctx.restore();
+        }
+        ctx.strokeStyle = withAlpha(col, 0.9);
+        ctx.beginPath(); ctx.moveTo(-radius * 0.42, 0); ctx.lineTo(-radius * 0.16, -radius * 0.35);
+        ctx.lineTo(0, radius * 0.1); ctx.lineTo(radius * 0.18, -radius * 0.35);
+        ctx.lineTo(radius * 0.42, 0); ctx.stroke();
+      } else if (motif === 'chinese-knot') {
+        // Symmetric interlocking loops: a decorative fantasy knot, not a specific sacred character.
+        ctx.strokeStyle = withAlpha(col, 0.92);
+        ctx.lineWidth = Math.max(1.5, radius * 0.055);
+        for (const s of [-1, 1]) {
+          ctx.beginPath(); ctx.moveTo(0, 0);
+          ctx.bezierCurveTo(s * radius * 0.95, -radius * 0.86, s * radius * 0.95, radius * 0.86, 0, 0);
+          ctx.bezierCurveTo(-s * radius * 0.78, -radius * 0.82, -s * radius * 0.78, radius * 0.82, 0, 0);
+          ctx.stroke();
+        }
+        ctx.beginPath(); ctx.arc(0, 0, radius * 0.2, 0, TAU); ctx.stroke();
+      } else if (motif === 'japanese-torii') {
+        const w = radius * 0.92;
+        ctx.strokeStyle = withAlpha(col, 0.95);
+        ctx.lineWidth = Math.max(1.5, radius * 0.06);
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-w * 0.82, -radius * 0.5); ctx.quadraticCurveTo(0, -radius * 0.72, w * 0.82, -radius * 0.5);
+        ctx.moveTo(-w * 0.62, -radius * 0.3); ctx.lineTo(w * 0.62, -radius * 0.3);
+        ctx.moveTo(-w * 0.48, -radius * 0.28); ctx.lineTo(-w * 0.42, radius * 0.56);
+        ctx.moveTo(w * 0.48, -radius * 0.28); ctx.lineTo(w * 0.42, radius * 0.56);
+        ctx.moveTo(-w * 0.58, radius * 0.12); ctx.lineTo(w * 0.58, radius * 0.12);
+        ctx.stroke();
+        ctx.strokeStyle = withAlpha(col2, 0.75);
+        for (let i = 0; i < 3; i++) {
+          const yy = radius * (0.62 + i * 0.1);
+          ctx.beginPath(); ctx.moveTo(-radius * 0.7, yy);
+          ctx.quadraticCurveTo(-radius * 0.3, yy - radius * 0.11, 0, yy);
+          ctx.quadraticCurveTo(radius * 0.3, yy + radius * 0.11, radius * 0.7, yy);
+          ctx.stroke();
+        }
+      } else {
+        ctx.strokeStyle = withAlpha(col, 0.92);
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 0.42, Math.PI * 0.18, Math.PI * 1.82);
+        ctx.stroke();
+        for (let i = 0; i < 4; i++) {
+          const a = i * TAU / 4 + Math.PI / 4;
+          const x = Math.cos(a) * radius * 0.7, y = Math.sin(a) * radius * 0.7;
+          ctx.save(); ctx.translate(x, y); ctx.rotate(a);
+          ctx.beginPath(); ctx.ellipse(0, 0, radius * 0.12, radius * 0.28, 0, 0, TAU); ctx.stroke();
+          ctx.restore();
+        }
+        sparkleStar(ctx, 0, 0, radius * 0.16, col2, 0.95, 6);
+      }
+      ctx.restore();
+    },
+  },
+
+  {
+    id: 'wind-currents', name: 'Visible Air Currents', family: 'natural', defaultLoop: 10, blend: 'lighter',
+    description: 'Soft, curling ribbons of air stream across the scene in repeating gusts.',
+    params: [
+      R('density', 'Current count', 2, 40, 1, 14),
+      R('speed', 'Gust speed', 1, 8, 1, 3, ' passes per cycle'),
+      R('sway', 'Curl', 0, 0.25, 0.01, 0.08),
+      R('thickness', 'Ribbon weight', 0.3, 4, 0.1, 1.2, 'x'),
+      R('opacity', 'Opacity', 0.05, 0.8, 0.01, 0.28),
+      C('color', 'Air tint', '#c9e8ff'),
+    ],
+    draw(ctx, d) {
+      const n = Math.round(num(d.params, 'density', 14));
+      const speed = Math.round(num(d.params, 'speed', 3));
+      const sway = num(d.params, 'sway', 0.08);
+      const opacity = num(d.params, 'opacity', 0.28);
+      const col = str(d.params, 'color', '#c9e8ff');
+      const min = Math.min(d.w, d.h);
+      for (let i = 0; i < n; i++) {
+        const phase = pr(d.seed, i, 1);
+        const len = d.w * (0.12 + 0.18 * pr(d.seed, i, 2));
+        const x = frac(d.u * speed + phase) * (d.w + len) - len;
+        const y = (0.06 + 0.88 * pr(d.seed, i, 3)) * d.h;
+        const amp = sway * d.h * (0.25 + 0.75 * pr(d.seed, i, 4));
+        const a = opacity * (0.5 + 0.5 * pr(d.seed, i, 5));
+        const grad = ctx.createLinearGradient(x, y, x + len, y);
+        grad.addColorStop(0, withAlpha(col, 0));
+        grad.addColorStop(0.28, withAlpha(col, a * 0.45));
+        grad.addColorStop(0.72, withAlpha(col, a));
+        grad.addColorStop(1, withAlpha(col, 0));
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = Math.max(1, min * 0.0022 * num(d.params, 'thickness', 1.2));
+        ctx.beginPath(); ctx.moveTo(x, y);
+        ctx.bezierCurveTo(x + len * 0.28, y - amp, x + len * 0.62, y + amp, x + len, y);
+        ctx.stroke();
+      }
+    },
+  },
+
+  {
+    id: 'zodiac-wheel', name: 'Mythic Zodiac Wheel', family: 'celestial', defaultLoop: 24, blend: 'lighter',
+    description: 'A slow-turning celestial seal of twelve zodiac-inspired marks, star paths and orbit rings.',
+    params: [
+      R('size', 'Wheel size', 0.1, 1.2, 0.01, 0.68),
+      R('cx', 'Centre X', 0, 1, 0.01, 0.5), R('cy', 'Centre Y', 0, 1, 0.01, 0.5),
+      R('rotations', 'Turns per cycle', -2, 2, 1, 1),
+      R('pulse', 'Breathing glow', 0, 0.5, 0.01, 0.12),
+      T('labels', 'Show sign names', true),
+      C('color', 'Star colour', '#ffe5ae'), C('color2', 'Orbit colour', '#a9d9ff'),
+    ],
+    draw(ctx, d) {
+      const names = ['ARIES', 'TAURUS', 'GEMINI', 'CANCER', 'LEO', 'VIRGO',
+        'LIBRA', 'SCORPIO', 'SAGITTARIUS', 'CAPRICORN', 'AQUARIUS', 'PISCES'];
+      // Small invented line-art interpretations of the twelve familiar sky signs.
+      const marks: number[][][] = [
+        [[-1, 0.8], [-0.72, 0.05], [-0.35, -0.35], [0, 0.25], [0.35, -0.35], [0.72, 0.05], [1, 0.8]],
+        [[-0.8, -0.55], [-0.52, -0.9], [-0.18, -0.55], [0.18, -0.55], [0.52, -0.9], [0.8, -0.55], [0, 0.8], [-0.8, -0.55]],
+        [[-0.75, -0.9], [0.75, -0.9], [0.75, 0.9], [-0.75, 0.9], [-0.75, -0.9], [0.75, 0.9]],
+        [[-0.9, -0.5], [-0.45, -0.1], [0, -0.5], [0.45, -0.1], [0.9, -0.5], [0.45, 0.35], [0, 0.7], [-0.45, 0.35], [-0.9, -0.5]],
+        [[-0.9, 0.6], [-0.7, -0.8], [-0.3, -0.1], [0.1, -0.75], [0.85, 0.5], [0.2, 0.85], [-0.3, 0.35], [-0.9, 0.6]],
+        [[-0.9, -0.7], [-0.55, 0.7], [-0.1, -0.2], [0.35, 0.65], [0.9, -0.7]],
+        [[-0.8, -0.6], [0.8, -0.6], [0, 0], [-0.8, 0.6], [0.8, 0.6]],
+        [[-0.9, -0.65], [-0.55, 0.2], [-0.2, -0.6], [0.15, 0.2], [0.5, -0.6], [0.9, 0.25], [0.45, 0.75]],
+        [[-0.8, 0.75], [0.45, -0.7], [0.8, -0.7], [0.68, -0.25], [0.95, -0.3]],
+        [[-0.9, -0.7], [-0.25, 0.15], [-0.65, 0.8], [0, 0.25], [0.72, 0.8], [0.35, -0.1], [0.9, -0.65]],
+        [[-0.9, -0.5], [-0.35, 0.2], [0.15, -0.5], [0.72, 0.2], [0.9, -0.05], [0.15, 0.72], [-0.35, 0.05], [-0.9, 0.72]],
+        [[-0.85, -0.2], [-0.35, -0.7], [0.2, -0.2], [0.8, -0.7], [0.8, 0.2], [0.3, 0.7], [-0.25, 0.2], [-0.85, 0.7]],
+      ];
+      const col = str(d.params, 'color', '#ffe5ae');
+      const col2 = str(d.params, 'color2', '#a9d9ff');
+      const min = Math.min(d.w, d.h);
+      const unit = min * 0.027 * num(d.params, 'size', 0.68);
+      const orbit = min * 0.32 * num(d.params, 'size', 0.68);
+      const rot = TAU * frac(Math.round(num(d.params, 'rotations', 1)) * d.u);
+      const breath = 1 + num(d.params, 'pulse', 0.12) * Math.sin(TAU * d.u);
+      ctx.save();
+      ctx.translate(num(d.params, 'cx', 0.5) * d.w, num(d.params, 'cy', 0.5) * d.h);
+      ctx.rotate(rot);
+      ctx.strokeStyle = withAlpha(col2, 0.48);
+      ctx.lineWidth = Math.max(1, min * 0.0015);
+      ctx.beginPath(); ctx.arc(0, 0, orbit * breath, 0, TAU); ctx.stroke();
+      ctx.strokeStyle = withAlpha(col, 0.24);
+      ctx.beginPath(); ctx.arc(0, 0, orbit * 1.13 * breath, 0, TAU); ctx.stroke();
+      glowDot(ctx, 0, 0, min * 0.045, col, 0.18 + 0.08 * Math.sin(TAU * d.u));
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * TAU - Math.PI / 2;
+        const x = Math.cos(a) * orbit * breath, y = Math.sin(a) * orbit * breath;
+        ctx.save(); ctx.translate(x, y); ctx.rotate(a + Math.PI / 2);
+        ctx.strokeStyle = withAlpha(i % 2 ? col2 : col, 0.88);
+        ctx.lineWidth = Math.max(1, min * 0.0018);
+        ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+        ctx.beginPath();
+        marks[i].forEach(([mx, my], j) => {
+          const px = mx * unit, py = my * unit;
+          if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        });
+        ctx.stroke();
+        for (let k = 0; k < marks[i].length; k += 2) {
+          const [mx, my] = marks[i][k];
+          glowDot(ctx, mx * unit, my * unit, min * 0.008, col, 0.9);
+        }
+        if (bool(d.params, 'labels', true)) {
+          ctx.fillStyle = withAlpha(col, 0.8);
+          ctx.font = `600 ${Math.max(7, min * 0.009)}px sans-serif`;
+          ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+          ctx.fillText(names[i], 0, unit * 1.12);
+        }
+        ctx.restore();
+      }
+      ctx.restore();
+    },
+  },
+
+  {
+    id: 'floating-lanterns', name: 'Floating Lanterns', family: 'fantasy', defaultLoop: 16, blend: 'lighter',
+    description: 'Warm paper lanterns bob upward and sway gently through drifting mist.',
+    params: [
+      R('density', 'Lantern count', 1, 36, 1, 7),
+      R('size', 'Lantern size', 0.2, 3, 0.05, 1),
+      R('sway', 'Air sway', 0, 0.3, 0.01, 0.08),
+      R('glow', 'Light bloom', 0, 3, 0.05, 1.35),
+      C('color', 'Lantern colour', '#e84232'), C('color2', 'Light colour', '#ffd889'),
+    ],
+    draw(ctx, d) {
+      const n = Math.round(num(d.params, 'density', 7));
+      const min = Math.min(d.w, d.h);
+      const unit = min * 0.038 * num(d.params, 'size', 1);
+      const sway = num(d.params, 'sway', 0.08);
+      const glow = num(d.params, 'glow', 1.35);
+      const body = str(d.params, 'color', '#e84232');
+      const light = str(d.params, 'color2', '#ffd889');
+      for (let i = 0; i < n; i++) {
+        const phase = pr(d.seed, i, 1);
+        const p = frac(d.u + phase);
+        const alpha = Math.sin(Math.PI * p);
+        if (alpha < 0.025) continue;
+        const x = (pr(d.seed, i, 2) + Math.sin(TAU * (d.u + phase)) * sway) * d.w;
+        const y = (1.1 - 1.3 * p) * d.h;
+        const w = unit * (0.72 + 0.45 * pr(d.seed, i, 3));
+        const h = w * 1.38;
+        const a = alpha * (0.7 + 0.25 * pr(d.seed, i, 4));
+        glowDot(ctx, x, y, h * 1.8 * glow, light, a * 0.22);
+        ctx.save(); ctx.translate(x, y);
+        ctx.rotate(Math.sin(TAU * (d.u + phase)) * 0.07);
+        ctx.fillStyle = withAlpha(body, a * 0.9);
+        ctx.beginPath(); ctx.ellipse(0, 0, w * 0.5, h * 0.48, 0, 0, TAU); ctx.fill();
+        ctx.strokeStyle = withAlpha(light, a * 0.85);
+        ctx.lineWidth = Math.max(1, w * 0.035);
+        ctx.beginPath();
+        ctx.moveTo(-w * 0.42, -h * 0.22); ctx.quadraticCurveTo(0, -h * 0.36, w * 0.42, -h * 0.22);
+        ctx.moveTo(-w * 0.43, h * 0.24); ctx.quadraticCurveTo(0, h * 0.37, w * 0.43, h * 0.24);
+        ctx.stroke();
+        ctx.fillStyle = withAlpha(light, a);
+        ctx.fillRect(-w * 0.3, -h * 0.48, w * 0.6, h * 0.12);
+        ctx.fillRect(-w * 0.27, h * 0.42, w * 0.54, h * 0.09);
+        ctx.strokeStyle = withAlpha(light, a * 0.85);
+        ctx.beginPath(); ctx.moveTo(0, h * 0.47); ctx.lineTo(0, h * 0.75); ctx.stroke();
+        ctx.restore();
+      }
+    },
+  },
+  ...SPIRITUAL_EFFECTS,
 ];
 
 export const EFFECT_MAP = new Map(EFFECTS.map((e) => [e.id, e]));
@@ -1021,6 +1333,7 @@ export const FAMILY_LABEL: Record<EffectFamily, string> = {
   fantasy: 'Fantasy',
   natural: 'Natural',
   weather: 'Weather',
+  spiritual: 'Spiritual & Mystical Overlays',
 };
 
 export function effectDefaults(id: string): Record<string, number | string | boolean> {
@@ -1049,6 +1362,8 @@ export const THEME_PRESETS: ThemePreset[] = [
       { id: 'aurora', params: { color: '#5cffc0', color2: '#6aa8ff', intensity: 0.4 } },
       { id: 'snow', params: { density: 90, opacity: 0.6 } },
       { id: 'floating-runes', params: { color: '#a8e6ff', density: 8 } },
+      { id: 'mythic-emblem', params: { motif: 'norse-compass', color: '#a8e6ff', color2: '#5cffc0' } },
+      { id: 'wind-currents', params: { color: '#a8e6ff', opacity: 0.16, density: 9 } },
     ],
   },
   {
@@ -1064,7 +1379,30 @@ export const THEME_PRESETS: ThemePreset[] = [
     effects: [
       { id: 'drifting-petals', params: { color: '#ffd0e2', density: 46 } },
       { id: 'mist', params: { color: '#e6f0f5', opacity: 0.14 } },
-      { id: 'glowing-orbs', params: { color: '#ffb46a', color2: '#ffd9a0', density: 6 } },
+      { id: 'floating-lanterns', params: { color: '#cf3b30', color2: '#ffd36b', density: 7 } },
+      { id: 'mythic-emblem', params: { motif: 'chinese-knot', color: '#cf3b30', color2: '#ffd36b' } },
+      { id: 'wind-currents', params: { color: '#ffd9a0', opacity: 0.12, density: 8 } },
+    ],
+  },
+  {
+    id: 'japanese', name: 'Japanese Moonlit Garden',
+    description: 'A stylized fantasy garden of sakura-like petals, soft lantern light and silver mist; not a historical reconstruction.',
+    effects: [
+      { id: 'drifting-petals', params: { color: '#ffd9e8', density: 36 } },
+      { id: 'mist', params: { color: '#d9e7f7', opacity: 0.12, band: 0.72 } },
+      { id: 'floating-lanterns', params: { color: '#f0dfbd', color2: '#fff0c7', density: 4, size: 0.78, sway: 0.04 } },
+      { id: 'mythic-emblem', params: { motif: 'japanese-torii', color: '#d96f79', color2: '#e8c782', size: 0.5 } },
+      { id: 'wind-currents', params: { color: '#e6e2f2', opacity: 0.11, density: 7 } },
+      { id: 'constellation', params: { color: '#d8e7ff', stars: 7, lineOpacity: 0.18 } },
+    ],
+  },
+  {
+    id: 'mythic-zodiac', name: 'Mythic Zodiac',
+    description: 'Twelve invented star-sign marks encircle a rotating celestial seal.',
+    effects: [
+      { id: 'zodiac-wheel', params: { color: '#ffe6ad', color2: '#9fcfff', size: 0.7 } },
+      { id: 'shooting-stars', params: { density: 5, color: '#ffe6ad' } },
+      { id: 'magic-circle', params: { color: '#9fcfff', size: 0.23, rings: 3, glyphs: 12 } },
     ],
   },
   {
@@ -1080,6 +1418,8 @@ export const THEME_PRESETS: ThemePreset[] = [
     effects: [
       { id: 'fairy-dust', params: { density: 110 } },
       { id: 'butterflies', params: { density: 5 } },
+      { id: 'mythic-emblem', params: { motif: 'fae-seal', color: '#edb9ff', color2: '#a9f7df' } },
+      { id: 'wind-currents', params: { color: '#d4ffe7', opacity: 0.16, sway: 0.12 } },
       { id: 'sparkles', params: { density: 60 } },
     ],
   },

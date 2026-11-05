@@ -294,6 +294,12 @@ export class Inspector {
         target: 'animation', hint: 'Adds out-of-phase gusts so nothing moves mechanically.',
       });
     }
+    if (anim.type === 'waterfall-flow') {
+      this.slider(m, node, 'Splash & mist', 'turbulence', 0, 1, 0.01, {
+        target: 'animation', format: (v) => `${Math.round(v * 100)}%`,
+        hint: 'Controls plunge-pool whitewater boil, leaping spray droplets and rising canyon mist.',
+      });
+    }
     if (['canopy-sway', 'grass-wind', 'stem-bend', 'float', 'spin'].includes(anim.type)) {
       this.slider(m, node, 'Direction', 'direction', 0, 360, 1, { target: 'animation', unit: 'deg' });
     }
@@ -461,13 +467,15 @@ function techniqueHint(t: AnimationType): string {
     case 'grass-wind': return 'Segmented bending anchored at the soil, with gusts. Tips travel furthest.';
     case 'stem-bend': return 'Stem deformation plus a lagging flower head.';
     case 'water-flow': return 'Travelling surface waves rather than a sliding texture.';
-    case 'waterfall-flow': return 'The water region scrolls as a seamlessly tiling band with feathered edges.';
+    case 'waterfall-flow': return 'Multi-stream rushing water curtains, falling droplets, plunge-pool splash spray and rising billowing mist over stationary cliffs.';
     case 'ripple': return 'Radial displacement falling off with distance from the centre.';
     case 'flag-wave': return 'Cloth-style wave anchored along one edge.';
     case 'float': return 'Closed curved drift path - returns exactly to its start.';
     case 'spin': return 'A whole number of turns per cycle, so the boundary is exact.';
     case 'pulse': return 'Brightness and scale breathing.';
     case 'lantern-glow': return 'Warm additive bloom that swells and fades.';
+    case 'hearth-fire': return 'Flickers the painted flames inside the hearth without moving the surrounding room.';
+    case 'coffee-steam': return 'Soft wisps rise from the coffee and fade away.';
     case 'cloud-drift': return 'The sky band scrolls horizontally as a tiling strip.';
     case 'water-shimmer': return 'Gentle wave distortion across the lower part of the plate.';
     case 'parallax': return 'Very slow scale breathing for depth.';
@@ -479,10 +487,12 @@ export function makeEffectNode(effectId: string, scene: { canvas: { width: numbe
   const def = EFFECT_MAP.get(effectId)!;
   const params: Record<string, number | string | boolean> = {};
   for (const p of def.params) params[p.key] = p.default;
+  const ornamentSize = Math.min(scene.canvas.width, scene.canvas.height) * 0.55;
   return {
     id: uid('fx'), kind: 'effect', layer: 'atmosphere', name: def.name,
     x: scene.canvas.width / 2, y: scene.canvas.height / 2,
-    width: scene.canvas.width, height: scene.canvas.height,
+    width: def.family === 'spiritual' ? ornamentSize : scene.canvas.width,
+    height: def.family === 'spiritual' ? ornamentSize : scene.canvas.height,
     rotation: 0, flipX: false, opacity: 1, visible: true, locked: false,
     order, depth: 1,
     crop: { x: 0, y: 0, w: 1, h: 1 },

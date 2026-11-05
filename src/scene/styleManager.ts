@@ -37,9 +37,10 @@ export function styleStats(library: AssetLibrary, styleId: string) {
 }
 
 /**
- * Move a scene to another style. Objects are matched by category so a tree
- * stays a tree; anything with no counterpart is removed rather than left as a
- * style clash. All transforms, animation settings and effects survive.
+ * Move a scene to another style. Objects are matched to the same asset in the
+ * target palette when possible, then by story theme, category or layer. Anything with no
+ * counterpart is removed rather than left as a style clash. Animation
+ * settings and effects survive; foreground transforms are retained.
  */
 export function switchStyle(scene: Scene, library: AssetLibrary, newStyleId: string): StyleSwitchReport {
   const report: StyleSwitchReport = {
@@ -58,7 +59,14 @@ export function switchStyle(scene: Scene, library: AssetLibrary, newStyleId: str
     if (!current) { report.removed.push(node.name); continue; }
     if (current.style === newStyleId) { keep.push(node); continue; }
 
-    let candidates = target.filter((a) => a.layer === current.layer && a.category === current.category);
+    const prefix = `${current.style}.`;
+    const counterpartId = current.id.startsWith(prefix) ? `${newStyleId}.${current.id.slice(prefix.length)}` : '';
+    let candidates = target.filter((a) => a.id === counterpartId && a.layer === current.layer && a.category === current.category);
+    const storyTheme = current.themes.find((theme) => ['fairy', 'norse', 'chinese', 'japanese', 'observatory', 'waterside', 'lotus-sanctuary'].includes(theme));
+    if (!candidates.length && storyTheme) {
+      candidates = target.filter((a) => a.layer === current.layer && a.category === current.category && a.themes.includes(storyTheme));
+    }
+    if (!candidates.length) candidates = target.filter((a) => a.layer === current.layer && a.category === current.category);
     if (!candidates.length) candidates = target.filter((a) => a.layer === current.layer);
     if (!candidates.length) { report.removed.push(node.name); continue; }
 

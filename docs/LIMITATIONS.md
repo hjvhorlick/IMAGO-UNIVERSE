@@ -12,20 +12,21 @@ animation engine, Loop Manager and effect library were exercised headlessly.
 | --- | --- |
 | The demo world composes correctly | `npm run render-check` → `.render-check/demo-t0.png`, inspected visually |
 | The master cycle returns to its exact start | **0 differing subpixels** between t=0 and t=48 s at 1280×720 |
-| The scene actually animates | 10.96 % of pixels change at mid-cycle |
-| All 22 effects are exactly periodic | `u=0` vs `u=1` compared per effect, byte-identical |
-| No chroma-key residue | magenta-pixel scan across every asset |
+| The scene actually animates | about 10.9 % of pixels change at mid-cycle |
+| All 52 effects are exactly periodic | `u=0` vs `u=1` compared per effect, byte-identical |
+| Lounge windows reveal the current world | transparent center pixel-identical to the background; opaque wall area changes |
+| No obvious chroma-key residue | opaque key-colour pixel scan across every object |
 | Trees stay planted | trunk-base displacement asserted < 0.001 in tests |
 | Grass roots do not slide | base-row `dx` < 0.001 |
 | Warping is local | sky above a shimmering lake is **pixel-identical** to the unwarped plate |
 | Water shimmer stays in the water | max delta **1/255** outside every background's declared region, 182/255 inside |
 | Every style composes | one rendered world per background plate → `.render-check/worlds.png` |
 | Rendering never mutates the scene | deep-equality assertion before/after render |
-| The UI really works | 14 jsdom tests mount the real `App` and drive it |
+| The UI really works | 19 jsdom tests mount the real `App` and drive it |
 | Still export produces a real file | 640×360 PNG > 5 kB asserted in the UI test |
 | Projects round-trip | scene → ZIP → scene, including embedded asset bytes |
 
-`npm test` → **109 passed** across 8 files. `npm run typecheck` → clean under `strict`,
+`npm test` → **141 passed** across 11 files. `npm run typecheck` → clean under `strict`,
 `noUnusedLocals` and `noUnusedParameters`. `npm run build` → succeeds.
 
 ## What was NOT verified — video export
@@ -60,11 +61,14 @@ rather than a broken file — but that error path itself is untested against a r
 
 ## Known functional constraints
 
-**Library size.** 37 assets across 3 styles (7 backgrounds / 13 middle / 17 foreground), which meets
-the brief's starter targets. But `moonlit` and `autumn` are colour grades of `enchanted`, not
-independently painted bodies of work, and there are no painted flower or fern plates — those
-foreground plants are procedurally composed from foliage chips. This is enough to build varied
-scenes but is not a large commercial library. Adding a genuinely independent style means
+**Library size.** 186 assets across 3 styles (28 backgrounds / 45 middle / 113 foreground), which
+exceeds the brief's starter targets. Fairy, Norse, Chinese-inspired, Japanese-inspired, celestial
+observatory, waterside and lotus sanctuary vistas, landmarks and foreground accents have Enchanted, Moonlit and Autumn
+palette variants, but the
+latter two remain colour grades rather than independently painted styles. The general fern, bush,
+ivy and pebble ground covers are still procedurally assembled from foliage and rock chips; the story-
+specific foreground accents are painted plates. This is enough to build varied scenes but is not a
+large commercial library. Adding a genuinely independent style means
 commissioning or painting a new plate set, not more grading.
 
 **Master cycle cap.** The LCM of all animation cycles is capped at 60 s. With many co-prime cycle
@@ -147,43 +151,36 @@ These were real bugs found by looking at output, not by reading code:
    button, made solo override the hidden flag, and dropped a solo whose subject gets deleted.
 
 
-## Falling water (rewritten)
+## Waterfalls and themed room views
 
-The original `waterfall-flow` scrolled the painted region vertically. Two things
-were wrong with that, both visible to the eye:
+`waterfall-flow` uses an artwork-derived, cached multi-stream water mask and renders high-contrast
+falling curtains, droplets, plunge-pool ripples, splash arcs, and broad rising/drifting mist. The
+wide enchanted, moonlit, and autumn waterfalls are auto-enabled and showcased without a bridge or
+foreground clutter over their impact zone. Tests cover downward optical flow, scene-region locality,
+mid-cycle motion, splash/mist turbulence response, exact loop boundaries, and auto-enabled placement.
 
-1. **It flowed upwards.** The scroll subtracted the phase offset, so increasing
-   time moved the texture toward negative y. `RegionScroll` now carries an
-   explicit `direction`, and `+1` means along the positive axis (down for y).
-2. **It was a picture of a waterfall, not water.** Sliding the painted region
-   dragged the lip, the rocks and the pool along with it and marched a tiling
-   seam through the artwork. A lateral mesh warp made this worse: `regionMask`
-   only gates *vertically*, so the wobble smeared rock and foliage across the
-   full width of the plate in horizontal bands.
+The Layer 3 room views are keyed transparent foreground overlays in all three styles. Their openings
+show the composition underneath. In addition to the original lounge, a reading room and a window-seat
+room each have an automatically flickering painted hearth and a steaming cup. A modern penthouse and
+a futuristic lounge add large panoramic windows, with modular furniture and a contemporary fireplace
+available as separate props. Two present-day oak-beamed rooms with tiled floors and wooden doors,
+plus a separate oak door, lounge chair and table, complement the futuristic options. An asymmetric
+brick-and-timber room adds two window openings on adjoining walls and a sloped roof. The loose
+oak bookshelf, potted fig and floor lamp are static placeable props. The fire and steam
+are stylized animation rather than video or physical
+simulations. `tests/interiors.test.ts` verifies window transparency, local fire motion, rising steam,
+and exact loop boundaries.
 
-`waterfall-flow` now leaves the painting completely still and renders falling
-water over it:
+Layer 4 now also includes a moving **Mythic Zodiac Wheel** and **Floating Lanterns**, alongside the
+existing rune, constellation, rain, windborne-petal and mist effects. A Japanese moon-garden theme
+and a separate mythic zodiac preset are available. These are clearly framed as stylized fantasy
+starting points, not culturally authoritative reconstructions.
 
-- A **water mask** is derived from the artwork itself (bright + desaturated),
-  blurred, and cached per asset/region/size. Without it the streaks fell over
-  sky, rock and foliage and read as rain.
-- The mask also yields a **per-row centre and half-width**, so streaks follow
-  the real column as it narrows and shifts instead of ruling straight lines
-  down a bounding box.
-- Streaks carry a **dark trough and a lit crest** composited with `overlay`;
-  additive white alone is invisible on water that is already near-white.
-- The region is **supersampled to a 260px floor**, because a narrow fall can be
-  ~35x99 px at preview size and a sub-pixel streak washes out into a flat haze.
-- **One fall speed** for the whole field. Water reaches terminal velocity, and
-  two superimposed speeds cancel into a static shimmer rather than reading as
-  falling.
+## Spiritual & mystical overlays
 
-Verified by measurement, not by eye alone (`tests/waterfall.test.ts`): 2D optical
-flow is downward at every sampled phase, the loop returns to byte-identical
-pixels, and nothing outside the region moves by more than antialiasing (<=2).
-
-**Known limitation:** if an imported waterfall's water is dark or strongly
-tinted, the mask finds nothing and the effect falls back to the declared region
-rectangle rather than switching itself off. Such artwork will look less
-convincing than the shipped falls; a per-asset painted mask would be the proper
-fix.
+The 25 new overlays are lightweight Canvas vector effects integrated into the existing compositor,
+not image files or true 3D objects. Their gold, chrome, glass and holographic looks, axis tilt and
+depth are visual approximations; symbolic designs are artistic interpretations. Tests exercise their
+materials, motion, loop boundaries, window fades, 16:9 and 9:16 rendering, style independence,
+project round-tripping and the export compositor/tiling plan. Actual browser MP4/WebM export and
+playback have not been tested.

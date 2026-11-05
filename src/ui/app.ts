@@ -20,7 +20,7 @@ import { ImageCache } from '../render/imageCache';
 import { Compositor } from '../render/compositor';
 import { PreviewRenderer } from '../render/previewRenderer';
 import { LoopManager, loopManager } from '../animation/loopManager';
-import { EFFECT_MAP, THEME_PRESETS, effectDefaults } from '../animation/effects';
+import { EFFECTS, EFFECT_MAP, THEME_PRESETS, effectDefaults } from '../animation/effects';
 import { ExportManager } from '../export/exportManager';
 import { ProjectShelf, openProjectFromFile, saveProjectToFile } from '../project/projectShelf';
 import type { LoadedProject } from '../project/projectFormat';
@@ -113,6 +113,7 @@ export class App {
   private activeLayer: LayerId = 'background';
   private autosaveTimer = 0;
   private hudTimer = 0;
+  private windowListeners: (() => void)[] = [];
   private soloNode: string | null = null;
 
   async mount(root: HTMLElement) {
@@ -144,9 +145,11 @@ export class App {
 
     this.autosaveTimer = window.setInterval(() => { void this.autosave(); }, 45_000);
     this.hudTimer = window.setInterval(() => this.updateHud(), 500);
-    window.addEventListener('beforeunload', (e) => {
+    const beforeUnload = (e: BeforeUnloadEvent) => {
       if (this.store.dirty) { e.preventDefault(); e.returnValue = ''; }
-    });
+    };
+    window.addEventListener('beforeunload', beforeUnload);
+    this.windowListeners.push(() => window.removeEventListener('beforeunload', beforeUnload));
   }
 
   /* ----------------------------------------------------------------- rail */
@@ -159,7 +162,7 @@ export class App {
       icon: 'image',
       title: 'Artwork',
       titleFn: () => `${LAYERS.indexOf(this.activeLayer) + 1} · ${LAYER_SHORT[LAYERS.indexOf(this.activeLayer)]}`,
-      badge: () => this.activeLayer === 'atmosphere' ? '22 effects' : `${this.library.forStyle(this.store.scene.styleId, this.activeLayer).length}`,
+      badge: () => this.activeLayer === 'atmosphere' ? `${EFFECTS.length} effects` : `${this.library.forStyle(this.store.scene.styleId, this.activeLayer).length}`,
       onToggle: (open) => { this.assetPanel.active = open; if (open) this.assetPanel.render(); },
     });
     this.assetPanel = new AssetPanel(assetsBody, this.store, this.library, {
@@ -326,6 +329,7 @@ export class App {
       onDropAsset: (id, x, y) => this.addAsset(id, { x, y }),
       onDropEffect: (id, x, y) => this.addEffect(id, { x, y }),
       onDoubleClick: (node) => { if (node) this.inspect(node); },
+      canSelectSpiritual: () => this.activeLayer === 'atmosphere',
     });
   }
 
@@ -394,7 +398,7 @@ export class App {
   /* ------------------------------------------------------------- keyboard */
 
   private wireKeyboard() {
-    window.addEventListener('keydown', (e) => {
+    this.windowListeners.push(on(window, 'keydown', (e) => {
       const target = e.target as HTMLElement;
       const typing = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
       if (e.code === 'Space' && !typing) {
@@ -432,13 +436,13 @@ export class App {
         const dy = e.key === 'ArrowUp' ? -step : e.key === 'ArrowDown' ? step : 0;
         this.store.mutate(() => { sel.forEach((n) => { n.x += dx; n.y += dy; }); }, 'Nudge');
       }
-    });
-    window.addEventListener('keyup', (e) => {
+    }));
+    this.windowListeners.push(on(window, 'keyup', (e) => {
       if (e.code === 'Space') {
         this.stage.setSpace(false);
         if (!(e.target as HTMLElement)?.matches?.('input, textarea')) this.preview.toggle();
       }
-    });
+    }));
   }
 
   private toggleSelected(key: 'locked' | 'visible') {
@@ -530,8 +534,13 @@ export class App {
       this.setLayer('middle');
       return;
     }
-    const node = createAssetNode(meta, scene, at ? { x: at.x, y: at.y + node0Height(meta, scene) / 2 } : undefined);
+    // Room views are full-frame overlays even when dragged from the library;
+    // users can reposition them afterwards with the normal transform tools.
+    const position = at && meta.rig?.type !== 'window-overlay'
+      ? { x: at.x, y: at.y + node0Height(meta, scene) / 2 } : undefined;
+    const node = createAssetNode(meta, scene, position);
     this.store.addNode(node, `Add ${meta.name}`);
+    if (node.animation?.enabled && !this.preview.playing) this.preview.play();
     void this.images.ensure([meta.id]).then(() => this.preview.invalidate());
   }
 
@@ -543,8 +552,10 @@ export class App {
     const node = makeEffectNode(effectId, scene, order);
     if (at) {
       node.x = at.x; node.y = at.y;
-      node.width = scene.canvas.width * 0.5;
-      node.height = scene.canvas.height * 0.5;
+      if (def.family !== 'spiritual') {
+        node.width = scene.canvas.width * 0.5;
+        node.height = scene.canvas.height * 0.5;
+      }
     }
     this.store.addNode(node, `Add ${def.name}`);
     if (!this.preview.playing) this.preview.play();
@@ -776,6 +787,7 @@ export class App {
   }
 
   dispose() {
+    this.windowListeners.splice(0).forEach((remove) => remove());
     window.clearInterval(this.autosaveTimer);
     window.clearInterval(this.hudTimer);
     this.menubar?.dispose();
