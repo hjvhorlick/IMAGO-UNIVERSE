@@ -25,7 +25,7 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 135 unit / integration / UI tests (Vitest) |
+| `npm test` | 141 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library from `assets-src/` (needs Pillow + numpy) |
@@ -102,6 +102,10 @@ via WebCodecs with a MediaRecorder fallback. 16:9, 9:16, 1:1, 4:3, 21:9 and cust
 720p / 1080p / 1440p / 4K; 24 / 30 / 60 fps; four quality tiers with a live size estimate, progress
 and cancellation.
 
+**Sound** — an import slot, not a library. The app ships no audio. A track you import plays in the
+preview, loops with a configurable crossfade at the join, and is embedded in the `.sceneproject`
+so it reopens with the scene. Exported video is still silent.
+
 **Projects** — `.sceneproject` is a ZIP containing the full editable scene graph plus every asset
 byte the scene uses. Never flattened. Save, Save As, open, and an in-browser project shelf.
 Save As mints a new id and leaves the original untouched.
@@ -176,6 +180,6 @@ src/
 assets-src/    source artwork plates (pipeline input)
 public/library/  runtime WebP assets + thumbnails + manifest.json
 tools/         asset preparation pipeline, headless render verification
-tests/         135 tests across 11 files
+tests/         141 tests across 11 files
 docs/          architecture, assets, limitations
 ```

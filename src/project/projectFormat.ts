@@ -8,6 +8,7 @@
  *                         settings, metadata)
  *   assets/manifest.json  metadata for every asset the scene references
  *   assets/files/<id>     the actual artwork bytes
+ *   audio/<id>.<ext>      the imported sound track, if the scene has one
  *   preview.jpg           a small thumbnail for the project shelf
  *
  * Because the artwork travels inside the file, a project does not depend on
@@ -16,7 +17,7 @@
  */
 import { unzipSync, zipSync, strToU8, strFromU8 } from 'fflate';
 import type { AssetLibrary } from '../assets/library';
-import type { AssetMeta, Scene, SceneNode } from '../core/types';
+import type { AssetMeta, Scene, SceneAudio, SceneNode } from '../core/types';
 import {
   DEFAULT_ADJUST, DEFAULT_CROP, DEFAULT_EXPORT, DEFAULT_LIGHTING, DEFAULT_SHADOW,
 } from '../core/types';
@@ -32,13 +33,26 @@ export interface ProjectFile {
   generator: string;
   savedAt: string;
   scene: Scene;
+  /** Archive path of the embedded sound track. Absent when the scene is silent. */
+  sound?: { file: string };
 }
 
 export interface LoadedProject {
   scene: Scene;
   missingAssets: string[];
   warnings: string[];
+  /**
+   * The sound track that travelled inside the file, or null. The caller decides
+   * where it goes (the browser's audio store) so this module stays free of IndexedDB.
+   */
+  sound: Blob | null;
 }
+
+const AUDIO_EXT: Record<string, string> = {
+  'audio/mpeg': 'mp3', 'audio/mp3': 'mp3', 'audio/wav': 'wav', 'audio/x-wav': 'wav',
+  'audio/ogg': 'ogg', 'audio/mp4': 'm4a', 'audio/aac': 'aac', 'audio/webm': 'webm', 'audio/flac': 'flac',
+};
+function audioExt(mime: string): string { return AUDIO_EXT[mime] ?? 'audio'; }
 
 function safeName(id: string) { return id.replace(/[^a-zA-Z0-9._-]/g, '_'); }
 
@@ -50,8 +64,13 @@ async function assetBytes(library: AssetLibrary, meta: AssetMeta): Promise<Uint8
   return new Uint8Array(await res.arrayBuffer());
 }
 
+/**
+ * Package a scene. `sound` is the bytes of `scene.audio`, supplied by the caller
+ * (usually loaded from the browser's audio store). If the scene has audio but no
+ * bytes are supplied, the reference is kept and the file opens with a warning.
+ */
 export async function packageProject(
-  scene: Scene, library: AssetLibrary, preview?: Blob,
+  scene: Scene, library: AssetLibrary, preview?: Blob, sound?: Blob | null,
 ): Promise<Blob> {
   const files: Record<string, Uint8Array> = {};
   const referenced = new Set<string>();
@@ -67,12 +86,20 @@ export async function packageProject(
     metas.push({ ...meta, file: `assets/files/${safeName(id)}.${ext}`, thumb: `assets/files/${safeName(id)}.${ext}` });
   }
 
+  let soundEntry: ProjectFile['sound'];
+  if (scene.audio && sound) {
+    const file = `audio/${safeName(scene.audio.id)}.${audioExt(scene.audio.mime)}`;
+    files[file] = new Uint8Array(await sound.arrayBuffer());
+    soundEntry = { file };
+  }
+
   const doc: ProjectFile = {
     format: PROJECT_FORMAT,
     version: PROJECT_VERSION,
     generator: 'Imago Universe 0.1',
     savedAt: new Date().toISOString(),
     scene,
+    ...(soundEntry ? { sound: soundEntry } : {}),
   };
   files['project.json'] = strToU8(JSON.stringify(doc, null, 1));
   files['assets/manifest.json'] = strToU8(JSON.stringify({ schema: 'imago.asset-library/1', assets: metas }, null, 1));
@@ -80,7 +107,8 @@ export async function packageProject(
     'Imago Universe editable project.\n\n'
     + 'Open this file with Imago Universe to continue editing. The artwork inside\n'
     + 'assets/files is the original, unmodified source art; all cropping, colour and\n'
-    + 'animation settings live in project.json and are applied non-destructively.\n',
+    + 'animation settings live in project.json and are applied non-destructively.\n'
+    + (soundEntry ? 'The sound track in audio/ is the file you imported; it plays in the preview.\n' : ''),
   );
   if (preview) files['preview.jpg'] = new Uint8Array(await preview.arrayBuffer());
 
@@ -136,7 +164,32 @@ export async function readProject(buffer: ArrayBuffer, library: AssetLibrary): P
   for (const n of scene.nodes) {
     if (n.kind === 'asset' && n.assetId && !library.get(n.assetId)) missing.push(n.assetId);
   }
-  return { scene, missingAssets: Array.from(new Set(missing)), warnings };
+
+  let sound: Blob | null = null;
+  if (doc.sound?.file && scene.audio) {
+    const bytes = entries[doc.sound.file];
+    if (bytes) sound = new Blob([bytes as BlobPart], { type: scene.audio.mime });
+    else warnings.push(`The sound "${scene.audio.name}" is missing from this file.`);
+  }
+  return { scene, missingAssets: Array.from(new Set(missing)), warnings, sound };
+}
+
+/** Keep the sound settings a user chose. A missing or malformed block means silence. */
+function migrateAudio(raw: unknown): SceneAudio | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const a = raw as Partial<SceneAudio>;
+  if (typeof a.id !== 'string' || !a.id) return null;
+  return {
+    id: a.id,
+    name: typeof a.name === 'string' && a.name ? a.name : 'Sound',
+    duration: num(a.duration, 0),
+    volume: Math.min(1, Math.max(0, num(a.volume, 0.8))),
+    loop: a.loop !== false,
+    crossfade: Math.max(0, num(a.crossfade, 1.5)),
+    offset: Math.max(0, num(a.offset, 0)),
+    mime: typeof a.mime === 'string' && a.mime ? a.mime : 'audio/mpeg',
+    bytes: num(a.bytes, 0),
+  };
 }
 
 /** Fill in anything a older/partial file may be missing, so loading never throws. */
@@ -156,6 +209,7 @@ function migrate(input: Scene, warnings: string[]): Scene {
     },
     nodes: [],
     lighting: { ...DEFAULT_LIGHTING, ...(input.lighting || {}) },
+    audio: migrateAudio(input.audio),
     exportSettings: { ...DEFAULT_EXPORT, ...(input.exportSettings || {}) },
     createdAt: input.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),

@@ -26,7 +26,7 @@ animation engine, Loop Manager and effect library were exercised headlessly.
 | Still export produces a real file | 640×360 PNG > 5 kB asserted in the UI test |
 | Projects round-trip | scene → ZIP → scene, including embedded asset bytes |
 
-`npm test` → **135 passed** across 11 files. `npm run typecheck` → clean under `strict`,
+`npm test` → **141 passed** across 11 files. `npm run typecheck` → clean under `strict`,
 `noUnusedLocals` and `noUnusedParameters`. `npm run build` → succeeds.
 
 ## What was NOT verified — video export
@@ -103,7 +103,14 @@ favourably, but this was not measured.
   a separate module would have been an empty seam.
 - **No ffmpeg.wasm.** It is a ~30 MB dependency that would still not give frame-exact H.264 muxing
   better than `mp4-muxer`, and it would violate the "works on ordinary hardware" goal.
-- **Seasons, day/night cycles, weather systems, water simulation and audio ambience** are not
+- **Sound in export.** An imported track plays in the preview only. Exported MP4/WebM video is silent,
+  because mixing audio would need an audio encoder track and a decode-and-mix pass that have not
+  been built or tested on real hardware. The sound panel says so.
+- **Sound in the browser, not verified in a real browser.** Playback, the crossfade at the loop join
+  and autoplay handling are logic-checked only. Browsers may block playback until a user gesture;
+  the panel shows a notice when that happens. The project round trip is tested: the bytes travel
+  inside the `.sceneproject`, and the settings come back unchanged.
+- **Seasons, day/night cycles, weather systems, water simulation and generated audio ambience** are not
   implemented. The data model anticipates them (per-node adjustments, the lighting block, effect
   parameters) but the brief said not to delay the core product for them.
 - **No multi-select, no grouping, no keyframe timeline.** Animation is procedural per node with a

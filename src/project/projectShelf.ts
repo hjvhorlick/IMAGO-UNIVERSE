@@ -10,6 +10,7 @@ import { downloadBlob } from '../core/util';
 import { idbDel, idbGet, idbSet, idbKeys, idbAvailable } from './idb';
 import { packageProject, projectFilename, readProject } from './projectFormat';
 import type { LoadedProject } from './projectFormat';
+import { loadSceneSound } from '../audio/audioStore';
 
 export interface ShelfEntry {
   id: string;
@@ -34,7 +35,7 @@ export class ProjectShelf {
 
   async save(scene: Scene, preview?: Blob): Promise<void> {
     if (!this.available) return;
-    const data = await packageProject(scene, this.library, preview);
+    const data = await packageSceneFile(scene, this.library, preview);
     const entry: ShelfEntry = {
       id: scene.id,
       name: scene.name,
@@ -67,8 +68,13 @@ export class ProjectShelf {
   async remove(id: string) { await idbDel('projects', key(id)); }
 }
 
+/** Package a scene together with its imported sound, if it has one. */
+export async function packageSceneFile(scene: Scene, library: AssetLibrary, preview?: Blob): Promise<Blob> {
+  return packageProject(scene, library, preview, await loadSceneSound(scene.audio));
+}
+
 export async function saveProjectToFile(scene: Scene, library: AssetLibrary, preview?: Blob) {
-  const blob = await packageProject(scene, library, preview);
+  const blob = await packageSceneFile(scene, library, preview);
   downloadBlob(blob, projectFilename(scene));
   return blob;
 }

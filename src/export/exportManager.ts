@@ -14,7 +14,7 @@ import { StillRenderer } from '../render/stillRenderer';
 import { VideoRenderer, detectCapabilities } from '../render/videoRenderer';
 import type { ExportProgress, VideoOptions, VideoResult, Capabilities } from '../render/videoRenderer';
 import type { LoopManager } from '../animation/loopManager';
-import { packageProject } from '../project/projectFormat';
+import { packageSceneFile } from '../project/projectShelf';
 
 export const RESOLUTIONS = [
   { label: '720p', height: 720 },
@@ -82,7 +82,7 @@ export class ExportManager {
   get running() { return this.currentAbort !== null; }
 
   async exportProject(scene: Scene, preview?: Blob, baseName = 'world') {
-    const blob = await packageProject(scene, this.libraryRef, preview);
+    const blob = await packageSceneFile(scene, this.libraryRef, preview);
     downloadBlob(blob, `${baseName}.sceneproject`);
     return blob;
   }

@@ -171,6 +171,7 @@ Backpressure: the encoder is awaited whenever `encodeQueueSize > 8`. A key frame
 project.json          { format: 'imago.sceneproject', version: 1, generator, savedAt, scene }
 assets/manifest.json  metadata for every asset the scene references
 assets/files/<id>.webp  the actual bytes, including user imports
+audio/<id>.<ext>      the imported sound track, present only if the scene has one
 preview.jpg           optional thumbnail
 README.txt            human-readable description of the package
 ```
@@ -178,6 +179,12 @@ README.txt            human-readable description of the package
 `readProject` validates the format, warns on a newer version, runs `migrate()` to fill defaults, and
 **always re-registers the embedded blobs and metadata**, even for built-in asset ids. A project
 therefore renders identically on a machine that has never seen the library.
+
+Sound follows the same rule. `packageProject` takes the track's bytes as an argument (the caller
+loads them from the audio store), and `readProject` returns them as `LoadedProject.sound`. The app
+then writes them to the audio store before swapping the scene, so the preview player finds them.
+`migrate()` sanitises the `audio` block and drops it if it has no id, so a malformed file opens silent
+rather than half-configured.
 
 ## Extension points
 
@@ -190,6 +197,6 @@ therefore renders identically on a machine that has never seen the library.
 | A new theme preset | One entry in `THEME_PRESETS` |
 | A new export container | A sink + muxer branch in `videoRenderer.ts` |
 
-Seasons, day/night, weather, water simulation and audio ambience are all anticipated by the data
+Seasons, day/night, weather, water simulation and generated audio ambience are all anticipated by the data
 model (per-node adjustments, the lighting block, effect parameters) but are deliberately not
 implemented yet.

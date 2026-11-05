@@ -113,6 +113,84 @@ describe('.sceneproject', () => {
     expect(reopened.scene.nodes.length).toBe(original.nodes.length);
   });
 
+  describe('imported sound', () => {
+    const SOUND_BYTES = new Uint8Array([0x49, 0x44, 0x33, 1, 2, 3, 4, 5, 6, 7]);
+    const sound = () => new Blob([SOUND_BYTES as BlobPart], { type: 'audio/mpeg' });
+    const withSound = () => {
+      const scene = createScene('enchanted', 'Scored');
+      scene.audio = {
+        id: 'audio_test_1', name: 'Dawn theme', duration: 42, volume: 0.35, loop: true,
+        crossfade: 2.5, offset: 1.25, mime: 'audio/mpeg', bytes: SOUND_BYTES.length,
+      };
+      return scene;
+    };
+
+    it('travels inside the file and comes back byte-identical with its settings', async () => {
+      const lib = loadedLibrary();
+      const scene = withSound();
+      const blob = await packageProject(scene, lib, undefined, sound());
+      const entries = unzipSync(new Uint8Array(await blob.arrayBuffer()));
+      const soundPath = Object.keys(entries).find((k) => k.startsWith('audio/'));
+      expect(soundPath).toBe('audio/audio_test_1.mp3');
+      expect(Array.from(entries[soundPath!])).toEqual(Array.from(SOUND_BYTES));
+
+      const loaded = await readProject(await blob.arrayBuffer(), testLibrary());
+      expect(loaded.scene.audio).toEqual(scene.audio);
+      expect(loaded.sound).not.toBeNull();
+      expect(Array.from(new Uint8Array(await loaded.sound!.arrayBuffer())))
+        .toEqual(Array.from(SOUND_BYTES));
+      expect(loaded.sound!.type).toBe('audio/mpeg');
+    });
+
+    it('a silent scene carries no audio entry and opens silent', async () => {
+      const lib = loadedLibrary();
+      const scene = createScene('enchanted', 'Quiet');
+      const blob = await packageProject(scene, lib, undefined, sound());
+      const entries = unzipSync(new Uint8Array(await blob.arrayBuffer()));
+      expect(Object.keys(entries).some((k) => k.startsWith('audio/'))).toBe(false);
+      const loaded = await readProject(await blob.arrayBuffer(), testLibrary());
+      expect(loaded.scene.audio ?? null).toBeNull();
+      expect(loaded.sound).toBeNull();
+    });
+
+    it('keeps the sound reference when the bytes were not supplied, without crashing', async () => {
+      const lib = loadedLibrary();
+      const blob = await packageProject(withSound(), lib);
+      const loaded = await readProject(await blob.arrayBuffer(), testLibrary());
+      expect(loaded.scene.audio?.id).toBe('audio_test_1');
+      expect(loaded.sound).toBeNull();
+    });
+
+    it('a project written before sound was embedded still opens', async () => {
+      // Older files have an `audio` block but no sound entry in the archive.
+      const lib = loadedLibrary();
+      const blob = await packageProject(withSound(), lib, undefined, null);
+      const loaded = await readProject(await blob.arrayBuffer(), testLibrary());
+      expect(loaded.missingAssets).toEqual([]);
+      expect(loaded.sound).toBeNull();
+    });
+
+    it('sanitises a malformed sound block instead of trusting it', async () => {
+      const lib = loadedLibrary();
+      const scene = createScene('enchanted', 'Bad audio');
+      scene.audio = { id: 'audio_x', volume: 9, crossfade: -4, offset: -1, loop: false } as never;
+      const blob = await packageProject(scene, lib);
+      const loaded = await readProject(await blob.arrayBuffer(), testLibrary());
+      expect(loaded.scene.audio).toMatchObject({
+        id: 'audio_x', volume: 1, crossfade: 0, offset: 0, loop: false, mime: 'audio/mpeg',
+      });
+    });
+
+    it('a sound block with no usable id is dropped rather than half-restored', async () => {
+      const lib = loadedLibrary();
+      const scene = createScene('enchanted', 'Junk');
+      scene.audio = { name: 'no id' } as never;
+      const blob = await packageProject(scene, lib);
+      const loaded = await readProject(await blob.arrayBuffer(), testLibrary());
+      expect(loaded.scene.audio ?? null).toBeNull();
+    });
+  });
+
   it('rejects a file that is not an Imago project with a clear reason', async () => {
     const lib = testLibrary();
     await expect(readProject(new TextEncoder().encode('not a zip').buffer as ArrayBuffer, lib))

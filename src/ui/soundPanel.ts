@@ -35,7 +35,7 @@ export class SoundPanel {
           .sceneproject file, so the project stays portable.</p>
           <button class="btn primary" data-import>${icon('upload', 13)} Import sound</button>
           <p class="field-hint">mp3, wav, ogg, m4a, aac or flac. You need the rights to
-          anything you import. Sound can also be added later in Scenering.</p>
+          anything you import. You can add, replace or remove sound at any time.</p>
         </div>
       </div>`;
       on(qs('[data-import]', this.root), 'click', () => this.pick());
@@ -64,8 +64,8 @@ export class SoundPanel {
         audible join. A crossfade softens it - it does not make the track seamless.</div>
       </div>
       ${this.player.blocked ? `<div class="note warn">Your browser blocked audio until you interact with the page. Press play again.</div>` : ''}
-      <div class="note">Sound plays in the preview. It is not yet mixed into exported
-      video - add it in Scenering after export for now.</div>
+      <div class="note">Sound plays in the preview and is saved inside the project file.
+      Exported video is still silent.</div>
     </div>`;
 
     const vol = qs<HTMLInputElement>('[data-volume]', this.root);

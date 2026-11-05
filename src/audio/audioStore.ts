@@ -83,6 +83,16 @@ export async function loadAudioBlob(id: string): Promise<Blob | null> {
   return rec?.blob ?? null;
 }
 
+/**
+ * The bytes a project needs for this scene's sound, or null if the scene is
+ * silent or the file is no longer in this browser. Never throws: a save should
+ * not fail because a sound is unreadable.
+ */
+export async function loadSceneSound(audio: SceneAudio | null | undefined): Promise<Blob | null> {
+  if (!audio) return null;
+  try { return await loadAudioBlob(audio.id); } catch { return null; }
+}
+
 export async function removeAudio(id: string): Promise<void> {
   await idbDel(STORE, key(id));
 }
