@@ -473,6 +473,19 @@ describe('application shell', () => {
     app.dispose();
   }, 60_000);
 
+  it('shows three artworks per row by default and cycles to two or four', async () => {
+    const app = await mountApp({ start: null });
+    const grid = () => document.querySelector('#asset-grid') as HTMLElement;
+    expect(grid().style.gridTemplateColumns).toContain('3');
+    expect(grid().classList.contains('dense')).toBe(true);
+    click(document.querySelector('[data-density]'));
+    expect(grid().style.gridTemplateColumns).toContain('4');
+    click(document.querySelector('[data-density]'));
+    expect(grid().style.gridTemplateColumns).toContain('2');
+    expect(grid().classList.contains('dense')).toBe(false);
+    app.dispose();
+  }, 60_000);
+
   it('solo preview isolates one effect, then one layer, then everything', async () => {
     const app = await mountApp();
     click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));

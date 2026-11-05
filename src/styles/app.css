@@ -362,6 +362,10 @@ button { cursor: pointer; border: none; background: none; }
    a thing is before you drag it in. */
 .asset-grid.big { gap: 10px; padding: 4px 11px 14px; }
 .asset-grid.big .asset-thumb { height: 132px; }
+/* 3 or 4 per row: smaller thumbnails so more artwork fits on screen at once. */
+.asset-grid.big.dense { gap: 7px; padding: 4px 9px 14px; }
+.asset-grid.big.dense .asset-thumb { height: 96px; }
+.asset-grid.big.dense .asset-label { font-size: 10.5px; padding: 5px 6px; }
 .asset-grid.big .asset-label { font-size: 11px; padding: 7px 8px; }
 .asset-grid.big .effect-preview { height: 112px; }
 .asset-grid.big .effect-preview canvas { width: 100%; height: 100%; display: block; }

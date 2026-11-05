@@ -32,6 +32,8 @@ export class AssetPanel {
   category = 'all';
   subcategory = 'all';
   favouritesOnly = false;
+  /** Artwork columns in the grid: 2 for large thumbnails, 3 or 4 to see more at once. */
+  columns = 3;
   active = false;
   private atmosphereTab: 'effects' | 'rooms' = 'effects';
   private previews = new Map<string, HTMLCanvasElement>();
@@ -87,6 +89,7 @@ export class AssetPanel {
             ${WORLD_COLLECTIONS.map((w) => `<option value="${w.id}"${w.id === this.renderedWorld ? ' selected' : ''}>${escapeHtml(w.label)}</option>`).join('')}
           </select></label>
           <button class="btn icon${this.favouritesOnly ? ' active' : ''}" data-fav title="Favourites only" aria-label="Favourites only">${icon('star', 13)}</button>
+          <button class="btn icon" data-density title="Change how many artworks show per row" aria-label="Artworks per row">${this.columns}×</button>
           <button class="btn icon" data-import title="Import your own artwork" aria-label="Import artwork">${icon('upload', 13)}</button>
         </div>
       </div>
@@ -107,6 +110,10 @@ export class AssetPanel {
       this.category = 'all'; this.subcategory = 'all'; this.render();
     }));
     on(qs('[data-fav]', this.root), 'click', () => { this.favouritesOnly = !this.favouritesOnly; this.render(); });
+    on(qs('[data-density]', this.root), 'click', () => {
+      this.columns = this.columns === 2 ? 3 : this.columns === 3 ? 4 : 2;
+      this.render();
+    });
     on(qs('[data-import]', this.root), 'click', () => this.cb.onImport());
 
     this.renderChips();
@@ -142,6 +149,8 @@ export class AssetPanel {
     const grid = qs<HTMLElement>('#asset-grid', this.root);
     if (!grid) return;
     grid.innerHTML = '';
+    grid.style.gridTemplateColumns = `repeat(${this.columns}, minmax(0, 1fr))`;
+    grid.classList.toggle('dense', this.columns > 2);
     this.previews.clear();
 
     const rooms = this.layer === 'atmosphere' && this.atmosphereTab === 'rooms';
