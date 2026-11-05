@@ -529,19 +529,30 @@ export function projectsDialog(shelf: ProjectShelf, opts: {
 /* ---------------------------------------------------------------- history */
 
 export function historyDialog(store: Store) {
-  const body = el(`<div><div class="info-box">Every editing step is kept. Click any entry to jump back to
-    that point; later steps stay available as redo.</div><div id="hist"></div></div>`);
+  const body = el(`<div><div class="info-box">Every step is kept. Click any step to go to it - earlier or
+    later. Steps ahead stay available until you make a new change.</div><div id="hist"></div></div>`);
   const host = qs<HTMLElement>('#hist', body)!;
   const paint = () => {
     host.innerHTML = '';
+    if (!store.past.length && !store.future.length) {
+      host.appendChild(el(`<div class="empty-state">No history yet.</div>`));
+    }
+    // Earlier steps, oldest first.
     store.past.forEach((h, i) => {
       const item = el<HTMLElement>(`<div class="history-item"><span class="history-index">${i + 1}</span>${escapeHtml(h.label)}</div>`);
       on(item, 'click', () => { store.jumpTo(i); paint(); });
       host.appendChild(item);
     });
-    const cur = el<HTMLElement>(`<div class="history-item current"><span class="history-index">${store.past.length + 1}</span>Current state</div>`);
-    host.appendChild(cur);
-    if (!store.past.length) host.prepend(el(`<div class="empty-state">No history yet.</div>`));
+    host.appendChild(el<HTMLElement>(`<div class="history-item current"><span class="history-index">${store.past.length + 1}</span>Current state</div>`));
+    // Later steps, nearest first. future[last] is the nearest; future[0] the farthest.
+    const ahead = store.future.length;
+    for (let idx = ahead - 1; idx >= 0; idx--) {
+      const distance = ahead - idx;               // redo presses needed to get there
+      const h = store.future[idx];
+      const item = el<HTMLElement>(`<div class="history-item ahead"><span class="history-index">${store.past.length + 1 + distance}</span>${escapeHtml(h.label)}<span class="history-tag">redo</span></div>`);
+      on(item, 'click', () => { store.goForward(distance); paint(); });
+      host.appendChild(item);
+    }
   };
   paint();
   openModal({ title: 'History', body });

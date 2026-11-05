@@ -739,3 +739,8 @@ input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px;
   .brand-text, .project-name { display: none; }
   .asset-grid.big .asset-thumb { height: 104px; }
 }
+
+/* History: steps ahead of the current state (available as redo). */
+.history-item.ahead { opacity: 0.7; }
+.history-item.ahead:hover { opacity: 1; }
+.history-tag { margin-left: auto; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }

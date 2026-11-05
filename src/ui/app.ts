@@ -519,19 +519,20 @@ export class App {
       return;
     }
     if (meta.layer === 'background') {
-      const existing = scene.nodes.filter((n) => n.layer === 'background' && !n.locked);
+      // Choosing a background is an explicit decision, so it replaces the current
+      // one whether or not it was locked. The new background is locked so that
+      // automatic arrangement never moves it. Nothing else is forced: the designer
+      // stays on whichever layer they are working in.
+      const existing = scene.nodes.filter((n) => n.layer === 'background');
       this.store.pushHistory('Set background');
-      scene.nodes = scene.nodes.filter((n) => !(n.layer === 'background' && !n.locked));
+      scene.nodes = scene.nodes.filter((n) => n.layer !== 'background');
       const node = createAssetNode(meta, scene);
       node.locked = true;
       scene.nodes.push(node);
       this.store.mutate(() => {});
       this.store.select(node.id);
       void this.images.ensure([meta.id]).then(() => this.preview.invalidate());
-      this.store.status(`Background set to ${meta.name}${existing.length ? ' (previous unlocked background replaced)' : ''}.`, 'success');
-      // Guided flow: a background is the one thing you only place once, so move
-      // straight on to the middle-ground library.
-      this.setLayer('middle');
+      this.store.status(`Background set to ${meta.name}${existing.length ? ' (replaced the previous background)' : ''}.`, 'success');
       return;
     }
     // Room views are full-frame overlays even when dragged from the library;

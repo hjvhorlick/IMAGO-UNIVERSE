@@ -109,13 +109,21 @@ export class Store {
     return true;
   }
 
+  /**
+   * Go to the state that sits before past entry `index` (0 = the very first
+   * state). Every step passed on the way stays on the forward stack, so the
+   * designer can come back to it. Walks one undo at a time, so each forward
+   * entry keeps the exact scene that was there.
+   */
   jumpTo(index: number) {
-    // index into `past`; everything after it becomes the redo stack
-    while (this.past.length > index + 1) {
-      const e = this.past.pop()!;
-      this.future.push({ label: e.label, scene: deepClone(this.scene), at: Date.now() });
+    while (this.past.length > index && this.undo()) { /* step back */ }
+  }
+
+  /** Walk forward through steps that were undone. Stops early at the newest step. */
+  goForward(count: number) {
+    for (let i = 0; i < count; i++) {
+      if (!this.redo()) break;
     }
-    this.undo();
   }
 
   /* ------------------------------------------------------------ selection */

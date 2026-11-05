@@ -356,19 +356,54 @@ describe('application shell', () => {
     app.dispose();
   }, 60_000);
 
-  it('advances to the middle layer after a background is placed', async () => {
+  it('stays where the designer is after a background is placed, and can move freely between layers', async () => {
     const app = await mountApp();
     click(document.querySelector('.layer-tab[data-layer="background"]'));
     const cards = Array.from(document.querySelectorAll('#asset-grid .asset-card'));
     expect(cards.length).toBeGreaterThan(0);
     click(cards[0]);
-    // Guided flow: a background is placed once, so move straight on to layer 2.
-    expect(app.layer).toBe('middle');
-    expect(document.querySelector('.layer-tab[data-layer="middle"]')?.classList.contains('active')).toBe(true);
-    expect(document.querySelectorAll('#asset-grid .asset-card').length).toBeGreaterThan(0);
-    // Going back is always one click.
-    click(document.querySelector('.layer-tab[data-layer="background"]'));
+    // No forced step: placing a background leaves the designer on layer 1.
     expect(app.layer).toBe('background');
+    // Any layer is one click away, in any order, as many times as needed.
+    for (const layer of ['middle', 'foreground', 'background', 'middle', 'background']) {
+      click(document.querySelector(`.layer-tab[data-layer="${layer}"]`));
+      expect(app.layer).toBe(layer);
+    }
+    app.dispose();
+  }, 60_000);
+
+  it('replaces the background when a different one is chosen, even after the first was placed (locked)', async () => {
+    const app = await mountApp();
+    click(document.querySelector('.layer-tab[data-layer="background"]'));
+    const cards = () => Array.from(document.querySelectorAll('#asset-grid .asset-card'));
+    click(cards()[0]);
+    const firstId = app.store.scene.nodes.find((n) => n.layer === 'background')!.assetId;
+    click(cards()[1]);
+    const backgrounds = app.store.scene.nodes.filter((n) => n.layer === 'background');
+    expect(backgrounds.length).toBe(1);
+    expect(backgrounds[0].assetId).not.toBe(firstId);
+    expect(backgrounds[0].locked).toBe(true);
+    app.dispose();
+  }, 60_000);
+
+  it('the History dialog lists steps ahead and walks forward and back through them', async () => {
+    const app = await mountApp();
+    const { historyDialog } = await import('../src/ui/dialogs');
+    const before = app.store.scene.nodes.length;
+    app.store.mutate((s) => { s.nodes.push({ id: 'h1', name: 'one' } as never); }, 'Add one');
+    app.store.mutate((s) => { s.nodes.push({ id: 'h2', name: 'two' } as never); }, 'Add two');
+    app.store.jumpTo(app.store.past.length - 2);   // back to before "Add one"
+    expect(app.store.scene.nodes.length).toBe(before);
+    historyDialog(app.store);
+    const ahead = Array.from(document.querySelectorAll('#hist .history-item.ahead'));
+    expect(ahead.length).toBe(2);
+    // Click the farthest step ahead: both steps come back.
+    (ahead[ahead.length - 1] as HTMLElement).click();
+    expect(app.store.scene.nodes.map((n) => n.name)).toContain('two');
+    // Click an earlier step: everything after it is undone, still reachable.
+    (document.querySelector('#hist .history-item') as HTMLElement).click();
+    expect(app.store.scene.nodes.length).toBe(before);
+    expect(app.store.future.length).toBe(2);
     app.dispose();
   }, 60_000);
 
