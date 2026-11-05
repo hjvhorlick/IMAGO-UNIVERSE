@@ -1,18 +1,18 @@
 /**
  * RAIL / Assets - the artwork browser for whichever layer is active.
  *
- * Layers 1-3 are gated by the active artistic style. Layer 4 is not: every
- * effect is listed regardless of style, which is the whole point of the
- * atmosphere layer.
+ * Artwork is gated by the active artistic style, including Layer 4 rooms.
+ * Layer 4 effects are universal and remain available in every style.
  *
  * Placement is by drag onto the canvas. Click is a convenience that places the
  * same object at a sensible default position - it still creates an object, it
  * is never an on/off toggle, so the scene only ever contains what you put there.
  */
 import type { AssetLibrary } from '../assets/library';
+import { WORLD_COLLECTIONS, collectionId, inWorldCollection } from '../assets/worldCollections';
 import type { Store } from '../core/store';
 import type { LayerId } from '../core/types';
-import { LAYER_HINT, LAYER_LABEL } from '../core/types';
+import { LAYER_LABEL } from '../core/types';
 import { EFFECTS, FAMILY_LABEL, THEME_PRESETS } from '../animation/effects';
 import type { EffectDef } from '../animation/effects';
 import { SPIRITUAL_SUBCATEGORIES } from '../animation/spiritualOverlays';
@@ -22,6 +22,8 @@ export interface AssetPanelCallbacks {
   onAddAsset: (assetId: string) => void;
   onAddEffect: (effectId: string) => void;
   onImport: () => void;
+  onChooseStyle: (styleId: string) => void;
+  onChooseWorld: (world: string) => void;
 }
 
 export class AssetPanel {
@@ -31,16 +33,23 @@ export class AssetPanel {
   subcategory = 'all';
   favouritesOnly = false;
   active = false;
+  private atmosphereTab: 'effects' | 'rooms' = 'effects';
   private previews = new Map<string, HTMLCanvasElement>();
+  private renderedStyle = '';
+  private renderedWorld = '';
 
   constructor(
     private root: HTMLElement,
     private store: Store,
     private library: AssetLibrary,
     private cb: AssetPanelCallbacks,
+    private categoryPicker: HTMLSelectElement,
   ) {
     store.on('library', () => { if (this.active) this.render(); });
-    store.on('scene', () => { if (this.active) this.syncGate(); });
+    store.on('scene', () => {
+      if (!this.active) return;
+      if (this.renderedStyle !== store.scene.styleId || this.renderedWorld !== collectionId(store.scene.theme)) this.render();
+    });
   }
 
   setLayer(layer: LayerId) {
@@ -48,70 +57,78 @@ export class AssetPanel {
     this.layer = layer;
     this.category = 'all';
     this.subcategory = 'all';
-    this.query = '';
+    if (layer === 'atmosphere') this.atmosphereTab = 'effects';
     if (this.active) this.render();
+  }
+
+  setQuery(query: string) { this.query = query; if (this.active) this.renderGrid(); }
+  setCategory(category: string) {
+    this.category = category;
+    this.subcategory = 'all';
+    if (this.active) { this.renderChips(); this.renderGrid(); }
   }
 
   get title() {
     return this.layer === 'atmosphere' ? 'Atmosphere effects' : `${LAYER_LABEL[this.layer]} artwork`;
   }
 
-  private syncGate() {
-    const note = qs<HTMLElement>('.gate-note', this.root);
-    if (!note) return;
-    const style = this.library.style(this.store.scene.styleId);
-    note.textContent = this.layer === 'atmosphere'
-      ? 'Universal - works in every style'
-      : `${style?.name ?? this.store.scene.styleId} only`;
-  }
-
   render() {
-    const isAtmos = this.layer === 'atmosphere';
     const scroll = qs<HTMLElement>('.asset-scroll', this.root)?.scrollTop ?? 0;
+    this.renderedStyle = this.store.scene.styleId;
+    this.renderedWorld = collectionId(this.store.scene.theme);
     this.root.innerHTML = `
-      <div class="rail-tools">
-        <label class="search">${icon('search', 13)}<input type="text"
-          placeholder="Search ${isAtmos ? 'effects' : 'artwork'}..." value="${escapeHtml(this.query)}"></label>
-        <button class="btn icon${this.favouritesOnly ? ' active' : ''}" data-fav title="Favourites only">${icon('star', 13)}</button>
-        <button class="btn icon" data-import title="Import your own artwork">${icon('upload', 13)}</button>
+      <div class="library-start">
+        <div class="library-pickers">
+          <label>Season / look<select aria-label="Season or look">
+            ${this.library.styles.map((s) => `<option value="${escapeHtml(s.id)}"${s.id === this.renderedStyle ? ' selected' : ''}>${escapeHtml(s.name)}</option>`).join('')}
+          </select></label>
+          <label>World<select aria-label="World collection">
+            <option value="all">All worlds</option>
+            ${WORLD_COLLECTIONS.map((w) => `<option value="${w.id}"${w.id === this.renderedWorld ? ' selected' : ''}>${escapeHtml(w.label)}</option>`).join('')}
+          </select></label>
+          <button class="btn icon${this.favouritesOnly ? ' active' : ''}" data-fav title="Favourites only" aria-label="Favourites only">${icon('star', 13)}</button>
+          <button class="btn icon" data-import title="Import your own artwork" aria-label="Import artwork">${icon('upload', 13)}</button>
+        </div>
       </div>
-      <div class="rail-hint">${escapeHtml(LAYER_HINT[this.layer])} <span class="gate-note"></span></div>
-      <div class="chips" id="category-chips"></div>
+      ${this.layer === 'atmosphere' ? `<div class="library-tabs" role="tablist" aria-label="Layer 4 collections">
+        <button role="tab" data-library-tab="effects" aria-selected="${this.atmosphereTab === 'effects'}" class="${this.atmosphereTab === 'effects' ? 'active' : ''}">Atmosphere</button>
+        <button role="tab" data-library-tab="rooms" aria-selected="${this.atmosphereTab === 'rooms'}" class="${this.atmosphereTab === 'rooms' ? 'active' : ''}">Rooms &amp; interiors</button>
+      </div>` : ''}
       <div id="spiritual-subcategories"></div>
       <div class="asset-scroll"><div class="asset-grid big" id="asset-grid"></div></div>
-      <div class="rail-foot">Drag onto the canvas to place. Drag a corner handle to scale in proportion.</div>
     `;
 
-    const search = qs<HTMLInputElement>('.search input', this.root);
-    on(search, 'input', () => { this.query = search!.value; this.renderGrid(); });
+    const styleSelect = qs<HTMLSelectElement>('[aria-label="Season or look"]', this.root)!;
+    on(styleSelect, 'change', () => this.cb.onChooseStyle(styleSelect.value));
+    const worldSelect = qs<HTMLSelectElement>('[aria-label="World collection"]', this.root)!;
+    on(worldSelect, 'change', () => { this.category = 'all'; this.cb.onChooseWorld(worldSelect.value); this.render(); });
+    qsa<HTMLElement>('[data-library-tab]', this.root).forEach((tab) => on(tab, 'click', () => {
+      this.atmosphereTab = tab.dataset.libraryTab as 'effects' | 'rooms';
+      this.category = 'all'; this.subcategory = 'all'; this.render();
+    }));
     on(qs('[data-fav]', this.root), 'click', () => { this.favouritesOnly = !this.favouritesOnly; this.render(); });
     on(qs('[data-import]', this.root), 'click', () => this.cb.onImport());
 
     this.renderChips();
     this.renderGrid();
-    this.syncGate();
     const scroller = qs<HTMLElement>('.asset-scroll', this.root);
     if (scroller) scroller.scrollTop = scroll;
   }
 
   private renderChips() {
-    const host = qs<HTMLElement>('#category-chips', this.root);
-    if (!host) return;
-    const cats = this.layer === 'atmosphere'
+    const effects = this.layer === 'atmosphere' && this.atmosphereTab === 'effects';
+    const rooms = this.layer === 'atmosphere' && this.atmosphereTab === 'rooms';
+    const cats = rooms ? ['room-views', 'furniture'] : effects
       ? Array.from(new Set(EFFECTS.map((e) => e.family)))
-      : this.library.categories(this.store.scene.styleId, this.layer);
-    host.innerHTML = [`<button class="chip${this.category === 'all' ? ' active' : ''}" data-cat="all">All</button>`]
-      .concat(cats.map((c) => `<button class="chip${this.category === c ? ' active' : ''}" data-cat="${c}">${escapeHtml(this.layer === 'atmosphere' ? FAMILY_LABEL[c as keyof typeof FAMILY_LABEL] : c)}</button>`))
-      .join('');
-    qsa<HTMLElement>('.chip', host).forEach((b) => on(b, 'click', () => {
-      this.category = b.dataset.cat!;
-      this.subcategory = 'all';
-      this.renderChips();
-      this.renderGrid();
-    }));
+      : this.library.categories(this.store.scene.styleId, this.layer).filter((c) => c !== 'interiors');
+    const label = (c: string) => rooms ? (c === 'room-views' ? 'Room views' : 'Furniture & props')
+      : effects ? FAMILY_LABEL[c as keyof typeof FAMILY_LABEL] : c.charAt(0).toUpperCase() + c.slice(1);
+    this.categoryPicker.innerHTML = `<option value="all">All categories</option>`
+      + cats.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(label(c))}</option>`).join('');
+    this.categoryPicker.value = this.category;
     const subs = qs<HTMLElement>('#spiritual-subcategories', this.root);
     if (subs) {
-      subs.innerHTML = this.layer === 'atmosphere' && this.category === 'spiritual'
+      subs.innerHTML = effects && this.category === 'spiritual'
         ? `<label class="spiritual-filter">Collection <select aria-label="Spiritual overlay subcategory">
             <option value="all">All spiritual overlays</option>
             ${SPIRITUAL_SUBCATEGORIES.map((name) => `<option value="${escapeHtml(name)}"${this.subcategory === name ? ' selected' : ''}>${escapeHtml(name)}</option>`).join('')}
@@ -127,7 +144,8 @@ export class AssetPanel {
     grid.innerHTML = '';
     this.previews.clear();
 
-    if (this.layer === 'atmosphere') {
+    const rooms = this.layer === 'atmosphere' && this.atmosphereTab === 'rooms';
+    if (this.layer === 'atmosphere' && !rooms) {
       const q = this.query.toLowerCase();
       const list = EFFECTS.filter((e) =>
         (this.category === 'all' || e.family === this.category)
@@ -141,15 +159,22 @@ export class AssetPanel {
       return;
     }
 
-    const list = this.library.search(this.store.scene.styleId, this.layer, {
-      query: this.query, category: this.category, favouritesOnly: this.favouritesOnly,
-    });
+    const list = this.library.search(this.store.scene.styleId, rooms ? 'foreground' : this.layer, {
+      query: this.query, category: rooms ? 'interiors' : this.category, favouritesOnly: this.favouritesOnly,
+    }).filter((asset) => inWorldCollection(asset, this.renderedWorld))
+      .filter((asset) => rooms || asset.category !== 'interiors')
+      .filter((asset) => !rooms || this.category === 'all' ||
+        (this.category === 'room-views' ? asset.rig?.type === 'window-overlay' : asset.rig?.type !== 'window-overlay'));
+    if (rooms) {
+      // Full room views first, followed by the loose furniture and props.
+      list.sort((a, b) => Number(b.rig?.type === 'window-overlay') - Number(a.rig?.type === 'window-overlay'));
+    }
     if (!list.length) {
       const style = this.library.style(this.store.scene.styleId);
       grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
         <strong>No matching artwork</strong>
-        ${escapeHtml(style?.name ?? 'This style')} has nothing in this category yet.
-        Styles only show artwork that belongs to them, so nothing here can clash.</div>`;
+        Nothing matches these filters in ${escapeHtml(style?.name ?? 'this look')}.
+        Try All worlds, All categories, or a different search.</div>`;
       return;
     }
     for (const meta of list) {

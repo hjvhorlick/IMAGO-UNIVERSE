@@ -67,6 +67,50 @@
     "ground": "autumn.foreground.autumn-grass"
    },
    "complete": true
+  },
+  {
+   "id": "realistic",
+   "name": "Clearwater",
+   "subtitle": "Ultra-realistic",
+   "description": "Photographic realism rather than painted fantasy: true water optics with refraction, caustics on the bed and specular sparkle on the surface. Painted from its own plates. Ships no room interiors - a photoreal room needs photographing, not recolouring.",
+   "swatches": [
+    "#07222b",
+    "#0f5b6b",
+    "#3fa7b5",
+    "#9fd8dd",
+    "#f2fbff"
+   ],
+   "lighting": "upper-left",
+   "reference": {
+    "background": "realistic.background.clearwater-lake",
+    "tree": "realistic.middle.water-rocks",
+    "structure": "realistic.middle.driftwood",
+    "plant": "realistic.foreground.reeds",
+    "ground": "realistic.foreground.river-stones"
+   },
+   "complete": true
+  },
+  {
+   "id": "winter",
+   "name": "Frostfall",
+   "subtitle": "Painted winter",
+   "description": "An independently painted winter collection, not a recolouring: snow-laden conifers, frosted bare branches, ice and low cold light. Outdoor artwork is painted from its own plates; interiors are shared with the Enchanted look because a room has no season.",
+   "swatches": [
+    "#1b2b3a",
+    "#3f5f7a",
+    "#8fb2c9",
+    "#d7e6ef",
+    "#ffffff"
+   ],
+   "lighting": "upper-left",
+   "reference": {
+    "background": "winter.background.frostfall-valley",
+    "tree": "winter.middle.snow-pine",
+    "structure": "winter.middle.ice-pavilion",
+    "plant": "winter.foreground.snowdrops",
+    "ground": "winter.foreground.snow-drift"
+   },
+   "complete": true
   }
  ],
  "assets": [
@@ -703,6 +747,146 @@
    "bytes": 288708
   },
   {
+   "id": "enchanted.middle.fairy-mushroom-cottage",
+   "name": "Fairy Mushroom Cottage",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "fairy",
+    "forest"
+   ],
+   "tags": [
+    "fairy",
+    "mushroom",
+    "cottage",
+    "woodland"
+   ],
+   "origin": "painted",
+   "file": "enchanted/middle/fairy-mushroom-cottage.webp",
+   "thumb": "enchanted/middle/thumbs/fairy-mushroom-cottage.webp",
+   "format": "image/webp",
+   "width": 1030,
+   "height": 716,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#303030",
+    "#705030",
+    "#503030",
+    "#503010"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A detailed mushroom-roof cottage with painted warm windows; independently placeable.",
+   "bytes": 300582
+  },
+  {
+   "id": "enchanted.middle.japanese-garden-bridge",
+   "name": "Japanese-Inspired Garden Bridge",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "japanese",
+    "garden",
+    "water"
+   ],
+   "tags": [
+    "japanese",
+    "bridge",
+    "garden",
+    "wood"
+   ],
+   "origin": "painted",
+   "file": "enchanted/middle/japanese-garden-bridge.webp",
+   "thumb": "enchanted/middle/thumbs/japanese-garden-bridge.webp",
+   "format": "image/webp",
+   "width": 1180,
+   "height": 555,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#903030",
+    "#703030",
+    "#703010",
+    "#905030",
+    "#903010"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "An arched timber garden bridge with transparent openings between its rails.",
+   "bytes": 377744
+  },
+  {
+   "id": "enchanted.middle.norse-stone-well",
+   "name": "Norse-Inspired Stone Well",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "norse",
+    "forest",
+    "garden"
+   ],
+   "tags": [
+    "norse",
+    "well",
+    "stone",
+    "wood"
+   ],
+   "origin": "painted",
+   "file": "enchanted/middle/norse-stone-well.webp",
+   "thumb": "enchanted/middle/thumbs/norse-stone-well.webp",
+   "format": "image/webp",
+   "width": 692,
+   "height": 747,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#303010",
+    "#505030",
+    "#505050",
+    "#503030"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A carved wooden well with a mossy stone base; independently placeable.",
+   "bytes": 120256
+  },
+  {
    "id": "enchanted.foreground.woodland-foxgloves",
    "name": "Woodland Foxgloves",
    "style": "enchanted",
@@ -1042,6 +1226,988 @@
    "bytes": 481842
   },
   {
+   "id": "enchanted.foreground.scarlet-dahlias",
+   "name": "Scarlet Dahlias",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "dahlia",
+    "red",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/scarlet-dahlias.webp",
+   "thumb": "enchanted/foreground/thumbs/scarlet-dahlias.webp",
+   "format": "image/webp",
+   "width": 610,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#701010",
+    "#901010",
+    "#305030",
+    "#501010",
+    "#b01010"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 217544
+  },
+  {
+   "id": "enchanted.foreground.golden-sunflowers",
+   "name": "Golden Sunflowers",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "sunflower",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/golden-sunflowers.webp",
+   "thumb": "enchanted/foreground/thumbs/golden-sunflowers.webp",
+   "format": "image/webp",
+   "width": 806,
+   "height": 708,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507030",
+    "#709050",
+    "#d09010",
+    "#905010",
+    "#f0d050"
+   ],
+   "defaultScale": 0.36,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 384568
+  },
+  {
+   "id": "enchanted.foreground.white-orchids",
+   "name": "White Moth Orchids",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meditation"
+   ],
+   "tags": [
+    "orchid",
+    "white",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/white-orchids.webp",
+   "thumb": "enchanted/foreground/thumbs/white-orchids.webp",
+   "format": "image/webp",
+   "width": 1002,
+   "height": 676,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0d0",
+    "#f0d0d0",
+    "#507030",
+    "#305010",
+    "#f0f0f0"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 417006
+  },
+  {
+   "id": "enchanted.foreground.tulips",
+   "name": "Garden Tulips",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "tulip",
+    "red",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/tulips.webp",
+   "thumb": "enchanted/foreground/thumbs/tulips.webp",
+   "format": "image/webp",
+   "width": 840,
+   "height": 882,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#709050",
+    "#507030",
+    "#90b070",
+    "#901030",
+    "#701010"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 429928
+  },
+  {
+   "id": "enchanted.foreground.daffodils",
+   "name": "Daffodils",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "daffodil",
+    "yellow",
+    "spring",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/daffodils.webp",
+   "thumb": "enchanted/foreground/thumbs/daffodils.webp",
+   "format": "image/webp",
+   "width": 841,
+   "height": 732,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507050",
+    "#709070",
+    "#f0f090",
+    "#f0d010",
+    "#d0b010"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 429624
+  },
+  {
+   "id": "enchanted.foreground.cosmos",
+   "name": "Cosmos Spray",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "cosmos",
+    "pink",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/cosmos.webp",
+   "thumb": "enchanted/foreground/thumbs/cosmos.webp",
+   "format": "image/webp",
+   "width": 863,
+   "height": 668,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#709070",
+    "#f0b0d0",
+    "#d090b0",
+    "#f0d0d0",
+    "#d0b0d0"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 253530
+  },
+  {
+   "id": "enchanted.middle.white-stag",
+   "name": "White Stag",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "fairy"
+   ],
+   "tags": [
+    "stag",
+    "deer",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "painted",
+   "file": "enchanted/middle/white-stag.webp",
+   "thumb": "enchanted/middle/thumbs/white-stag.webp",
+   "format": "image/webp",
+   "width": 503,
+   "height": 705,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b090",
+    "#d0d0b0",
+    "#909070",
+    "#b09090",
+    "#907070"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pale forest stag; breathing and a slow weight shift are optional.",
+   "bytes": 243264
+  },
+  {
+   "id": "enchanted.foreground.red-fox",
+   "name": "Red Fox",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow"
+   ],
+   "tags": [
+    "fox",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/red-fox.webp",
+   "thumb": "enchanted/foreground/thumbs/red-fox.webp",
+   "format": "image/webp",
+   "width": 542,
+   "height": 648,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d09050",
+    "#b07030",
+    "#905030",
+    "#b07050",
+    "#101010"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A sitting red fox; breathing and a slow weight shift are optional.",
+   "bytes": 212166
+  },
+  {
+   "id": "enchanted.middle.mute-swans",
+   "name": "Mute Swans",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden"
+   ],
+   "tags": [
+    "swan",
+    "bird",
+    "animal",
+    "water",
+    "wildlife"
+   ],
+   "origin": "painted",
+   "file": "enchanted/middle/mute-swans.webp",
+   "thumb": "enchanted/middle/thumbs/mute-swans.webp",
+   "format": "image/webp",
+   "width": 1332,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#b0b0b0",
+    "#f0f0f0",
+    "#709090",
+    "#507070"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pair of swans with their reflections; drifting on the current is optional.",
+   "bytes": 218566
+  },
+  {
+   "id": "enchanted.foreground.koi-fish",
+   "name": "Koi Fish",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "japanese",
+    "chinese"
+   ],
+   "tags": [
+    "koi",
+    "fish",
+    "animal",
+    "pond",
+    "water"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/koi-fish.webp",
+   "thumb": "enchanted/foreground/thumbs/koi-fish.webp",
+   "format": "image/webp",
+   "width": 1306,
+   "height": 698,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#90b0b0",
+    "#703010",
+    "#b0b0b0",
+    "#905010",
+    "#b05010"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Koi seen from above; place them over water. Swimming is optional.",
+   "bytes": 500010
+  },
+  {
+   "id": "enchanted.foreground.butterflies",
+   "name": "Butterflies",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "meadow",
+    "garden"
+   ],
+   "tags": [
+    "butterfly",
+    "insect",
+    "animal",
+    "wildlife",
+    "swarm"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/butterflies.webp",
+   "thumb": "enchanted/foreground/thumbs/butterflies.webp",
+   "format": "image/webp",
+   "width": 934,
+   "height": 664,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#505050",
+    "#d07030",
+    "#907050",
+    "#505030"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "flutter"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A loose group of butterflies in flight. Fluttering is optional.",
+   "bytes": 368948
+  },
+  {
+   "id": "enchanted.middle.great-owl",
+   "name": "Great Owl",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "fairy"
+   ],
+   "tags": [
+    "owl",
+    "bird",
+    "animal",
+    "wildlife",
+    "nocturnal"
+   ],
+   "origin": "painted",
+   "file": "enchanted/middle/great-owl.webp",
+   "thumb": "enchanted/middle/thumbs/great-owl.webp",
+   "format": "image/webp",
+   "width": 399,
+   "height": 721,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707050",
+    "#707070",
+    "#505050",
+    "#909070",
+    "#705050"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A perched owl; breathing and a slow weight shift are optional.",
+   "bytes": 163506
+  },
+  {
+   "id": "enchanted.foreground.rabbit",
+   "name": "Brown Rabbit",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "meadow",
+    "forest"
+   ],
+   "tags": [
+    "rabbit",
+    "bunny",
+    "animal",
+    "wildlife"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/rabbit.webp",
+   "thumb": "enchanted/foreground/thumbs/rabbit.webp",
+   "format": "image/webp",
+   "width": 507,
+   "height": 640,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#907050",
+    "#907070",
+    "#b0b090",
+    "#705050"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A rabbit listening in the grass; breathing is optional.",
+   "bytes": 180046
+  },
+  {
+   "id": "enchanted.foreground.red-squirrel",
+   "name": "Red Squirrel",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow"
+   ],
+   "tags": [
+    "squirrel",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/red-squirrel.webp",
+   "thumb": "enchanted/foreground/thumbs/red-squirrel.webp",
+   "format": "image/webp",
+   "width": 597,
+   "height": 699,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#905030",
+    "#703010",
+    "#b07050",
+    "#b07030",
+    "#d09050"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "An alert red squirrel; breathing is optional.",
+   "bytes": 239346
+  },
+  {
+   "id": "enchanted.middle.mallard-ducks",
+   "name": "Mallard Ducks",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden"
+   ],
+   "tags": [
+    "duck",
+    "mallard",
+    "bird",
+    "animal",
+    "water"
+   ],
+   "origin": "painted",
+   "file": "enchanted/middle/mallard-ducks.webp",
+   "thumb": "enchanted/middle/thumbs/mallard-ducks.webp",
+   "format": "image/webp",
+   "width": 1283,
+   "height": 509,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#907050",
+    "#705030",
+    "#909090",
+    "#705050",
+    "#707050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A drake and a hen; drifting on the current is optional.",
+   "bytes": 398044
+  },
+  {
+   "id": "enchanted.foreground.hedgehog",
+   "name": "Hedgehog",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "garden"
+   ],
+   "tags": [
+    "hedgehog",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/hedgehog.webp",
+   "thumb": "enchanted/foreground/thumbs/hedgehog.webp",
+   "format": "image/webp",
+   "width": 1135,
+   "height": 631,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705050",
+    "#505030",
+    "#707050",
+    "#907050",
+    "#503030"
+   ],
+   "defaultScale": 0.18,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A hedgehog in the grass; breathing is optional.",
+   "bytes": 196028
+  },
+  {
+   "id": "enchanted.middle.deer-fawn",
+   "name": "Deer Fawn",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow"
+   ],
+   "tags": [
+    "fawn",
+    "deer",
+    "animal",
+    "wildlife",
+    "young"
+   ],
+   "origin": "painted",
+   "file": "enchanted/middle/deer-fawn.webp",
+   "thumb": "enchanted/middle/thumbs/deer-fawn.webp",
+   "format": "image/webp",
+   "width": 1174,
+   "height": 578,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#905030",
+    "#505030",
+    "#907050",
+    "#b07050"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A fawn lying in long grass; breathing is optional.",
+   "bytes": 373358
+  },
+  {
+   "id": "enchanted.foreground.moor-frog",
+   "name": "Moor Frog",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden"
+   ],
+   "tags": [
+    "frog",
+    "amphibian",
+    "animal",
+    "pond",
+    "wildlife"
+   ],
+   "origin": "painted",
+   "file": "enchanted/foreground/moor-frog.webp",
+   "thumb": "enchanted/foreground/thumbs/moor-frog.webp",
+   "format": "image/webp",
+   "width": 1134,
+   "height": 494,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#907030",
+    "#907050",
+    "#b09050"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pond frog; breathing is optional.",
+   "bytes": 294302
+  },
+  {
+   "id": "enchanted.middle.songbird-flock",
+   "name": "Songbird Flock",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "water",
+    "garden"
+   ],
+   "tags": [
+    "birds",
+    "flock",
+    "flight",
+    "animal",
+    "sky"
+   ],
+   "origin": "painted",
+   "file": "enchanted/middle/songbird-flock.webp",
+   "thumb": "enchanted/middle/thumbs/songbird-flock.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909070",
+    "#907050",
+    "#907070",
+    "#909090",
+    "#707050"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "flutter"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A scattered flock in flight; wing beats and drift are optional.",
+   "bytes": 469328
+  },
+  {
    "id": "enchanted.foreground.hearth-reading-room",
    "name": "Hearth Reading Room",
    "style": "enchanted",
@@ -1186,6 +2352,7 @@
     "modern",
     "penthouse",
     "large windows",
+    "window",
     "living room"
    ],
    "origin": "painted",
@@ -1235,6 +2402,7 @@
     "future",
     "modern",
     "large windows",
+    "window",
     "lounge"
    ],
    "origin": "painted",
@@ -1286,6 +2454,7 @@
     "wood beams",
     "wooden door",
     "tile floor",
+    "window",
     "fireplace"
    ],
    "origin": "painted",
@@ -1346,6 +2515,7 @@
     "oak beams",
     "wooden door",
     "tile floor",
+    "window",
     "lounge"
    ],
    "origin": "painted",
@@ -1398,6 +2568,7 @@
     "wood beams",
     "slanted roof",
     "corner windows",
+    "window",
     "tile floor"
    ],
    "origin": "painted",
@@ -4245,6 +5416,149 @@
    "bytes": 204372
   },
   {
+   "id": "moonlit.middle.fairy-mushroom-cottage",
+   "name": "Moonlit Fairy Mushroom Cottage",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "fairy",
+    "forest",
+    "night"
+   ],
+   "tags": [
+    "fairy",
+    "mushroom",
+    "cottage",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "moonlit/middle/fairy-mushroom-cottage.webp",
+   "thumb": "moonlit/middle/thumbs/fairy-mushroom-cottage.webp",
+   "format": "image/webp",
+   "width": 1030,
+   "height": 716,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#103030",
+    "#303030",
+    "#101030",
+    "#505050"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A detailed mushroom-roof cottage with painted warm windows; independently placeable.",
+   "bytes": 194986
+  },
+  {
+   "id": "moonlit.middle.japanese-garden-bridge",
+   "name": "Moonlit Japanese-Inspired Garden Bridge",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "japanese",
+    "garden",
+    "water",
+    "night"
+   ],
+   "tags": [
+    "japanese",
+    "bridge",
+    "garden",
+    "wood"
+   ],
+   "origin": "graded",
+   "file": "moonlit/middle/japanese-garden-bridge.webp",
+   "thumb": "moonlit/middle/thumbs/japanese-garden-bridge.webp",
+   "format": "image/webp",
+   "width": 1180,
+   "height": 555,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#303050",
+    "#101030",
+    "#301030",
+    "#505050"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "An arched timber garden bridge with transparent openings between its rails.",
+   "bytes": 268408
+  },
+  {
+   "id": "moonlit.middle.norse-stone-well",
+   "name": "Moonlit Norse-Inspired Stone Well",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "norse",
+    "forest",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "norse",
+    "well",
+    "stone",
+    "wood"
+   ],
+   "origin": "graded",
+   "file": "moonlit/middle/norse-stone-well.webp",
+   "thumb": "moonlit/middle/thumbs/norse-stone-well.webp",
+   "format": "image/webp",
+   "width": 692,
+   "height": 747,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#103030",
+    "#101030",
+    "#303030",
+    "#305070"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A carved wooden well with a mossy stone base; independently placeable.",
+   "bytes": 77686
+  },
+  {
    "id": "moonlit.foreground.woodland-foxgloves",
    "name": "Moonlit Woodland Foxgloves",
    "style": "moonlit",
@@ -4590,6 +5904,1007 @@
    "bytes": 342412
   },
   {
+   "id": "moonlit.foreground.scarlet-dahlias",
+   "name": "Moonlit Scarlet Dahlias",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "dahlia",
+    "red",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/scarlet-dahlias.webp",
+   "thumb": "moonlit/foreground/thumbs/scarlet-dahlias.webp",
+   "format": "image/webp",
+   "width": 610,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#301030",
+    "#103030",
+    "#303030",
+    "#303050",
+    "#503050"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 150698
+  },
+  {
+   "id": "moonlit.foreground.golden-sunflowers",
+   "name": "Moonlit Golden Sunflowers",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "sunflower",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/golden-sunflowers.webp",
+   "thumb": "moonlit/foreground/thumbs/golden-sunflowers.webp",
+   "format": "image/webp",
+   "width": 806,
+   "height": 708,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#505050",
+    "#303030",
+    "#507070",
+    "#303050"
+   ],
+   "defaultScale": 0.36,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 277172
+  },
+  {
+   "id": "moonlit.foreground.white-orchids",
+   "name": "Moonlit White Moth Orchids",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meditation",
+    "night"
+   ],
+   "tags": [
+    "orchid",
+    "white",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/white-orchids.webp",
+   "thumb": "moonlit/foreground/thumbs/white-orchids.webp",
+   "format": "image/webp",
+   "width": 1002,
+   "height": 676,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#7090b0",
+    "#507090",
+    "#7070b0",
+    "#103030",
+    "#305050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 290354
+  },
+  {
+   "id": "moonlit.foreground.tulips",
+   "name": "Moonlit Garden Tulips",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "tulip",
+    "red",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/tulips.webp",
+   "thumb": "moonlit/foreground/thumbs/tulips.webp",
+   "format": "image/webp",
+   "width": 840,
+   "height": 882,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#303050",
+    "#305070",
+    "#301030",
+    "#507070"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 303856
+  },
+  {
+   "id": "moonlit.foreground.daffodils",
+   "name": "Moonlit Daffodils",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "daffodil",
+    "yellow",
+    "spring",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/daffodils.webp",
+   "thumb": "moonlit/foreground/thumbs/daffodils.webp",
+   "format": "image/webp",
+   "width": 841,
+   "height": 732,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#305070",
+    "#507050",
+    "#507070",
+    "#507090"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 308766
+  },
+  {
+   "id": "moonlit.foreground.cosmos",
+   "name": "Moonlit Cosmos Spray",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "cosmos",
+    "pink",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/cosmos.webp",
+   "thumb": "moonlit/foreground/thumbs/cosmos.webp",
+   "format": "image/webp",
+   "width": 863,
+   "height": 668,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305070",
+    "#5070b0",
+    "#507090",
+    "#505090",
+    "#7070b0"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 197900
+  },
+  {
+   "id": "moonlit.middle.white-stag",
+   "name": "Moonlit White Stag",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "fairy",
+    "night"
+   ],
+   "tags": [
+    "stag",
+    "deer",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "moonlit/middle/white-stag.webp",
+   "thumb": "moonlit/middle/thumbs/white-stag.webp",
+   "format": "image/webp",
+   "width": 503,
+   "height": 705,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#505070",
+    "#303050",
+    "#305070",
+    "#305050"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pale forest stag; breathing and a slow weight shift are optional.",
+   "bytes": 175262
+  },
+  {
+   "id": "moonlit.foreground.red-fox",
+   "name": "Moonlit Red Fox",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "fox",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/red-fox.webp",
+   "thumb": "moonlit/foreground/thumbs/red-fox.webp",
+   "format": "image/webp",
+   "width": 542,
+   "height": 648,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505070",
+    "#505050",
+    "#303050",
+    "#303030",
+    "#101030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A sitting red fox; breathing and a slow weight shift are optional.",
+   "bytes": 148138
+  },
+  {
+   "id": "moonlit.middle.mute-swans",
+   "name": "Moonlit Mute Swans",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "swan",
+    "bird",
+    "animal",
+    "water",
+    "wildlife"
+   ],
+   "origin": "graded",
+   "file": "moonlit/middle/mute-swans.webp",
+   "thumb": "moonlit/middle/thumbs/mute-swans.webp",
+   "format": "image/webp",
+   "width": 1332,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#305070",
+    "#5070b0",
+    "#7090b0",
+    "#303050"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pair of swans with their reflections; drifting on the current is optional.",
+   "bytes": 145002
+  },
+  {
+   "id": "moonlit.foreground.koi-fish",
+   "name": "Moonlit Koi Fish",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "japanese",
+    "chinese",
+    "night"
+   ],
+   "tags": [
+    "koi",
+    "fish",
+    "animal",
+    "pond",
+    "water"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/koi-fish.webp",
+   "thumb": "moonlit/foreground/thumbs/koi-fish.webp",
+   "format": "image/webp",
+   "width": 1306,
+   "height": 698,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#303030",
+    "#505070",
+    "#505050",
+    "#303050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Koi seen from above; place them over water. Swimming is optional.",
+   "bytes": 355718
+  },
+  {
+   "id": "moonlit.foreground.butterflies",
+   "name": "Moonlit Butterflies",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "meadow",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "butterfly",
+    "insect",
+    "animal",
+    "wildlife",
+    "swarm"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/butterflies.webp",
+   "thumb": "moonlit/foreground/thumbs/butterflies.webp",
+   "format": "image/webp",
+   "width": 934,
+   "height": 664,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#505050",
+    "#103030",
+    "#305050",
+    "#101030"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "flutter"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A loose group of butterflies in flight. Fluttering is optional.",
+   "bytes": 261584
+  },
+  {
+   "id": "moonlit.middle.great-owl",
+   "name": "Moonlit Great Owl",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "fairy",
+    "night"
+   ],
+   "tags": [
+    "owl",
+    "bird",
+    "animal",
+    "wildlife",
+    "nocturnal"
+   ],
+   "origin": "graded",
+   "file": "moonlit/middle/great-owl.webp",
+   "thumb": "moonlit/middle/thumbs/great-owl.webp",
+   "format": "image/webp",
+   "width": 399,
+   "height": 721,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#305070",
+    "#505070",
+    "#103030",
+    "#305050"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A perched owl; breathing and a slow weight shift are optional.",
+   "bytes": 130088
+  },
+  {
+   "id": "moonlit.foreground.rabbit",
+   "name": "Moonlit Brown Rabbit",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "meadow",
+    "forest",
+    "night"
+   ],
+   "tags": [
+    "rabbit",
+    "bunny",
+    "animal",
+    "wildlife"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/rabbit.webp",
+   "thumb": "moonlit/foreground/thumbs/rabbit.webp",
+   "format": "image/webp",
+   "width": 507,
+   "height": 640,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505070",
+    "#303050",
+    "#507090",
+    "#305070",
+    "#305050"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A rabbit listening in the grass; breathing is optional.",
+   "bytes": 131810
+  },
+  {
+   "id": "moonlit.foreground.red-squirrel",
+   "name": "Moonlit Red Squirrel",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "squirrel",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/red-squirrel.webp",
+   "thumb": "moonlit/foreground/thumbs/red-squirrel.webp",
+   "format": "image/webp",
+   "width": 597,
+   "height": 699,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505070",
+    "#303030",
+    "#303050",
+    "#505050",
+    "#507090"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "An alert red squirrel; breathing is optional.",
+   "bytes": 171930
+  },
+  {
+   "id": "moonlit.middle.mallard-ducks",
+   "name": "Moonlit Mallard Ducks",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "duck",
+    "mallard",
+    "bird",
+    "animal",
+    "water"
+   ],
+   "origin": "graded",
+   "file": "moonlit/middle/mallard-ducks.webp",
+   "thumb": "moonlit/middle/thumbs/mallard-ducks.webp",
+   "format": "image/webp",
+   "width": 1283,
+   "height": 509,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#305070",
+    "#505070",
+    "#305050",
+    "#103030"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A drake and a hen; drifting on the current is optional.",
+   "bytes": 282160
+  },
+  {
+   "id": "moonlit.foreground.hedgehog",
+   "name": "Moonlit Hedgehog",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "hedgehog",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/hedgehog.webp",
+   "thumb": "moonlit/foreground/thumbs/hedgehog.webp",
+   "format": "image/webp",
+   "width": 1135,
+   "height": 631,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#305050",
+    "#505070",
+    "#305070",
+    "#103030"
+   ],
+   "defaultScale": 0.18,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A hedgehog in the grass; breathing is optional.",
+   "bytes": 158090
+  },
+  {
+   "id": "moonlit.middle.deer-fawn",
+   "name": "Moonlit Deer Fawn",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "fawn",
+    "deer",
+    "animal",
+    "wildlife",
+    "young"
+   ],
+   "origin": "graded",
+   "file": "moonlit/middle/deer-fawn.webp",
+   "thumb": "moonlit/middle/thumbs/deer-fawn.webp",
+   "format": "image/webp",
+   "width": 1174,
+   "height": 578,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#303030",
+    "#305050",
+    "#505070",
+    "#305070"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A fawn lying in long grass; breathing is optional.",
+   "bytes": 265326
+  },
+  {
+   "id": "moonlit.foreground.moor-frog",
+   "name": "Moonlit Moor Frog",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "frog",
+    "amphibian",
+    "animal",
+    "pond",
+    "wildlife"
+   ],
+   "origin": "graded",
+   "file": "moonlit/foreground/moor-frog.webp",
+   "thumb": "moonlit/foreground/thumbs/moor-frog.webp",
+   "format": "image/webp",
+   "width": 1134,
+   "height": 494,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#303030",
+    "#305050",
+    "#505070",
+    "#101030"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pond frog; breathing is optional.",
+   "bytes": 209108
+  },
+  {
+   "id": "moonlit.middle.songbird-flock",
+   "name": "Moonlit Songbird Flock",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "water",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "birds",
+    "flock",
+    "flight",
+    "animal",
+    "sky"
+   ],
+   "origin": "graded",
+   "file": "moonlit/middle/songbird-flock.webp",
+   "thumb": "moonlit/middle/thumbs/songbird-flock.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305070",
+    "#303050",
+    "#505070",
+    "#305050",
+    "#507090"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "flutter"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A scattered flock in flight; wing beats and drift are optional.",
+   "bytes": 255446
+  },
+  {
    "id": "moonlit.foreground.hearth-reading-room",
    "name": "Moonlit Hearth Reading Room",
    "style": "moonlit",
@@ -4734,6 +7049,7 @@
     "modern",
     "penthouse",
     "large windows",
+    "window",
     "living room"
    ],
    "origin": "graded",
@@ -4783,6 +7099,7 @@
     "future",
     "modern",
     "large windows",
+    "window",
     "lounge"
    ],
    "origin": "graded",
@@ -4834,6 +7151,7 @@
     "wood beams",
     "wooden door",
     "tile floor",
+    "window",
     "fireplace"
    ],
    "origin": "graded",
@@ -4894,6 +7212,7 @@
     "oak beams",
     "wooden door",
     "tile floor",
+    "window",
     "lounge"
    ],
    "origin": "graded",
@@ -4946,6 +7265,7 @@
     "wood beams",
     "slanted roof",
     "corner windows",
+    "window",
     "tile floor"
    ],
    "origin": "graded",
@@ -7337,6 +9657,149 @@
    "bytes": 277428
   },
   {
+   "id": "autumn.middle.fairy-mushroom-cottage",
+   "name": "Autumn Fairy Mushroom Cottage",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "fairy",
+    "forest",
+    "autumn"
+   ],
+   "tags": [
+    "fairy",
+    "mushroom",
+    "cottage",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "autumn/middle/fairy-mushroom-cottage.webp",
+   "thumb": "autumn/middle/thumbs/fairy-mushroom-cottage.webp",
+   "format": "image/webp",
+   "width": 1030,
+   "height": 716,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#303010",
+    "#503030",
+    "#503010",
+    "#303030"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A detailed mushroom-roof cottage with painted warm windows; independently placeable.",
+   "bytes": 292538
+  },
+  {
+   "id": "autumn.middle.japanese-garden-bridge",
+   "name": "Autumn Japanese-Inspired Garden Bridge",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "japanese",
+    "garden",
+    "water",
+    "autumn"
+   ],
+   "tags": [
+    "japanese",
+    "bridge",
+    "garden",
+    "wood"
+   ],
+   "origin": "graded",
+   "file": "autumn/middle/japanese-garden-bridge.webp",
+   "thumb": "autumn/middle/thumbs/japanese-garden-bridge.webp",
+   "format": "image/webp",
+   "width": 1180,
+   "height": 555,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#903030",
+    "#703030",
+    "#703010",
+    "#905030",
+    "#903010"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "An arched timber garden bridge with transparent openings between its rails.",
+   "bytes": 354802
+  },
+  {
+   "id": "autumn.middle.norse-stone-well",
+   "name": "Autumn Norse-Inspired Stone Well",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "norse",
+    "forest",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "norse",
+    "well",
+    "stone",
+    "wood"
+   ],
+   "origin": "graded",
+   "file": "autumn/middle/norse-stone-well.webp",
+   "thumb": "autumn/middle/thumbs/norse-stone-well.webp",
+   "format": "image/webp",
+   "width": 692,
+   "height": 747,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#303030",
+    "#505030",
+    "#503030",
+    "#705030"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A carved wooden well with a mossy stone base; independently placeable.",
+   "bytes": 118374
+  },
+  {
    "id": "autumn.foreground.woodland-foxgloves",
    "name": "Autumn Woodland Foxgloves",
    "style": "autumn",
@@ -7682,6 +10145,1007 @@
    "bytes": 455638
   },
   {
+   "id": "autumn.foreground.scarlet-dahlias",
+   "name": "Autumn Scarlet Dahlias",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "dahlia",
+    "red",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/scarlet-dahlias.webp",
+   "thumb": "autumn/foreground/thumbs/scarlet-dahlias.webp",
+   "format": "image/webp",
+   "width": 610,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#701010",
+    "#901010",
+    "#501010",
+    "#705030",
+    "#b01010"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 204044
+  },
+  {
+   "id": "autumn.foreground.golden-sunflowers",
+   "name": "Autumn Golden Sunflowers",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "sunflower",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/golden-sunflowers.webp",
+   "thumb": "autumn/foreground/thumbs/golden-sunflowers.webp",
+   "format": "image/webp",
+   "width": 806,
+   "height": 708,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07030",
+    "#d09010",
+    "#905010",
+    "#905030",
+    "#d09030"
+   ],
+   "defaultScale": 0.36,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 351990
+  },
+  {
+   "id": "autumn.foreground.white-orchids",
+   "name": "Autumn White Moth Orchids",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meditation",
+    "autumn"
+   ],
+   "tags": [
+    "orchid",
+    "white",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/white-orchids.webp",
+   "thumb": "autumn/foreground/thumbs/white-orchids.webp",
+   "format": "image/webp",
+   "width": 1002,
+   "height": 676,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0d0",
+    "#f0d0d0",
+    "#f0d0b0",
+    "#705010",
+    "#905030"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 367922
+  },
+  {
+   "id": "autumn.foreground.tulips",
+   "name": "Autumn Garden Tulips",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "tulip",
+    "red",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/tulips.webp",
+   "thumb": "autumn/foreground/thumbs/tulips.webp",
+   "format": "image/webp",
+   "width": 840,
+   "height": 882,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07030",
+    "#d09030",
+    "#d07030",
+    "#905030",
+    "#901030"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 403366
+  },
+  {
+   "id": "autumn.foreground.daffodils",
+   "name": "Autumn Daffodils",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "daffodil",
+    "yellow",
+    "spring",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/daffodils.webp",
+   "thumb": "autumn/foreground/thumbs/daffodils.webp",
+   "format": "image/webp",
+   "width": 841,
+   "height": 732,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0d070",
+    "#b07030",
+    "#f0d010",
+    "#905030",
+    "#f0d090"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 394418
+  },
+  {
+   "id": "autumn.foreground.cosmos",
+   "name": "Autumn Cosmos Spray",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "cosmos",
+    "pink",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/cosmos.webp",
+   "thumb": "autumn/foreground/thumbs/cosmos.webp",
+   "format": "image/webp",
+   "width": 863,
+   "height": 668,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09050",
+    "#f0b0d0",
+    "#d090b0",
+    "#f0d0d0",
+    "#d0b0d0"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 249256
+  },
+  {
+   "id": "autumn.middle.white-stag",
+   "name": "Autumn White Stag",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "fairy",
+    "autumn"
+   ],
+   "tags": [
+    "stag",
+    "deer",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "autumn/middle/white-stag.webp",
+   "thumb": "autumn/middle/thumbs/white-stag.webp",
+   "format": "image/webp",
+   "width": 503,
+   "height": 705,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#d0b090",
+    "#f0d0b0",
+    "#907050",
+    "#b0b090"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pale forest stag; breathing and a slow weight shift are optional.",
+   "bytes": 219816
+  },
+  {
+   "id": "autumn.foreground.red-fox",
+   "name": "Autumn Red Fox",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "fox",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/red-fox.webp",
+   "thumb": "autumn/foreground/thumbs/red-fox.webp",
+   "format": "image/webp",
+   "width": 542,
+   "height": 648,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d09050",
+    "#b07030",
+    "#905030",
+    "#b07050",
+    "#101010"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A sitting red fox; breathing and a slow weight shift are optional.",
+   "bytes": 194152
+  },
+  {
+   "id": "autumn.middle.mute-swans",
+   "name": "Autumn Mute Swans",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "swan",
+    "bird",
+    "animal",
+    "water",
+    "wildlife"
+   ],
+   "origin": "graded",
+   "file": "autumn/middle/mute-swans.webp",
+   "thumb": "autumn/middle/thumbs/mute-swans.webp",
+   "format": "image/webp",
+   "width": 1332,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#b0b0b0",
+    "#f0f0f0",
+    "#709090",
+    "#507070"
+   ],
+   "defaultScale": 0.42,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pair of swans with their reflections; drifting on the current is optional.",
+   "bytes": 214536
+  },
+  {
+   "id": "autumn.foreground.koi-fish",
+   "name": "Autumn Koi Fish",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "japanese",
+    "chinese",
+    "autumn"
+   ],
+   "tags": [
+    "koi",
+    "fish",
+    "animal",
+    "pond",
+    "water"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/koi-fish.webp",
+   "thumb": "autumn/foreground/thumbs/koi-fish.webp",
+   "format": "image/webp",
+   "width": 1306,
+   "height": 698,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#703010",
+    "#d0b090",
+    "#905010",
+    "#b0b090"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Koi seen from above; place them over water. Swimming is optional.",
+   "bytes": 442270
+  },
+  {
+   "id": "autumn.foreground.butterflies",
+   "name": "Autumn Butterflies",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "meadow",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "butterfly",
+    "insect",
+    "animal",
+    "wildlife",
+    "swarm"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/butterflies.webp",
+   "thumb": "autumn/foreground/thumbs/butterflies.webp",
+   "format": "image/webp",
+   "width": 934,
+   "height": 664,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#505030",
+    "#907050",
+    "#705030",
+    "#d07030"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "flutter"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A loose group of butterflies in flight. Fluttering is optional.",
+   "bytes": 334332
+  },
+  {
+   "id": "autumn.middle.great-owl",
+   "name": "Autumn Great Owl",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "fairy",
+    "autumn"
+   ],
+   "tags": [
+    "owl",
+    "bird",
+    "animal",
+    "wildlife",
+    "nocturnal"
+   ],
+   "origin": "graded",
+   "file": "autumn/middle/great-owl.webp",
+   "thumb": "autumn/middle/thumbs/great-owl.webp",
+   "format": "image/webp",
+   "width": 399,
+   "height": 721,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707050",
+    "#705050",
+    "#909070",
+    "#505030",
+    "#907070"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A perched owl; breathing and a slow weight shift are optional.",
+   "bytes": 161150
+  },
+  {
+   "id": "autumn.foreground.rabbit",
+   "name": "Autumn Brown Rabbit",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "meadow",
+    "forest",
+    "autumn"
+   ],
+   "tags": [
+    "rabbit",
+    "bunny",
+    "animal",
+    "wildlife"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/rabbit.webp",
+   "thumb": "autumn/foreground/thumbs/rabbit.webp",
+   "format": "image/webp",
+   "width": 507,
+   "height": 640,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#907050",
+    "#d0b090",
+    "#907070",
+    "#705050"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A rabbit listening in the grass; breathing is optional.",
+   "bytes": 167996
+  },
+  {
+   "id": "autumn.foreground.red-squirrel",
+   "name": "Autumn Red Squirrel",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "squirrel",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/red-squirrel.webp",
+   "thumb": "autumn/foreground/thumbs/red-squirrel.webp",
+   "format": "image/webp",
+   "width": 597,
+   "height": 699,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#905030",
+    "#703010",
+    "#b07050",
+    "#d09050",
+    "#b07030"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "An alert red squirrel; breathing is optional.",
+   "bytes": 223566
+  },
+  {
+   "id": "autumn.middle.mallard-ducks",
+   "name": "Autumn Mallard Ducks",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "duck",
+    "mallard",
+    "bird",
+    "animal",
+    "water"
+   ],
+   "origin": "graded",
+   "file": "autumn/middle/mallard-ducks.webp",
+   "thumb": "autumn/middle/thumbs/mallard-ducks.webp",
+   "format": "image/webp",
+   "width": 1283,
+   "height": 509,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#907050",
+    "#705030",
+    "#705050",
+    "#909090",
+    "#707050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A drake and a hen; drifting on the current is optional.",
+   "bytes": 360570
+  },
+  {
+   "id": "autumn.foreground.hedgehog",
+   "name": "Autumn Hedgehog",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "hedgehog",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/hedgehog.webp",
+   "thumb": "autumn/foreground/thumbs/hedgehog.webp",
+   "format": "image/webp",
+   "width": 1135,
+   "height": 631,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705050",
+    "#907050",
+    "#505030",
+    "#707050",
+    "#503030"
+   ],
+   "defaultScale": 0.18,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A hedgehog in the grass; breathing is optional.",
+   "bytes": 194614
+  },
+  {
+   "id": "autumn.middle.deer-fawn",
+   "name": "Autumn Deer Fawn",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "fawn",
+    "deer",
+    "animal",
+    "wildlife",
+    "young"
+   ],
+   "origin": "graded",
+   "file": "autumn/middle/deer-fawn.webp",
+   "thumb": "autumn/middle/thumbs/deer-fawn.webp",
+   "format": "image/webp",
+   "width": 1174,
+   "height": 578,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#905030",
+    "#907050",
+    "#b07050",
+    "#503010"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A fawn lying in long grass; breathing is optional.",
+   "bytes": 354212
+  },
+  {
+   "id": "autumn.foreground.moor-frog",
+   "name": "Autumn Moor Frog",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "frog",
+    "amphibian",
+    "animal",
+    "pond",
+    "wildlife"
+   ],
+   "origin": "graded",
+   "file": "autumn/foreground/moor-frog.webp",
+   "thumb": "autumn/foreground/thumbs/moor-frog.webp",
+   "format": "image/webp",
+   "width": 1134,
+   "height": 494,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#907050",
+    "#907030",
+    "#b09050"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pond frog; breathing is optional.",
+   "bytes": 284018
+  },
+  {
+   "id": "autumn.middle.songbird-flock",
+   "name": "Autumn Songbird Flock",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "water",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "birds",
+    "flock",
+    "flight",
+    "animal",
+    "sky"
+   ],
+   "origin": "graded",
+   "file": "autumn/middle/songbird-flock.webp",
+   "thumb": "autumn/middle/thumbs/songbird-flock.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909070",
+    "#907050",
+    "#907070",
+    "#707050",
+    "#b09070"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "flutter"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A scattered flock in flight; wing beats and drift are optional.",
+   "bytes": 334050
+  },
+  {
    "id": "autumn.foreground.hearth-reading-room",
    "name": "Autumn Hearth Reading Room",
    "style": "autumn",
@@ -7826,6 +11290,7 @@
     "modern",
     "penthouse",
     "large windows",
+    "window",
     "living room"
    ],
    "origin": "graded",
@@ -7875,6 +11340,7 @@
     "future",
     "modern",
     "large windows",
+    "window",
     "lounge"
    ],
    "origin": "graded",
@@ -7926,6 +11392,7 @@
     "wood beams",
     "wooden door",
     "tile floor",
+    "window",
     "fireplace"
    ],
    "origin": "graded",
@@ -7986,6 +11453,7 @@
     "oak beams",
     "wooden door",
     "tile floor",
+    "window",
     "lounge"
    ],
    "origin": "graded",
@@ -8038,6 +11506,7 @@
     "wood beams",
     "slanted roof",
     "corner windows",
+    "window",
     "tile floor"
    ],
    "origin": "graded",
@@ -9954,6 +13423,2979 @@
    "variants": [],
    "notes": "Transparent window opening reveals the current composed scene behind this foreground room overlay.",
    "bytes": 322490
+  },
+  {
+   "id": "realistic.background.clearwater-lake",
+   "name": "Clearwater Lake",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "lake",
+    "clear water",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/background/clearwater-lake.webp",
+   "thumb": "realistic/background/thumbs/clearwater-lake.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#90b0d0",
+    "#303030",
+    "#505050",
+    "#707070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle",
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.34,
+     1.0,
+     0.66
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic clear water with refraction and caustics.",
+   "bytes": 405554
+  },
+  {
+   "id": "realistic.background.forest-stream",
+   "name": "Forest Stream",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "stream",
+    "caustics",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/background/forest-stream.webp",
+   "thumb": "realistic/background/thumbs/forest-stream.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#101010",
+    "#505030",
+    "#707050",
+    "#909070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle",
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.22,
+     1.0,
+     0.78
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic clear water with refraction and caustics.",
+   "bytes": 437652
+  },
+  {
+   "id": "realistic.middle.water-rocks",
+   "name": "Rocks in Clear Water",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "rocks",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "rocks",
+    "granite",
+    "wet",
+    "ripples",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/water-rocks.webp",
+   "thumb": "realistic/middle/thumbs/water-rocks.webp",
+   "format": "image/webp",
+   "width": 1332,
+   "height": 675,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#101010",
+    "#505050",
+    "#909090",
+    "#b09070"
+   ],
+   "defaultScale": 0.46,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0.0,
+     0.42,
+     1.0,
+     0.58
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 572350
+  },
+  {
+   "id": "realistic.middle.driftwood",
+   "name": "Half-Submerged Driftwood",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "nature",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "driftwood",
+    "wood",
+    "refraction",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/driftwood.webp",
+   "thumb": "realistic/middle/thumbs/driftwood.webp",
+   "format": "image/webp",
+   "width": 1290,
+   "height": 629,
+   "alpha": true,
+   "depth": 0.54,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#d0d0d0",
+    "#909090",
+    "#505050",
+    "#707070"
+   ],
+   "defaultScale": 0.44,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0.0,
+     0.3,
+     1.0,
+     0.7
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 445450
+  },
+  {
+   "id": "realistic.middle.lily-pads",
+   "name": "Water Lily Pads",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "plants",
+   "themes": [
+    "water",
+    "garden",
+    "photoreal"
+   ],
+   "tags": [
+    "lily",
+    "pads",
+    "floating",
+    "pond",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/lily-pads.webp",
+   "thumb": "realistic/middle/thumbs/lily-pads.webp",
+   "format": "image/webp",
+   "width": 1307,
+   "height": 675,
+   "alpha": true,
+   "depth": 0.58,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#90b090",
+    "#90b070",
+    "#90d090",
+    "#709090",
+    "#70b070"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "float",
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0.0,
+     0.28,
+     1.0,
+     0.72
+    ]
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 472278
+  },
+  {
+   "id": "realistic.foreground.water-surface",
+   "name": "Clear Water Surface",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "water",
+   "themes": [
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "water",
+    "surface",
+    "sparkle",
+    "ripples",
+    "close-up",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/water-surface.webp",
+   "thumb": "realistic/foreground/thumbs/water-surface.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.94,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0d0d0",
+    "#90b0d0",
+    "#707070",
+    "#707050",
+    "#909090"
+   ],
+   "defaultScale": 0.46,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "sparkle",
+    "water-flow",
+    "water-shimmer"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic water texture; sparkle adds specular glints.",
+   "bytes": 481372
+  },
+  {
+   "id": "realistic.foreground.shallow-ripples",
+   "name": "Shallow Ripples and Caustics",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "water",
+   "themes": [
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "water",
+    "caustics",
+    "pebbles",
+    "ripples",
+    "close-up",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/shallow-ripples.webp",
+   "thumb": "realistic/foreground/thumbs/shallow-ripples.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.93,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505050",
+    "#707070",
+    "#303030",
+    "#707050",
+    "#909070"
+   ],
+   "defaultScale": 0.44,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "sparkle",
+    "water-flow"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic water texture; sparkle adds specular glints.",
+   "bytes": 567996
+  },
+  {
+   "id": "realistic.foreground.river-stones",
+   "name": "Wet River Stones",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "rocks",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "stones",
+    "pebbles",
+    "wet",
+    "glistening",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/river-stones.webp",
+   "thumb": "realistic/foreground/thumbs/river-stones.webp",
+   "format": "image/webp",
+   "width": 1197,
+   "height": 676,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#505030",
+    "#101010",
+    "#505050",
+    "#b0b0b0"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "sparkle"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic water texture; sparkle adds specular glints.",
+   "bytes": 499024
+  },
+  {
+   "id": "realistic.foreground.reeds",
+   "name": "Reeds at the Water's Edge",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "reeds",
+    "rushes",
+    "waterside",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/reeds.webp",
+   "thumb": "realistic/foreground/thumbs/reeds.webp",
+   "format": "image/webp",
+   "width": 1055,
+   "height": 749,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#507030",
+    "#707050",
+    "#303010",
+    "#709050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Photographic water texture; sparkle adds specular glints.",
+   "bytes": 461840
+  },
+  {
+   "id": "realistic.foreground.water-droplets",
+   "name": "Water Droplets on Stone",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "water",
+   "themes": [
+    "water",
+    "garden",
+    "photoreal"
+   ],
+   "tags": [
+    "droplets",
+    "dew",
+    "macro",
+    "stone",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/water-droplets.webp",
+   "thumb": "realistic/foreground/thumbs/water-droplets.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.95,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505050",
+    "#505070",
+    "#707070",
+    "#707090",
+    "#507070"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "sparkle"
+   ],
+   "rig": {
+    "type": "water",
+    "region": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "variants": [],
+   "notes": "Photographic water texture; sparkle adds specular glints.",
+   "bytes": 490622
+  },
+  {
+   "id": "realistic.foreground.japanese-modern-room",
+   "name": "Modern Japanese Room",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "photoreal"
+   ],
+   "tags": [
+    "japanese",
+    "modern",
+    "tatami",
+    "wood",
+    "stone",
+    "fireplace",
+    "room",
+    "window",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/japanese-modern-room.webp",
+   "thumb": "realistic/foreground/thumbs/japanese-modern-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#705030",
+    "#909090",
+    "#907050",
+    "#b0b0b0"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.825,
+     0.415,
+     0.135,
+     0.255
+    ]
+   },
+   "variants": [],
+   "notes": "Floor-to-roof glass keys out into a real opening; the fire is optional.",
+   "bytes": 332192
+  },
+  {
+   "id": "realistic.foreground.glass-pavilion-lounge",
+   "name": "Glass Pavilion Lounge",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "photoreal"
+   ],
+   "tags": [
+    "pavilion",
+    "open plan",
+    "glass",
+    "corner",
+    "fireplace",
+    "room",
+    "window",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/glass-pavilion-lounge.webp",
+   "thumb": "realistic/foreground/thumbs/glass-pavilion-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503030",
+    "#303010",
+    "#505030",
+    "#503010",
+    "#705030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.615,
+     0.605,
+     0.08,
+     0.18
+    ]
+   },
+   "variants": [],
+   "notes": "Floor-to-roof glass keys out into a real opening; the fire is optional.",
+   "bytes": 407528
+  },
+  {
+   "id": "realistic.foreground.woodstone-lounge",
+   "name": "Wood and Stone Lounge",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "photoreal"
+   ],
+   "tags": [
+    "lounge",
+    "oak",
+    "stone",
+    "fireplace",
+    "room",
+    "window",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/woodstone-lounge.webp",
+   "thumb": "realistic/foreground/thumbs/woodstone-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#301010",
+    "#705030",
+    "#505030",
+    "#503030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.12,
+     0.515,
+     0.15,
+     0.155
+    ]
+   },
+   "variants": [],
+   "notes": "Floor-to-roof glass keys out into a real opening; the fire is optional.",
+   "bytes": 467780
+  },
+  {
+   "id": "realistic.foreground.minimal-glass-loft",
+   "name": "Minimal Glass Loft",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "photoreal"
+   ],
+   "tags": [
+    "loft",
+    "minimal",
+    "linear fireplace",
+    "concrete",
+    "room",
+    "window",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/minimal-glass-loft.webp",
+   "thumb": "realistic/foreground/thumbs/minimal-glass-loft.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707070",
+    "#505050",
+    "#303030",
+    "#707050",
+    "#b0b0b0"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.81,
+     0.56,
+     0.15,
+     0.165
+    ]
+   },
+   "variants": [],
+   "notes": "Floor-to-roof glass keys out into a real opening; the fire is optional.",
+   "bytes": 442226
+  },
+  {
+   "id": "realistic.foreground.japanese-engawa-room",
+   "name": "Japanese Engawa Room",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "photoreal"
+   ],
+   "tags": [
+    "japanese",
+    "engawa",
+    "tatami",
+    "sunken hearth",
+    "room",
+    "window",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/japanese-engawa-room.webp",
+   "thumb": "realistic/foreground/thumbs/japanese-engawa-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#907050",
+    "#b09070",
+    "#503010",
+    "#703010",
+    "#705030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.788,
+     0.73,
+     0.11,
+     0.145
+    ]
+   },
+   "variants": [],
+   "notes": "Floor-to-roof glass keys out into a real opening; the fire is optional.",
+   "bytes": 235962
+  },
+  {
+   "id": "realistic.foreground.minimal-wood-bench",
+   "name": "Minimal Oak Bench",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "furniture",
+    "photoreal"
+   ],
+   "tags": [
+    "bench",
+    "oak",
+    "seating",
+    "minimal",
+    "furniture",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/minimal-wood-bench.webp",
+   "thumb": "realistic/foreground/thumbs/minimal-wood-bench.webp",
+   "format": "image/webp",
+   "width": 1205,
+   "height": 343,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07050",
+    "#d09070",
+    "#905030",
+    "#101010",
+    "#907030"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 39236
+  },
+  {
+   "id": "realistic.foreground.low-wood-table",
+   "name": "Low Oak Table",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "furniture",
+    "photoreal"
+   ],
+   "tags": [
+    "table",
+    "oak",
+    "coffee table",
+    "minimal",
+    "furniture",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/low-wood-table.webp",
+   "thumb": "realistic/foreground/thumbs/low-wood-table.webp",
+   "format": "image/webp",
+   "width": 1276,
+   "height": 461,
+   "alpha": true,
+   "depth": 0.97,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b070",
+    "#705030",
+    "#f0b090",
+    "#d09070",
+    "#b07050"
+   ],
+   "defaultScale": 0.2,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 55146
+  },
+  {
+   "id": "realistic.foreground.linen-floor-cushions",
+   "name": "Linen Floor Cushions",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "furniture",
+    "photoreal"
+   ],
+   "tags": [
+    "cushions",
+    "zabuton",
+    "linen",
+    "seating",
+    "furniture",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/linen-floor-cushions.webp",
+   "thumb": "realistic/foreground/thumbs/linen-floor-cushions.webp",
+   "format": "image/webp",
+   "width": 1400,
+   "height": 764,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#f0d0d0",
+    "#d0d0b0",
+    "#d0d0d0",
+    "#909090"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 403400
+  },
+  {
+   "id": "realistic.middle.seated-meditation",
+   "name": "Seated Meditation",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "figures",
+   "themes": [
+    "meditation",
+    "forest",
+    "meadow",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "figure",
+    "person",
+    "sitting",
+    "meditation",
+    "calm",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/seated-meditation.webp",
+   "thumb": "realistic/middle/thumbs/seated-meditation.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 600,
+   "alpha": true,
+   "depth": 0.62,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b0b0",
+    "#b09090",
+    "#f0d0d0",
+    "#d0d0b0",
+    "#d0b090"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Photographic figure; slow breathing is optional and off by default.",
+   "bytes": 73024
+  },
+  {
+   "id": "realistic.middle.seated-meditation-side",
+   "name": "Seated Meditation (side)",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "figures",
+   "themes": [
+    "meditation",
+    "forest",
+    "meadow",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "figure",
+    "person",
+    "sitting",
+    "profile",
+    "meditation",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/seated-meditation-side.webp",
+   "thumb": "realistic/middle/thumbs/seated-meditation-side.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 600,
+   "alpha": true,
+   "depth": 0.62,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505050",
+    "#303030",
+    "#101010",
+    "#503030",
+    "#301010"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Photographic figure; slow breathing is optional and off by default.",
+   "bytes": 58422
+  },
+  {
+   "id": "realistic.middle.standing-prayer",
+   "name": "Standing Prayer Pose",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "figures",
+   "themes": [
+    "meditation",
+    "forest",
+    "meadow",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "figure",
+    "person",
+    "standing",
+    "namaste",
+    "meditation",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/standing-prayer.webp",
+   "thumb": "realistic/middle/thumbs/standing-prayer.webp",
+   "format": "image/webp",
+   "width": 221,
+   "height": 725,
+   "alpha": true,
+   "depth": 0.62,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b0b0",
+    "#f0d0d0",
+    "#b09090",
+    "#d0d0d0",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Photographic figure; slow breathing is optional and off by default.",
+   "bytes": 35330
+  },
+  {
+   "id": "realistic.middle.tree-pose",
+   "name": "Standing Tree Pose",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "figures",
+   "themes": [
+    "meditation",
+    "forest",
+    "meadow",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "figure",
+    "person",
+    "standing",
+    "yoga",
+    "balance",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/tree-pose.webp",
+   "thumb": "realistic/middle/thumbs/tree-pose.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 600,
+   "alpha": true,
+   "depth": 0.62,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09090",
+    "#907070",
+    "#b0b0b0",
+    "#705050",
+    "#909090"
+   ],
+   "defaultScale": 0.36,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Photographic figure; slow breathing is optional and off by default.",
+   "bytes": 33814
+  },
+  {
+   "id": "realistic.middle.standing-mountain",
+   "name": "Standing Mountain Pose",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "figures",
+   "themes": [
+    "meditation",
+    "forest",
+    "meadow",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "figure",
+    "person",
+    "standing",
+    "yoga",
+    "calm",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/standing-mountain.webp",
+   "thumb": "realistic/middle/thumbs/standing-mountain.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 600,
+   "alpha": true,
+   "depth": 0.62,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707070",
+    "#909090",
+    "#907070",
+    "#b0b0b0",
+    "#b09090"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Photographic figure; slow breathing is optional and off by default.",
+   "bytes": 36958
+  },
+  {
+   "id": "realistic.foreground.stone-fireplace",
+   "name": "Real Stone Fireplace",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "fireplace",
+    "photoreal"
+   ],
+   "tags": [
+    "fireplace",
+    "stone",
+    "fire",
+    "hearth",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/stone-fireplace.webp",
+   "thumb": "realistic/foreground/thumbs/stone-fireplace.webp",
+   "format": "image/webp",
+   "width": 1400,
+   "height": 767,
+   "alpha": true,
+   "depth": 0.97,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#705030",
+    "#301010",
+    "#503030",
+    "#907050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.4,
+     0.345,
+     0.225,
+     0.29
+    ]
+   },
+   "variants": [],
+   "notes": "Placeable photographic fireplace. The fire is optional and off by default.",
+   "bytes": 464542
+  },
+  {
+   "id": "realistic.foreground.linear-fireplace",
+   "name": "Real Linear Fireplace",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "fireplace",
+    "photoreal"
+   ],
+   "tags": [
+    "fireplace",
+    "modern",
+    "linear",
+    "fire",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/foreground/linear-fireplace.webp",
+   "thumb": "realistic/foreground/thumbs/linear-fireplace.webp",
+   "format": "image/webp",
+   "width": 1276,
+   "height": 568,
+   "alpha": true,
+   "depth": 0.97,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909090",
+    "#b0b0b0",
+    "#101010",
+    "#301010",
+    "#b09090"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.57,
+     0.56,
+     0.245,
+     0.225
+    ]
+   },
+   "variants": [],
+   "notes": "Placeable photographic fireplace. The fire is optional and off by default.",
+   "bytes": 208230
+  },
+  {
+   "id": "winter.background.frostfall-valley",
+   "name": "Frostfall Valley",
+   "style": "winter",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "forest",
+    "water",
+    "winter"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "snow",
+    "valley"
+   ],
+   "origin": "painted",
+   "file": "winter/background/frostfall-valley.webp",
+   "thumb": "winter/background/thumbs/frostfall-valley.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#7090b0",
+    "#505070",
+    "#b0d0d0",
+    "#507090",
+    "#b0b0d0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 303524
+  },
+  {
+   "id": "winter.background.frozen-lake",
+   "name": "Frozen Lake",
+   "style": "winter",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "water",
+    "forest",
+    "winter"
+   ],
+   "tags": [
+    "background",
+    "vista",
+    "ice",
+    "lake"
+   ],
+   "origin": "painted",
+   "file": "winter/background/frozen-lake.webp",
+   "thumb": "winter/background/thumbs/frozen-lake.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507090",
+    "#303050",
+    "#305070",
+    "#9090b0",
+    "#707090"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "cloud-drift",
+    "parallax"
+   ],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 239646
+  },
+  {
+   "id": "winter.middle.snow-pine",
+   "name": "Snow-Laden Pine",
+   "style": "winter",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "forest",
+    "meadow",
+    "winter"
+   ],
+   "tags": [
+    "pine",
+    "conifer",
+    "snow",
+    "tree"
+   ],
+   "origin": "painted",
+   "file": "winter/middle/snow-pine.webp",
+   "thumb": "winter/middle/thumbs/snow-pine.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909090",
+    "#707070",
+    "#b0b0b0",
+    "#505050",
+    "#709090"
+   ],
+   "defaultScale": 0.55,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.9,
+    "stiffness": 0.86,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 105660
+  },
+  {
+   "id": "winter.middle.bare-winter-tree",
+   "name": "Frosted Bare Tree",
+   "style": "winter",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "forest",
+    "meadow",
+    "winter"
+   ],
+   "tags": [
+    "tree",
+    "bare",
+    "frost",
+    "winter"
+   ],
+   "origin": "painted",
+   "file": "winter/middle/bare-winter-tree.webp",
+   "thumb": "winter/middle/thumbs/bare-winter-tree.webp",
+   "format": "image/webp",
+   "width": 1229,
+   "height": 758,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#b0b0d0",
+    "#9090b0",
+    "#d0d0d0",
+    "#909090"
+   ],
+   "defaultScale": 0.5,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.45,
+    "stiffness": 0.55,
+    "gusts": 3
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 679794
+  },
+  {
+   "id": "winter.middle.ice-pavilion",
+   "name": "Frostfall Pavilion",
+   "style": "winter",
+   "layer": "middle",
+   "category": "structures",
+   "themes": [
+    "forest",
+    "garden",
+    "winter"
+   ],
+   "tags": [
+    "pavilion",
+    "shelter",
+    "icicles",
+    "snow"
+   ],
+   "origin": "painted",
+   "file": "winter/middle/ice-pavilion.webp",
+   "thumb": "winter/middle/thumbs/ice-pavilion.webp",
+   "format": "image/webp",
+   "width": 1225,
+   "height": 747,
+   "alpha": true,
+   "depth": 0.55,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0f0",
+    "#303030",
+    "#505050",
+    "#d0f0f0",
+    "#d0d0f0"
+   ],
+   "defaultScale": 0.45,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "lantern-glow"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 310510
+  },
+  {
+   "id": "winter.foreground.snow-drift",
+   "name": "Snow Drift",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "ground",
+   "themes": [
+    "meadow",
+    "forest",
+    "water",
+    "garden",
+    "winter"
+   ],
+   "tags": [
+    "snow",
+    "drift",
+    "ground"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/snow-drift.webp",
+   "thumb": "winter/foreground/thumbs/snow-drift.webp",
+   "format": "image/webp",
+   "width": 1313,
+   "height": 458,
+   "alpha": true,
+   "depth": 0.95,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0f0",
+    "#b0d0d0",
+    "#d0d0f0",
+    "#b0b0d0",
+    "#d0f0f0"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 74764
+  },
+  {
+   "id": "winter.foreground.snowdrops",
+   "name": "Snowdrops",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "meadow",
+    "forest",
+    "garden",
+    "winter"
+   ],
+   "tags": [
+    "snowdrop",
+    "white",
+    "flower",
+    "winter"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/snowdrops.webp",
+   "thumb": "winter/foreground/thumbs/snowdrops.webp",
+   "format": "image/webp",
+   "width": 1400,
+   "height": 764,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#507050",
+    "#709070",
+    "#f0f0f0",
+    "#909070"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 293240
+  },
+  {
+   "id": "winter.foreground.frost-grasses",
+   "name": "Frost Grasses",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "grass",
+   "themes": [
+    "meadow",
+    "forest",
+    "winter"
+   ],
+   "tags": [
+    "grass",
+    "frost",
+    "winter"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/frost-grasses.webp",
+   "thumb": "winter/foreground/thumbs/frost-grasses.webp",
+   "format": "image/webp",
+   "width": 674,
+   "height": 695,
+   "alpha": true,
+   "depth": 0.93,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#d0b0b0",
+    "#b0b090",
+    "#b09070",
+    "#f0f0f0"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 338882
+  },
+  {
+   "id": "winter.foreground.winter-berries",
+   "name": "Winter Berry Branch",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "forest",
+    "garden",
+    "winter"
+   ],
+   "tags": [
+    "holly",
+    "berries",
+    "red",
+    "winter"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/winter-berries.webp",
+   "thumb": "winter/foreground/thumbs/winter-berries.webp",
+   "format": "image/webp",
+   "width": 1333,
+   "height": 676,
+   "alpha": true,
+   "depth": 0.92,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507050",
+    "#305010",
+    "#709070",
+    "#507030",
+    "#305030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 244050
+  },
+  {
+   "id": "winter.foreground.frost-fern",
+   "name": "Frost Fern",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "forest",
+    "garden",
+    "winter"
+   ],
+   "tags": [
+    "fern",
+    "frost",
+    "winter"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/frost-fern.webp",
+   "thumb": "winter/foreground/thumbs/frost-fern.webp",
+   "format": "image/webp",
+   "width": 1326,
+   "height": 666,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0d0d0",
+    "#d0d0f0",
+    "#90b0d0",
+    "#b0b0d0",
+    "#d0f0f0"
+   ],
+   "defaultScale": 0.28,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "",
+   "bytes": 302702
+  },
+  {
+   "id": "winter.foreground.hearth-reading-room",
+   "name": "Hearth Reading Room",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "fireplace"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "hearth"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/hearth-reading-room.webp",
+   "thumb": "winter/foreground/thumbs/hearth-reading-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#705030",
+    "#905030",
+    "#b07030",
+    "#703010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.165,
+     0.66,
+     0.085,
+     0.14
+    ],
+    "steamRegion": [
+     0.91,
+     0.73,
+     0.045,
+     0.16
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+   "bytes": 222184
+  },
+  {
+   "id": "winter.foreground.window-seat-room",
+   "name": "Window Seat Room",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "fireplace"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "hearth"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/window-seat-room.webp",
+   "thumb": "winter/foreground/thumbs/window-seat-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#301010",
+    "#705030",
+    "#703010",
+    "#905030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.755,
+     0.515,
+     0.1,
+     0.19
+    ],
+    "steamRegion": [
+     0.64,
+     0.77,
+     0.045,
+     0.16
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+   "bytes": 260442
+  },
+  {
+   "id": "winter.foreground.modern-penthouse",
+   "name": "Modern Penthouse View",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "modern",
+    "interior",
+    "window"
+   ],
+   "tags": [
+    "modern",
+    "penthouse",
+    "large windows",
+    "window",
+    "living room"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/modern-penthouse.webp",
+   "thumb": "winter/foreground/thumbs/modern-penthouse.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#d0d0d0",
+    "#d0b0b0",
+    "#909070",
+    "#b0b090"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+   "bytes": 248962
+  },
+  {
+   "id": "winter.foreground.future-sky-lounge",
+   "name": "Futuristic Sky Lounge",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "futuristic",
+    "interior",
+    "window"
+   ],
+   "tags": [
+    "future",
+    "modern",
+    "large windows",
+    "window",
+    "lounge"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/future-sky-lounge.webp",
+   "thumb": "winter/foreground/thumbs/future-sky-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909090",
+    "#b0b0b0",
+    "#707070",
+    "#505050",
+    "#507070"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+   "bytes": 267120
+  },
+  {
+   "id": "winter.foreground.timber-great-room",
+   "name": "Contemporary Timber Great Room",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "wood beams",
+    "wooden door",
+    "tile floor",
+    "window",
+    "fireplace"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/timber-great-room.webp",
+   "thumb": "winter/foreground/thumbs/timber-great-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#b09070",
+    "#d0d0d0",
+    "#b09090",
+    "#907050"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.082,
+     0.68,
+     0.07,
+     0.1
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Present-day tiled great room with varnished beams, an animated fireplace and a transparent window.",
+   "bytes": 198130
+  },
+  {
+   "id": "winter.foreground.oak-window-lounge",
+   "name": "Contemporary Oak Window Lounge",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "oak beams",
+    "wooden door",
+    "tile floor",
+    "window",
+    "lounge"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/oak-window-lounge.webp",
+   "thumb": "winter/foreground/thumbs/oak-window-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b090",
+    "#d0d0d0",
+    "#b09090",
+    "#d0b0b0",
+    "#b0b0b0"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Present-day oak-beam room with tiled floor and a transparent window onto the composed world.",
+   "bytes": 186342
+  },
+  {
+   "id": "winter.foreground.brick-timber-corner-room",
+   "name": "Asymmetric Brick and Timber Room",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "window",
+    "contemporary",
+    "timber"
+   ],
+   "tags": [
+    "modern",
+    "brick",
+    "wood beams",
+    "slanted roof",
+    "corner windows",
+    "window",
+    "tile floor"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/brick-timber-corner-room.webp",
+   "thumb": "winter/foreground/thumbs/brick-timber-corner-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#705050",
+    "#503030",
+    "#703010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Asymmetric brick-and-wood room with a sloping roof and two transparent windows on adjacent walls.",
+   "bytes": 275376
+  },
+  {
+   "id": "winter.foreground.modern-sectional",
+   "name": "Modern Modular Sectional",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern"
+   ],
+   "tags": [
+    "modern",
+    "sofa",
+    "furniture",
+    "sectional"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/modern-sectional.webp",
+   "thumb": "winter/foreground/thumbs/modern-sectional.webp",
+   "format": "image/webp",
+   "width": 1226,
+   "height": 421,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#f0f0d0",
+    "#909070",
+    "#907070",
+    "#b09090"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 94708
+  },
+  {
+   "id": "winter.foreground.future-lounge-chair",
+   "name": "Futuristic Lounge Chair",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "futuristic"
+   ],
+   "tags": [
+    "future",
+    "modern",
+    "chair",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/future-lounge-chair.webp",
+   "thumb": "winter/foreground/thumbs/future-lounge-chair.webp",
+   "format": "image/webp",
+   "width": 785,
+   "height": 679,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#b0b0b0",
+    "#909090",
+    "#707070",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.25,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 61912
+  },
+  {
+   "id": "winter.foreground.contemporary-oak-door",
+   "name": "Contemporary Oak Door",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "door",
+    "wood",
+    "oak",
+    "modern"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/contemporary-oak-door.webp",
+   "thumb": "winter/foreground/thumbs/contemporary-oak-door.webp",
+   "format": "image/webp",
+   "width": 327,
+   "height": 686,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07050",
+    "#d09050",
+    "#d09070",
+    "#b09050",
+    "#b07030"
+   ],
+   "defaultScale": 0.4,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 24642
+  },
+  {
+   "id": "winter.foreground.contemporary-oak-chair",
+   "name": "Contemporary Oak Lounge Chair",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "chair",
+    "wood",
+    "oak",
+    "modern",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/contemporary-oak-chair.webp",
+   "thumb": "winter/foreground/thumbs/contemporary-oak-chair.webp",
+   "format": "image/webp",
+   "width": 848,
+   "height": 684,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#907050",
+    "#d0b090",
+    "#d0d0b0",
+    "#b0b090"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 117674
+  },
+  {
+   "id": "winter.foreground.contemporary-oak-table",
+   "name": "Contemporary Oak Coffee Table",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "table",
+    "wood",
+    "oak",
+    "coffee",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/contemporary-oak-table.webp",
+   "thumb": "winter/foreground/thumbs/contemporary-oak-table.webp",
+   "format": "image/webp",
+   "width": 1172,
+   "height": 567,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#d09070",
+    "#705030",
+    "#905030",
+    "#b07050"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 40084
+  },
+  {
+   "id": "winter.foreground.oak-bookshelf",
+   "name": "Contemporary Oak Bookshelf",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "shelves",
+    "books",
+    "wood",
+    "oak",
+    "furniture"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/oak-bookshelf.webp",
+   "thumb": "winter/foreground/thumbs/oak-bookshelf.webp",
+   "format": "image/webp",
+   "width": 485,
+   "height": 667,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#905030",
+    "#b07050",
+    "#703010"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 55980
+  },
+  {
+   "id": "winter.foreground.indoor-fig",
+   "name": "Potted Fiddle-Leaf Fig",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "plant"
+   ],
+   "tags": [
+    "plant",
+    "pot",
+    "foliage",
+    "green",
+    "decor"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/indoor-fig.webp",
+   "thumb": "winter/foreground/thumbs/indoor-fig.webp",
+   "format": "image/webp",
+   "width": 441,
+   "height": 692,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305010",
+    "#507030",
+    "#103010",
+    "#303010",
+    "#505010"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 55678
+  },
+  {
+   "id": "winter.foreground.oak-floor-lamp",
+   "name": "Contemporary Oak Floor Lamp",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "timber"
+   ],
+   "tags": [
+    "lamp",
+    "wood",
+    "oak",
+    "lighting",
+    "decor"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/oak-floor-lamp.webp",
+   "thumb": "winter/foreground/thumbs/oak-floor-lamp.webp",
+   "format": "image/webp",
+   "width": 218,
+   "height": 700,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09070",
+    "#d0b090",
+    "#f0f0d0",
+    "#d0d0b0",
+    "#b09050"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "Independent placeable contemporary interior object.",
+   "bytes": 18020
+  },
+  {
+   "id": "winter.foreground.modern-fireplace",
+   "name": "Modern Linear Fireplace",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "modern",
+    "fireplace"
+   ],
+   "tags": [
+    "modern",
+    "fireplace",
+    "fire",
+    "linear"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/modern-fireplace.webp",
+   "thumb": "winter/foreground/thumbs/modern-fireplace.webp",
+   "format": "image/webp",
+   "width": 1133,
+   "height": 592,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#b0b0b0",
+    "#d0d0d0",
+    "#303030",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.25,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.2,
+     0.45,
+     0.58,
+     0.25
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable contemporary fireplace with a locally animated painted fire.",
+   "bytes": 84352
+  },
+  {
+   "id": "winter.foreground.stone-fireplace",
+   "name": "Stone Fireplace",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "fireplace",
+    "hearth"
+   ],
+   "tags": [
+    "fireplace",
+    "fire",
+    "stone"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/stone-fireplace.webp",
+   "thumb": "winter/foreground/thumbs/stone-fireplace.webp",
+   "format": "image/webp",
+   "width": 929,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#303010",
+    "#301010",
+    "#503030",
+    "#503010"
+   ],
+   "defaultScale": 0.35,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.4,
+     0.49,
+     0.2,
+     0.29
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable stone fireplace with a locally animated painted fire.",
+   "bytes": 170654
+  },
+  {
+   "id": "winter.foreground.coffee-cup",
+   "name": "Steaming Coffee Cup",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "coffee",
+    "comfort"
+   ],
+   "tags": [
+    "cup",
+    "coffee",
+    "steam",
+    "table"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/coffee-cup.webp",
+   "thumb": "winter/foreground/thumbs/coffee-cup.webp",
+   "format": "image/webp",
+   "width": 716,
+   "height": 569,
+   "alpha": true,
+   "depth": 0.99,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b090",
+    "#f0d0b0",
+    "#b09070",
+    "#301010",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.12,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "coffee-steam"
+   ],
+   "rig": {
+    "type": "steam",
+    "region": [
+     0.47,
+     0.14,
+     0.4,
+     0.85
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Placeable cup with soft animated steam rising from the coffee.",
+   "bytes": 105664
+  },
+  {
+   "id": "winter.foreground.lounge-window",
+   "name": "Frostfall Lounge Window View",
+   "style": "winter",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window"
+   ],
+   "tags": [
+    "room",
+    "window",
+    "living room",
+    "view frame"
+   ],
+   "origin": "painted",
+   "file": "winter/foreground/lounge-window.webp",
+   "thumb": "winter/foreground/thumbs/lounge-window.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503010",
+    "#703010",
+    "#705030",
+    "#707030",
+    "#905010"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "window-overlay"
+   },
+   "variants": [],
+   "notes": "Transparent window opening reveals the current composed scene behind this foreground room overlay.",
+   "bytes": 332122
   }
  ]
 }

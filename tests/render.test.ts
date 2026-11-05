@@ -43,6 +43,9 @@ describe('painted foreground artwork', () => {
       { name: 'rose-peonies', match: (r: number, g: number, b: number) => r > 150 && r > g * 1.2 && b > g * 1.05 },
       { name: 'lotus-flowers', match: (r: number, g: number, b: number) => r > 150 && r > g * 1.2 && b > g * 1.05 },
       { name: 'golden-irises', match: (r: number, g: number, b: number) => r > 150 && g > 90 && b < g * 0.75 },
+      { name: 'scarlet-dahlias', match: (r: number, g: number, b: number) => r > 120 && r > g * 1.5 && r > b * 1.5 },
+      { name: 'golden-sunflowers', match: (r: number, g: number, b: number) => r > 150 && g > 90 && b < g * 0.75 },
+      { name: 'white-orchids', match: (r: number, g: number, b: number) => r > 190 && g > 180 && b > 170 },
     ];
     for (const { name, match } of cases) {
       const meta = manifest.assets.find((a: { style: string; file: string }) =>
@@ -72,7 +75,9 @@ describe('painted foreground artwork', () => {
         'modern-sectional', 'future-lounge-chair', 'modern-fireplace',
         'contemporary-oak-door', 'contemporary-oak-chair', 'contemporary-oak-table',
         'oak-bookshelf', 'indoor-fig', 'oak-floor-lamp', 'lotus-flowers', 'lotus-pavilion',
-        'chinese-moon-gate', 'japanese-stone-lantern', 'norse-dragon-boat']) {
+        'chinese-moon-gate', 'japanese-stone-lantern', 'norse-dragon-boat',
+        'fairy-mushroom-cottage', 'japanese-garden-bridge', 'norse-stone-well',
+        'scarlet-dahlias', 'golden-sunflowers', 'white-orchids']) {
         // Look the file up through the manifest rather than hard-coding the folder layout.
         const meta = manifest.assets.find((a: { style: string; file: string }) =>
           a.style === style && a.file.endsWith(`/${name}.webp`));
@@ -240,6 +245,8 @@ describe('animation engine', () => {
         if (a.fall || b.fall) moved = true;
         if (a.flame && b.flame && a.flame.phase !== b.flame.phase) moved = true;
         if (a.steam && b.steam && a.steam.phase !== b.steam.phase) moved = true;
+        // Sparkle lives in a glint field driven by the cycle position.
+        if (a.sparkle && b.sparkle && a.sparkle.phase !== b.sparkle.phase) moved = true;
         if (moved) break;
       }
       expect(moved, `${type} never moves`).toBe(true);

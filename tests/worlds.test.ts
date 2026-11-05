@@ -37,10 +37,12 @@ describe('world categories', () => {
     }
   });
 
-  it('keeps the reserved realistic category empty until it is built', () => {
+  it('holds the photographic worlds in the realistic category', () => {
     const realistic = WORLD_CATEGORIES.find((c) => c.id === 'realistic');
     expect(realistic).toBeTruthy();
-    expect(realistic!.worlds).toEqual([]);
+    expect(realistic!.worlds).toEqual(['clearwater-lake', 'forest-stream']);
+    const realisticWorlds = listWorlds(lib).filter((w) => w.categoryId === 'realistic').map((w) => w.id);
+    expect(realisticWorlds.sort()).toEqual(['clearwater-lake', 'forest-stream']);
   });
 
   it('treats the three styles as looks of the same world, not as separate worlds', () => {

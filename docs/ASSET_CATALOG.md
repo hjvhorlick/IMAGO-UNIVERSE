@@ -9,9 +9,11 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 
 | Style | Background | Middle | Foreground | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Enchanted Realms (`enchanted`) | 10 | 16 | 41 | 67 |
-| Moonlit Reverie (`moonlit`) | 9 | 14 | 35 | 58 |
-| Harvest Season (`autumn`) | 9 | 15 | 37 | 61 |
+| Enchanted Realms (`enchanted`) | 10 | 25 | 54 | 89 |
+| Moonlit Reverie (`moonlit`) | 9 | 23 | 48 | 80 |
+| Harvest Season (`autumn`) | 9 | 24 | 50 | 83 |
+| Clearwater (`realistic`) | 2 | 8 | 15 | 25 |
+| Frostfall (`winter`) | 2 | 3 | 24 | 29 |
 
 ## Enchanted Realms (`enchanted`)
 
@@ -30,13 +32,22 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/enchanted/background/thumbs/enchanted-lake.webp" width="96" alt="Enchanted Lake Valley"> | Enchanted Lake Valley | nature | painted | 1376×768 | [`enchanted/background/enchanted-lake.webp`](../public/library/enchanted/background/enchanted-lake.webp) |
 | <img src="../public/library/enchanted/background/thumbs/forest-hollow.webp" width="96" alt="Sunlit Forest Hollow"> | Sunlit Forest Hollow | nature | painted | 1376×768 | [`enchanted/background/forest-hollow.webp`](../public/library/enchanted/background/forest-hollow.webp) |
 
-### Middle (16)
+### Middle (25)
 
 | Preview | Name | Category | Origin | Size | File |
 | --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/enchanted/middle/thumbs/deer-fawn.webp" width="96" alt="Deer Fawn"> | Deer Fawn | creatures | painted | 1174×578 | [`enchanted/middle/deer-fawn.webp`](../public/library/enchanted/middle/deer-fawn.webp) |
+| <img src="../public/library/enchanted/middle/thumbs/great-owl.webp" width="96" alt="Great Owl"> | Great Owl | creatures | painted | 399×721 | [`enchanted/middle/great-owl.webp`](../public/library/enchanted/middle/great-owl.webp) |
+| <img src="../public/library/enchanted/middle/thumbs/mallard-ducks.webp" width="96" alt="Mallard Ducks"> | Mallard Ducks | creatures | painted | 1283×509 | [`enchanted/middle/mallard-ducks.webp`](../public/library/enchanted/middle/mallard-ducks.webp) |
+| <img src="../public/library/enchanted/middle/thumbs/mute-swans.webp" width="96" alt="Mute Swans"> | Mute Swans | creatures | painted | 1332×768 | [`enchanted/middle/mute-swans.webp`](../public/library/enchanted/middle/mute-swans.webp) |
+| <img src="../public/library/enchanted/middle/thumbs/songbird-flock.webp" width="96" alt="Songbird Flock"> | Songbird Flock | creatures | painted | 1408×768 | [`enchanted/middle/songbird-flock.webp`](../public/library/enchanted/middle/songbird-flock.webp) |
+| <img src="../public/library/enchanted/middle/thumbs/white-stag.webp" width="96" alt="White Stag"> | White Stag | creatures | painted | 503×705 | [`enchanted/middle/white-stag.webp`](../public/library/enchanted/middle/white-stag.webp) |
 | <img src="../public/library/enchanted/middle/thumbs/chinese-moon-gate.webp" width="96" alt="Chinese-Inspired Moon Gate"> | Chinese-Inspired Moon Gate | decorations | painted | 789×691 | [`enchanted/middle/chinese-moon-gate.webp`](../public/library/enchanted/middle/chinese-moon-gate.webp) |
+| <img src="../public/library/enchanted/middle/thumbs/fairy-mushroom-cottage.webp" width="96" alt="Fairy Mushroom Cottage"> | Fairy Mushroom Cottage | decorations | painted | 1030×716 | [`enchanted/middle/fairy-mushroom-cottage.webp`](../public/library/enchanted/middle/fairy-mushroom-cottage.webp) |
+| <img src="../public/library/enchanted/middle/thumbs/japanese-garden-bridge.webp" width="96" alt="Japanese-Inspired Garden Bridge"> | Japanese-Inspired Garden Bridge | decorations | painted | 1180×555 | [`enchanted/middle/japanese-garden-bridge.webp`](../public/library/enchanted/middle/japanese-garden-bridge.webp) |
 | <img src="../public/library/enchanted/middle/thumbs/japanese-stone-lantern.webp" width="96" alt="Japanese-Inspired Stone Lantern"> | Japanese-Inspired Stone Lantern | decorations | painted | 361×702 | [`enchanted/middle/japanese-stone-lantern.webp`](../public/library/enchanted/middle/japanese-stone-lantern.webp) |
 | <img src="../public/library/enchanted/middle/thumbs/norse-dragon-boat.webp" width="96" alt="Norse-Inspired Dragon Boat"> | Norse-Inspired Dragon Boat | decorations | painted | 1235×474 | [`enchanted/middle/norse-dragon-boat.webp`](../public/library/enchanted/middle/norse-dragon-boat.webp) |
+| <img src="../public/library/enchanted/middle/thumbs/norse-stone-well.webp" width="96" alt="Norse-Inspired Stone Well"> | Norse-Inspired Stone Well | decorations | painted | 692×747 | [`enchanted/middle/norse-stone-well.webp`](../public/library/enchanted/middle/norse-stone-well.webp) |
 | <img src="../public/library/enchanted/middle/thumbs/celestial-arch.webp" width="96" alt="Celestial Astrolabe Arch"> | Celestial Astrolabe Arch | landmarks | painted | 613×717 | [`enchanted/middle/celestial-arch.webp`](../public/library/enchanted/middle/celestial-arch.webp) |
 | <img src="../public/library/enchanted/middle/thumbs/japanese-torii.webp" width="96" alt="Moon Garden Torii Gate"> | Moon Garden Torii Gate | landmarks | painted | 715×725 | [`enchanted/middle/japanese-torii.webp`](../public/library/enchanted/middle/japanese-torii.webp) |
 | <img src="../public/library/enchanted/middle/thumbs/chinese-pavilion.webp" width="96" alt="Mountain Lantern Pavilion"> | Mountain Lantern Pavilion | landmarks | painted | 1134×757 | [`enchanted/middle/chinese-pavilion.webp`](../public/library/enchanted/middle/chinese-pavilion.webp) |
@@ -51,17 +62,30 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/enchanted/middle/thumbs/weeping-willow.webp" width="96" alt="Weeping Willow"> | Weeping Willow | trees | painted | 768×1264 | [`enchanted/middle/weeping-willow.webp`](../public/library/enchanted/middle/weeping-willow.webp) |
 | <img src="../public/library/enchanted/middle/thumbs/waterfall.webp" width="96" alt="Grand Forest Waterfall"> | Grand Forest Waterfall | water | painted | 1300×710 | [`enchanted/middle/waterfall.webp`](../public/library/enchanted/middle/waterfall.webp) |
 
-### Foreground (41)
+### Foreground (54)
 
 | Preview | Name | Category | Origin | Size | File |
 | --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/enchanted/foreground/thumbs/rabbit.webp" width="96" alt="Brown Rabbit"> | Brown Rabbit | creatures | painted | 507×640 | [`enchanted/foreground/rabbit.webp`](../public/library/enchanted/foreground/rabbit.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/butterflies.webp" width="96" alt="Butterflies"> | Butterflies | creatures | painted | 934×664 | [`enchanted/foreground/butterflies.webp`](../public/library/enchanted/foreground/butterflies.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/hedgehog.webp" width="96" alt="Hedgehog"> | Hedgehog | creatures | painted | 1135×631 | [`enchanted/foreground/hedgehog.webp`](../public/library/enchanted/foreground/hedgehog.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/koi-fish.webp" width="96" alt="Koi Fish"> | Koi Fish | creatures | painted | 1306×698 | [`enchanted/foreground/koi-fish.webp`](../public/library/enchanted/foreground/koi-fish.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/moor-frog.webp" width="96" alt="Moor Frog"> | Moor Frog | creatures | painted | 1134×494 | [`enchanted/foreground/moor-frog.webp`](../public/library/enchanted/foreground/moor-frog.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/red-fox.webp" width="96" alt="Red Fox"> | Red Fox | creatures | painted | 542×648 | [`enchanted/foreground/red-fox.webp`](../public/library/enchanted/foreground/red-fox.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/red-squirrel.webp" width="96" alt="Red Squirrel"> | Red Squirrel | creatures | painted | 597×699 | [`enchanted/foreground/red-squirrel.webp`](../public/library/enchanted/foreground/red-squirrel.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/cosmos.webp" width="96" alt="Cosmos Spray"> | Cosmos Spray | flowers | painted | 863×668 | [`enchanted/foreground/cosmos.webp`](../public/library/enchanted/foreground/cosmos.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/daffodils.webp" width="96" alt="Daffodils"> | Daffodils | flowers | painted | 841×732 | [`enchanted/foreground/daffodils.webp`](../public/library/enchanted/foreground/daffodils.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/tulips.webp" width="96" alt="Garden Tulips"> | Garden Tulips | flowers | painted | 840×882 | [`enchanted/foreground/tulips.webp`](../public/library/enchanted/foreground/tulips.webp) |
 | <img src="../public/library/enchanted/foreground/thumbs/golden-irises.webp" width="96" alt="Golden Irises"> | Golden Irises | flowers | painted | 646×1205 | [`enchanted/foreground/golden-irises.webp`](../public/library/enchanted/foreground/golden-irises.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/golden-sunflowers.webp" width="96" alt="Golden Sunflowers"> | Golden Sunflowers | flowers | painted | 806×708 | [`enchanted/foreground/golden-sunflowers.webp`](../public/library/enchanted/foreground/golden-sunflowers.webp) |
 | <img src="../public/library/enchanted/foreground/thumbs/lotus-flowers.webp" width="96" alt="Lotus Blossoms and Leaves"> | Lotus Blossoms and Leaves | flowers | painted | 880×615 | [`enchanted/foreground/lotus-flowers.webp`](../public/library/enchanted/foreground/lotus-flowers.webp) |
 | <img src="../public/library/enchanted/foreground/thumbs/japanese-moon-moss.webp" width="96" alt="Moon Garden Moss and Sakura"> | Moon Garden Moss and Sakura | flowers | painted | 1100×477 | [`enchanted/foreground/japanese-moon-moss.webp`](../public/library/enchanted/foreground/japanese-moon-moss.webp) |
 | <img src="../public/library/enchanted/foreground/thumbs/chinese-peach-blossoms.webp" width="96" alt="Peach Blossom Garden Cluster"> | Peach Blossom Garden Cluster | flowers | painted | 1100×493 | [`enchanted/foreground/chinese-peach-blossoms.webp`](../public/library/enchanted/foreground/chinese-peach-blossoms.webp) |
 | <img src="../public/library/enchanted/foreground/thumbs/rose-peonies.webp" width="96" alt="Rose Peonies"> | Rose Peonies | flowers | painted | 869×694 | [`enchanted/foreground/rose-peonies.webp`](../public/library/enchanted/foreground/rose-peonies.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/scarlet-dahlias.webp" width="96" alt="Scarlet Dahlias"> | Scarlet Dahlias | flowers | painted | 610×639 | [`enchanted/foreground/scarlet-dahlias.webp`](../public/library/enchanted/foreground/scarlet-dahlias.webp) |
 | <img src="../public/library/enchanted/foreground/thumbs/wild-poppies.webp" width="96" alt="Scarlet Wild Poppies"> | Scarlet Wild Poppies | flowers | painted | 704×964 | [`enchanted/foreground/wild-poppies.webp`](../public/library/enchanted/foreground/wild-poppies.webp) |
 | <img src="../public/library/enchanted/foreground/thumbs/starflowers.webp" width="96" alt="Starflower Cluster"> | Starflower Cluster | flowers | painted | 718×773 | [`enchanted/foreground/starflowers.webp`](../public/library/enchanted/foreground/starflowers.webp) |
+| <img src="../public/library/enchanted/foreground/thumbs/white-orchids.webp" width="96" alt="White Moth Orchids"> | White Moth Orchids | flowers | painted | 1002×676 | [`enchanted/foreground/white-orchids.webp`](../public/library/enchanted/foreground/white-orchids.webp) |
 | <img src="../public/library/enchanted/foreground/thumbs/wild-roses.webp" width="96" alt="Wild Rose Cluster"> | Wild Rose Cluster | flowers | painted | 1226×583 | [`enchanted/foreground/wild-roses.webp`](../public/library/enchanted/foreground/wild-roses.webp) |
 | <img src="../public/library/enchanted/foreground/thumbs/wildflowers.webp" width="96" alt="Wildflower Cluster"> | Wildflower Cluster | flowers | composed | 575×875 | [`enchanted/foreground/wildflowers.webp`](../public/library/enchanted/foreground/wildflowers.webp) |
 | <img src="../public/library/enchanted/foreground/thumbs/woodland-anemones.webp" width="96" alt="Woodland Anemones"> | Woodland Anemones | flowers | painted | 701×970 | [`enchanted/foreground/woodland-anemones.webp`](../public/library/enchanted/foreground/woodland-anemones.webp) |
@@ -113,13 +137,22 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/moonlit/background/thumbs/moonlit-glade.webp" width="96" alt="Moonlit Forest Glade"> | Moonlit Forest Glade | night | painted | 1376×768 | [`moonlit/background/moonlit-glade.webp`](../public/library/moonlit/background/moonlit-glade.webp) |
 | <img src="../public/library/moonlit/background/thumbs/night-valley.webp" width="96" alt="Night Lake Valley"> | Night Lake Valley | night | graded | 1376×768 | [`moonlit/background/night-valley.webp`](../public/library/moonlit/background/night-valley.webp) |
 
-### Middle (14)
+### Middle (23)
 
 | Preview | Name | Category | Origin | Size | File |
 | --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/moonlit/middle/thumbs/deer-fawn.webp" width="96" alt="Moonlit Deer Fawn"> | Moonlit Deer Fawn | creatures | graded | 1174×578 | [`moonlit/middle/deer-fawn.webp`](../public/library/moonlit/middle/deer-fawn.webp) |
+| <img src="../public/library/moonlit/middle/thumbs/great-owl.webp" width="96" alt="Moonlit Great Owl"> | Moonlit Great Owl | creatures | graded | 399×721 | [`moonlit/middle/great-owl.webp`](../public/library/moonlit/middle/great-owl.webp) |
+| <img src="../public/library/moonlit/middle/thumbs/mallard-ducks.webp" width="96" alt="Moonlit Mallard Ducks"> | Moonlit Mallard Ducks | creatures | graded | 1283×509 | [`moonlit/middle/mallard-ducks.webp`](../public/library/moonlit/middle/mallard-ducks.webp) |
+| <img src="../public/library/moonlit/middle/thumbs/mute-swans.webp" width="96" alt="Moonlit Mute Swans"> | Moonlit Mute Swans | creatures | graded | 1332×768 | [`moonlit/middle/mute-swans.webp`](../public/library/moonlit/middle/mute-swans.webp) |
+| <img src="../public/library/moonlit/middle/thumbs/songbird-flock.webp" width="96" alt="Moonlit Songbird Flock"> | Moonlit Songbird Flock | creatures | graded | 1408×768 | [`moonlit/middle/songbird-flock.webp`](../public/library/moonlit/middle/songbird-flock.webp) |
+| <img src="../public/library/moonlit/middle/thumbs/white-stag.webp" width="96" alt="Moonlit White Stag"> | Moonlit White Stag | creatures | graded | 503×705 | [`moonlit/middle/white-stag.webp`](../public/library/moonlit/middle/white-stag.webp) |
 | <img src="../public/library/moonlit/middle/thumbs/chinese-moon-gate.webp" width="96" alt="Moonlit Chinese-Inspired Moon Gate"> | Moonlit Chinese-Inspired Moon Gate | decorations | graded | 789×691 | [`moonlit/middle/chinese-moon-gate.webp`](../public/library/moonlit/middle/chinese-moon-gate.webp) |
+| <img src="../public/library/moonlit/middle/thumbs/fairy-mushroom-cottage.webp" width="96" alt="Moonlit Fairy Mushroom Cottage"> | Moonlit Fairy Mushroom Cottage | decorations | graded | 1030×716 | [`moonlit/middle/fairy-mushroom-cottage.webp`](../public/library/moonlit/middle/fairy-mushroom-cottage.webp) |
+| <img src="../public/library/moonlit/middle/thumbs/japanese-garden-bridge.webp" width="96" alt="Moonlit Japanese-Inspired Garden Bridge"> | Moonlit Japanese-Inspired Garden Bridge | decorations | graded | 1180×555 | [`moonlit/middle/japanese-garden-bridge.webp`](../public/library/moonlit/middle/japanese-garden-bridge.webp) |
 | <img src="../public/library/moonlit/middle/thumbs/japanese-stone-lantern.webp" width="96" alt="Moonlit Japanese-Inspired Stone Lantern"> | Moonlit Japanese-Inspired Stone Lantern | decorations | graded | 361×702 | [`moonlit/middle/japanese-stone-lantern.webp`](../public/library/moonlit/middle/japanese-stone-lantern.webp) |
 | <img src="../public/library/moonlit/middle/thumbs/norse-dragon-boat.webp" width="96" alt="Moonlit Norse-Inspired Dragon Boat"> | Moonlit Norse-Inspired Dragon Boat | decorations | graded | 1235×474 | [`moonlit/middle/norse-dragon-boat.webp`](../public/library/moonlit/middle/norse-dragon-boat.webp) |
+| <img src="../public/library/moonlit/middle/thumbs/norse-stone-well.webp" width="96" alt="Moonlit Norse-Inspired Stone Well"> | Moonlit Norse-Inspired Stone Well | decorations | graded | 692×747 | [`moonlit/middle/norse-stone-well.webp`](../public/library/moonlit/middle/norse-stone-well.webp) |
 | <img src="../public/library/moonlit/middle/thumbs/celestial-arch.webp" width="96" alt="Moonlit Celestial Astrolabe Arch"> | Moonlit Celestial Astrolabe Arch | landmarks | graded | 613×717 | [`moonlit/middle/celestial-arch.webp`](../public/library/moonlit/middle/celestial-arch.webp) |
 | <img src="../public/library/moonlit/middle/thumbs/japanese-torii.webp" width="96" alt="Moonlit Moon Garden Torii Gate"> | Moonlit Moon Garden Torii Gate | landmarks | graded | 715×725 | [`moonlit/middle/japanese-torii.webp`](../public/library/moonlit/middle/japanese-torii.webp) |
 | <img src="../public/library/moonlit/middle/thumbs/chinese-pavilion.webp" width="96" alt="Moonlit Mountain Lantern Pavilion"> | Moonlit Mountain Lantern Pavilion | landmarks | graded | 1134×757 | [`moonlit/middle/chinese-pavilion.webp`](../public/library/moonlit/middle/chinese-pavilion.webp) |
@@ -132,17 +165,30 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/moonlit/middle/thumbs/silver-oak.webp" width="96" alt="Silver Oak"> | Silver Oak | trees | graded | 755×1275 | [`moonlit/middle/silver-oak.webp`](../public/library/moonlit/middle/silver-oak.webp) |
 | <img src="../public/library/moonlit/middle/thumbs/moonlit-waterfall.webp" width="96" alt="Moonlit Waterfall"> | Moonlit Waterfall | water | graded | 1300×710 | [`moonlit/middle/moonlit-waterfall.webp`](../public/library/moonlit/middle/moonlit-waterfall.webp) |
 
-### Foreground (35)
+### Foreground (48)
 
 | Preview | Name | Category | Origin | Size | File |
 | --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/moonlit/foreground/thumbs/rabbit.webp" width="96" alt="Moonlit Brown Rabbit"> | Moonlit Brown Rabbit | creatures | graded | 507×640 | [`moonlit/foreground/rabbit.webp`](../public/library/moonlit/foreground/rabbit.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/butterflies.webp" width="96" alt="Moonlit Butterflies"> | Moonlit Butterflies | creatures | graded | 934×664 | [`moonlit/foreground/butterflies.webp`](../public/library/moonlit/foreground/butterflies.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/hedgehog.webp" width="96" alt="Moonlit Hedgehog"> | Moonlit Hedgehog | creatures | graded | 1135×631 | [`moonlit/foreground/hedgehog.webp`](../public/library/moonlit/foreground/hedgehog.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/koi-fish.webp" width="96" alt="Moonlit Koi Fish"> | Moonlit Koi Fish | creatures | graded | 1306×698 | [`moonlit/foreground/koi-fish.webp`](../public/library/moonlit/foreground/koi-fish.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/moor-frog.webp" width="96" alt="Moonlit Moor Frog"> | Moonlit Moor Frog | creatures | graded | 1134×494 | [`moonlit/foreground/moor-frog.webp`](../public/library/moonlit/foreground/moor-frog.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/red-fox.webp" width="96" alt="Moonlit Red Fox"> | Moonlit Red Fox | creatures | graded | 542×648 | [`moonlit/foreground/red-fox.webp`](../public/library/moonlit/foreground/red-fox.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/red-squirrel.webp" width="96" alt="Moonlit Red Squirrel"> | Moonlit Red Squirrel | creatures | graded | 597×699 | [`moonlit/foreground/red-squirrel.webp`](../public/library/moonlit/foreground/red-squirrel.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/cosmos.webp" width="96" alt="Moonlit Cosmos Spray"> | Moonlit Cosmos Spray | flowers | graded | 863×668 | [`moonlit/foreground/cosmos.webp`](../public/library/moonlit/foreground/cosmos.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/daffodils.webp" width="96" alt="Moonlit Daffodils"> | Moonlit Daffodils | flowers | graded | 841×732 | [`moonlit/foreground/daffodils.webp`](../public/library/moonlit/foreground/daffodils.webp) |
 | <img src="../public/library/moonlit/foreground/thumbs/japanese-moon-moss.webp" width="96" alt="Moonlit Garden Moss and Sakura"> | Moonlit Garden Moss and Sakura | flowers | graded | 1200×521 | [`moonlit/foreground/japanese-moon-moss.webp`](../public/library/moonlit/foreground/japanese-moon-moss.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/tulips.webp" width="96" alt="Moonlit Garden Tulips"> | Moonlit Garden Tulips | flowers | graded | 840×882 | [`moonlit/foreground/tulips.webp`](../public/library/moonlit/foreground/tulips.webp) |
 | <img src="../public/library/moonlit/foreground/thumbs/golden-irises.webp" width="96" alt="Moonlit Golden Irises"> | Moonlit Golden Irises | flowers | graded | 646×1205 | [`moonlit/foreground/golden-irises.webp`](../public/library/moonlit/foreground/golden-irises.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/golden-sunflowers.webp" width="96" alt="Moonlit Golden Sunflowers"> | Moonlit Golden Sunflowers | flowers | graded | 806×708 | [`moonlit/foreground/golden-sunflowers.webp`](../public/library/moonlit/foreground/golden-sunflowers.webp) |
 | <img src="../public/library/moonlit/foreground/thumbs/lotus-flowers.webp" width="96" alt="Moonlit Lotus Blossoms and Leaves"> | Moonlit Lotus Blossoms and Leaves | flowers | graded | 880×615 | [`moonlit/foreground/lotus-flowers.webp`](../public/library/moonlit/foreground/lotus-flowers.webp) |
 | <img src="../public/library/moonlit/foreground/thumbs/chinese-peach-blossoms.webp" width="96" alt="Moonlit Peach Blossom Garden Cluster"> | Moonlit Peach Blossom Garden Cluster | flowers | graded | 1200×537 | [`moonlit/foreground/chinese-peach-blossoms.webp`](../public/library/moonlit/foreground/chinese-peach-blossoms.webp) |
 | <img src="../public/library/moonlit/foreground/thumbs/rose-peonies.webp" width="96" alt="Moonlit Rose Peonies"> | Moonlit Rose Peonies | flowers | graded | 869×694 | [`moonlit/foreground/rose-peonies.webp`](../public/library/moonlit/foreground/rose-peonies.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/scarlet-dahlias.webp" width="96" alt="Moonlit Scarlet Dahlias"> | Moonlit Scarlet Dahlias | flowers | graded | 610×639 | [`moonlit/foreground/scarlet-dahlias.webp`](../public/library/moonlit/foreground/scarlet-dahlias.webp) |
 | <img src="../public/library/moonlit/foreground/thumbs/wild-poppies.webp" width="96" alt="Moonlit Scarlet Wild Poppies"> | Moonlit Scarlet Wild Poppies | flowers | graded | 704×964 | [`moonlit/foreground/wild-poppies.webp`](../public/library/moonlit/foreground/wild-poppies.webp) |
 | <img src="../public/library/moonlit/foreground/thumbs/starflowers.webp" width="96" alt="Moonlit Starflower Cluster"> | Moonlit Starflower Cluster | flowers | graded | 718×773 | [`moonlit/foreground/starflowers.webp`](../public/library/moonlit/foreground/starflowers.webp) |
+| <img src="../public/library/moonlit/foreground/thumbs/white-orchids.webp" width="96" alt="Moonlit White Moth Orchids"> | Moonlit White Moth Orchids | flowers | graded | 1002×676 | [`moonlit/foreground/white-orchids.webp`](../public/library/moonlit/foreground/white-orchids.webp) |
 | <img src="../public/library/moonlit/foreground/thumbs/wild-roses.webp" width="96" alt="Moonlit Wild Rose Cluster"> | Moonlit Wild Rose Cluster | flowers | graded | 1226×583 | [`moonlit/foreground/wild-roses.webp`](../public/library/moonlit/foreground/wild-roses.webp) |
 | <img src="../public/library/moonlit/foreground/thumbs/woodland-anemones.webp" width="96" alt="Moonlit Woodland Anemones"> | Moonlit Woodland Anemones | flowers | graded | 701×970 | [`moonlit/foreground/woodland-anemones.webp`](../public/library/moonlit/foreground/woodland-anemones.webp) |
 | <img src="../public/library/moonlit/foreground/thumbs/woodland-foxgloves.webp" width="96" alt="Moonlit Woodland Foxgloves"> | Moonlit Woodland Foxgloves | flowers | graded | 698×1261 | [`moonlit/foreground/woodland-foxgloves.webp`](../public/library/moonlit/foreground/woodland-foxgloves.webp) |
@@ -188,13 +234,22 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/autumn/background/thumbs/autumn-river.webp" width="96" alt="Autumn River Valley"> | Autumn River Valley | nature | painted | 1376×768 | [`autumn/background/autumn-river.webp`](../public/library/autumn/background/autumn-river.webp) |
 | <img src="../public/library/autumn/background/thumbs/harvest-hollow.webp" width="96" alt="Harvest Woodland Hollow"> | Harvest Woodland Hollow | nature | graded | 1376×768 | [`autumn/background/harvest-hollow.webp`](../public/library/autumn/background/harvest-hollow.webp) |
 
-### Middle (15)
+### Middle (24)
 
 | Preview | Name | Category | Origin | Size | File |
 | --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/autumn/middle/thumbs/deer-fawn.webp" width="96" alt="Autumn Deer Fawn"> | Autumn Deer Fawn | creatures | graded | 1174×578 | [`autumn/middle/deer-fawn.webp`](../public/library/autumn/middle/deer-fawn.webp) |
+| <img src="../public/library/autumn/middle/thumbs/great-owl.webp" width="96" alt="Autumn Great Owl"> | Autumn Great Owl | creatures | graded | 399×721 | [`autumn/middle/great-owl.webp`](../public/library/autumn/middle/great-owl.webp) |
+| <img src="../public/library/autumn/middle/thumbs/mallard-ducks.webp" width="96" alt="Autumn Mallard Ducks"> | Autumn Mallard Ducks | creatures | graded | 1283×509 | [`autumn/middle/mallard-ducks.webp`](../public/library/autumn/middle/mallard-ducks.webp) |
+| <img src="../public/library/autumn/middle/thumbs/mute-swans.webp" width="96" alt="Autumn Mute Swans"> | Autumn Mute Swans | creatures | graded | 1332×768 | [`autumn/middle/mute-swans.webp`](../public/library/autumn/middle/mute-swans.webp) |
+| <img src="../public/library/autumn/middle/thumbs/songbird-flock.webp" width="96" alt="Autumn Songbird Flock"> | Autumn Songbird Flock | creatures | graded | 1408×768 | [`autumn/middle/songbird-flock.webp`](../public/library/autumn/middle/songbird-flock.webp) |
+| <img src="../public/library/autumn/middle/thumbs/white-stag.webp" width="96" alt="Autumn White Stag"> | Autumn White Stag | creatures | graded | 503×705 | [`autumn/middle/white-stag.webp`](../public/library/autumn/middle/white-stag.webp) |
 | <img src="../public/library/autumn/middle/thumbs/chinese-moon-gate.webp" width="96" alt="Autumn Chinese-Inspired Moon Gate"> | Autumn Chinese-Inspired Moon Gate | decorations | graded | 789×691 | [`autumn/middle/chinese-moon-gate.webp`](../public/library/autumn/middle/chinese-moon-gate.webp) |
+| <img src="../public/library/autumn/middle/thumbs/fairy-mushroom-cottage.webp" width="96" alt="Autumn Fairy Mushroom Cottage"> | Autumn Fairy Mushroom Cottage | decorations | graded | 1030×716 | [`autumn/middle/fairy-mushroom-cottage.webp`](../public/library/autumn/middle/fairy-mushroom-cottage.webp) |
+| <img src="../public/library/autumn/middle/thumbs/japanese-garden-bridge.webp" width="96" alt="Autumn Japanese-Inspired Garden Bridge"> | Autumn Japanese-Inspired Garden Bridge | decorations | graded | 1180×555 | [`autumn/middle/japanese-garden-bridge.webp`](../public/library/autumn/middle/japanese-garden-bridge.webp) |
 | <img src="../public/library/autumn/middle/thumbs/japanese-stone-lantern.webp" width="96" alt="Autumn Japanese-Inspired Stone Lantern"> | Autumn Japanese-Inspired Stone Lantern | decorations | graded | 361×702 | [`autumn/middle/japanese-stone-lantern.webp`](../public/library/autumn/middle/japanese-stone-lantern.webp) |
 | <img src="../public/library/autumn/middle/thumbs/norse-dragon-boat.webp" width="96" alt="Autumn Norse-Inspired Dragon Boat"> | Autumn Norse-Inspired Dragon Boat | decorations | graded | 1235×474 | [`autumn/middle/norse-dragon-boat.webp`](../public/library/autumn/middle/norse-dragon-boat.webp) |
+| <img src="../public/library/autumn/middle/thumbs/norse-stone-well.webp" width="96" alt="Autumn Norse-Inspired Stone Well"> | Autumn Norse-Inspired Stone Well | decorations | graded | 692×747 | [`autumn/middle/norse-stone-well.webp`](../public/library/autumn/middle/norse-stone-well.webp) |
 | <img src="../public/library/autumn/middle/thumbs/celestial-arch.webp" width="96" alt="Autumn Celestial Astrolabe Arch"> | Autumn Celestial Astrolabe Arch | landmarks | graded | 613×717 | [`autumn/middle/celestial-arch.webp`](../public/library/autumn/middle/celestial-arch.webp) |
 | <img src="../public/library/autumn/middle/thumbs/japanese-torii.webp" width="96" alt="Autumn Moon Garden Torii Gate"> | Autumn Moon Garden Torii Gate | landmarks | graded | 715×725 | [`autumn/middle/japanese-torii.webp`](../public/library/autumn/middle/japanese-torii.webp) |
 | <img src="../public/library/autumn/middle/thumbs/chinese-pavilion.webp" width="96" alt="Autumn Mountain Lantern Pavilion"> | Autumn Mountain Lantern Pavilion | landmarks | graded | 1134×757 | [`autumn/middle/chinese-pavilion.webp`](../public/library/autumn/middle/chinese-pavilion.webp) |
@@ -208,17 +263,30 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/autumn/middle/thumbs/copper-willow.webp" width="96" alt="Copper Willow"> | Copper Willow | trees | graded | 768×1264 | [`autumn/middle/copper-willow.webp`](../public/library/autumn/middle/copper-willow.webp) |
 | <img src="../public/library/autumn/middle/thumbs/autumn-waterfall.webp" width="96" alt="Autumn Waterfall"> | Autumn Waterfall | water | graded | 1300×710 | [`autumn/middle/autumn-waterfall.webp`](../public/library/autumn/middle/autumn-waterfall.webp) |
 
-### Foreground (37)
+### Foreground (50)
 
 | Preview | Name | Category | Origin | Size | File |
 | --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/autumn/foreground/thumbs/rabbit.webp" width="96" alt="Autumn Brown Rabbit"> | Autumn Brown Rabbit | creatures | graded | 507×640 | [`autumn/foreground/rabbit.webp`](../public/library/autumn/foreground/rabbit.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/butterflies.webp" width="96" alt="Autumn Butterflies"> | Autumn Butterflies | creatures | graded | 934×664 | [`autumn/foreground/butterflies.webp`](../public/library/autumn/foreground/butterflies.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/hedgehog.webp" width="96" alt="Autumn Hedgehog"> | Autumn Hedgehog | creatures | graded | 1135×631 | [`autumn/foreground/hedgehog.webp`](../public/library/autumn/foreground/hedgehog.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/koi-fish.webp" width="96" alt="Autumn Koi Fish"> | Autumn Koi Fish | creatures | graded | 1306×698 | [`autumn/foreground/koi-fish.webp`](../public/library/autumn/foreground/koi-fish.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/moor-frog.webp" width="96" alt="Autumn Moor Frog"> | Autumn Moor Frog | creatures | graded | 1134×494 | [`autumn/foreground/moor-frog.webp`](../public/library/autumn/foreground/moor-frog.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/red-fox.webp" width="96" alt="Autumn Red Fox"> | Autumn Red Fox | creatures | graded | 542×648 | [`autumn/foreground/red-fox.webp`](../public/library/autumn/foreground/red-fox.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/red-squirrel.webp" width="96" alt="Autumn Red Squirrel"> | Autumn Red Squirrel | creatures | graded | 597×699 | [`autumn/foreground/red-squirrel.webp`](../public/library/autumn/foreground/red-squirrel.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/cosmos.webp" width="96" alt="Autumn Cosmos Spray"> | Autumn Cosmos Spray | flowers | graded | 863×668 | [`autumn/foreground/cosmos.webp`](../public/library/autumn/foreground/cosmos.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/daffodils.webp" width="96" alt="Autumn Daffodils"> | Autumn Daffodils | flowers | graded | 841×732 | [`autumn/foreground/daffodils.webp`](../public/library/autumn/foreground/daffodils.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/japanese-moon-moss.webp" width="96" alt="Autumn Garden Moss and Sakura"> | Autumn Garden Moss and Sakura | flowers | graded | 1200×521 | [`autumn/foreground/japanese-moon-moss.webp`](../public/library/autumn/foreground/japanese-moon-moss.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/tulips.webp" width="96" alt="Autumn Garden Tulips"> | Autumn Garden Tulips | flowers | graded | 840×882 | [`autumn/foreground/tulips.webp`](../public/library/autumn/foreground/tulips.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/golden-irises.webp" width="96" alt="Autumn Golden Irises"> | Autumn Golden Irises | flowers | graded | 646×1205 | [`autumn/foreground/golden-irises.webp`](../public/library/autumn/foreground/golden-irises.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/golden-sunflowers.webp" width="96" alt="Autumn Golden Sunflowers"> | Autumn Golden Sunflowers | flowers | graded | 806×708 | [`autumn/foreground/golden-sunflowers.webp`](../public/library/autumn/foreground/golden-sunflowers.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/lotus-flowers.webp" width="96" alt="Autumn Lotus Blossoms and Leaves"> | Autumn Lotus Blossoms and Leaves | flowers | graded | 880×615 | [`autumn/foreground/lotus-flowers.webp`](../public/library/autumn/foreground/lotus-flowers.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/chinese-peach-blossoms.webp" width="96" alt="Autumn Peach Blossom Garden Cluster"> | Autumn Peach Blossom Garden Cluster | flowers | graded | 1200×537 | [`autumn/foreground/chinese-peach-blossoms.webp`](../public/library/autumn/foreground/chinese-peach-blossoms.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/rose-peonies.webp" width="96" alt="Autumn Rose Peonies"> | Autumn Rose Peonies | flowers | graded | 869×694 | [`autumn/foreground/rose-peonies.webp`](../public/library/autumn/foreground/rose-peonies.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/scarlet-dahlias.webp" width="96" alt="Autumn Scarlet Dahlias"> | Autumn Scarlet Dahlias | flowers | graded | 610×639 | [`autumn/foreground/scarlet-dahlias.webp`](../public/library/autumn/foreground/scarlet-dahlias.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/wild-poppies.webp" width="96" alt="Autumn Scarlet Wild Poppies"> | Autumn Scarlet Wild Poppies | flowers | graded | 704×964 | [`autumn/foreground/wild-poppies.webp`](../public/library/autumn/foreground/wild-poppies.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/starflowers.webp" width="96" alt="Autumn Starflower Cluster"> | Autumn Starflower Cluster | flowers | graded | 718×773 | [`autumn/foreground/starflowers.webp`](../public/library/autumn/foreground/starflowers.webp) |
+| <img src="../public/library/autumn/foreground/thumbs/white-orchids.webp" width="96" alt="Autumn White Moth Orchids"> | Autumn White Moth Orchids | flowers | graded | 1002×676 | [`autumn/foreground/white-orchids.webp`](../public/library/autumn/foreground/white-orchids.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/wild-roses.webp" width="96" alt="Autumn Wild Rose Cluster"> | Autumn Wild Rose Cluster | flowers | graded | 1226×583 | [`autumn/foreground/wild-roses.webp`](../public/library/autumn/foreground/wild-roses.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/woodland-anemones.webp" width="96" alt="Autumn Woodland Anemones"> | Autumn Woodland Anemones | flowers | graded | 701×970 | [`autumn/foreground/woodland-anemones.webp`](../public/library/autumn/foreground/woodland-anemones.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/woodland-foxgloves.webp" width="96" alt="Autumn Woodland Foxgloves"> | Autumn Woodland Foxgloves | flowers | graded | 698×1261 | [`autumn/foreground/woodland-foxgloves.webp`](../public/library/autumn/foreground/woodland-foxgloves.webp) |
@@ -249,3 +317,91 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/autumn/foreground/thumbs/river-reeds.webp" width="96" alt="Autumn River Reeds"> | Autumn River Reeds | plants | graded | 735×1011 | [`autumn/foreground/river-reeds.webp`](../public/library/autumn/foreground/river-reeds.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/autumn-fern.webp" width="96" alt="Bracken Fern"> | Bracken Fern | plants | graded | 519×587 | [`autumn/foreground/autumn-fern.webp`](../public/library/autumn/foreground/autumn-fern.webp) |
 | <img src="../public/library/autumn/foreground/thumbs/autumn-bush.webp" width="96" alt="Copper Bush"> | Copper Bush | plants | graded | 900×640 | [`autumn/foreground/autumn-bush.webp`](../public/library/autumn/foreground/autumn-bush.webp) |
+
+## Clearwater (`realistic`)
+
+### Background (2)
+
+| Preview | Name | Category | Origin | Size | File |
+| --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/realistic/background/thumbs/clearwater-lake.webp" width="96" alt="Clearwater Lake"> | Clearwater Lake | nature | painted | 1376×768 | [`realistic/background/clearwater-lake.webp`](../public/library/realistic/background/clearwater-lake.webp) |
+| <img src="../public/library/realistic/background/thumbs/forest-stream.webp" width="96" alt="Forest Stream"> | Forest Stream | nature | painted | 1376×768 | [`realistic/background/forest-stream.webp`](../public/library/realistic/background/forest-stream.webp) |
+
+### Middle (8)
+
+| Preview | Name | Category | Origin | Size | File |
+| --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/realistic/middle/thumbs/seated-meditation.webp" width="96" alt="Seated Meditation"> | Seated Meditation | figures | painted | 1100×600 | [`realistic/middle/seated-meditation.webp`](../public/library/realistic/middle/seated-meditation.webp) |
+| <img src="../public/library/realistic/middle/thumbs/seated-meditation-side.webp" width="96" alt="Seated Meditation (side)"> | Seated Meditation (side) | figures | painted | 1100×600 | [`realistic/middle/seated-meditation-side.webp`](../public/library/realistic/middle/seated-meditation-side.webp) |
+| <img src="../public/library/realistic/middle/thumbs/standing-mountain.webp" width="96" alt="Standing Mountain Pose"> | Standing Mountain Pose | figures | painted | 1100×600 | [`realistic/middle/standing-mountain.webp`](../public/library/realistic/middle/standing-mountain.webp) |
+| <img src="../public/library/realistic/middle/thumbs/standing-prayer.webp" width="96" alt="Standing Prayer Pose"> | Standing Prayer Pose | figures | painted | 221×725 | [`realistic/middle/standing-prayer.webp`](../public/library/realistic/middle/standing-prayer.webp) |
+| <img src="../public/library/realistic/middle/thumbs/tree-pose.webp" width="96" alt="Standing Tree Pose"> | Standing Tree Pose | figures | painted | 1100×600 | [`realistic/middle/tree-pose.webp`](../public/library/realistic/middle/tree-pose.webp) |
+| <img src="../public/library/realistic/middle/thumbs/driftwood.webp" width="96" alt="Half-Submerged Driftwood"> | Half-Submerged Driftwood | nature | painted | 1290×629 | [`realistic/middle/driftwood.webp`](../public/library/realistic/middle/driftwood.webp) |
+| <img src="../public/library/realistic/middle/thumbs/lily-pads.webp" width="96" alt="Water Lily Pads"> | Water Lily Pads | plants | painted | 1307×675 | [`realistic/middle/lily-pads.webp`](../public/library/realistic/middle/lily-pads.webp) |
+| <img src="../public/library/realistic/middle/thumbs/water-rocks.webp" width="96" alt="Rocks in Clear Water"> | Rocks in Clear Water | rocks | painted | 1332×675 | [`realistic/middle/water-rocks.webp`](../public/library/realistic/middle/water-rocks.webp) |
+
+### Foreground (15)
+
+| Preview | Name | Category | Origin | Size | File |
+| --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/realistic/foreground/thumbs/glass-pavilion-lounge.webp" width="96" alt="Glass Pavilion Lounge"> | Glass Pavilion Lounge | interiors | painted | 1376×768 | [`realistic/foreground/glass-pavilion-lounge.webp`](../public/library/realistic/foreground/glass-pavilion-lounge.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/japanese-engawa-room.webp" width="96" alt="Japanese Engawa Room"> | Japanese Engawa Room | interiors | painted | 1376×768 | [`realistic/foreground/japanese-engawa-room.webp`](../public/library/realistic/foreground/japanese-engawa-room.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/linen-floor-cushions.webp" width="96" alt="Linen Floor Cushions"> | Linen Floor Cushions | interiors | painted | 1400×764 | [`realistic/foreground/linen-floor-cushions.webp`](../public/library/realistic/foreground/linen-floor-cushions.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/low-wood-table.webp" width="96" alt="Low Oak Table"> | Low Oak Table | interiors | painted | 1276×461 | [`realistic/foreground/low-wood-table.webp`](../public/library/realistic/foreground/low-wood-table.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/minimal-glass-loft.webp" width="96" alt="Minimal Glass Loft"> | Minimal Glass Loft | interiors | painted | 1376×768 | [`realistic/foreground/minimal-glass-loft.webp`](../public/library/realistic/foreground/minimal-glass-loft.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/minimal-wood-bench.webp" width="96" alt="Minimal Oak Bench"> | Minimal Oak Bench | interiors | painted | 1205×343 | [`realistic/foreground/minimal-wood-bench.webp`](../public/library/realistic/foreground/minimal-wood-bench.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/japanese-modern-room.webp" width="96" alt="Modern Japanese Room"> | Modern Japanese Room | interiors | painted | 1376×768 | [`realistic/foreground/japanese-modern-room.webp`](../public/library/realistic/foreground/japanese-modern-room.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/linear-fireplace.webp" width="96" alt="Real Linear Fireplace"> | Real Linear Fireplace | interiors | painted | 1276×568 | [`realistic/foreground/linear-fireplace.webp`](../public/library/realistic/foreground/linear-fireplace.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/stone-fireplace.webp" width="96" alt="Real Stone Fireplace"> | Real Stone Fireplace | interiors | painted | 1400×767 | [`realistic/foreground/stone-fireplace.webp`](../public/library/realistic/foreground/stone-fireplace.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/woodstone-lounge.webp" width="96" alt="Wood and Stone Lounge"> | Wood and Stone Lounge | interiors | painted | 1376×768 | [`realistic/foreground/woodstone-lounge.webp`](../public/library/realistic/foreground/woodstone-lounge.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/reeds.webp" width="96" alt="Reeds at the Water's Edge"> | Reeds at the Water's Edge | plants | painted | 1055×749 | [`realistic/foreground/reeds.webp`](../public/library/realistic/foreground/reeds.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/river-stones.webp" width="96" alt="Wet River Stones"> | Wet River Stones | rocks | painted | 1197×676 | [`realistic/foreground/river-stones.webp`](../public/library/realistic/foreground/river-stones.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/water-surface.webp" width="96" alt="Clear Water Surface"> | Clear Water Surface | water | painted | 1408×768 | [`realistic/foreground/water-surface.webp`](../public/library/realistic/foreground/water-surface.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/shallow-ripples.webp" width="96" alt="Shallow Ripples and Caustics"> | Shallow Ripples and Caustics | water | painted | 1408×768 | [`realistic/foreground/shallow-ripples.webp`](../public/library/realistic/foreground/shallow-ripples.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/water-droplets.webp" width="96" alt="Water Droplets on Stone"> | Water Droplets on Stone | water | painted | 1408×768 | [`realistic/foreground/water-droplets.webp`](../public/library/realistic/foreground/water-droplets.webp) |
+
+## Frostfall (`winter`)
+
+### Background (2)
+
+| Preview | Name | Category | Origin | Size | File |
+| --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/winter/background/thumbs/frostfall-valley.webp" width="96" alt="Frostfall Valley"> | Frostfall Valley | nature | painted | 1376×768 | [`winter/background/frostfall-valley.webp`](../public/library/winter/background/frostfall-valley.webp) |
+| <img src="../public/library/winter/background/thumbs/frozen-lake.webp" width="96" alt="Frozen Lake"> | Frozen Lake | nature | painted | 1376×768 | [`winter/background/frozen-lake.webp`](../public/library/winter/background/frozen-lake.webp) |
+
+### Middle (3)
+
+| Preview | Name | Category | Origin | Size | File |
+| --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/winter/middle/thumbs/ice-pavilion.webp" width="96" alt="Frostfall Pavilion"> | Frostfall Pavilion | structures | painted | 1225×747 | [`winter/middle/ice-pavilion.webp`](../public/library/winter/middle/ice-pavilion.webp) |
+| <img src="../public/library/winter/middle/thumbs/bare-winter-tree.webp" width="96" alt="Frosted Bare Tree"> | Frosted Bare Tree | trees | painted | 1229×758 | [`winter/middle/bare-winter-tree.webp`](../public/library/winter/middle/bare-winter-tree.webp) |
+| <img src="../public/library/winter/middle/thumbs/snow-pine.webp" width="96" alt="Snow-Laden Pine"> | Snow-Laden Pine | trees | painted | 1408×768 | [`winter/middle/snow-pine.webp`](../public/library/winter/middle/snow-pine.webp) |
+
+### Foreground (24)
+
+| Preview | Name | Category | Origin | Size | File |
+| --- | --- | --- | --- | ---: | --- |
+| <img src="../public/library/winter/foreground/thumbs/snowdrops.webp" width="96" alt="Snowdrops"> | Snowdrops | flowers | painted | 1400×764 | [`winter/foreground/snowdrops.webp`](../public/library/winter/foreground/snowdrops.webp) |
+| <img src="../public/library/winter/foreground/thumbs/frost-grasses.webp" width="96" alt="Frost Grasses"> | Frost Grasses | grass | painted | 674×695 | [`winter/foreground/frost-grasses.webp`](../public/library/winter/foreground/frost-grasses.webp) |
+| <img src="../public/library/winter/foreground/thumbs/snow-drift.webp" width="96" alt="Snow Drift"> | Snow Drift | ground | painted | 1313×458 | [`winter/foreground/snow-drift.webp`](../public/library/winter/foreground/snow-drift.webp) |
+| <img src="../public/library/winter/foreground/thumbs/brick-timber-corner-room.webp" width="96" alt="Asymmetric Brick and Timber Room"> | Asymmetric Brick and Timber Room | interiors | painted | 1376×768 | [`winter/foreground/brick-timber-corner-room.webp`](../public/library/winter/foreground/brick-timber-corner-room.webp) |
+| <img src="../public/library/winter/foreground/thumbs/oak-bookshelf.webp" width="96" alt="Contemporary Oak Bookshelf"> | Contemporary Oak Bookshelf | interiors | painted | 485×667 | [`winter/foreground/oak-bookshelf.webp`](../public/library/winter/foreground/oak-bookshelf.webp) |
+| <img src="../public/library/winter/foreground/thumbs/contemporary-oak-table.webp" width="96" alt="Contemporary Oak Coffee Table"> | Contemporary Oak Coffee Table | interiors | painted | 1172×567 | [`winter/foreground/contemporary-oak-table.webp`](../public/library/winter/foreground/contemporary-oak-table.webp) |
+| <img src="../public/library/winter/foreground/thumbs/contemporary-oak-door.webp" width="96" alt="Contemporary Oak Door"> | Contemporary Oak Door | interiors | painted | 327×686 | [`winter/foreground/contemporary-oak-door.webp`](../public/library/winter/foreground/contemporary-oak-door.webp) |
+| <img src="../public/library/winter/foreground/thumbs/oak-floor-lamp.webp" width="96" alt="Contemporary Oak Floor Lamp"> | Contemporary Oak Floor Lamp | interiors | painted | 218×700 | [`winter/foreground/oak-floor-lamp.webp`](../public/library/winter/foreground/oak-floor-lamp.webp) |
+| <img src="../public/library/winter/foreground/thumbs/contemporary-oak-chair.webp" width="96" alt="Contemporary Oak Lounge Chair"> | Contemporary Oak Lounge Chair | interiors | painted | 848×684 | [`winter/foreground/contemporary-oak-chair.webp`](../public/library/winter/foreground/contemporary-oak-chair.webp) |
+| <img src="../public/library/winter/foreground/thumbs/oak-window-lounge.webp" width="96" alt="Contemporary Oak Window Lounge"> | Contemporary Oak Window Lounge | interiors | painted | 1376×768 | [`winter/foreground/oak-window-lounge.webp`](../public/library/winter/foreground/oak-window-lounge.webp) |
+| <img src="../public/library/winter/foreground/thumbs/timber-great-room.webp" width="96" alt="Contemporary Timber Great Room"> | Contemporary Timber Great Room | interiors | painted | 1376×768 | [`winter/foreground/timber-great-room.webp`](../public/library/winter/foreground/timber-great-room.webp) |
+| <img src="../public/library/winter/foreground/thumbs/lounge-window.webp" width="96" alt="Frostfall Lounge Window View"> | Frostfall Lounge Window View | interiors | painted | 1376×768 | [`winter/foreground/lounge-window.webp`](../public/library/winter/foreground/lounge-window.webp) |
+| <img src="../public/library/winter/foreground/thumbs/future-lounge-chair.webp" width="96" alt="Futuristic Lounge Chair"> | Futuristic Lounge Chair | interiors | painted | 785×679 | [`winter/foreground/future-lounge-chair.webp`](../public/library/winter/foreground/future-lounge-chair.webp) |
+| <img src="../public/library/winter/foreground/thumbs/future-sky-lounge.webp" width="96" alt="Futuristic Sky Lounge"> | Futuristic Sky Lounge | interiors | painted | 1376×768 | [`winter/foreground/future-sky-lounge.webp`](../public/library/winter/foreground/future-sky-lounge.webp) |
+| <img src="../public/library/winter/foreground/thumbs/hearth-reading-room.webp" width="96" alt="Hearth Reading Room"> | Hearth Reading Room | interiors | painted | 1376×768 | [`winter/foreground/hearth-reading-room.webp`](../public/library/winter/foreground/hearth-reading-room.webp) |
+| <img src="../public/library/winter/foreground/thumbs/modern-fireplace.webp" width="96" alt="Modern Linear Fireplace"> | Modern Linear Fireplace | interiors | painted | 1133×592 | [`winter/foreground/modern-fireplace.webp`](../public/library/winter/foreground/modern-fireplace.webp) |
+| <img src="../public/library/winter/foreground/thumbs/modern-sectional.webp" width="96" alt="Modern Modular Sectional"> | Modern Modular Sectional | interiors | painted | 1226×421 | [`winter/foreground/modern-sectional.webp`](../public/library/winter/foreground/modern-sectional.webp) |
+| <img src="../public/library/winter/foreground/thumbs/modern-penthouse.webp" width="96" alt="Modern Penthouse View"> | Modern Penthouse View | interiors | painted | 1376×768 | [`winter/foreground/modern-penthouse.webp`](../public/library/winter/foreground/modern-penthouse.webp) |
+| <img src="../public/library/winter/foreground/thumbs/indoor-fig.webp" width="96" alt="Potted Fiddle-Leaf Fig"> | Potted Fiddle-Leaf Fig | interiors | painted | 441×692 | [`winter/foreground/indoor-fig.webp`](../public/library/winter/foreground/indoor-fig.webp) |
+| <img src="../public/library/winter/foreground/thumbs/coffee-cup.webp" width="96" alt="Steaming Coffee Cup"> | Steaming Coffee Cup | interiors | painted | 716×569 | [`winter/foreground/coffee-cup.webp`](../public/library/winter/foreground/coffee-cup.webp) |
+| <img src="../public/library/winter/foreground/thumbs/stone-fireplace.webp" width="96" alt="Stone Fireplace"> | Stone Fireplace | interiors | painted | 929×639 | [`winter/foreground/stone-fireplace.webp`](../public/library/winter/foreground/stone-fireplace.webp) |
+| <img src="../public/library/winter/foreground/thumbs/window-seat-room.webp" width="96" alt="Window Seat Room"> | Window Seat Room | interiors | painted | 1376×768 | [`winter/foreground/window-seat-room.webp`](../public/library/winter/foreground/window-seat-room.webp) |
+| <img src="../public/library/winter/foreground/thumbs/frost-fern.webp" width="96" alt="Frost Fern"> | Frost Fern | plants | painted | 1326×666 | [`winter/foreground/frost-fern.webp`](../public/library/winter/foreground/frost-fern.webp) |
+| <img src="../public/library/winter/foreground/thumbs/winter-berries.webp" width="96" alt="Winter Berry Branch"> | Winter Berry Branch | plants | painted | 1333×676 | [`winter/foreground/winter-berries.webp`](../public/library/winter/foreground/winter-berries.webp) |

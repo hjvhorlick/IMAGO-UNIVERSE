@@ -30,16 +30,16 @@ export const WORLD_CATEGORIES: WorldCategory[] = [
   { id: 'woodland', name: 'Woodland & lakes',
     worlds: ['enchanted-lake', 'forest-hollow', 'fairy-court', 'autumn-river', 'harvest-hollow'] },
   { id: 'highlands', name: 'Highlands & mountains',
-    worlds: ['crystal-highlands', 'chinese-mist-mountains', 'norse-worldtree'] },
+    worlds: ['crystal-highlands', 'chinese-mist-mountains', 'norse-worldtree', 'frostfall-valley'] },
   { id: 'water', name: 'Water & shores',
-    worlds: ['mythic-waterside', 'lotus-sanctuary'] },
+    worlds: ['mythic-waterside', 'lotus-sanctuary', 'frozen-lake'] },
   { id: 'gardens', name: 'Gardens & skies',
     worlds: ['japanese-moon-garden', 'celestial-observatory'] },
   { id: 'night', name: 'Night',
     worlds: ['moonlit-glade', 'night-valley'] },
   { id: 'realistic', name: 'Realistic',
-    worlds: [],
-    note: 'Reserved for realistic worlds. None are in the library yet.' },
+    worlds: ['clearwater-lake', 'forest-stream'],
+    note: 'Photographic worlds. More can be added here as they are painted.' },
 ];
 
 export interface World {

@@ -442,7 +442,9 @@ export function cropDialog(
 
 export function replaceDialog(node: SceneNode, store: Store, library: AssetLibrary, onPick: (meta: AssetMeta) => void) {
   const current = library.get(node.assetId);
-  const list = library.forStyle(store.scene.styleId, node.layer);
+  const sourceLayer = current?.layer ?? node.layer;
+  const list = library.forStyle(store.scene.styleId, sourceLayer)
+    .filter((asset) => current?.category !== 'interiors' || asset.category === 'interiors');
   const body = el(`<div>
     <div class="info-box">Replacing keeps position, size, rotation, colour, animation and layer order.
       Only artwork from <b>${escapeHtml(library.style(store.scene.styleId)?.name ?? '')}</b> is offered.</div>

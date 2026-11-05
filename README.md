@@ -25,7 +25,7 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 165 unit / integration / UI tests (Vitest) |
+| `npm test` | 202 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library and `docs/ASSET_CATALOG.md` from `assets-src/` (needs Pillow + numpy, ~11 min) |
@@ -45,24 +45,37 @@ Every scene is built from exactly four layers, painted back to front:
 2. **Middle-ground** — trees, structures, rock, water; the substance of the world.
 3. **Foreground** — grass, flowers, ferns, ground detail. Fully animatable, and allowed to
    extend past the canvas edge; only the visible part is rendered.
-4. **Atmosphere & Imagination** — particles, light, magic, weather. **Universal:** this layer is
-   never filtered by artistic style, so any effect can be used with any world.
+4. **Atmosphere, Rooms & Imagination** — effects, room views and interior furnishings. Effects are
+   universal; room artwork follows the chosen look. Room and effect order can be changed on canvas.
 
 **A world has exactly one background.** Choosing a new background replaces the old one, and a background
 cannot be duplicated. Every other element (trees, rocks, bushes, flowers, effects) can repeat as often as you need.
 
-Layers 1–3 are gated by the selected artistic style. Incompatible artwork is simply never shown —
-there are no style-conflict dialogs, because the conflict cannot be created in the first place.
+Artwork is gated by the selected artistic style, including rooms on Layer 4. Incompatible artwork is
+not shown in the library, while effects remain available with every look.
 
 ---
 
 ## What is implemented
 
-**Asset library** — 186 assets across 3 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
+**Asset library** — 306 assets across 5 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
 a celestial observatory, a moonlit waterside and a lotus sanctuary with animated water, a timber
 meditation pavilion and close-up lotus blossoms. Placeable Chinese-inspired moon gate, Japanese-inspired
-stone lantern and Norse-inspired dragon boat add garden and waterside details.
-Detailed close-up flowers add foreground variety. Eight room views reveal the current composition
+stone lantern and Norse-inspired dragon boat add garden and waterside details. A fairy mushroom cottage, Japanese-inspired garden bridge and Norse-inspired stone well are also separately placeable.
+Detailed close-up flowers, including dahlias, sunflowers and white orchids, add foreground variety.
+Thirteen placeable creatures — a white stag, red fox, mute swans, koi, butterflies, a great owl, a rabbit,
+a squirrel, mallards, a hedgehog, a fawn, a frog and a flock of songbirds — each arrive still, with optional
+breathing, swimming or fluttering motion.
+**Frostfall** is an independently painted winter look — snow-laden pines, frosted bare branches, a
+frozen lake and an icicle pavilion — rather than another recolouring of the fantasy plates.
+**Clearwater** is a fifth, ultra-realistic photographic look built around water: refraction, caustics on
+the bed, and a **sparkle** animation that scatters specular glints which wink in and out across wet
+surfaces. It ships five photographic rooms — modern Japanese and open-plan, in wood and stone, with
+floor-to-roof glass that keys out into a real opening — each with a fireplace whose fire is optional,
+plus minimal oak and linen furniture. Two placeable photographic fireplaces have the same optional
+fire, now with glowing embers lifting off the bed and dying as they rise. Five photographic figures
+in meditation — seated, seated in profile, standing prayer, tree and mountain poses — arrive still,
+with slow breathing as an option. Eight room views reveal the current composition
 through their windows, including present-day timber-beamed rooms as well as modern and futuristic
 high-ceiling spaces, and an asymmetrical brick-and-timber room with windows on adjoining walls.
 Animated fireplaces, a steaming coffee cup and contemporary furniture and doors
@@ -187,6 +200,6 @@ assets-src/plates/<layer>/  source artwork plates (pipeline input), one folder p
 public/library/<style>/<layer>/  runtime WebP assets + thumbs/ + manifest.json
 docs/ASSET_CATALOG.md  every asset with a thumbnail, grouped by style and layer
 tools/         asset preparation pipeline, headless render verification
-tests/         141 tests across 11 files
+tests/         202 tests across 19 files
 docs/          architecture, assets, limitations
 ```

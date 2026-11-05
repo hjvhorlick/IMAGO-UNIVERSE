@@ -190,12 +190,15 @@ describe('the published library', () => {
     expect(count('middle')).toBeGreaterThanOrEqual(8);
     expect(count('foreground')).toBeGreaterThanOrEqual(8);
     expect(EFFECTS.length).toBeGreaterThanOrEqual(10);
+    // Every look has to offer at least one room view whose window is a real
+    // opening onto the composed world, not a picture of a view.
     for (const style of lib.styles) {
-      const room = lib.get(`${style.id}.foreground.lounge-window`);
-      expect(room, `${style.id} lounge window`).toBeTruthy();
-      expect(room!.alpha).toBe(true);
-      expect(room!.rig?.type).toBe('window-overlay');
-      expect(room!.tags).toContain('window');
+      const rooms = lib.forStyle(style.id).filter((a) => a.rig?.type === 'window-overlay');
+      expect(rooms.length, `${style.id} has no room view`).toBeGreaterThan(0);
+      for (const room of rooms) {
+        expect(room.alpha, `${room.id} is not keyed`).toBe(true);
+        expect(room.tags, `${room.id} is not tagged as a window`).toContain('window');
+      }
     }
   });
 
@@ -216,7 +219,9 @@ describe('the published library', () => {
     const lib = shipped();
     const scene = createScene('enchanted');
     const ids = ['woodland-foxgloves', 'wild-roses', 'woodland-anemones',
-      'wild-poppies', 'rose-peonies', 'golden-irises', 'lotus-flowers'];
+      'wild-poppies', 'rose-peonies', 'golden-irises', 'lotus-flowers',
+      'scarlet-dahlias', 'golden-sunflowers', 'white-orchids',
+      'tulips', 'daffodils', 'cosmos'];
     for (const id of ids) {
       const meta = lib.get(`enchanted.foreground.${id}`)!;
       expect(meta.origin).toBe('painted');
