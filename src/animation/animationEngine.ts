@@ -331,6 +331,60 @@ export class AnimationEngine {
         state.offsetY = Math.sin(TAU * u) * h * 0.004 * amp;
         break;
 
+      /* Animals. Three different problems, three different techniques.
+         All of them are subtle on purpose: a creature that visibly pulses or
+         slides stops reading as a creature. */
+
+      /* Standing animals: the ribcage rises and falls and the weight shifts
+         between the legs. The displacement is anchored at the feet, so hooves
+         and paws never slide across the ground while the body breathes. */
+      case 'creature-breathe': {
+        const rise = h * 0.011 * amp, lean = w * 0.007 * amp;
+        const breath = Math.sin(TAU * u) * 0.75 + periodic(u, seed, 3) * turb * 0.35;
+        const shift = Math.sin(TAU * u + 1.1) * 0.7 + periodic(u, seed + 5, 3) * turb * 0.4;
+        const field: FieldFn = (_uu, vv) => {
+          const up = (1 - vv) ** 1.6;   // 0 at the feet, 1 at the shoulders
+          return { dx: shift * lean * up, dy: -breath * rise * up };
+        };
+        state.warp = {
+          mode: 'strip', cols: Math.max(4, Math.round(6 * detail)),
+          rows: Math.max(10, Math.round(20 * detail)), field, active: [0, 1],
+        };
+        break;
+      }
+
+      /* Flying insects. There is no separate wing artwork, so a wing beat is
+         suggested by a fast, shallow size pulse over a slow wandering path -
+         the whole group drifts together like a loose Swarm. */
+      case 'flutter': {
+        const beats = Math.max(2, Math.round(a.loop * 2.5));   // integer, so it loops
+        state.offsetX = (Math.sin(TAU * u) * 0.6 + periodic(u, seed, 3) * turb * 0.5) * w * 0.035 * amp;
+        state.offsetY = (Math.sin(TAU * 2 * u + 0.9) * 0.5 + periodic(u, seed + 7, 3) * turb * 0.5) * h * 0.05 * amp;
+        state.rotation = Math.sin(TAU * u + 0.3) * 3.5 * amp + periodic(u, seed + 3, 3) * turb * 2 * amp;
+        state.scale = 1 + Math.sin(TAU * beats * u) * 0.045 * amp;
+        break;
+      }
+
+      /* Fish and swimming birds: a body-length travelling wave plus a slow
+         drift. The wave travels along x, which reads as underwater refraction
+         over a school and as a gentle current under floating birds. */
+      case 'swim': {
+        const rx = w * 0.045 * amp, ry = h * 0.032 * amp;
+        state.offsetX = Math.sin(TAU * u) * rx + periodic(u, seed, 3) * rx * turb * 0.6;
+        state.offsetY = Math.sin(TAU * 2 * u + 0.7) * ry + periodic(u, seed + 4, 3) * ry * turb * 0.6;
+        state.rotation = Math.sin(TAU * u + 0.5) * 4.5 * amp;
+        const reach = w * 0.013 * amp;
+        const field: FieldFn = (uu, _vv) => ({
+          dx: Math.sin(TAU * (uu * 1.5 - u)) * reach,
+          dy: Math.cos(TAU * (uu * 1.5 - u)) * reach * 0.35,
+        });
+        state.warp = {
+          mode: 'mesh', cols: Math.max(8, Math.round(12 * detail)),
+          rows: Math.max(4, Math.round(6 * detail)), field, active: [0, 1],
+        };
+        break;
+      }
+
       default:
         return { ...IDENTITY };
     }

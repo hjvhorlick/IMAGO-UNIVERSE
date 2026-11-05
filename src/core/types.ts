@@ -65,7 +65,10 @@ export type AnimationType =
   | 'coffee-steam'
   | 'cloud-drift'
   | 'water-shimmer'
-  | 'parallax';
+  | 'parallax'
+  | 'creature-breathe'
+  | 'flutter'
+  | 'swim';
 
 export interface AnimationSettings {
   type: AnimationType;
@@ -304,6 +307,9 @@ export const DEFAULT_LOOP: Record<AnimationType, number> = {
   'cloud-drift': 24,
   'water-shimmer': 8,
   parallax: 12,
+  'creature-breathe': 5,
+  flutter: 6,
+  swim: 10,
 };
 
 export const ANIMATION_LABEL: Record<AnimationType, string> = {
@@ -324,4 +330,7 @@ export const ANIMATION_LABEL: Record<AnimationType, string> = {
   'cloud-drift': 'Cloud drift',
   'water-shimmer': 'Water shimmer',
   parallax: 'Parallax breathing',
+  'creature-breathe': 'Breathing animal',
+  flutter: 'Wing flutter',
+  swim: 'Swimming drift',
 };

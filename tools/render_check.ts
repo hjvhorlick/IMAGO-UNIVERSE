@@ -216,6 +216,55 @@ async function main() {
   }
   console.log('rendered three independently placeable close-up flowers');
 
+  // Review each animal on its own, then all of them together in one scene.
+  const CREATURE_PLACEMENTS: Array<[string, string, number, number, number]> = [
+    ['white-stag', 'middle', 0.30, 0.60, 0.46],
+    ['red-fox', 'foreground', 0.68, 0.82, 0.30],
+    ['mute-swans', 'middle', 0.62, 0.72, 0.34],
+    ['koi-fish', 'foreground', 0.34, 0.86, 0.26],
+    ['butterflies', 'foreground', 0.50, 0.52, 0.22],
+    ['great-owl', 'middle', 0.78, 0.48, 0.26],
+    ['rabbit', 'foreground', 0.16, 0.86, 0.16],
+    ['red-squirrel', 'foreground', 0.86, 0.84, 0.18],
+  ];
+  for (const [id, layer, x, y, height] of CREATURE_PLACEMENTS) {
+    const scene = createScene('enchanted');
+    const bg = lib.get('enchanted.background.enchanted-lake')!;
+    const meta = lib.get(`enchanted.${layer}.${id}`)!;
+    await images.ensure([bg.id, meta.id]);
+    scene.nodes.push(createAssetNode(bg, scene));
+    const node = createAssetNode(meta, scene);
+    node.x = scene.canvas.width * x; node.y = scene.canvas.height * y;
+    node.height = scene.canvas.height * height; node.width = node.height * meta.width / meta.height;
+    scene.nodes.push(node);
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, scene, { scale, quality: 'export', time: 0 });
+    fs.writeFileSync(path.join(OUT, `${id}.png`), cv.toBuffer('image/png'));
+  }
+
+  const wildlife = createScene('enchanted');
+  const wildBg = lib.get('enchanted.background.enchanted-lake')!;
+  await images.ensure([wildBg.id, ...CREATURE_PLACEMENTS.map(([id, layer]) => `enchanted.${layer}.${id}`)]);
+  const wildBgNode = createAssetNode(wildBg, wildlife);
+  fitBackground(wildBgNode, wildlife, wildBg.width, wildBg.height);
+  wildlife.nodes.push(wildBgNode);
+  for (const [id, layer, x, y, height] of CREATURE_PLACEMENTS) {
+    const meta = lib.get(`enchanted.${layer}.${id}`)!;
+    const node = createAssetNode(meta, wildlife);
+    node.x = wildlife.canvas.width * x; node.y = wildlife.canvas.height * y;
+    node.height = wildlife.canvas.height * height; node.width = node.height * meta.width / meta.height;
+    node.animation!.enabled = true;      // the animals are the point of the check
+    node.animation!.seed = 100 + wildlife.nodes.length * 37;
+    wildlife.nodes.push(node);
+  }
+  loops.invalidate();
+  const wildCv = createCanvas(W, H);
+  comp.render(wildCv.getContext('2d') as never, wildlife, {
+    scale, quality: 'export', time: 1.4, masterCycle: loops.analyse(wildlife).master,
+  });
+  fs.writeFileSync(path.join(OUT, 'wildlife-scene.png'), wildCv.toBuffer('image/png'));
+  console.log(`rendered ${CREATURE_PLACEMENTS.length} independently placeable creatures and wildlife-scene.png`);
+
   /* ---- acceptance: the master cycle boundary must be pixel-identical ---- */
   const a = renderAt(0).cv.getContext('2d').getImageData(0, 0, W, H).data;
   const b = renderAt(report.master).cv.getContext('2d').getImageData(0, 0, W, H).data;

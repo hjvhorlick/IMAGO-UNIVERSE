@@ -309,6 +309,21 @@ describe('application shell', () => {
     app.dispose();
   }, 60_000);
 
+  it('finds the creature collection and places an animal that does not move on its own', async () => {
+    const app = await mountApp();
+    click(document.querySelector('.layer-tab[data-layer="middle"]'));
+    chooseCategory('creatures');
+    const search = document.querySelector('#library-search') as HTMLInputElement;
+    search.value = 'stag'; search.dispatchEvent(new Event('input', { bubbles: true }));
+    const cards = document.querySelectorAll('#asset-grid .asset-card');
+    expect(cards).toHaveLength(1);
+    click(cards[0]);
+    expect(app.store.primary?.assetId).toBe('enchanted.middle.white-stag');
+    expect(app.store.primary?.animation?.type).toBe('creature-breathe');
+    expect(app.store.primary?.animation?.enabled).toBe(false);
+    app.dispose();
+  }, 60_000);
+
   it('every panel tab renders and every layer switches the library', async () => {
     const app = await mountApp();
     for (const section of ['canvas', 'object', 'animate', 'scene', 'sound']) {

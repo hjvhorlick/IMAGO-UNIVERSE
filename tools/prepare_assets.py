@@ -89,6 +89,21 @@ def key_blue(img: Image.Image, lo: float = 20.0, hi: float = 100.0) -> Image.Ima
     return Image.fromarray(np.dstack([obj, alpha * 255.0]).astype(np.uint8), "RGBA")
 
 
+def clean_edges(img: Image.Image, px: int = 3) -> Image.Image:
+    """Zero a hairline frame so keyed ripples never leave a faint rectangle edge."""
+    if px <= 0:
+        return img
+    a = np.array(img)
+    h, w = a.shape[:2]
+    if min(h, w) <= px * 2:
+        return img
+    a[:px, :, 3] = 0
+    a[h - px:, :, 3] = 0
+    a[:, :px, 3] = 0
+    a[:, w - px:, 3] = 0
+    return Image.fromarray(a, "RGBA")
+
+
 def autocrop(img: Image.Image, pad: int = 4) -> Image.Image:
     bbox = img.getchannel("A").getbbox()
     if not bbox:
@@ -533,6 +548,48 @@ def publish_new_blooms(p: Publisher, src: str, style: str, label: str, transform
                         max_dim=1600, quality=95))
 
 
+def publish_creatures(p: Publisher, src: str, style: str, label: str, transform=None):
+    """Publish independently placeable animals, each with its own motion."""
+    folder = os.path.join(src, "style-fantasy")
+    seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
+    for aid, name, layer, themes, tags, scale, anim, notes in [
+        ("white-stag", "White Stag", "middle", ["forest", "meadow", "fairy"],
+         ["stag", "deer", "animal", "wildlife", "woodland"], 0.40, "creature-breathe",
+         "A pale forest stag; breathing and a slow weight shift are optional."),
+        ("red-fox", "Red Fox", "foreground", ["forest", "meadow"],
+         ["fox", "animal", "wildlife", "woodland"], 0.30, "creature-breathe",
+         "A sitting red fox; breathing and a slow weight shift are optional."),
+        ("mute-swans", "Mute Swans", "middle", ["water", "garden"],
+         ["swan", "bird", "animal", "water", "wildlife"], 0.42, "swim",
+         "A pair of swans with their reflections; drifting on the current is optional."),
+        ("koi-fish", "Koi Fish", "foreground", ["water", "garden", "japanese", "chinese"],
+         ["koi", "fish", "animal", "pond", "water"], 0.34, "swim",
+         "Koi seen from above; place them over water. Swimming is optional."),
+        ("butterflies", "Butterflies", "foreground", ["meadow", "garden"],
+         ["butterfly", "insect", "animal", "wildlife", "swarm"], 0.26, "flutter",
+         "A loose group of butterflies in flight. Fluttering is optional."),
+        ("great-owl", "Great Owl", "middle", ["forest", "fairy"],
+         ["owl", "bird", "animal", "wildlife", "nocturnal"], 0.30, "creature-breathe",
+         "A perched owl; breathing and a slow weight shift are optional."),
+        ("rabbit", "Brown Rabbit", "foreground", ["meadow", "forest"],
+         ["rabbit", "bunny", "animal", "wildlife"], 0.22, "creature-breathe",
+         "A rabbit listening in the grass; breathing is optional."),
+        ("red-squirrel", "Red Squirrel", "foreground", ["forest", "meadow"],
+         ["squirrel", "animal", "wildlife", "woodland"], 0.22, "creature-breathe",
+         "An alert red squirrel; breathing is optional."),
+    ]:
+        # Blue key: every one of these subjects is warm or white, so a blue
+        # backdrop separates cleanly without eating into fur, feathers or scales.
+        plate = Image.open(os.path.join(folder, f"{'mid' if layer == 'middle' else 'fg'}-{aid}.png"))
+        image = clean_edges(autocrop(key_blue(plate)))
+        p.publish(Asset(f"{style}.{layer}.{aid}", f"{label}{name}", style, layer, "creatures",
+                        grade(image, transform) if transform else image,
+                        origin="graded" if transform else "painted", themes=themes + seasonal,
+                        tags=tags, depth=0.88 if layer == "foreground" else 0.60,
+                        default_scale=scale, animations=[anim], rig={}, notes=notes,
+                        max_dim=1500, quality=94))
+
+
 def build(src: str, out: str) -> dict:
     p = Publisher(out)
     S = os.path.join(src, "style-fantasy")
@@ -823,6 +880,7 @@ def build(src: str, out: str) -> dict:
     publish_garden_structures(p, src, E, "")
     publish_closeup_flowers(E, "")
     publish_new_blooms(p, src, E, "")
+    publish_creatures(p, src, E, "")
     publish_interiors(E, "")
     # `region` marks the water so the shimmer mesh stays off the sky and the
     # foliage. Plates without one fall back to a bottom-of-frame mask.
@@ -957,6 +1015,7 @@ def build(src: str, out: str) -> dict:
     publish_garden_structures(p, src, M, "Moonlit ", night_grade)
     publish_closeup_flowers(M, "Moonlit ", night_grade)
     publish_new_blooms(p, src, M, "Moonlit ", night_grade)
+    publish_creatures(p, src, M, "Moonlit ", night_grade)
     publish_interiors(M, "Moonlit ", night_grade)
     p.publish(Asset(f"{M}.background.moonlit-glade", "Moonlit Forest Glade", M, "background", "night",
                     bg_glade, themes=["night", "forest", "celestial"], tags=["moon", "night"],
@@ -1044,6 +1103,7 @@ def build(src: str, out: str) -> dict:
     publish_garden_structures(p, src, A, "Autumn ", autumn_foliage)
     publish_closeup_flowers(A, "Autumn ", autumn_foliage)
     publish_new_blooms(p, src, A, "Autumn ", autumn_foliage)
+    publish_creatures(p, src, A, "Autumn ", autumn_foliage)
     publish_interiors(A, "Autumn ", autumn_foliage)
     autumn_rig = {"type": "background", "region": [0.0, 0.68, 1.0, 0.32]}
     p.publish(Asset(f"{A}.background.autumn-river", "Autumn River Valley", A, "background", "nature",
