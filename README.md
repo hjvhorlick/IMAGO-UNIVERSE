@@ -25,7 +25,7 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 141 unit / integration / UI tests (Vitest) |
+| `npm test` | 155 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library and `docs/ASSET_CATALOG.md` from `assets-src/` (needs Pillow + numpy, ~11 min) |
@@ -44,6 +44,9 @@ Every scene is built from exactly four layers, painted back to front:
    extend past the canvas edge; only the visible part is rendered.
 4. **Atmosphere & Imagination** — particles, light, magic, weather. **Universal:** this layer is
    never filtered by artistic style, so any effect can be used with any world.
+
+**A world has exactly one background.** Choosing a new background replaces the old one, and a background
+cannot be duplicated. Every other element (trees, rocks, bushes, flowers, effects) can repeat as often as you need.
 
 Layers 1–3 are gated by the selected artistic style. Incompatible artwork is simply never shown —
 there are no style-conflict dialogs, because the conflict cannot be created in the first place.

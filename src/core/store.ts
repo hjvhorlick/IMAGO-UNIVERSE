@@ -8,6 +8,7 @@
  */
 import type { Scene, SceneNode } from './types';
 import { deepClone, uid } from './util';
+import { isBackground, withSingleBackground } from './sceneRules';
 
 export type AppEvent =
   | 'scene'        // scene graph changed
@@ -78,6 +79,7 @@ export class Store {
   }
 
   replaceScene(scene: Scene, opts: { resetHistory?: boolean } = {}) {
+    scene.nodes = withSingleBackground(scene.nodes).nodes;
     this.scene = scene;
     this.selection = [];
     if (opts.resetHistory !== false) { this.past = []; this.future = []; }
@@ -154,8 +156,12 @@ export class Store {
     return peers.length ? Math.max(...peers.map((n) => n.order)) + 1 : 0;
   }
 
+  /** Add an element. A background replaces the current one: a scene has only one. */
   addNode(node: SceneNode, label = 'Add object') {
-    this.mutate((s) => { s.nodes.push(node); }, label);
+    this.mutate((s) => {
+      if (isBackground(node)) s.nodes = s.nodes.filter((n) => !isBackground(n));
+      s.nodes.push(node);
+    }, label);
     this.select(node.id);
   }
 
@@ -172,8 +178,14 @@ export class Store {
 
   duplicateSelected(): SceneNode[] {
     const copies: SceneNode[] = [];
-    const sel = this.selected;
-    if (!sel.length) return copies;
+    // A background cannot be duplicated: a scene has one. Other elements repeat freely.
+    const sel = this.selected.filter((n) => !isBackground(n));
+    if (!sel.length) {
+      if (this.selected.some(isBackground)) {
+        this.status('A world has one background. Choose a different background instead of duplicating it.', 'warn');
+      }
+      return copies;
+    }
     this.pushHistory('Duplicate');
     for (const n of sel) {
       const copy = deepClone(n);

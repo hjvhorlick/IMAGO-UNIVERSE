@@ -22,6 +22,7 @@ import {
   DEFAULT_ADJUST, DEFAULT_CROP, DEFAULT_EXPORT, DEFAULT_LIGHTING, DEFAULT_SHADOW,
 } from '../core/types';
 import { uid } from '../core/util';
+import { withSingleBackground } from '../core/sceneRules';
 
 export const PROJECT_FORMAT = 'imago.sceneproject';
 export const PROJECT_VERSION = 1;
@@ -161,6 +162,12 @@ export async function readProject(buffer: ArrayBuffer, library: AssetLibrary): P
   }
 
   const scene = migrate(doc.scene, warnings);
+  // Older files may hold more than one background; a scene only ever has one.
+  const single = withSingleBackground(scene.nodes);
+  if (single.removed) {
+    scene.nodes = single.nodes;
+    warnings.push(`The project had ${single.removed} extra background(s); kept the first.`);
+  }
   for (const n of scene.nodes) {
     if (n.kind === 'asset' && n.assetId && !library.get(n.assetId)) missing.push(n.assetId);
   }
