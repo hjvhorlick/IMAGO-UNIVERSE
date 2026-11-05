@@ -19,7 +19,7 @@ than buried in a README.
 
 | `origin` | Count | Meaning |
 | --- | --- | --- |
-| `painted` | 122 | A dedicated source plate exists in `assets-src/` |
+| `painted` | 130 | A dedicated source plate exists in `assets-src/` |
 | `graded` | 161 | Colour-graded from a painted plate to build the sibling styles |
 | `composed` | 5 | Built procedurally by the pipeline from extracted artwork chips |
 | `derived` | 3 | Geometric/colour variant of another asset (mirror, narrow, golden) |
@@ -40,7 +40,7 @@ composition in that style is coherent.
 | `moonlit` | Cool nocturnal sibling, including moonlit grades of the seven story sets | upper-right | 80 |
 | `autumn` | Harvest sibling, including autumn grades of the seven story sets | upper-left | 83 |
 | `winter` | Frostfall: an independently painted winter collection, with shared interiors | upper-left | 29 |
-| `realistic` | Clearwater: ultra-realistic photographic water. No interiors yet | upper-left | 10 |
+| `realistic` | Clearwater: ultra-realistic photographic water and rooms | upper-left | 18 |
 
 `moonlit` and `autumn` are graded siblings of `enchanted`, not independently painted styles. They
 demonstrate that the style system, the light-direction metadata and the grading pipeline all work,
@@ -61,7 +61,7 @@ Arch, Lantern Bridge and a contemporary timber meditation pavilion in each palet
 moon gate, Japanese-inspired stone lantern and Norse-inspired dragon boat are separately placeable
 decorations in each palette. The lantern glows and the boat floats automatically; their motion can be edited.
 The boat's lower hull is cut along a gently wavy, transparent waterline, so place it over water for a submerged appearance. A fairy mushroom cottage, Japanese-inspired arched garden bridge and Norse-inspired stone well are also individually placeable in each palette. Their artwork is static; atmospheric effects can be layered around them.
-**Foreground (181)** — The 20 base plants, grasses, ground covers and room overlays, plus Fae Lantern
+**Foreground (189)** — The 20 base plants, grasses, ground covers and room overlays, plus Fae Lantern
 Mushrooms, Frost-Kissed Juniper, Peach Blossom Garden Cluster, Moon Garden Moss and Sakura,
 Starflower Cluster and River Reeds in Enchanted, Moonlit and Autumn palettes. Ten detailed botanical
 close-up plates — Woodland Foxgloves, Wild Roses, Woodland Anemones, Scarlet Wild Poppies, Rose Peonies,
@@ -80,7 +80,7 @@ windows on adjacent walls. A separate oak door, lounge chair, coffee table, book
 **Atmosphere (52 effects)** — procedural, not assets; see below.
 
 The brief's starter targets were 5 backgrounds / 8 middle / 8 foreground / 10 effects. **All four
-targets are met or exceeded** (32 / 78 / 181 / 52). `npm run render-check` composes and renders one
+targets are met or exceeded** (32 / 78 / 189 / 52). `npm run render-check` composes and renders one
 world per background plate to `.render-check/worlds.png` so the variety is verifiable at a glance.
 
 ## Atmospheric effects
@@ -158,7 +158,7 @@ python3 -m venv .venv
 7. **Encode** to WebP (quality 90, or 95 for close-up botanical plates; method 6, exact) plus 256 px thumbnails, and write
    `public/library/manifest.json` (`imago.asset-library/1`).
 
-Output: 291 assets; file sizes depend on the WebP encoder used.
+Output: 299 assets; file sizes depend on the WebP encoder used.
 
 ## Adding a style
 

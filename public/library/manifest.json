@@ -2352,7 +2352,8 @@
     "modern",
     "penthouse",
     "large windows",
-    "living room"
+    "living room",
+    "window"
    ],
    "origin": "painted",
    "file": "enchanted/modern-penthouse.webp",
@@ -2401,7 +2402,8 @@
     "future",
     "modern",
     "large windows",
-    "lounge"
+    "lounge",
+    "window"
    ],
    "origin": "painted",
    "file": "enchanted/future-sky-lounge.webp",
@@ -2452,7 +2454,8 @@
     "wood beams",
     "wooden door",
     "tile floor",
-    "fireplace"
+    "fireplace",
+    "window"
    ],
    "origin": "painted",
    "file": "enchanted/timber-great-room.webp",
@@ -2512,7 +2515,8 @@
     "oak beams",
     "wooden door",
     "tile floor",
-    "lounge"
+    "lounge",
+    "window"
    ],
    "origin": "painted",
    "file": "enchanted/oak-window-lounge.webp",
@@ -2564,7 +2568,8 @@
     "wood beams",
     "slanted roof",
     "corner windows",
-    "tile floor"
+    "tile floor",
+    "window"
    ],
    "origin": "painted",
    "file": "enchanted/brick-timber-corner-room.webp",
@@ -7044,7 +7049,8 @@
     "modern",
     "penthouse",
     "large windows",
-    "living room"
+    "living room",
+    "window"
    ],
    "origin": "graded",
    "file": "moonlit/modern-penthouse.webp",
@@ -7093,7 +7099,8 @@
     "future",
     "modern",
     "large windows",
-    "lounge"
+    "lounge",
+    "window"
    ],
    "origin": "graded",
    "file": "moonlit/future-sky-lounge.webp",
@@ -7144,7 +7151,8 @@
     "wood beams",
     "wooden door",
     "tile floor",
-    "fireplace"
+    "fireplace",
+    "window"
    ],
    "origin": "graded",
    "file": "moonlit/timber-great-room.webp",
@@ -7204,7 +7212,8 @@
     "oak beams",
     "wooden door",
     "tile floor",
-    "lounge"
+    "lounge",
+    "window"
    ],
    "origin": "graded",
    "file": "moonlit/oak-window-lounge.webp",
@@ -7256,7 +7265,8 @@
     "wood beams",
     "slanted roof",
     "corner windows",
-    "tile floor"
+    "tile floor",
+    "window"
    ],
    "origin": "graded",
    "file": "moonlit/brick-timber-corner-room.webp",
@@ -11280,7 +11290,8 @@
     "modern",
     "penthouse",
     "large windows",
-    "living room"
+    "living room",
+    "window"
    ],
    "origin": "graded",
    "file": "autumn/modern-penthouse.webp",
@@ -11329,7 +11340,8 @@
     "future",
     "modern",
     "large windows",
-    "lounge"
+    "lounge",
+    "window"
    ],
    "origin": "graded",
    "file": "autumn/future-sky-lounge.webp",
@@ -11380,7 +11392,8 @@
     "wood beams",
     "wooden door",
     "tile floor",
-    "fireplace"
+    "fireplace",
+    "window"
    ],
    "origin": "graded",
    "file": "autumn/timber-great-room.webp",
@@ -11440,7 +11453,8 @@
     "oak beams",
     "wooden door",
     "tile floor",
-    "lounge"
+    "lounge",
+    "window"
    ],
    "origin": "graded",
    "file": "autumn/oak-window-lounge.webp",
@@ -11492,7 +11506,8 @@
     "wood beams",
     "slanted roof",
     "corner windows",
-    "tile floor"
+    "tile floor",
+    "window"
    ],
    "origin": "graded",
    "file": "autumn/brick-timber-corner-room.webp",
@@ -14001,6 +14016,461 @@
    "bytes": 490622
   },
   {
+   "id": "realistic.foreground.japanese-modern-room",
+   "name": "Modern Japanese Room",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "photoreal"
+   ],
+   "tags": [
+    "japanese",
+    "modern",
+    "tatami",
+    "wood",
+    "stone",
+    "fireplace",
+    "room",
+    "window",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/japanese-modern-room.webp",
+   "thumb": "realistic/thumbs/japanese-modern-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#705030",
+    "#909090",
+    "#907050",
+    "#b0b0b0"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.825,
+     0.415,
+     0.135,
+     0.255
+    ]
+   },
+   "variants": [],
+   "notes": "Floor-to-roof glass keys out into a real opening; the fire is optional.",
+   "bytes": 332192
+  },
+  {
+   "id": "realistic.foreground.glass-pavilion-lounge",
+   "name": "Glass Pavilion Lounge",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "photoreal"
+   ],
+   "tags": [
+    "pavilion",
+    "open plan",
+    "glass",
+    "corner",
+    "fireplace",
+    "room",
+    "window",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/glass-pavilion-lounge.webp",
+   "thumb": "realistic/thumbs/glass-pavilion-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#503030",
+    "#303010",
+    "#505030",
+    "#503010",
+    "#705030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.615,
+     0.605,
+     0.08,
+     0.18
+    ]
+   },
+   "variants": [],
+   "notes": "Floor-to-roof glass keys out into a real opening; the fire is optional.",
+   "bytes": 407528
+  },
+  {
+   "id": "realistic.foreground.woodstone-lounge",
+   "name": "Wood and Stone Lounge",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "photoreal"
+   ],
+   "tags": [
+    "lounge",
+    "oak",
+    "stone",
+    "fireplace",
+    "room",
+    "window",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/woodstone-lounge.webp",
+   "thumb": "realistic/thumbs/woodstone-lounge.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#301010",
+    "#705030",
+    "#505030",
+    "#503030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.12,
+     0.515,
+     0.15,
+     0.155
+    ]
+   },
+   "variants": [],
+   "notes": "Floor-to-roof glass keys out into a real opening; the fire is optional.",
+   "bytes": 467780
+  },
+  {
+   "id": "realistic.foreground.minimal-glass-loft",
+   "name": "Minimal Glass Loft",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "photoreal"
+   ],
+   "tags": [
+    "loft",
+    "minimal",
+    "linear fireplace",
+    "concrete",
+    "room",
+    "window",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/minimal-glass-loft.webp",
+   "thumb": "realistic/thumbs/minimal-glass-loft.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707070",
+    "#505050",
+    "#303030",
+    "#707050",
+    "#b0b0b0"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.81,
+     0.56,
+     0.15,
+     0.165
+    ]
+   },
+   "variants": [],
+   "notes": "Floor-to-roof glass keys out into a real opening; the fire is optional.",
+   "bytes": 442226
+  },
+  {
+   "id": "realistic.foreground.japanese-engawa-room",
+   "name": "Japanese Engawa Room",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "lounge",
+    "window",
+    "photoreal"
+   ],
+   "tags": [
+    "japanese",
+    "engawa",
+    "tatami",
+    "sunken hearth",
+    "room",
+    "window",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/japanese-engawa-room.webp",
+   "thumb": "realistic/thumbs/japanese-engawa-room.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#907050",
+    "#b09070",
+    "#503010",
+    "#703010",
+    "#705030"
+   ],
+   "defaultScale": 0.82,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "window-overlay",
+    "region": [
+     0.788,
+     0.73,
+     0.11,
+     0.145
+    ]
+   },
+   "variants": [],
+   "notes": "Floor-to-roof glass keys out into a real opening; the fire is optional.",
+   "bytes": 235962
+  },
+  {
+   "id": "realistic.foreground.minimal-wood-bench",
+   "name": "Minimal Oak Bench",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "furniture",
+    "photoreal"
+   ],
+   "tags": [
+    "bench",
+    "oak",
+    "seating",
+    "minimal",
+    "furniture",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/minimal-wood-bench.webp",
+   "thumb": "realistic/thumbs/minimal-wood-bench.webp",
+   "format": "image/webp",
+   "width": 1205,
+   "height": 343,
+   "alpha": true,
+   "depth": 0.96,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07050",
+    "#d09070",
+    "#905030",
+    "#101010",
+    "#907030"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 39236
+  },
+  {
+   "id": "realistic.foreground.low-wood-table",
+   "name": "Low Oak Table",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "furniture",
+    "photoreal"
+   ],
+   "tags": [
+    "table",
+    "oak",
+    "coffee table",
+    "minimal",
+    "furniture",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/low-wood-table.webp",
+   "thumb": "realistic/thumbs/low-wood-table.webp",
+   "format": "image/webp",
+   "width": 1276,
+   "height": 461,
+   "alpha": true,
+   "depth": 0.97,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b070",
+    "#705030",
+    "#f0b090",
+    "#d09070",
+    "#b07050"
+   ],
+   "defaultScale": 0.2,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 55146
+  },
+  {
+   "id": "realistic.foreground.linen-floor-cushions",
+   "name": "Linen Floor Cushions",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "furniture",
+    "photoreal"
+   ],
+   "tags": [
+    "cushions",
+    "zabuton",
+    "linen",
+    "seating",
+    "furniture",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/linen-floor-cushions.webp",
+   "thumb": "realistic/thumbs/linen-floor-cushions.webp",
+   "format": "image/webp",
+   "width": 1400,
+   "height": 764,
+   "alpha": true,
+   "depth": 0.98,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b0b0b0",
+    "#f0d0d0",
+    "#d0d0b0",
+    "#d0d0d0",
+    "#909090"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "",
+   "bytes": 403400
+  },
+  {
    "id": "winter.background.frostfall-valley",
    "name": "Frostfall Valley",
    "style": "winter",
@@ -14689,7 +15159,8 @@
     "modern",
     "penthouse",
     "large windows",
-    "living room"
+    "living room",
+    "window"
    ],
    "origin": "painted",
    "file": "winter/modern-penthouse.webp",
@@ -14738,7 +15209,8 @@
     "future",
     "modern",
     "large windows",
-    "lounge"
+    "lounge",
+    "window"
    ],
    "origin": "painted",
    "file": "winter/future-sky-lounge.webp",
@@ -14789,7 +15261,8 @@
     "wood beams",
     "wooden door",
     "tile floor",
-    "fireplace"
+    "fireplace",
+    "window"
    ],
    "origin": "painted",
    "file": "winter/timber-great-room.webp",
@@ -14849,7 +15322,8 @@
     "oak beams",
     "wooden door",
     "tile floor",
-    "lounge"
+    "lounge",
+    "window"
    ],
    "origin": "painted",
    "file": "winter/oak-window-lounge.webp",
@@ -14901,7 +15375,8 @@
     "wood beams",
     "slanted roof",
     "corner windows",
-    "tile floor"
+    "tile floor",
+    "window"
    ],
    "origin": "painted",
    "file": "winter/brick-timber-corner-room.webp",

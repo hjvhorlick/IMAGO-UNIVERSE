@@ -758,6 +758,56 @@ def publish_realistic(p: Publisher, src: str, style: str):
                         max_dim=1600, quality=95))
 
 
+def publish_realistic_rooms(p: Publisher, src: str, style: str):
+    """Photographic rooms: floor-to-roof glass, wood and stone, minimal.
+
+    The glass is plated as flat magenta so it keys out into a real opening and
+    the composed world shows through. Each hearth region was measured from the
+    finished plate by finding the flame pixels in it, and is asserted by tests.
+    """
+    R = os.path.join(src, "style-realistic")
+
+    def plate(name: str) -> Image.Image:
+        return key_magenta(Image.open(os.path.join(R, f"fg-{name}.png")))
+
+    def prop(name: str) -> Image.Image:
+        return clean_edges(autocrop(key_magenta(Image.open(os.path.join(R, f"fg-{name}.png")))))
+
+    # aid, name, hearth region (or None), tags
+    for aid, name, hearth, tags in [
+        ("japanese-modern-room", "Modern Japanese Room", [0.825, 0.415, 0.135, 0.255],
+         ["japanese", "modern", "tatami", "wood", "stone", "fireplace"]),
+        ("glass-pavilion-lounge", "Glass Pavilion Lounge", [0.615, 0.605, 0.080, 0.180],
+         ["pavilion", "open plan", "glass", "corner", "fireplace"]),
+        ("woodstone-lounge", "Wood and Stone Lounge", [0.120, 0.515, 0.150, 0.155],
+         ["lounge", "oak", "stone", "fireplace"]),
+        ("minimal-glass-loft", "Minimal Glass Loft", [0.810, 0.560, 0.150, 0.165],
+         ["loft", "minimal", "linear fireplace", "concrete"]),
+        ("japanese-engawa-room", "Japanese Engawa Room", [0.788, 0.730, 0.110, 0.145],
+         ["japanese", "engawa", "tatami", "sunken hearth"]),
+    ]:
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", "interiors",
+                        plate(aid), themes=["interior", "lounge", "window"] + ["photoreal"],
+                        tags=tags + ["room", "window", "photoreal"], depth=0.98, default_scale=0.82,
+                        # Fire is an option, never automatic: a scene starts still.
+                        animations=["hearth-fire"] if hearth else [],
+                        rig={"type": "window-overlay"} if not hearth
+                        else {"type": "window-overlay", "region": hearth},
+                        notes="Floor-to-roof glass keys out into a real opening; the fire is optional."
+                        if hearth else "Floor-to-roof glass keys out into a real opening.",
+                        max_dim=1600, quality=94))
+
+    for aid, name, tags, scale, depth in [
+        ("minimal-wood-bench", "Minimal Oak Bench", ["bench", "oak", "seating", "minimal"], 0.22, 0.96),
+        ("low-wood-table", "Low Oak Table", ["table", "oak", "coffee table", "minimal"], 0.20, 0.97),
+        ("linen-floor-cushions", "Linen Floor Cushions", ["cushions", "zabuton", "linen", "seating"], 0.16, 0.98),
+    ]:
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", "interiors",
+                        prop(aid), themes=["interior", "furniture"] + ["photoreal"],
+                        tags=tags + ["furniture", "photoreal"], depth=depth, default_scale=scale,
+                        animations=[], rig={}, max_dim=1400, quality=94))
+
+
 def build(src: str, out: str) -> dict:
     p = Publisher(out)
     S = os.path.join(src, "style-fantasy")
@@ -968,9 +1018,9 @@ def build(src: str, out: str) -> dict:
                             max_dim=1400))
         for aid, name, image, themes, tags in [
             ("modern-penthouse", "Modern Penthouse View", modern_room, ["modern", "interior", "window"],
-             ["modern", "penthouse", "large windows", "living room"]),
+             ["modern", "penthouse", "large windows", "window", "living room"]),
             ("future-sky-lounge", "Futuristic Sky Lounge", future_room, ["futuristic", "interior", "window"],
-             ["future", "modern", "large windows", "lounge"]),
+             ["future", "modern", "large windows", "window", "lounge"]),
         ]:
             p.publish(Asset(f"{style}.foreground.{aid}", f"{label}{name}", style, "foreground", "interiors",
                             plate(image), origin=origin, themes=themes, tags=tags, depth=0.98, default_scale=0.82,
@@ -980,7 +1030,7 @@ def build(src: str, out: str) -> dict:
         p.publish(Asset(f"{style}.foreground.timber-great-room", f"{label}Contemporary Timber Great Room",
                         style, "foreground", "interiors", plate(timber_room), origin=origin,
                         themes=["interior", "window", "contemporary", "timber"],
-                        tags=["modern", "wood beams", "wooden door", "tile floor", "fireplace"],
+                        tags=["modern", "wood beams", "wooden door", "tile floor", "window", "fireplace"],
                         depth=0.98, default_scale=0.82, animations=["hearth-fire"],
                         rig={"type": "window-overlay", "region": [0.082, 0.68, 0.07, 0.10], "autoplay": True},
                         notes="Present-day tiled great room with varnished beams, an animated fireplace and a transparent window.",
@@ -988,14 +1038,14 @@ def build(src: str, out: str) -> dict:
         p.publish(Asset(f"{style}.foreground.oak-window-lounge", f"{label}Contemporary Oak Window Lounge",
                         style, "foreground", "interiors", plate(oak_lounge), origin=origin,
                         themes=["interior", "window", "contemporary", "timber"],
-                        tags=["modern", "oak beams", "wooden door", "tile floor", "lounge"],
+                        tags=["modern", "oak beams", "wooden door", "tile floor", "window", "lounge"],
                         depth=0.98, default_scale=0.82, animations=[], rig={"type": "window-overlay"},
                         notes="Present-day oak-beam room with tiled floor and a transparent window onto the composed world.",
                         max_dim=1400))
         p.publish(Asset(f"{style}.foreground.brick-timber-corner-room", f"{label}Asymmetric Brick and Timber Room",
                         style, "foreground", "interiors", plate(brick_timber_room), origin=origin,
                         themes=["interior", "window", "contemporary", "timber"],
-                        tags=["modern", "brick", "wood beams", "slanted roof", "corner windows", "tile floor"],
+                        tags=["modern", "brick", "wood beams", "slanted roof", "corner windows", "window", "tile floor"],
                         depth=0.98, default_scale=0.82, animations=[], rig={"type": "window-overlay"},
                         notes="Asymmetric brick-and-wood room with a sloping roof and two transparent windows on adjacent walls.",
                         max_dim=1400))
@@ -1364,6 +1414,7 @@ def build(src: str, out: str) -> dict:
     # A different brief entirely: true water optics instead of painted fantasy.
     R = "realistic"
     publish_realistic(p, src, R)
+    publish_realistic_rooms(p, src, R)
 
     W = "winter"
     publish_winter(p, src, W)

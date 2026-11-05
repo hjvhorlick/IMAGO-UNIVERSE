@@ -26,7 +26,7 @@ animation engine, Loop Manager and effect library were exercised headlessly.
 | Still export produces a real file | 640×360 PNG > 5 kB asserted in the UI test |
 | Projects round-trip | scene → ZIP → scene, including embedded asset bytes |
 
-`npm test` → **162 passed** across 16 files. `npm run typecheck` → clean under `strict`,
+`npm test` → **167 passed** across 16 files. `npm run typecheck` → clean under `strict`,
 `noUnusedLocals` and `noUnusedParameters`. `npm run build` → succeeds.
 
 ## What was NOT verified — video export
@@ -61,7 +61,7 @@ rather than a broken file — but that error path itself is untested against a r
 
 ## Known functional constraints
 
-**Library size.** 291 assets across 5 styles (32 backgrounds / 78 middle / 181 foreground), which
+**Library size.** 299 assets across 5 styles (32 backgrounds / 78 middle / 189 foreground), which
 exceeds the brief's starter targets. Fairy, Norse, Chinese-inspired, Japanese-inspired, celestial
 observatory, waterside and lotus sanctuary vistas, landmarks and foreground accents have Enchanted, Moonlit and Autumn
 palette variants, but the
@@ -73,10 +73,10 @@ specific foreground accents are painted plates. This is enough to build varied s
 large commercial library. Adding a genuinely independent style means
 commissioning or painting a new plate set, not more grading.
 
-**Clearwater ships no room interiors.** It is photographic, and a photoreal room has to be
-photographed rather than recoloured, so the Rooms tab is empty in that look until its own plates
-exist. Auto-composition now falls back to the wider layer pool when a look has no assets in a
-category, so Clearwater still composes a scene - just without rooms.
+**Hearth regions are measured, not guessed.** Each fireplace animation flicks painted flames inside a
+declared rectangle. For the Clearwater rooms that rectangle was located by finding the flame pixels
+in the finished plate, and a test re-measures it against the shipped file, so the fire cannot drift
+onto a wall unnoticed.
 
 **Master cycle cap.** The LCM of all animation cycles is capped at 60 s. With many co-prime cycle
 lengths the true LCM can exceed this; the Loop Manager snaps cycles to a 0.5 s grid to keep the LCM

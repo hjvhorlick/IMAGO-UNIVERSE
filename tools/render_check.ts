@@ -321,6 +321,27 @@ async function main() {
   }
   console.log('rendered clearwater-world.png with sparkle, and two sparkle phases');
 
+  // Each photographic room over its own world, with the fire lit.
+  for (const id of ['japanese-modern-room', 'glass-pavilion-lounge', 'woodstone-lounge',
+    'minimal-glass-loft', 'japanese-engawa-room']) {
+    const roomScene = createScene('realistic');
+    const roomBg = lib.get('realistic.background.clearwater-lake')!;
+    await images.ensure([roomBg.id, `realistic.foreground.${id}`]);
+    const roomBgNode = createAssetNode(roomBg, roomScene);
+    fitBackground(roomBgNode, roomScene, roomBg.width, roomBg.height);
+    roomScene.nodes.push(roomBgNode);
+    const roomNode = createAssetNode(lib.get(`realistic.foreground.${id}`)!, roomScene);
+    if (roomNode.animation) { roomNode.animation.enabled = true; roomNode.animation.amplitude = 0.9; }
+    roomScene.nodes.push(roomNode);
+    loops.invalidate();
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, roomScene, {
+      scale, quality: 'export', time: 0.8, masterCycle: loops.analyse(roomScene).master,
+    });
+    fs.writeFileSync(path.join(OUT, `room-${id}.png`), cv.toBuffer('image/png'));
+  }
+  console.log('rendered five photographic rooms with their fires lit');
+
   /* ---- acceptance: the master cycle boundary must be pixel-identical ---- */
   const a = renderAt(0).cv.getContext('2d').getImageData(0, 0, W, H).data;
   const b = renderAt(report.master).cv.getContext('2d').getImageData(0, 0, W, H).data;
