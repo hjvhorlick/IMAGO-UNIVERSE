@@ -25,7 +25,7 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 149 unit / integration / UI tests (Vitest) |
+| `npm test` | 150 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library from `assets-src/` (needs Pillow + numpy) |
@@ -54,13 +54,14 @@ not shown in the library, while effects remain available with every look.
 
 ## What is implemented
 
-**Asset library** — 228 assets across 3 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
+**Asset library** — 252 assets across 3 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
 a celestial observatory, a moonlit waterside and a lotus sanctuary with animated water, a timber
 meditation pavilion and close-up lotus blossoms. Placeable Chinese-inspired moon gate, Japanese-inspired
 stone lantern and Norse-inspired dragon boat add garden and waterside details. A fairy mushroom cottage, Japanese-inspired garden bridge and Norse-inspired stone well are also separately placeable.
 Detailed close-up flowers, including dahlias, sunflowers and white orchids, add foreground variety.
-Eight placeable creatures — a white stag, red fox, mute swans, koi, butterflies, a great owl, a rabbit and a
-squirrel — each arrive still, with optional breathing, swimming or fluttering motion. Eight room views reveal the current composition
+Thirteen placeable creatures — a white stag, red fox, mute swans, koi, butterflies, a great owl, a rabbit,
+a squirrel, mallards, a hedgehog, a fawn, a frog and a flock of songbirds — each arrive still, with optional
+breathing, swimming or fluttering motion. Eight room views reveal the current composition
 through their windows, including present-day timber-beamed rooms as well as modern and futuristic
 high-ceiling spaces, and an asymmetrical brick-and-timber room with windows on adjoining walls.
 Animated fireplaces, a steaming coffee cup and contemporary furniture and doors
@@ -180,6 +181,6 @@ src/
 assets-src/    source artwork plates (pipeline input)
 public/library/  runtime WebP assets + thumbnails + manifest.json
 tools/         asset preparation pipeline, headless render verification
-tests/         149 tests across 14 files
+tests/         150 tests across 14 files
 docs/          architecture, assets, limitations
 ```

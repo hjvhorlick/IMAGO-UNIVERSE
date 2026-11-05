@@ -20,6 +20,11 @@ const CREATURES: Array<[string, string, string, string[]]> = [
   ['middle.great-owl', 'creature-breathe', 'Great Owl', ['fairy']],
   ['foreground.rabbit', 'creature-breathe', 'Brown Rabbit', ['nature']],
   ['foreground.red-squirrel', 'creature-breathe', 'Red Squirrel', ['nature']],
+  ['middle.mallard-ducks', 'swim', 'Mallard Ducks', ['japanese', 'waterside']],
+  ['foreground.hedgehog', 'creature-breathe', 'Hedgehog', ['nature', 'chinese']],
+  ['middle.deer-fawn', 'creature-breathe', 'Deer Fawn', ['nature']],
+  ['foreground.moor-frog', 'creature-breathe', 'Moor Frog', ['japanese', 'lotus-sanctuary']],
+  ['middle.songbird-flock', 'flutter', 'Songbird Flock', ['nature', 'japanese']],
 ];
 function library() {
   const lib = new AssetLibrary();
@@ -70,6 +75,27 @@ describe('placeable creatures', () => {
         }
         expect(edge, `${style}.${key} touches its plate edge`).toBe(0);
       }
+    }
+  });
+
+  it('keeps the bird flock crisp instead of veiled in keyed sky haze', async () => {
+    const lib = library();
+    for (const style of ['enchanted', 'moonlit', 'autumn']) {
+      const meta = lib.get(`${style}.middle.songbird-flock`)!;
+      const img = await loadImage(path.join(ROOT, 'public/library', meta.file));
+      const cv = createCanvas(img.width, img.height), ctx = cv.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const al = ctx.getImageData(0, 0, img.width, img.height).data;
+      let opaque = 0, haze = 0;
+      for (let i = 3; i < al.length; i += 4) {
+        if (al[i] > 250) opaque++;
+        else if (al[i] > 5) haze++;
+      }
+      const total = al.length / 4;
+      expect(opaque / total, `${style} flock too faint`).toBeGreaterThan(0.05);
+      // A bird painted against open sky keys to a wide band of near-zero alpha;
+      // that band must be ramped away or the plate arrives as a grey veil.
+      expect(haze / total, `${style} flock haze`).toBeLessThan(0.05);
     }
   });
 

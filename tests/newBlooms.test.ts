@@ -9,7 +9,7 @@ import { Compositor } from '../src/render/compositor';
 import { createAssetNode, createScene } from '../src/scene/sceneModel';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
-const IDS = ['scarlet-dahlias', 'golden-sunflowers', 'white-orchids'];
+const IDS = ['scarlet-dahlias', 'golden-sunflowers', 'white-orchids', 'tulips', 'daffodils', 'cosmos'];
 function library() {
   const lib = new AssetLibrary();
   lib.manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/library/manifest.json'), 'utf8'));
@@ -31,7 +31,7 @@ describe('new close-up blooms', () => {
         expect(node.animation?.enabled).toBe(false);
         scene.nodes.push(node);
       }
-      expect(new Set(scene.nodes.map((n) => n.id)).size).toBe(3);
+      expect(new Set(scene.nodes.map((n) => n.id)).size).toBe(IDS.length);
     }
   });
 

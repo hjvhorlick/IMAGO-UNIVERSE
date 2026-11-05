@@ -1353,6 +1353,179 @@
    "bytes": 417006
   },
   {
+   "id": "enchanted.foreground.tulips",
+   "name": "Garden Tulips",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "tulip",
+    "red",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/tulips.webp",
+   "thumb": "enchanted/thumbs/tulips.webp",
+   "format": "image/webp",
+   "width": 840,
+   "height": 882,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#709050",
+    "#507030",
+    "#90b070",
+    "#901030",
+    "#701010"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 429928
+  },
+  {
+   "id": "enchanted.foreground.daffodils",
+   "name": "Daffodils",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "daffodil",
+    "yellow",
+    "spring",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/daffodils.webp",
+   "thumb": "enchanted/thumbs/daffodils.webp",
+   "format": "image/webp",
+   "width": 841,
+   "height": 732,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507050",
+    "#709070",
+    "#f0f090",
+    "#f0d010",
+    "#d0b010"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 429624
+  },
+  {
+   "id": "enchanted.foreground.cosmos",
+   "name": "Cosmos Spray",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "cosmos",
+    "pink",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/cosmos.webp",
+   "thumb": "enchanted/thumbs/cosmos.webp",
+   "format": "image/webp",
+   "width": 863,
+   "height": 668,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#709070",
+    "#f0b0d0",
+    "#d090b0",
+    "#f0d0d0",
+    "#d0b0d0"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 253530
+  },
+  {
    "id": "enchanted.middle.white-stag",
    "name": "White Stag",
    "style": "enchanted",
@@ -1743,6 +1916,252 @@
    "variants": [],
    "notes": "An alert red squirrel; breathing is optional.",
    "bytes": 239346
+  },
+  {
+   "id": "enchanted.middle.mallard-ducks",
+   "name": "Mallard Ducks",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden"
+   ],
+   "tags": [
+    "duck",
+    "mallard",
+    "bird",
+    "animal",
+    "water"
+   ],
+   "origin": "painted",
+   "file": "enchanted/mallard-ducks.webp",
+   "thumb": "enchanted/thumbs/mallard-ducks.webp",
+   "format": "image/webp",
+   "width": 1283,
+   "height": 509,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#907050",
+    "#705030",
+    "#909090",
+    "#705050",
+    "#707050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A drake and a hen; drifting on the current is optional.",
+   "bytes": 398044
+  },
+  {
+   "id": "enchanted.foreground.hedgehog",
+   "name": "Hedgehog",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "garden"
+   ],
+   "tags": [
+    "hedgehog",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "painted",
+   "file": "enchanted/hedgehog.webp",
+   "thumb": "enchanted/thumbs/hedgehog.webp",
+   "format": "image/webp",
+   "width": 1135,
+   "height": 631,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705050",
+    "#505030",
+    "#707050",
+    "#907050",
+    "#503030"
+   ],
+   "defaultScale": 0.18,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A hedgehog in the grass; breathing is optional.",
+   "bytes": 196028
+  },
+  {
+   "id": "enchanted.middle.deer-fawn",
+   "name": "Deer Fawn",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow"
+   ],
+   "tags": [
+    "fawn",
+    "deer",
+    "animal",
+    "wildlife",
+    "young"
+   ],
+   "origin": "painted",
+   "file": "enchanted/deer-fawn.webp",
+   "thumb": "enchanted/thumbs/deer-fawn.webp",
+   "format": "image/webp",
+   "width": 1174,
+   "height": 578,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#905030",
+    "#505030",
+    "#907050",
+    "#b07050"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A fawn lying in long grass; breathing is optional.",
+   "bytes": 373358
+  },
+  {
+   "id": "enchanted.foreground.moor-frog",
+   "name": "Moor Frog",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden"
+   ],
+   "tags": [
+    "frog",
+    "amphibian",
+    "animal",
+    "pond",
+    "wildlife"
+   ],
+   "origin": "painted",
+   "file": "enchanted/moor-frog.webp",
+   "thumb": "enchanted/thumbs/moor-frog.webp",
+   "format": "image/webp",
+   "width": 1134,
+   "height": 494,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#907030",
+    "#907050",
+    "#b09050"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pond frog; breathing is optional.",
+   "bytes": 294302
+  },
+  {
+   "id": "enchanted.middle.songbird-flock",
+   "name": "Songbird Flock",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "water",
+    "garden"
+   ],
+   "tags": [
+    "birds",
+    "flock",
+    "flight",
+    "animal",
+    "sky"
+   ],
+   "origin": "painted",
+   "file": "enchanted/songbird-flock.webp",
+   "thumb": "enchanted/thumbs/songbird-flock.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909070",
+    "#907050",
+    "#907070",
+    "#909090",
+    "#707050"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "flutter"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A scattered flock in flight; wing beats and drift are optional.",
+   "bytes": 469328
   },
   {
    "id": "enchanted.foreground.hearth-reading-room",
@@ -5610,6 +6029,182 @@
    "bytes": 290354
   },
   {
+   "id": "moonlit.foreground.tulips",
+   "name": "Moonlit Garden Tulips",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "tulip",
+    "red",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/tulips.webp",
+   "thumb": "moonlit/thumbs/tulips.webp",
+   "format": "image/webp",
+   "width": 840,
+   "height": 882,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#303050",
+    "#305070",
+    "#301030",
+    "#507070"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 303856
+  },
+  {
+   "id": "moonlit.foreground.daffodils",
+   "name": "Moonlit Daffodils",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "daffodil",
+    "yellow",
+    "spring",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/daffodils.webp",
+   "thumb": "moonlit/thumbs/daffodils.webp",
+   "format": "image/webp",
+   "width": 841,
+   "height": 732,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#305070",
+    "#507050",
+    "#507070",
+    "#507090"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 308766
+  },
+  {
+   "id": "moonlit.foreground.cosmos",
+   "name": "Moonlit Cosmos Spray",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "cosmos",
+    "pink",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/cosmos.webp",
+   "thumb": "moonlit/thumbs/cosmos.webp",
+   "format": "image/webp",
+   "width": 863,
+   "height": 668,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305070",
+    "#5070b0",
+    "#507090",
+    "#505090",
+    "#7070b0"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 197900
+  },
+  {
    "id": "moonlit.middle.white-stag",
    "name": "Moonlit White Stag",
    "style": "moonlit",
@@ -6008,6 +6603,257 @@
    "variants": [],
    "notes": "An alert red squirrel; breathing is optional.",
    "bytes": 171930
+  },
+  {
+   "id": "moonlit.middle.mallard-ducks",
+   "name": "Moonlit Mallard Ducks",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "duck",
+    "mallard",
+    "bird",
+    "animal",
+    "water"
+   ],
+   "origin": "graded",
+   "file": "moonlit/mallard-ducks.webp",
+   "thumb": "moonlit/thumbs/mallard-ducks.webp",
+   "format": "image/webp",
+   "width": 1283,
+   "height": 509,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#305070",
+    "#505070",
+    "#305050",
+    "#103030"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A drake and a hen; drifting on the current is optional.",
+   "bytes": 282160
+  },
+  {
+   "id": "moonlit.foreground.hedgehog",
+   "name": "Moonlit Hedgehog",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "hedgehog",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "moonlit/hedgehog.webp",
+   "thumb": "moonlit/thumbs/hedgehog.webp",
+   "format": "image/webp",
+   "width": 1135,
+   "height": 631,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#305050",
+    "#505070",
+    "#305070",
+    "#103030"
+   ],
+   "defaultScale": 0.18,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A hedgehog in the grass; breathing is optional.",
+   "bytes": 158090
+  },
+  {
+   "id": "moonlit.middle.deer-fawn",
+   "name": "Moonlit Deer Fawn",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "fawn",
+    "deer",
+    "animal",
+    "wildlife",
+    "young"
+   ],
+   "origin": "graded",
+   "file": "moonlit/deer-fawn.webp",
+   "thumb": "moonlit/thumbs/deer-fawn.webp",
+   "format": "image/webp",
+   "width": 1174,
+   "height": 578,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#303030",
+    "#305050",
+    "#505070",
+    "#305070"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A fawn lying in long grass; breathing is optional.",
+   "bytes": 265326
+  },
+  {
+   "id": "moonlit.foreground.moor-frog",
+   "name": "Moonlit Moor Frog",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "frog",
+    "amphibian",
+    "animal",
+    "pond",
+    "wildlife"
+   ],
+   "origin": "graded",
+   "file": "moonlit/moor-frog.webp",
+   "thumb": "moonlit/thumbs/moor-frog.webp",
+   "format": "image/webp",
+   "width": 1134,
+   "height": 494,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#303030",
+    "#305050",
+    "#505070",
+    "#101030"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pond frog; breathing is optional.",
+   "bytes": 209108
+  },
+  {
+   "id": "moonlit.middle.songbird-flock",
+   "name": "Moonlit Songbird Flock",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "water",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "birds",
+    "flock",
+    "flight",
+    "animal",
+    "sky"
+   ],
+   "origin": "graded",
+   "file": "moonlit/songbird-flock.webp",
+   "thumb": "moonlit/thumbs/songbird-flock.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305070",
+    "#303050",
+    "#505070",
+    "#305050",
+    "#507090"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "flutter"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A scattered flock in flight; wing beats and drift are optional.",
+   "bytes": 255446
   },
   {
    "id": "moonlit.foreground.hearth-reading-room",
@@ -9419,6 +10265,182 @@
    "bytes": 367922
   },
   {
+   "id": "autumn.foreground.tulips",
+   "name": "Autumn Garden Tulips",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "tulip",
+    "red",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/tulips.webp",
+   "thumb": "autumn/thumbs/tulips.webp",
+   "format": "image/webp",
+   "width": 840,
+   "height": 882,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07030",
+    "#d09030",
+    "#d07030",
+    "#905030",
+    "#901030"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 403366
+  },
+  {
+   "id": "autumn.foreground.daffodils",
+   "name": "Autumn Daffodils",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "daffodil",
+    "yellow",
+    "spring",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/daffodils.webp",
+   "thumb": "autumn/thumbs/daffodils.webp",
+   "format": "image/webp",
+   "width": 841,
+   "height": 732,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0d070",
+    "#b07030",
+    "#f0d010",
+    "#905030",
+    "#f0d090"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 394418
+  },
+  {
+   "id": "autumn.foreground.cosmos",
+   "name": "Autumn Cosmos Spray",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "cosmos",
+    "pink",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/cosmos.webp",
+   "thumb": "autumn/thumbs/cosmos.webp",
+   "format": "image/webp",
+   "width": 863,
+   "height": 668,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09050",
+    "#f0b0d0",
+    "#d090b0",
+    "#f0d0d0",
+    "#d0b0d0"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 249256
+  },
+  {
    "id": "autumn.middle.white-stag",
    "name": "Autumn White Stag",
    "style": "autumn",
@@ -9817,6 +10839,257 @@
    "variants": [],
    "notes": "An alert red squirrel; breathing is optional.",
    "bytes": 223566
+  },
+  {
+   "id": "autumn.middle.mallard-ducks",
+   "name": "Autumn Mallard Ducks",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "duck",
+    "mallard",
+    "bird",
+    "animal",
+    "water"
+   ],
+   "origin": "graded",
+   "file": "autumn/mallard-ducks.webp",
+   "thumb": "autumn/thumbs/mallard-ducks.webp",
+   "format": "image/webp",
+   "width": 1283,
+   "height": 509,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#907050",
+    "#705030",
+    "#705050",
+    "#909090",
+    "#707050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "swim"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A drake and a hen; drifting on the current is optional.",
+   "bytes": 360570
+  },
+  {
+   "id": "autumn.foreground.hedgehog",
+   "name": "Autumn Hedgehog",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "hedgehog",
+    "animal",
+    "wildlife",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "autumn/hedgehog.webp",
+   "thumb": "autumn/thumbs/hedgehog.webp",
+   "format": "image/webp",
+   "width": 1135,
+   "height": 631,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705050",
+    "#907050",
+    "#505030",
+    "#707050",
+    "#503030"
+   ],
+   "defaultScale": 0.18,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A hedgehog in the grass; breathing is optional.",
+   "bytes": 194614
+  },
+  {
+   "id": "autumn.middle.deer-fawn",
+   "name": "Autumn Deer Fawn",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "fawn",
+    "deer",
+    "animal",
+    "wildlife",
+    "young"
+   ],
+   "origin": "graded",
+   "file": "autumn/deer-fawn.webp",
+   "thumb": "autumn/thumbs/deer-fawn.webp",
+   "format": "image/webp",
+   "width": 1174,
+   "height": 578,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#905030",
+    "#907050",
+    "#b07050",
+    "#503010"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A fawn lying in long grass; breathing is optional.",
+   "bytes": 354212
+  },
+  {
+   "id": "autumn.foreground.moor-frog",
+   "name": "Autumn Moor Frog",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "creatures",
+   "themes": [
+    "water",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "frog",
+    "amphibian",
+    "animal",
+    "pond",
+    "wildlife"
+   ],
+   "origin": "graded",
+   "file": "autumn/moor-frog.webp",
+   "thumb": "autumn/thumbs/moor-frog.webp",
+   "format": "image/webp",
+   "width": 1134,
+   "height": 494,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#503010",
+    "#907050",
+    "#907030",
+    "#b09050"
+   ],
+   "defaultScale": 0.16,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A pond frog; breathing is optional.",
+   "bytes": 284018
+  },
+  {
+   "id": "autumn.middle.songbird-flock",
+   "name": "Autumn Songbird Flock",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "creatures",
+   "themes": [
+    "forest",
+    "meadow",
+    "water",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "birds",
+    "flock",
+    "flight",
+    "animal",
+    "sky"
+   ],
+   "origin": "graded",
+   "file": "autumn/songbird-flock.webp",
+   "thumb": "autumn/thumbs/songbird-flock.webp",
+   "format": "image/webp",
+   "width": 1408,
+   "height": 768,
+   "alpha": true,
+   "depth": 0.6,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909070",
+    "#907050",
+    "#907070",
+    "#707050",
+    "#b09070"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "flutter"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "A scattered flock in flight; wing beats and drift are optional.",
+   "bytes": 334050
   },
   {
    "id": "autumn.foreground.hearth-reading-room",

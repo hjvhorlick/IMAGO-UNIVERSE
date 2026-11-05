@@ -26,7 +26,7 @@ animation engine, Loop Manager and effect library were exercised headlessly.
 | Still export produces a real file | 640×360 PNG > 5 kB asserted in the UI test |
 | Projects round-trip | scene → ZIP → scene, including embedded asset bytes |
 
-`npm test` → **149 passed** across 14 files. `npm run typecheck` → clean under `strict`,
+`npm test` → **150 passed** across 14 files. `npm run typecheck` → clean under `strict`,
 `noUnusedLocals` and `noUnusedParameters`. `npm run build` → succeeds.
 
 ## What was NOT verified — video export
@@ -61,7 +61,7 @@ rather than a broken file — but that error path itself is untested against a r
 
 ## Known functional constraints
 
-**Library size.** 228 assets across 3 styles (28 backgrounds / 63 middle / 137 foreground), which
+**Library size.** 252 assets across 3 styles (28 backgrounds / 72 middle / 152 foreground), which
 exceeds the brief's starter targets. Fairy, Norse, Chinese-inspired, Japanese-inspired, celestial
 observatory, waterside and lotus sanctuary vistas, landmarks and foreground accents have Enchanted, Moonlit and Autumn
 palette variants, but the

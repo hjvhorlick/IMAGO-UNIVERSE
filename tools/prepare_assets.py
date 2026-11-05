@@ -104,6 +104,19 @@ def clean_edges(img: Image.Image, px: int = 3) -> Image.Image:
     return Image.fromarray(a, "RGBA")
 
 
+def crisp_alpha(img: Image.Image, cut: float = 0.25, hi: float = 0.60) -> Image.Image:
+    """Harden a soft alpha matte.
+
+    Small subjects painted against a blue sky key to a wide band of very low
+    alpha haze rather than to clean edges. Ramping that band away keeps the
+    antialiasing on the subject while deleting the haze around it.
+    """
+    a = np.asarray(img).astype(np.float32)
+    al = a[..., 3] / 255.0
+    a[..., 3] = np.clip((al - cut) / (hi - cut), 0, 1) * 255.0
+    return Image.fromarray(a.astype(np.uint8), "RGBA")
+
+
 def autocrop(img: Image.Image, pad: int = 4) -> Image.Image:
     bbox = img.getchannel("A").getbbox()
     if not bbox:
@@ -536,10 +549,13 @@ def publish_new_blooms(p: Publisher, src: str, style: str, label: str, transform
         ("scarlet-dahlias", "Scarlet Dahlias", ["garden", "meadow"], ["dahlia", "red", "flower", "botanical", "close-up"], 0.33),
         ("golden-sunflowers", "Golden Sunflowers", ["garden", "meadow"], ["sunflower", "yellow", "flower", "botanical", "close-up"], 0.36),
         ("white-orchids", "White Moth Orchids", ["garden", "meditation"], ["orchid", "white", "flower", "botanical", "close-up"], 0.34),
+        ("tulips", "Garden Tulips", ["garden", "meadow"], ["tulip", "red", "yellow", "flower", "botanical", "close-up"], 0.33),
+        ("daffodils", "Daffodils", ["garden", "meadow"], ["daffodil", "yellow", "spring", "flower", "botanical", "close-up"], 0.33),
+        ("cosmos", "Cosmos Spray", ["garden", "meadow"], ["cosmos", "pink", "flower", "botanical", "close-up"], 0.30),
     ]:
         # Blue rather than magenta key preserves the saturated scarlet petals
         # and the soft pink in the orchid's throat.
-        image = autocrop(key_blue(Image.open(os.path.join(folder, f"fg-{aid}.png"))))
+        image = clean_edges(autocrop(key_blue(Image.open(os.path.join(folder, f"fg-{aid}.png")))))
         p.publish(Asset(f"{style}.foreground.{aid}", f"{label}{name}", style, "foreground", "flowers",
                         grade(image, transform) if transform else image,
                         origin="graded" if transform else "painted", themes=themes + seasonal,
@@ -577,11 +593,29 @@ def publish_creatures(p: Publisher, src: str, style: str, label: str, transform=
         ("red-squirrel", "Red Squirrel", "foreground", ["forest", "meadow"],
          ["squirrel", "animal", "wildlife", "woodland"], 0.22, "creature-breathe",
          "An alert red squirrel; breathing is optional."),
+        ("mallard-ducks", "Mallard Ducks", "middle", ["water", "garden"],
+         ["duck", "mallard", "bird", "animal", "water"], 0.34, "swim",
+         "A drake and a hen; drifting on the current is optional."),
+        ("hedgehog", "Hedgehog", "foreground", ["forest", "garden"],
+         ["hedgehog", "animal", "wildlife", "woodland"], 0.18, "creature-breathe",
+         "A hedgehog in the grass; breathing is optional."),
+        ("deer-fawn", "Deer Fawn", "middle", ["forest", "meadow"],
+         ["fawn", "deer", "animal", "wildlife", "young"], 0.32, "creature-breathe",
+         "A fawn lying in long grass; breathing is optional."),
+        ("moor-frog", "Moor Frog", "foreground", ["water", "garden"],
+         ["frog", "amphibian", "animal", "pond", "wildlife"], 0.16, "creature-breathe",
+         "A pond frog; breathing is optional."),
+        ("songbird-flock", "Songbird Flock", "middle", ["forest", "meadow", "water", "garden"],
+         ["birds", "flock", "flight", "animal", "sky"], 0.30, "flutter",
+         "A scattered flock in flight; wing beats and drift are optional."),
     ]:
         # Blue key: every one of these subjects is warm or white, so a blue
         # backdrop separates cleanly without eating into fur, feathers or scales.
         plate = Image.open(os.path.join(folder, f"{'mid' if layer == 'middle' else 'fg'}-{aid}.png"))
         image = clean_edges(autocrop(key_blue(plate)))
+        # Birds painted against an open sky key to a haze rather than to edges.
+        if aid == "songbird-flock":
+            image = crisp_alpha(image)
         p.publish(Asset(f"{style}.{layer}.{aid}", f"{label}{name}", style, layer, "creatures",
                         grade(image, transform) if transform else image,
                         origin="graded" if transform else "painted", themes=themes + seasonal,

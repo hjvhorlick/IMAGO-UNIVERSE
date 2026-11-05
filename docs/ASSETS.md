@@ -19,8 +19,8 @@ than buried in a README.
 
 | `origin` | Count | Meaning |
 | --- | --- | --- |
-| `painted` | 75 | A dedicated source plate exists in `assets-src/` |
-| `graded` | 145 | Colour-graded from a painted plate to build the sibling styles |
+| `painted` | 83 | A dedicated source plate exists in `assets-src/` |
+| `graded` | 161 | Colour-graded from a painted plate to build the sibling styles |
 | `composed` | 5 | Built procedurally by the pipeline from extracted artwork chips |
 | `derived` | 3 | Geometric/colour variant of another asset (mirror, narrow, golden) |
 
@@ -36,9 +36,9 @@ composition in that style is coherent.
 
 | Style | Character | Light | Assets |
 | --- | --- | --- | --- |
-| `enchanted` | Fantasy vistas, including an observatory and a moonlit waterside | upper-left | 81 |
-| `moonlit` | Cool nocturnal sibling, including moonlit grades of the seven story sets | upper-right | 72 |
-| `autumn` | Harvest sibling, including autumn grades of the seven story sets | upper-left | 75 |
+| `enchanted` | Fantasy vistas, including an observatory and a moonlit waterside | upper-left | 89 |
+| `moonlit` | Cool nocturnal sibling, including moonlit grades of the seven story sets | upper-right | 80 |
+| `autumn` | Harvest sibling, including autumn grades of the seven story sets | upper-left | 83 |
 
 `moonlit` and `autumn` are graded siblings of `enchanted`, not independently painted styles. They
 demonstrate that the style system, the light-direction metadata and the grading pipeline all work,
@@ -59,25 +59,26 @@ Arch, Lantern Bridge and a contemporary timber meditation pavilion in each palet
 moon gate, Japanese-inspired stone lantern and Norse-inspired dragon boat are separately placeable
 decorations in each palette. The lantern glows and the boat floats automatically; their motion can be edited.
 The boat's lower hull is cut along a gently wavy, transparent waterline, so place it over water for a submerged appearance. A fairy mushroom cottage, Japanese-inspired arched garden bridge and Norse-inspired stone well are also individually placeable in each palette. Their artwork is static; atmospheric effects can be layered around them.
-**Foreground (137)** — The 20 base plants, grasses, ground covers and room overlays, plus Fae Lantern
+**Foreground (152)** — The 20 base plants, grasses, ground covers and room overlays, plus Fae Lantern
 Mushrooms, Frost-Kissed Juniper, Peach Blossom Garden Cluster, Moon Garden Moss and Sakura,
 Starflower Cluster and River Reeds in Enchanted, Moonlit and Autumn palettes. Ten detailed botanical
 close-up plates — Woodland Foxgloves, Wild Roses, Woodland Anemones, Scarlet Wild Poppies, Rose Peonies,
-Golden Irises, Lotus Blossoms, Scarlet Dahlias, Golden Sunflowers and White Moth Orchids — also come in each palette; they retain their source dimensions, use higher-quality
+Golden Irises, Lotus Blossoms, Scarlet Dahlias, Golden Sunflowers, White Moth Orchids, Garden Tulips,
+Daffodils and Cosmos Spray — also come in each palette; they retain their source dimensions, use higher-quality
 WebP encoding and support stem bending. Each palette also has two additional windowed rooms with
 flickering hearths and steaming cups, plus a separate stone fireplace and coffee cup. A modern
 penthouse and futuristic sky lounge offer high ceilings and large transparent windows, with a separate
 modular sectional, futuristic chair and animated modern fireplace. Eight placeable creatures — a white
-stag, red fox, mute swans, koi fish, butterflies, a great owl, a brown rabbit and a red squirrel — come
-in each palette as their own objects; each is still when placed and offers optional breathing, swimming
-or wing-fluttering motion. Two present-day rooms have
+stag, red fox, mute swans, koi fish, butterflies, a great owl, a brown rabbit, a red squirrel, mallard
+ducks, a hedgehog, a deer fawn, a moor frog and a flock of songbirds — come in each palette as their own
+objects; each is still when placed and offers optional breathing, swimming or wing-fluttering motion. Two present-day rooms have
 varnished oak beams, wooden doors, tiled floors and large windows; the great room includes an
 animated fireplace. An asymmetrical brick-and-timber room has a sloping roof and two transparent
 windows on adjacent walls. A separate oak door, lounge chair, coffee table, bookshelf, floor lamp and potted fig are also available. Find them under **Layer 4 → Rooms & interiors**; loose furniture and props can be moved and resized independently. Their source assets remain foreground artwork in the manifest, but newly placed interiors are scene nodes on Layer 4.
 **Atmosphere (52 effects)** — procedural, not assets; see below.
 
 The brief's starter targets were 5 backgrounds / 8 middle / 8 foreground / 10 effects. **All four
-targets are met or exceeded** (28 / 63 / 137 / 52). `npm run render-check` composes and renders one
+targets are met or exceeded** (28 / 72 / 152 / 52). `npm run render-check` composes and renders one
 world per background plate to `.render-check/worlds.png` so the variety is verifiable at a glance.
 
 ## Atmospheric effects
@@ -155,7 +156,7 @@ python3 -m venv .venv
 7. **Encode** to WebP (quality 90, or 95 for close-up botanical plates; method 6, exact) plus 256 px thumbnails, and write
    `public/library/manifest.json` (`imago.asset-library/1`).
 
-Output: 228 assets; file sizes depend on the WebP encoder used.
+Output: 252 assets; file sizes depend on the WebP encoder used.
 
 ## Adding a style
 

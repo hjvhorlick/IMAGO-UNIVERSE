@@ -200,6 +200,9 @@ async function main() {
     ['scarlet-dahlias', 0.30, 0.70, 0.60],
     ['golden-sunflowers', 0.70, 0.68, 0.65],
     ['white-orchids', 0.50, 0.68, 0.62],
+    ['tulips', 0.32, 0.74, 0.62],
+    ['daffodils', 0.68, 0.74, 0.60],
+    ['cosmos', 0.50, 0.72, 0.58],
   ] as const) {
     const flowers = createScene('enchanted');
     const bg = lib.get('enchanted.background.enchanted-lake')!;
@@ -214,7 +217,7 @@ async function main() {
     comp.render(cv.getContext('2d') as never, flowers, { scale, quality: 'export', time: 0 });
     fs.writeFileSync(path.join(OUT, `${id}.png`), cv.toBuffer('image/png'));
   }
-  console.log('rendered three independently placeable close-up flowers');
+  console.log('rendered six independently placeable close-up flowers');
 
   // Review each animal on its own, then all of them together in one scene.
   const CREATURE_PLACEMENTS: Array<[string, string, number, number, number]> = [
@@ -226,6 +229,11 @@ async function main() {
     ['great-owl', 'middle', 0.78, 0.48, 0.26],
     ['rabbit', 'foreground', 0.16, 0.86, 0.16],
     ['red-squirrel', 'foreground', 0.86, 0.84, 0.18],
+    ['mallard-ducks', 'middle', 0.46, 0.70, 0.26],
+    ['hedgehog', 'foreground', 0.24, 0.92, 0.13],
+    ['deer-fawn', 'middle', 0.70, 0.66, 0.24],
+    ['moor-frog', 'foreground', 0.56, 0.94, 0.12],
+    ['songbird-flock', 'middle', 0.50, 0.30, 0.30],
   ];
   for (const [id, layer, x, y, height] of CREATURE_PLACEMENTS) {
     const scene = createScene('enchanted');
