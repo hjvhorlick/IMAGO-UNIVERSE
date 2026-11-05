@@ -13,20 +13,20 @@ animation engine, Loop Manager and effect library were exercised headlessly.
 | The demo world composes correctly | `npm run render-check` → `.render-check/demo-t0.png`, inspected visually |
 | The master cycle returns to its exact start | **0 differing subpixels** between t=0 and t=48 s at 1280×720 |
 | The scene actually animates | about 10.9 % of pixels change at mid-cycle |
-| All 27 effects are exactly periodic | `u=0` vs `u=1` compared per effect, byte-identical |
+| All 52 effects are exactly periodic | `u=0` vs `u=1` compared per effect, byte-identical |
 | Lounge windows reveal the current world | transparent center pixel-identical to the background; opaque wall area changes |
-| No chroma-key residue | magenta-pixel scan across every asset |
+| No obvious chroma-key residue | opaque key-colour pixel scan across every object |
 | Trees stay planted | trunk-base displacement asserted < 0.001 in tests |
 | Grass roots do not slide | base-row `dx` < 0.001 |
 | Warping is local | sky above a shimmering lake is **pixel-identical** to the unwarped plate |
 | Water shimmer stays in the water | max delta **1/255** outside every background's declared region, 182/255 inside |
 | Every style composes | one rendered world per background plate → `.render-check/worlds.png` |
 | Rendering never mutates the scene | deep-equality assertion before/after render |
-| The UI really works | 18 jsdom tests mount the real `App` and drive it |
+| The UI really works | 19 jsdom tests mount the real `App` and drive it |
 | Still export produces a real file | 640×360 PNG > 5 kB asserted in the UI test |
 | Projects round-trip | scene → ZIP → scene, including embedded asset bytes |
 
-`npm test` → **109 passed** across 8 files. `npm run typecheck` → clean under `strict`,
+`npm test` → **135 passed** across 11 files. `npm run typecheck` → clean under `strict`,
 `noUnusedLocals` and `noUnusedParameters`. `npm run build` → succeeds.
 
 ## What was NOT verified — video export
@@ -61,14 +61,14 @@ rather than a broken file — but that error path itself is untested against a r
 
 ## Known functional constraints
 
-**Library size.** 54 assets across 3 styles (11 backgrounds / 19 middle / 24 foreground), which meets
-the brief's starter targets. The fairy, Norse, Chinese-inspired and Japanese-inspired vistas,
-landmarks and foreground accents are curated theme sets inside the `enchanted` style, not four
-independently painted styles. `moonlit` and `autumn` remain colour grades of `enchanted`, not
-independently painted bodies of work. The general fern, bush, ivy and pebble ground covers are still
-procedurally assembled from foliage and rock chips; the new story-specific foreground accents are
-painted plates. This is enough to build varied scenes but is not a large commercial library. Adding a
-genuinely independent style means
+**Library size.** 186 assets across 3 styles (28 backgrounds / 45 middle / 113 foreground), which
+exceeds the brief's starter targets. Fairy, Norse, Chinese-inspired, Japanese-inspired, celestial
+observatory, waterside and lotus sanctuary vistas, landmarks and foreground accents have Enchanted, Moonlit and Autumn
+palette variants, but the
+latter two remain colour grades rather than independently painted styles. The general fern, bush,
+ivy and pebble ground covers are still procedurally assembled from foliage and rock chips; the story-
+specific foreground accents are painted plates. This is enough to build varied scenes but is not a
+large commercial library. Adding a genuinely independent style means
 commissioning or painting a new plate set, not more grading.
 
 **Master cycle cap.** The LCM of all animation cycles is capped at 60 s. With many co-prime cycle
@@ -152,13 +152,28 @@ wide enchanted, moonlit, and autumn waterfalls are auto-enabled and showcased wi
 foreground clutter over their impact zone. Tests cover downward optical flow, scene-region locality,
 mid-cycle motion, splash/mist turbulence response, exact loop boundaries, and auto-enabled placement.
 
-The Layer 3 **Lounge Window View** assets are keyed transparent foreground overlays in all three
-styles. Their large alpha opening shows the exact composition underneath; the painted room, curtains,
-wooden window frame, sill and sofa make that scene read as a view from indoors. `tests/render.test.ts`
-compares the opening pixel-for-pixel with the unobscured world and confirms the surrounding room
-changes those pixels.
+The Layer 3 room views are keyed transparent foreground overlays in all three styles. Their openings
+show the composition underneath. In addition to the original lounge, a reading room and a window-seat
+room each have an automatically flickering painted hearth and a steaming cup. A modern penthouse and
+a futuristic lounge add large panoramic windows, with modular furniture and a contemporary fireplace
+available as separate props. Two present-day oak-beamed rooms with tiled floors and wooden doors,
+plus a separate oak door, lounge chair and table, complement the futuristic options. An asymmetric
+brick-and-timber room adds two window openings on adjoining walls and a sloped roof. The loose
+oak bookshelf, potted fig and floor lamp are static placeable props. The fire and steam
+are stylized animation rather than video or physical
+simulations. `tests/interiors.test.ts` verifies window transparency, local fire motion, rising steam,
+and exact loop boundaries.
 
 Layer 4 now also includes a moving **Mythic Zodiac Wheel** and **Floating Lanterns**, alongside the
 existing rune, constellation, rain, windborne-petal and mist effects. A Japanese moon-garden theme
 and a separate mythic zodiac preset are available. These are clearly framed as stylized fantasy
 starting points, not culturally authoritative reconstructions.
+
+## Spiritual & mystical overlays
+
+The 25 new overlays are lightweight Canvas vector effects integrated into the existing compositor,
+not image files or true 3D objects. Their gold, chrome, glass and holographic looks, axis tilt and
+depth are visual approximations; symbolic designs are artistic interpretations. Tests exercise their
+materials, motion, loop boundaries, window fades, 16:9 and 9:16 rendering, style independence,
+project round-tripping and the export compositor/tiling plan. Actual browser MP4/WebM export and
+playback have not been tested.

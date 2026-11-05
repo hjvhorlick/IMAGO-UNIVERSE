@@ -331,6 +331,8 @@ button { cursor: pointer; border: none; background: none; }
 }
 .chip:hover { color: var(--text-dim); border-color: var(--line-strong); }
 .chip.active { background: rgba(167, 139, 250, 0.18); border-color: rgba(167, 139, 250, 0.42); color: #d6c9ff; }
+.spiritual-filter { display: flex; align-items: center; gap: 8px; padding: 0 12px 10px; color: var(--text-faint); font-size: 11px; }
+.spiritual-filter select { min-width: 0; flex: 1; color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 5px; }
 
 /* ------------------------------------------------------------ asset grid */
 

@@ -7,9 +7,9 @@ runtime-ready asset library in `public/library/`.
 
 Pipeline stages
 ---------------
-1. Chroma key      - remove the flat FF00FF studio backdrop from object plates.
-2. Unmix / despill - mathematically un-composite the backdrop colour from edge
-                     pixels so no magenta halo survives, then suppress spill.
+1. Chroma key      - remove flat magenta or blue studio backdrops from object plates.
+2. Unmix / despill - un-composite the backdrop colour from edge pixels and
+                     suppress colour spill.
 3. Refine          - alpha cleanup, de-fringe, autocrop, resize.
 4. Derive          - build extra coherent assets by re-using *real painted
                      texture* (foliage chips / rock chips) extracted from the
@@ -70,6 +70,25 @@ def key_magenta(img: Image.Image, lo: float = 28.0, hi: float = 150.0) -> Image.
     return Image.fromarray(out, "RGBA")
 
 
+def key_blue(img: Image.Image, lo: float = 20.0, hi: float = 100.0) -> Image.Image:
+    """Remove blue backdrops while preserving pink/red petals, unlike a magenta key."""
+    rgb = np.asarray(img.convert("RGB"), dtype=np.float32)
+    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    blue = b - np.maximum(r, g)
+    t = np.clip((blue - lo) / (hi - lo), 0.0, 1.0)
+    t = t * t * (3.0 - 2.0 * t)
+    alpha = 1.0 - t
+    a3 = alpha[..., None]
+    obj = (rgb - np.array([0.0, 0.0, 255.0], dtype=np.float32) * (1.0 - a3)) / np.maximum(a3, 1e-3)
+    obj = np.clip(obj, 0, 255)
+    # Remove blue bounce on opaque edges without desaturating pink blossoms.
+    spill = np.maximum(0.0, obj[..., 2] - np.maximum(obj[..., 0], obj[..., 1])) * (alpha > 0.985)
+    obj[..., 2] = np.clip(obj[..., 2] - spill * 0.85, 0, 255)
+    alpha[alpha < 0.05] = 0.0
+    alpha[alpha > 0.96] = 1.0
+    return Image.fromarray(np.dstack([obj, alpha * 255.0]).astype(np.uint8), "RGBA")
+
+
 def autocrop(img: Image.Image, pad: int = 4) -> Image.Image:
     bbox = img.getchannel("A").getbbox()
     if not bbox:
@@ -80,6 +99,24 @@ def autocrop(img: Image.Image, pad: int = 4) -> Image.Image:
     r = min(img.width, r + pad)
     b = min(img.height, b + pad)
     return img.crop((l, t, r, b))
+
+
+def boat_waterline(img: Image.Image) -> Image.Image:
+    """Hide the submerged hull below a gently rippling, transparent waterline.
+
+    The line is positioned on the original painted plate so the unmodified
+    source remains available, and the same silhouette is used for every palette.
+    A one-pixel soft edge avoids a jagged cut when the boat is scaled.
+    """
+    rgba = np.array(img.convert("RGBA"), dtype=np.uint8, copy=True)
+    height, width = rgba.shape[:2]
+    x = np.arange(width, dtype=np.float32)
+    line = height * (0.68 + 0.008 * np.sin(2 * np.pi * x / (width * 0.19))
+                     + 0.003 * np.sin(2 * np.pi * x / (width * 0.083) + 0.7))
+    y = np.arange(height, dtype=np.float32)[:, None]
+    coverage = np.clip(line[None, :] - y + 0.5, 0.0, 1.0)
+    rgba[..., 3] = np.round(rgba[..., 3].astype(np.float32) * coverage).astype(np.uint8)
+    return Image.fromarray(rgba, "RGBA")
 
 
 def fit(img: Image.Image, max_dim: int) -> Image.Image:
@@ -392,6 +429,7 @@ class Asset:
     variants: list[str] = field(default_factory=list)
     notes: str = ""
     max_dim: int = 1200
+    quality: int = 90
 
 
 class Publisher:
@@ -406,7 +444,7 @@ class Publisher:
         os.makedirs(os.path.join(folder, "thumbs"), exist_ok=True)
         fname = a.id.split(".")[-1] + ".webp"
         rel = f"{a.style}/{fname}"
-        img.save(os.path.join(self.out, rel), "WEBP", quality=90, method=6, exact=True)
+        img.save(os.path.join(self.out, rel), "WEBP", quality=a.quality, method=6, exact=True)
         thumb = fit(img.copy(), 256)
         thumb.save(os.path.join(folder, "thumbs", fname), "WEBP", quality=82, method=6, exact=True)
         alpha = img.getchannel("A")
@@ -465,6 +503,29 @@ def build(src: str, out: str) -> dict:
     bg_norse = fit(load_bg(f"{S}/bg-norse-worldtree.png"), 1920)
     bg_chinese = fit(load_bg(f"{S}/bg-chinese-mist-mountains.png"), 1920)
     bg_japanese = fit(load_bg(f"{S}/bg-japanese-moon-garden.png"), 1920)
+    bg_observatory = fit(load_bg(f"{S}/bg-celestial-observatory.png"), 1920)
+    bg_waterside = fit(load_bg(f"{S}/bg-mythic-waterside.png"), 1920)
+    bg_lotus = fit(load_bg(f"{S}/bg-lotus-sanctuary.png"), 1920)
+    lotus_pavilion = autocrop(key_magenta(Image.open(f"{S}/mid-lotus-meditation-pavilion.png"), lo=20, hi=100))
+    lotus_flowers = autocrop(key_blue(Image.open(f"{S}/fg-lotus-flowers.png")))
+    moon_gate = autocrop(key_magenta(Image.open(f"{S}/mid-chinese-moon-gate.png"), lo=20, hi=100))
+    stone_lantern = autocrop(key_magenta(Image.open(f"{S}/mid-japanese-stone-lantern.png"), lo=20, hi=100))
+    dragon_boat = autocrop(boat_waterline(key_magenta(Image.open(f"{S}/mid-norse-dragon-boat.png"), lo=20, hi=100)))
+    # These plates have slightly desaturated magenta at their edges.
+    lantern_bridge = autocrop(key_magenta(Image.open(f"{S}/mid-lantern-bridge.png"), lo=20, hi=100))
+    river_reeds = autocrop(key_magenta(Image.open(f"{S}/fg-river-reeds.png"), lo=20, hi=100))
+    celestial_arch = load_obj(f"{S}/mid-celestial-ruins.png")
+    # This painted plate's backdrop is less saturated near its edges; a
+    # tighter key removes that spill without leaving a translucent rectangle.
+    starflowers = autocrop(key_magenta(Image.open(f"{S}/fg-starflowers.png"), lo=20, hi=80))
+    foxgloves = autocrop(key_magenta(Image.open(f"{S}/fg-woodland-foxgloves.png"), lo=20, hi=80))
+    wild_roses = load_obj(f"{S}/fg-wild-roses.png")
+    anemones = autocrop(key_magenta(Image.open(f"{S}/fg-woodland-anemones.png"), lo=20, hi=100))
+    # Blue studio plates preserve the saturated red and pink petals that a
+    # magenta key would mistakenly erase.
+    poppies = autocrop(key_blue(Image.open(f"{S}/fg-wild-poppies.png")))
+    peonies = autocrop(key_blue(Image.open(f"{S}/fg-rose-peonies.png")))
+    irises = autocrop(key_blue(Image.open(f"{S}/fg-golden-irises.png")))
     oak = load_obj(f"{S}/mid-ancient-oak.png")
     willow = load_obj(f"{S}/mid-willow-tree.png")
     bridge = load_obj(f"{S}/mid-stone-bridge.png")
@@ -472,6 +533,24 @@ def build(src: str, out: str) -> dict:
     boulders = load_obj(f"{S}/mid-mossy-boulders.png")
     waterfall = load_obj(f"{S}/mid-waterfall.png")
     lounge_window = load_obj(f"{S}/fg-lounge-window.png")
+    room_hearth = load_obj(f"{S}/fg-room-hearth-nook.png")
+    room_window_seat = load_obj(f"{S}/fg-room-window-seat.png")
+    stone_fireplace = autocrop(key_magenta(Image.open(f"{S}/fg-stone-fireplace.png"), lo=20, hi=100))
+    coffee_cup = autocrop(key_magenta(Image.open(f"{S}/fg-coffee-cup.png"), lo=20, hi=100))
+    modern_room = load_obj(f"{S}/fg-room-modern-penthouse.png")
+    future_room = load_obj(f"{S}/fg-room-future-observatory.png")
+    modern_sofa = load_obj(f"{S}/fg-modern-sectional.png")
+    future_chair = load_obj(f"{S}/fg-future-lounge-chair.png")
+    modern_fireplace = load_obj(f"{S}/fg-modern-fireplace.png")
+    timber_room = load_obj(f"{S}/fg-room-timber-greatroom.png")
+    oak_lounge = load_obj(f"{S}/fg-room-oak-window-lounge.png")
+    brick_timber_room = load_obj(f"{S}/fg-room-asymmetric-brick-timber.png")
+    oak_door = load_obj(f"{S}/fg-contemporary-oak-door.png")
+    oak_chair = load_obj(f"{S}/fg-contemporary-oak-chair.png")
+    oak_table = load_obj(f"{S}/fg-contemporary-oak-table.png")
+    oak_bookshelf = load_obj(f"{S}/fg-oak-bookshelf.png")
+    indoor_plant = load_obj(f"{S}/fg-indoor-plant.png")
+    oak_floor_lamp = load_obj(f"{S}/fg-oak-floor-lamp.png")
     fairy_mushrooms = load_obj(f"{S}/fg-fae-mushroom-cluster.png")
     norse_frost_pine = load_obj(f"{S}/fg-norse-frost-pine.png")
     chinese_peach = load_obj(f"{S}/fg-chinese-peach-blossoms.png")
@@ -487,8 +566,218 @@ def build(src: str, out: str) -> dict:
     bend = {"type": "bend", "anchor": [0.5, 1.0], "stiffness": 0.18, "gusts": 4}
     fall = {"type": "fall", "region": [0.16, 0.10, 0.68, 0.85], "speed": 1.0}
 
+    # Three matching layers from original celestial observatory plates.
+    # Publish each palette together so its visual identity survives style changes.
+    def publish_observatory(style: str, label: str, transform=None):
+        def plate(img):
+            return grade(img, transform) if transform else img
+
+        origin = "graded" if transform else "painted"
+        seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
+        p.publish(Asset(f"{style}.background.celestial-observatory", f"{label}Celestial Observatory Garden",
+                        style, "background", "fantasy", plate(bg_observatory), origin=origin,
+                        themes=["observatory", "celestial", "garden"] + seasonal,
+                        tags=["background", "vista", "stars", "observatory"], depth=0.0, default_scale=1.0,
+                        animations=["cloud-drift", "parallax"], rig={"type": "background"}, max_dim=1920))
+        p.publish(Asset(f"{style}.middle.celestial-arch", f"{label}Celestial Astrolabe Arch",
+                        style, "middle", "landmarks", plate(celestial_arch), origin=origin,
+                        themes=["observatory", "celestial", "ruins"] + seasonal,
+                        tags=["arch", "astrolabe", "moon", "stars"], depth=0.54, default_scale=0.43,
+                        animations=[], rig={}, max_dim=1300))
+        p.publish(Asset(f"{style}.foreground.starflowers", f"{label}Starflower Cluster",
+                        style, "foreground", "flowers", plate(starflowers), origin=origin,
+                        themes=["observatory", "celestial", "garden"] + seasonal,
+                        tags=["flowers", "stars", "moss"], depth=0.89, default_scale=0.3,
+                        animations=["stem-bend"], rig=bend, max_dim=1100))
+
+    def publish_waterside(style: str, label: str, transform=None):
+        def plate(img):
+            return grade(img, transform) if transform else img
+
+        origin = "graded" if transform else "painted"
+        seasonal = ["autumn"] if style == "autumn" else []
+        p.publish(Asset(f"{style}.background.mythic-waterside", f"{label}Moonlit Waterside",
+                        style, "background", "fantasy", plate(bg_waterside), origin=origin,
+                        themes=["waterside", "water", "night"] + seasonal,
+                        tags=["river", "moon", "lanterns", "vista"], depth=0, default_scale=1,
+                        animations=["water-shimmer", "cloud-drift", "parallax"],
+                        rig={"type": "background", "region": [0.0, 0.83, 1.0, 0.17], "autoplay": True}, max_dim=1920))
+        p.publish(Asset(f"{style}.middle.lantern-bridge", f"{label}Lantern Bridge",
+                        style, "middle", "structures", plate(lantern_bridge), origin=origin,
+                        themes=["waterside", "water", "lanterns"] + seasonal,
+                        tags=["bridge", "lantern", "moon"], depth=0.52, default_scale=0.42,
+                        animations=["lantern-glow"], rig={}, max_dim=1300))
+        p.publish(Asset(f"{style}.foreground.river-reeds", f"{label}River Reeds",
+                        style, "foreground", "plants", plate(river_reeds), origin=origin,
+                        themes=["waterside", "water", "reeds"] + seasonal,
+                        tags=["reeds", "cattails", "river"], depth=0.89, default_scale=0.3,
+                        animations=["grass-wind"], rig=bend, max_dim=1100))
+
+    def publish_lotus_sanctuary(style: str, label: str, transform=None):
+        def plate(img):
+            return grade(img, transform) if transform else img
+
+        origin = "graded" if transform else "painted"
+        seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
+        p.publish(Asset(f"{style}.background.lotus-sanctuary", f"{label}Lotus Sanctuary Lake",
+                        style, "background", "fantasy", plate(bg_lotus), origin=origin,
+                        themes=["lotus-sanctuary", "water", "meditation", "garden"] + seasonal,
+                        tags=["lake", "meditation", "mountains", "mist", "sunrise"], depth=0, default_scale=1,
+                        animations=["water-shimmer", "cloud-drift", "parallax"],
+                        rig={"type": "background", "region": [0.0, 0.71, 1.0, 0.29], "autoplay": True}, max_dim=1920))
+        p.publish(Asset(f"{style}.middle.lotus-pavilion", f"{label}Timber Meditation Pavilion",
+                        style, "middle", "structures", plate(lotus_pavilion), origin=origin,
+                        themes=["lotus-sanctuary", "meditation", "garden"] + seasonal,
+                        tags=["pavilion", "timber", "modern", "meditation"], depth=0.52, default_scale=0.35,
+                        animations=[], rig={}, notes="Independently placeable contemporary timber pavilion.", max_dim=1400))
+        p.publish(Asset(f"{style}.foreground.lotus-flowers", f"{label}Lotus Blossoms and Leaves",
+                        style, "foreground", "flowers", plate(lotus_flowers), origin=origin,
+                        themes=["lotus-sanctuary", "meditation", "garden"] + seasonal,
+                        tags=["lotus", "pink", "flowers", "botanical", "close-up"], depth=0.9, default_scale=0.33,
+                        animations=["stem-bend"], rig=bend,
+                        notes="Detailed pink lotus blossoms, bud and leaves; full source detail retained.",
+                        max_dim=1600, quality=95))
+
+    def publish_cultural_details(style: str, label: str, transform=None):
+        origin = "graded" if transform else "painted"
+        seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
+        for aid, name, image, themes, tags, scale, anims, rig, notes in [
+            ("chinese-moon-gate", "Chinese-Inspired Moon Gate", moon_gate,
+             ["chinese", "garden"], ["gate", "round", "stone", "garden"], 0.42, [], {},
+             "A placeable moon gate with a transparent circular opening onto the scene."),
+            ("japanese-stone-lantern", "Japanese-Inspired Stone Lantern", stone_lantern,
+             ["japanese", "garden"], ["lantern", "stone", "moss", "light"], 0.31, ["lantern-glow"], {"autoplay": True},
+             "A placeable carved garden lantern with a gently pulsing glow."),
+            ("norse-dragon-boat", "Norse-Inspired Dragon Boat", dragon_boat,
+             ["norse", "water"], ["boat", "dragon", "wood", "water"], 0.26, ["float"], {"autoplay": True},
+             "A placeable wooden dragon boat with a transparent, wavy waterline and gentle floating motion."),
+        ]:
+            p.publish(Asset(f"{style}.middle.{aid}", f"{label}{name}", style, "middle", "decorations",
+                            grade(image, transform) if transform else image, origin=origin,
+                            themes=themes + seasonal, tags=tags, depth=0.56, default_scale=scale,
+                            animations=anims, rig=rig, notes=notes, max_dim=1400))
+
+    def publish_closeup_flowers(style: str, label: str, transform=None):
+        origin = "graded" if transform else "painted"
+        seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
+        for aid, name, img, themes, tags, scale in [
+            ("woodland-foxgloves", "Woodland Foxgloves", foxgloves, ["forest", "garden"],
+             ["foxglove", "flowers", "botanical", "close-up"], 0.37),
+            ("wild-roses", "Wild Rose Cluster", wild_roses, ["garden", "meadow"],
+             ["rose", "flowers", "botanical", "close-up"], 0.29),
+            ("woodland-anemones", "Woodland Anemones", anemones, ["forest", "meadow"],
+             ["anemone", "flowers", "botanical", "close-up"], 0.32),
+            ("wild-poppies", "Scarlet Wild Poppies", poppies, ["meadow", "garden"],
+             ["poppy", "red", "flowers", "botanical", "close-up"], 0.33),
+            ("rose-peonies", "Rose Peonies", peonies, ["garden", "blossom"],
+             ["peony", "pink", "flowers", "botanical", "close-up"], 0.30),
+            ("golden-irises", "Golden Irises", irises, ["garden", "water"],
+             ["iris", "gold", "flowers", "botanical", "close-up"], 0.34),
+        ]:
+            image = grade(img, transform) if transform else img
+            p.publish(Asset(f"{style}.foreground.{aid}", f"{label}{name}", style, "foreground", "flowers",
+                            image, origin=origin, themes=themes + seasonal, tags=tags,
+                            depth=0.91, default_scale=scale, animations=["stem-bend"], rig=bend,
+                            notes="Detailed painted foreground flowers; full source resolution retained.",
+                            max_dim=1600, quality=95))
+
+    def publish_interiors(style: str, label: str, transform=None):
+        def plate(img):
+            return grade(img, transform) if transform else img
+
+        origin = "graded" if transform else "painted"
+        for aid, name, image, region, steam_region in [
+            ("hearth-reading-room", "Hearth Reading Room", room_hearth, [0.165, 0.66, 0.085, 0.14], [0.91, 0.73, 0.045, 0.16]),
+            ("window-seat-room", "Window Seat Room", room_window_seat, [0.755, 0.515, 0.10, 0.19], [0.64, 0.77, 0.045, 0.16]),
+        ]:
+            p.publish(Asset(f"{style}.foreground.{aid}", f"{label}{name}", style, "foreground", "interiors",
+                            plate(image), origin=origin, themes=["interior", "lounge", "window", "fireplace"],
+                            tags=["room", "window", "living room", "hearth"], depth=0.98, default_scale=0.82,
+                            animations=["hearth-fire"], rig={"type": "window-overlay", "region": region,
+                                                               "steamRegion": steam_region, "autoplay": True},
+                            notes="Transparent window reveals the world; the fireplace and coffee steam animate automatically.",
+                            max_dim=1400))
+        for aid, name, image, themes, tags in [
+            ("modern-penthouse", "Modern Penthouse View", modern_room, ["modern", "interior", "window"],
+             ["modern", "penthouse", "large windows", "living room"]),
+            ("future-sky-lounge", "Futuristic Sky Lounge", future_room, ["futuristic", "interior", "window"],
+             ["future", "modern", "large windows", "lounge"]),
+        ]:
+            p.publish(Asset(f"{style}.foreground.{aid}", f"{label}{name}", style, "foreground", "interiors",
+                            plate(image), origin=origin, themes=themes, tags=tags, depth=0.98, default_scale=0.82,
+                            animations=[], rig={"type": "window-overlay"},
+                            notes="A high-ceiling room overlay with a transparent panoramic window onto the composed world.",
+                            max_dim=1400))
+        p.publish(Asset(f"{style}.foreground.timber-great-room", f"{label}Contemporary Timber Great Room",
+                        style, "foreground", "interiors", plate(timber_room), origin=origin,
+                        themes=["interior", "window", "contemporary", "timber"],
+                        tags=["modern", "wood beams", "wooden door", "tile floor", "fireplace"],
+                        depth=0.98, default_scale=0.82, animations=["hearth-fire"],
+                        rig={"type": "window-overlay", "region": [0.082, 0.68, 0.07, 0.10], "autoplay": True},
+                        notes="Present-day tiled great room with varnished beams, an animated fireplace and a transparent window.",
+                        max_dim=1400))
+        p.publish(Asset(f"{style}.foreground.oak-window-lounge", f"{label}Contemporary Oak Window Lounge",
+                        style, "foreground", "interiors", plate(oak_lounge), origin=origin,
+                        themes=["interior", "window", "contemporary", "timber"],
+                        tags=["modern", "oak beams", "wooden door", "tile floor", "lounge"],
+                        depth=0.98, default_scale=0.82, animations=[], rig={"type": "window-overlay"},
+                        notes="Present-day oak-beam room with tiled floor and a transparent window onto the composed world.",
+                        max_dim=1400))
+        p.publish(Asset(f"{style}.foreground.brick-timber-corner-room", f"{label}Asymmetric Brick and Timber Room",
+                        style, "foreground", "interiors", plate(brick_timber_room), origin=origin,
+                        themes=["interior", "window", "contemporary", "timber"],
+                        tags=["modern", "brick", "wood beams", "slanted roof", "corner windows", "tile floor"],
+                        depth=0.98, default_scale=0.82, animations=[], rig={"type": "window-overlay"},
+                        notes="Asymmetric brick-and-wood room with a sloping roof and two transparent windows on adjacent walls.",
+                        max_dim=1400))
+        for aid, name, image, themes, tags, scale in [
+            ("modern-sectional", "Modern Modular Sectional", modern_sofa, ["interior", "modern"],
+             ["modern", "sofa", "furniture", "sectional"], 0.22),
+            ("future-lounge-chair", "Futuristic Lounge Chair", future_chair, ["interior", "futuristic"],
+             ["future", "modern", "chair", "furniture"], 0.25),
+            ("contemporary-oak-door", "Contemporary Oak Door", oak_door, ["interior", "modern", "timber"],
+             ["door", "wood", "oak", "modern"], 0.40),
+            ("contemporary-oak-chair", "Contemporary Oak Lounge Chair", oak_chair, ["interior", "modern", "timber"],
+             ["chair", "wood", "oak", "modern", "furniture"], 0.24),
+            ("contemporary-oak-table", "Contemporary Oak Coffee Table", oak_table, ["interior", "modern", "timber"],
+             ["table", "wood", "oak", "coffee", "furniture"], 0.16),
+            ("oak-bookshelf", "Contemporary Oak Bookshelf", oak_bookshelf, ["interior", "modern", "timber"],
+             ["shelves", "books", "wood", "oak", "furniture"], 0.38),
+            ("indoor-fig", "Potted Fiddle-Leaf Fig", indoor_plant, ["interior", "modern", "plant"],
+             ["plant", "pot", "foliage", "green", "decor"], 0.35),
+            ("oak-floor-lamp", "Contemporary Oak Floor Lamp", oak_floor_lamp, ["interior", "modern", "timber"],
+             ["lamp", "wood", "oak", "lighting", "decor"], 0.38),
+        ]:
+            p.publish(Asset(f"{style}.foreground.{aid}", f"{label}{name}", style, "foreground", "interiors",
+                            plate(image), origin=origin, themes=themes, tags=tags, depth=0.99, default_scale=scale,
+                            animations=[], rig={}, notes="Independent placeable contemporary interior object.", max_dim=1400))
+        p.publish(Asset(f"{style}.foreground.modern-fireplace", f"{label}Modern Linear Fireplace", style,
+                        "foreground", "interiors", plate(modern_fireplace), origin=origin,
+                        themes=["interior", "modern", "fireplace"], tags=["modern", "fireplace", "fire", "linear"],
+                        depth=0.96, default_scale=0.25, animations=["hearth-fire"],
+                        rig={"type": "hearth", "region": [0.20, 0.45, 0.58, 0.25], "autoplay": True},
+                        notes="Placeable contemporary fireplace with a locally animated painted fire.", max_dim=1400))
+        p.publish(Asset(f"{style}.foreground.stone-fireplace", f"{label}Stone Fireplace", style,
+                        "foreground", "interiors", plate(stone_fireplace), origin=origin,
+                        themes=["interior", "fireplace", "hearth"], tags=["fireplace", "fire", "stone"],
+                        depth=0.96, default_scale=0.35, animations=["hearth-fire"],
+                        rig={"type": "hearth", "region": [0.40, 0.49, 0.20, 0.29], "autoplay": True},
+                        notes="Placeable stone fireplace with a locally animated painted fire.", max_dim=1400))
+        p.publish(Asset(f"{style}.foreground.coffee-cup", f"{label}Steaming Coffee Cup", style,
+                        "foreground", "interiors", plate(coffee_cup), origin=origin,
+                        themes=["interior", "coffee", "comfort"], tags=["cup", "coffee", "steam", "table"],
+                        depth=0.99, default_scale=0.12, animations=["coffee-steam"],
+                        rig={"type": "steam", "region": [0.47, 0.14, 0.40, 0.85], "autoplay": True},
+                        notes="Placeable cup with soft animated steam rising from the coffee.", max_dim=1200))
+
     # ---------------- style: enchanted (highly detailed fantasy) ----------
     E = "enchanted"
+    publish_observatory(E, "")
+    publish_waterside(E, "")
+    publish_lotus_sanctuary(E, "")
+    publish_cultural_details(E, "")
+    publish_closeup_flowers(E, "")
+    publish_interiors(E, "")
     # `region` marks the water so the shimmer mesh stays off the sky and the
     # foliage. Plates without one fall back to a bottom-of-frame mask.
     for aid, name, img, cat, themes, rig in [
@@ -615,6 +904,12 @@ def build(src: str, out: str) -> dict:
     # ---------------- style: moonlit (graded sibling collection) ----------
     M = "moonlit"
     print("building moonlit sibling collection ...")
+    publish_observatory(M, "Moonlit ", night_grade)
+    publish_waterside(M, "Silver ", night_grade)
+    publish_lotus_sanctuary(M, "Moonlit ", night_grade)
+    publish_cultural_details(M, "Moonlit ", night_grade)
+    publish_closeup_flowers(M, "Moonlit ", night_grade)
+    publish_interiors(M, "Moonlit ", night_grade)
     p.publish(Asset(f"{M}.background.moonlit-glade", "Moonlit Forest Glade", M, "background", "night",
                     bg_glade, themes=["night", "forest", "celestial"], tags=["moon", "night"],
                     depth=0.0, default_scale=1.0,
@@ -625,6 +920,20 @@ def build(src: str, out: str) -> dict:
                     themes=["night", "water"], tags=["lake", "night"], depth=0.0, default_scale=1.0,
                     animations=["cloud-drift", "water-shimmer", "parallax"],
                     rig={"type": "background"}, max_dim=1920))
+    for aid, name, img, themes, tags, rig in [
+        ("fairy-court", "Moonlit Fairy Court Glade", bg_fairy, ["fairy", "forest", "water", "night"],
+         ["background", "vista", "fairy", "night"], {"type": "background", "region": [0.0, 0.76, 1.0, 0.24]}),
+        ("norse-worldtree", "Moonlit Norse Worldtree Fjord", bg_norse, ["norse", "worldtree", "night"],
+         ["background", "vista", "norse", "night"], {"type": "background"}),
+        ("chinese-mist-mountains", "Moonlit Chinese-Inspired Mist Mountains", bg_chinese, ["chinese", "mountains", "mist", "night"],
+         ["background", "vista", "chinese", "night"], {"type": "background"}),
+        ("japanese-moon-garden", "Moonlit Japanese Moon Garden", bg_japanese, ["japanese", "moon", "garden", "night"],
+         ["background", "vista", "japanese", "night"], {"type": "background"}),
+    ]:
+        p.publish(Asset(f"{M}.background.{aid}", name, M, "background", "fantasy", grade(img, night_grade),
+                        origin="graded", themes=themes, tags=tags, depth=0.0, default_scale=1.0,
+                        animations=["cloud-drift", "parallax"] + (["water-shimmer"] if "water" in themes else []),
+                        rig=rig, max_dim=1920))
     for aid, name, img, cat, scale, anims, rig in [
         ("silver-oak", "Silver Oak", oak, "trees", 0.72, ["canopy-sway", "leaf-shed"], canopy),
         ("night-pavilion", "Lantern Pavilion", pavilion, "structures", 0.36, ["lantern-glow"], {}),
@@ -635,6 +944,19 @@ def build(src: str, out: str) -> dict:
                         origin="graded", themes=["night", "forest"] + (["water"] if cat == "water" else []),
                         tags=[cat, "night"] + (["waterfall", "cascade"] if cat == "water" else []),
                         depth=0.45, default_scale=scale, animations=anims, rig=rig, max_dim=1300))
+    for aid, name, img, cat, scale, themes, tags, anims, rig in [
+        ("fairy-tree", "Moonlit Fae Court Willow", fairy_tree, "trees", 0.76,
+         ["fairy", "forest", "enchanted", "night"], ["fairy", "willow", "night"], ["canopy-sway"], canopy),
+        ("norse-rune-stones", "Moonlit Norse Rune Stones", norse_stones, "landmarks", 0.38,
+         ["norse", "worldtree", "runes", "night"], ["standing stones", "runes", "night"], [], {}),
+        ("chinese-pavilion", "Moonlit Mountain Lantern Pavilion", chinese_pavilion, "landmarks", 0.43,
+         ["chinese", "mountains", "lanterns", "night"], ["pavilion", "lantern", "night"], [], {}),
+        ("japanese-torii", "Moonlit Moon Garden Torii Gate", japanese_torii, "landmarks", 0.42,
+         ["japanese", "moon", "garden", "night"], ["torii", "gate", "night"], [], {}),
+    ]:
+        p.publish(Asset(f"{M}.middle.{aid}", name, M, "middle", cat, grade(img, night_grade),
+                        origin="graded", themes=themes, tags=tags, depth=0.54, default_scale=scale,
+                        animations=anims, rig=rig, max_dim=1400))
     for aid, name, img, cat, scale in [
         ("night-grass", "Moonlit Grass", grass, "grass", 0.26),
         ("night-fern", "Night Fern", compose_sprig(leaf_chips, seed=31), "plants", 0.28),
@@ -643,6 +965,19 @@ def build(src: str, out: str) -> dict:
         p.publish(Asset(f"{M}.foreground.{aid}", name, M, "foreground", cat, grade(img, night_grade),
                         origin="graded", themes=["night"], tags=[cat, "night"], depth=0.86,
                         default_scale=scale, animations=["grass-wind"], rig=bend, max_dim=1000))
+    for aid, name, img, cat, scale, themes, tags, anim in [
+        ("fae-mushrooms", "Moonlit Fae Lantern Mushrooms", fairy_mushrooms, "plants", 0.3,
+         ["fairy", "forest", "enchanted", "night"], ["mushrooms", "glow", "night"], "grass-wind"),
+        ("norse-frost-pine", "Moonlit Frost-Kissed Juniper", norse_frost_pine, "plants", 0.3,
+         ["norse", "night", "winter"], ["pine", "frost", "night"], "grass-wind"),
+        ("chinese-peach-blossoms", "Moonlit Peach Blossom Garden Cluster", chinese_peach, "flowers", 0.32,
+         ["chinese", "garden", "flowers", "night"], ["peach blossom", "flowers", "night"], "stem-bend"),
+        ("japanese-moon-moss", "Moonlit Garden Moss and Sakura", japanese_moon_moss, "flowers", 0.3,
+         ["japanese", "moon", "garden", "night"], ["sakura", "moss", "night"], "stem-bend"),
+    ]:
+        p.publish(Asset(f"{M}.foreground.{aid}", name, M, "foreground", cat, grade(img, night_grade),
+                        origin="graded", themes=themes, tags=tags, depth=0.89, default_scale=scale,
+                        animations=[anim], rig=bend, max_dim=1200))
     p.publish(Asset(f"{M}.foreground.lounge-window", "Moonlit Lounge Window View", M, "foreground", "interiors",
                     grade(lounge_window, night_grade), origin="graded",
                     themes=["interior", "lounge", "window", "night"],
@@ -654,6 +989,12 @@ def build(src: str, out: str) -> dict:
     # ---------------- style: autumn (graded sibling collection) -------------
     A = "autumn"
     print("building autumn sibling collection ...")
+    publish_observatory(A, "Autumn ", autumn_foliage)
+    publish_waterside(A, "Autumn ", autumn_foliage)
+    publish_lotus_sanctuary(A, "Autumn ", autumn_foliage)
+    publish_cultural_details(A, "Autumn ", autumn_foliage)
+    publish_closeup_flowers(A, "Autumn ", autumn_foliage)
+    publish_interiors(A, "Autumn ", autumn_foliage)
     autumn_rig = {"type": "background", "region": [0.0, 0.68, 1.0, 0.32]}
     p.publish(Asset(f"{A}.background.autumn-river", "Autumn River Valley", A, "background", "nature",
                     bg_autumn, themes=["forest", "water", "autumn", "day"],
@@ -666,6 +1007,20 @@ def build(src: str, out: str) -> dict:
                     depth=0.0, default_scale=1.0,
                     animations=["cloud-drift", "water-shimmer", "parallax"],
                     rig={"type": "background", "region": [0.26, 0.56, 0.54, 0.26]}, max_dim=1920))
+    for aid, name, img, themes, tags, rig in [
+        ("fairy-court", "Autumn Fairy Court Glade", bg_fairy, ["fairy", "forest", "water", "autumn"],
+         ["background", "vista", "fairy", "autumn"], {"type": "background", "region": [0.0, 0.76, 1.0, 0.24]}),
+        ("norse-worldtree", "Autumn Norse Worldtree Fjord", bg_norse, ["norse", "worldtree", "autumn"],
+         ["background", "vista", "norse", "autumn"], {"type": "background"}),
+        ("chinese-mist-mountains", "Autumn Chinese-Inspired Mist Mountains", bg_chinese, ["chinese", "mountains", "mist", "autumn"],
+         ["background", "vista", "chinese", "autumn"], {"type": "background"}),
+        ("japanese-moon-garden", "Autumn Japanese Moon Garden", bg_japanese, ["japanese", "moon", "garden", "autumn"],
+         ["background", "vista", "japanese", "autumn"], {"type": "background"}),
+    ]:
+        p.publish(Asset(f"{A}.background.{aid}", name, A, "background", "fantasy", grade(img, autumn_foliage),
+                        origin="graded", themes=themes, tags=tags, depth=0.0, default_scale=1.0,
+                        animations=["cloud-drift", "parallax"] + (["water-shimmer"] if "water" in themes else []),
+                        rig=rig, max_dim=1920))
     for aid, name, img, cat, scale, anims, rig in [
         ("amber-oak", "Amber Oak", oak, "trees", 0.72, ["canopy-sway", "leaf-shed"], canopy),
         ("copper-willow", "Copper Willow", willow, "trees", 0.66, ["canopy-sway"], canopy),
@@ -677,6 +1032,19 @@ def build(src: str, out: str) -> dict:
                         origin="graded", themes=["forest", "autumn"] + (["water"] if cat == "water" else []),
                         tags=[cat, "autumn"] + (["waterfall", "cascade"] if cat == "water" else []),
                         depth=0.45, default_scale=scale, animations=anims, rig=rig, max_dim=1300))
+    for aid, name, img, cat, scale, themes, tags, anims, rig in [
+        ("fairy-tree", "Autumn Fae Court Willow", fairy_tree, "trees", 0.76,
+         ["fairy", "forest", "enchanted", "autumn"], ["fairy", "willow", "autumn"], ["canopy-sway"], canopy),
+        ("norse-rune-stones", "Autumn Norse Rune Stones", norse_stones, "landmarks", 0.38,
+         ["norse", "worldtree", "runes", "autumn"], ["standing stones", "runes", "autumn"], [], {}),
+        ("chinese-pavilion", "Autumn Mountain Lantern Pavilion", chinese_pavilion, "landmarks", 0.43,
+         ["chinese", "mountains", "lanterns", "autumn"], ["pavilion", "lantern", "autumn"], [], {}),
+        ("japanese-torii", "Autumn Moon Garden Torii Gate", japanese_torii, "landmarks", 0.42,
+         ["japanese", "moon", "garden", "autumn"], ["torii", "gate", "autumn"], [], {}),
+    ]:
+        p.publish(Asset(f"{A}.middle.{aid}", name, A, "middle", cat, grade(img, autumn_foliage),
+                        origin="graded", themes=themes, tags=tags, depth=0.54, default_scale=scale,
+                        animations=anims, rig=rig, max_dim=1400))
     for aid, name, img, cat, scale, anims in [
         ("autumn-grass", "Autumn Grass", grass, "grass", 0.26, ["grass-wind"]),
         ("autumn-fern", "Bracken Fern", compose_sprig(leaf_chips, seed=11), "plants", 0.28, ["stem-bend"]),
@@ -686,6 +1054,19 @@ def build(src: str, out: str) -> dict:
         p.publish(Asset(f"{A}.foreground.{aid}", name, A, "foreground", cat, grade(img, autumn_foliage),
                         origin="graded", themes=["autumn", "forest"], tags=[cat, "autumn"], depth=0.86,
                         default_scale=scale, animations=anims, rig=bend, max_dim=1000))
+    for aid, name, img, cat, scale, themes, tags, anim in [
+        ("fae-mushrooms", "Autumn Fae Lantern Mushrooms", fairy_mushrooms, "plants", 0.3,
+         ["fairy", "forest", "enchanted", "autumn"], ["mushrooms", "glow", "autumn"], "grass-wind"),
+        ("norse-frost-pine", "Autumn Frost-Kissed Juniper", norse_frost_pine, "plants", 0.3,
+         ["norse", "autumn", "winter"], ["pine", "frost", "autumn"], "grass-wind"),
+        ("chinese-peach-blossoms", "Autumn Peach Blossom Garden Cluster", chinese_peach, "flowers", 0.32,
+         ["chinese", "garden", "flowers", "autumn"], ["peach blossom", "flowers", "autumn"], "stem-bend"),
+        ("japanese-moon-moss", "Autumn Garden Moss and Sakura", japanese_moon_moss, "flowers", 0.3,
+         ["japanese", "moon", "garden", "autumn"], ["sakura", "moss", "autumn"], "stem-bend"),
+    ]:
+        p.publish(Asset(f"{A}.foreground.{aid}", name, A, "foreground", cat, grade(img, autumn_foliage),
+                        origin="graded", themes=themes, tags=tags, depth=0.89, default_scale=scale,
+                        animations=[anim], rig=bend, max_dim=1200))
     p.publish(Asset(f"{A}.foreground.autumn-pebbles", "Autumn Pebble Scatter", A, "foreground", "ground",
                     grade(compose_pebbles(rock_chips, seed=9), autumn_foliage), origin="graded",
                     themes=["water", "path", "autumn"], tags=["stones", "ground"], depth=0.94,

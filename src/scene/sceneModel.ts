@@ -57,6 +57,13 @@ export function createAssetNode(
     width = meta.width * cover;
     height = meta.height * cover;
     x = cw / 2; y = ch / 2;
+  } else if (meta.rig?.type === 'window-overlay') {
+    // A room is a full-frame view, not a ground-level prop. Cover the canvas
+    // so the outdoor world appears only through its transparent window.
+    const cover = Math.max(cw / meta.width, ch / meta.height) * (opts.scale ?? 1);
+    width = meta.width * cover;
+    height = meta.height * cover;
+    x = opts.x ?? cw / 2; y = opts.y ?? ch / 2;
   } else {
     // Depth scaling: near objects are larger, distant ones smaller.
     const depthScale = lerp(0.62, 1.25, clamp(depth, 0, 1));
@@ -90,7 +97,8 @@ function defaultAnimationFor(meta: AssetMeta): SceneNode['animation'] {
     a.amplitude = 0.85;
     a.turbulence = 0.7;
   } else {
-    a.enabled = false;
+    a.enabled = meta.rig?.autoplay === true;
+    if (a.enabled && (first === 'hearth-fire' || first === 'coffee-steam')) a.amplitude = 0.8;
   }
   return a;
 }

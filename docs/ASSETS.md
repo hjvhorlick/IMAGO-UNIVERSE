@@ -19,15 +19,14 @@ than buried in a README.
 
 | `origin` | Count | Meaning |
 | --- | --- | --- |
-| `painted` | 25 | A dedicated source plate exists in `assets-src/` |
-| `graded` | 21 | Colour-graded from a painted plate to build the sibling styles |
+| `painted` | 61 | A dedicated source plate exists in `assets-src/` |
+| `graded` | 117 | Colour-graded from a painted plate to build the sibling styles |
 | `composed` | 5 | Built procedurally by the pipeline from extracted artwork chips |
 | `derived` | 3 | Geometric/colour variant of another asset (mirror, narrow, golden) |
 
-The image generator hit a hard 10-image-per-turn cap during the first art pass, so there are no
-painted flower or fern plates. Those foreground plants are `composed` — assembled by the pipeline from
-foliage chips extracted from the painted plates. This is a real limitation of the current library's
-variety, not a hidden one.
+Many general-purpose ground plants are `composed` — assembled by the pipeline from foliage chips
+extracted from painted plates. The story-specific foreground accents have dedicated painted sources.
+This keeps the starter library varied without pretending its general flora is a large catalog.
 
 ## Styles
 
@@ -37,9 +36,9 @@ composition in that style is coherent.
 
 | Style | Character | Light | Assets |
 | --- | --- | --- | --- |
-| `enchanted` | Warm sunlit fantasy plus fairy, Norse, Chinese-inspired and Japanese-inspired vistas | upper-left | 31 |
-| `moonlit` | Cool nocturnal sibling — silver foliage, deep teals, lantern warmth | upper-right | 10 |
-| `autumn` | Harvest sibling — amber, copper and rust foliage, stone kept neutral | upper-left | 13 |
+| `enchanted` | Fantasy vistas, including an observatory and a moonlit waterside | upper-left | 67 |
+| `moonlit` | Cool nocturnal sibling, including moonlit grades of the seven story sets | upper-right | 58 |
+| `autumn` | Harvest sibling, including autumn grades of the seven story sets | upper-left | 61 |
 
 `moonlit` and `autumn` are graded siblings of `enchanted`, not independently painted styles. They
 demonstrate that the style system, the light-direction metadata and the grading pipeline all work,
@@ -51,27 +50,37 @@ would read as a colour cast rather than a season.
 
 ## Inventory
 
-**Backgrounds (11)** — Enchanted Lake Valley, Sunrise Highlands, Sunlit Forest Hollow, Fairy Court
-Glade, Norse Worldtree Fjord, Chinese-Inspired Mist Mountains, Japanese Moon Garden, Moonlit Forest
-Glade, Night Lake Valley, Autumn River Valley, Harvest Woodland Hollow
-**Middle-ground (19)** — Ancient Oak, Weeping Willow, Mossy Stone Bridge, Elven Garden Pavilion,
-Mossy Boulders, Grand Forest Waterfall, Fae Court Willow, Norse-Inspired Rune Stones, Mountain
-Lantern Pavilion, Moon Garden Torii Gate, Silver Oak, Lantern Pavilion, Moonlit Boulders,
-Moonlit Waterfall, Amber Oak, Copper Willow, Harvest Stone Bridge, Autumn Boulders, Autumn Waterfall
-**Foreground (24)** — Lush Grass Tuft, Grass Clump (narrow), Grass Sweep (mirrored), Golden Harvest
-Grass, Wildflower Cluster, Woodland Fern, Leafy Bush, Ground Ivy Trail, Pebble Scatter, Fae Lantern
+**Backgrounds (28)** — The 7 base Enchanted, Moonlit and Autumn vistas, plus Fairy Court Glade,
+Norse Worldtree Fjord, Chinese-Inspired Mist Mountains, Japanese Moon Garden, Celestial Observatory
+Garden, Moonlit Waterside and Lotus Sanctuary Lake in each palette. The waterside river shimmers automatically on placement.
+**Middle-ground (45)** — The 15 base trees, structures, rocks and waterfalls, plus a Fae Court
+Willow, Norse rune stones, Chinese-inspired pavilion, Japanese torii gate, Celestial Astrolabe
+Arch, Lantern Bridge and a contemporary timber meditation pavilion in each palette. A Chinese-inspired
+moon gate, Japanese-inspired stone lantern and Norse-inspired dragon boat are separately placeable
+decorations in each palette. The lantern glows and the boat floats automatically; their motion can be edited.
+The boat's lower hull is cut along a gently wavy, transparent waterline, so place it over water for a submerged appearance.
+**Foreground (113)** — The 20 base plants, grasses, ground covers and room overlays, plus Fae Lantern
 Mushrooms, Frost-Kissed Juniper, Peach Blossom Garden Cluster, Moon Garden Moss and Sakura,
-Moonlit Grass, Night Fern, Shadow Bush, Autumn Grass, Bracken Fern, Copper Bush, Fallen Ivy Trail,
-Autumn Pebble Scatter, and the three Lounge Window Views (enchanted, moonlit, harvest)
-**Atmosphere (27 effects)** — procedural, not assets; see below.
+Starflower Cluster and River Reeds in Enchanted, Moonlit and Autumn palettes. Seven detailed botanical
+close-up plates — Woodland Foxgloves, Wild Roses, Woodland Anemones, Scarlet Wild Poppies, Rose Peonies
+Golden Irises and Lotus Blossoms — also come in each palette; they retain their source dimensions, use higher-quality
+WebP encoding and support stem bending. Each palette also has two additional windowed rooms with
+flickering hearths and steaming cups, plus a separate stone fireplace and coffee cup. A modern
+penthouse and futuristic sky lounge offer high ceilings and large transparent windows, with a separate
+modular sectional, futuristic chair and animated modern fireplace. Two present-day rooms have
+varnished oak beams, wooden doors, tiled floors and large windows; the great room includes an
+animated fireplace. An asymmetrical brick-and-timber room has a sloping roof and two transparent
+windows on adjacent walls. A separate oak door, lounge chair, coffee table, bookshelf, floor lamp and potted fig are also available. Find them in the foreground
+library's **Interiors** category; loose furniture and props can be moved and resized independently.
+**Atmosphere (52 effects)** — procedural, not assets; see below.
 
 The brief's starter targets were 5 backgrounds / 8 middle / 8 foreground / 10 effects. **All four
-targets are met or exceeded** (11 / 19 / 24 / 27). `npm run render-check` composes and renders one
+targets are met or exceeded** (28 / 45 / 113 / 52). `npm run render-check` composes and renders one
 world per background plate to `.render-check/worlds.png` so the variety is verifiable at a glance.
 
 ## Atmospheric effects
 
-Layer 4 is procedural and never style-gated. 27 effects in 6 families:
+Layer 4 is procedural and never style-gated. 52 effects in 7 families:
 
 - **Magical:** fairy-dust, sparkles, glowing-orbs, light-beams, energy-rings
 - **Symbols:** magic-circle, mandala, floating-runes, glowing-symbols, mythic-emblem
@@ -79,6 +88,18 @@ Layer 4 is procedural and never style-gated. 27 effects in 6 families:
 - **Fantasy:** butterflies, drifting-petals, feathers, floating-lanterns
 - **Natural:** fireflies, falling-leaves, bubbles, wind-currents
 - **Weather:** mist, snow, rain, rising-mist
+- **Spiritual & Mystical Overlays:** 25 independently placeable vector ornaments across Sacred Geometry,
+  Meditation Symbols, Mandalas, Chakra & Energy, Celestial Symbols, Ancient Mystical Symbols, Glowing
+  Geometric Patterns and Inspirational Elements. Choose the category in Layer 4 and use its collection
+  filter to browse. The seven chakra designs and the yantra, Om and zodiac motifs are stylized
+  interpretations, not authoritative representations.
+
+These ornaments use Canvas paths rather than large image files; they render transparently and work in
+any style. Appearance presets simulate gold, silver, white, energy, glass and holographic finishes,
+with a custom colour option. Each has independent position, size, rotation, opacity, cycle length,
+rotation direction, phase, sway, tilt, simulated depth, glow, fade, particles and optional trails.
+Tilt/depth and materials are 2D approximations, not physical 3D. When a start or stop is set, the
+separate start/stop fade softens the edge. Timing windows prevent master-cycle video tiling.
 
 Eight theme presets include Norse, Greek, Chinese-inspired fantasy, Japanese moonlit garden, Gothic,
 fairy tale, meditation/celestial, and Mythic Zodiac. They are **artistic interpretations, not claims
@@ -119,20 +140,20 @@ python3 -m venv .venv
 
 `tools/prepare_assets.py` performs, in order:
 
-1. **Chroma-key un-mixing.** Plates are shot on a pure magenta `#FF00FF` backdrop. Rather than a
-   tolerance key (which leaves a coloured fringe), alpha is recovered from the key channel and the
-   foreground colour is *un-composited*: `obj = (observed − key·(1−a)) / a`. This yields clean edges
-   with zero magenta residue — verified across all assets by `npm run render-check`.
+1. **Chroma-key un-mixing.** Object plates use a magenta `#FF00FF` or blue `#0000FF` studio backdrop;
+   blue preserves the pink and red petals of the new flowers. Alpha is estimated from key dominance
+   and the foreground colour is *un-composited*: `obj = (observed − key·(1−a)) / a`.
+   `npm run render-check` scans each object for opaque pixels dominated by its key colour.
 2. **Despill and alpha refinement.**
 3. **Autocrop** to the content bounding box, recording the ground-contact point.
 4. **Palette extraction** for style matching and grading.
 5. **Sibling grades** — a night grade builds `moonlit`; a foliage-aware autumn grade builds `autumn`.
 6. **Procedural plants** — green-biased foliage chips are extracted from the painted plates and
    assembled into ferns, bushes, ivy and pebble scatter with a shared ground line.
-7. **Encode** to WebP (quality 90, method 6, exact) plus 256 px thumbnails, and write
+7. **Encode** to WebP (quality 90, or 95 for close-up botanical plates; method 6, exact) plus 256 px thumbnails, and write
    `public/library/manifest.json` (`imago.asset-library/1`).
 
-Output: 54 assets, ~9.6 MB of main WebP (about 10.4 MB including thumbnails).
+Output: 186 assets; file sizes depend on the WebP encoder used.
 
 ## Adding a style
 

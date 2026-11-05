@@ -223,6 +223,50 @@ describe('application shell', () => {
     app.dispose();
   }, 60_000);
 
+  it('browses, selects and edits the spiritual overlay collection on Layer 4', async () => {
+    const app = await mountApp();
+    click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
+    click(document.querySelector('[data-cat="spiritual"]'));
+    const filter = document.querySelector('[aria-label="Spiritual overlay subcategory"]') as HTMLSelectElement;
+    expect(filter.options.length).toBe(9);
+    filter.value = 'Sacred Geometry';
+    filter.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(document.querySelectorAll('.effect-card').length).toBe(3);
+    click(document.querySelector('[data-effect="spiritual-flower-of-life"]'));
+    const node = app.store.primary!;
+    expect(node.effect?.effectId).toBe('spiritual-flower-of-life');
+    expect(node.width).toBe(node.height);
+    expect(app.stage.hitTest(node.x, node.y)?.id).toBe(node.id);
+    // The same card also places an independent square ornament by drag/drop.
+    const data = new Map<string, string>();
+    const transfer = { effectAllowed: '', dropEffect: '', setData: (key: string, value: string) => data.set(key, value),
+      getData: (key: string) => data.get(key) ?? '' };
+    const drag = new Event('dragstart', { bubbles: true });
+    Object.defineProperty(drag, 'dataTransfer', { value: transfer });
+    document.querySelector('[data-effect="spiritual-flower-of-life"]')!.dispatchEvent(drag);
+    const drop = new MouseEvent('drop', { bubbles: true, clientX: 400, clientY: 200 });
+    Object.defineProperty(drop, 'dataTransfer', { value: transfer });
+    document.querySelector('.stage')!.dispatchEvent(drop);
+    const dropped = app.store.primary!;
+    expect(dropped.id).not.toBe(node.id);
+    expect(dropped.effect?.effectId).toBe(node.effect?.effectId);
+    expect(dropped.width).toBe(dropped.height);
+    app.store.removeSelected();
+    app.store.select(node.id);
+    openSection('animate');
+    const labels = Array.from(document.querySelectorAll('[data-body="animate"] .field-label')).map((n) => n.textContent ?? '');
+    for (const label of ['Appearance', 'Rotation direction', 'Starting phase', 'Glow intensity', 'Cycle length', 'Start / stop fade']) {
+      expect(labels.some((l) => l.includes(label)), label).toBe(true);
+    }
+    menuClick('edit', 'Duplicate');
+    expect(app.store.scene.nodes.filter((n) => n.effect?.effectId === 'spiritual-flower-of-life')).toHaveLength(2);
+    press('Delete');
+    expect(app.store.scene.nodes.filter((n) => n.effect?.effectId === 'spiritual-flower-of-life')).toHaveLength(1);
+    click(document.querySelector('.layer-tab[data-layer="middle"]'));
+    expect(app.stage.hitTest(node.x, node.y)?.id).not.toBe(node.id);
+    app.dispose();
+  }, 60_000);
+
   it('solo preview isolates one effect, then one layer, then everything', async () => {
     const app = await mountApp();
     const fx = app.store.scene.nodes.filter((n) => n.kind === 'effect');

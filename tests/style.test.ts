@@ -212,13 +212,43 @@ describe('the published library', () => {
     }
   });
 
-  it('keeps landmark sets paired with their fairy, Norse, Chinese and Japanese backdrops', () => {
+  it('keeps detailed close-up flower varieties intact when switching palettes', () => {
+    const lib = shipped();
+    const scene = createScene('enchanted');
+    const ids = ['woodland-foxgloves', 'wild-roses', 'woodland-anemones',
+      'wild-poppies', 'rose-peonies', 'golden-irises', 'lotus-flowers'];
+    for (const id of ids) {
+      const meta = lib.get(`enchanted.foreground.${id}`)!;
+      expect(meta.origin).toBe('painted');
+      expect(meta.width).toBeGreaterThan(600);
+      expect(meta.height).toBeGreaterThan(500);
+      expect(meta.animations).toContain('stem-bend');
+      const node = createAssetNode(meta, scene);
+      node.animation!.enabled = true;
+      scene.nodes.push(node);
+    }
+    for (const style of ['moonlit', 'autumn', 'enchanted']) {
+      switchStyle(scene, lib, style);
+      expect(findStyleClashes(scene, lib)).toEqual([]);
+      for (const id of ids) {
+        const node = scene.nodes.find((n) => n.assetId === `${style}.foreground.${id}`);
+        expect(node, `${style} ${id}`).toBeDefined();
+        expect(node!.animation?.enabled).toBe(true);
+        expect(node!.animation?.type).toBe('stem-bend');
+      }
+    }
+  });
+
+  it('keeps landmark sets paired with their story backdrops across palettes', () => {
     const lib = shipped();
     const stories = [
       ['enchanted.background.fairy-court', 'fairy', 'enchanted.middle.fairy-tree', 'enchanted.foreground.fae-mushrooms'],
       ['enchanted.background.norse-worldtree', 'norse', 'enchanted.middle.norse-rune-stones', 'enchanted.foreground.norse-frost-pine'],
       ['enchanted.background.chinese-mist-mountains', 'chinese', 'enchanted.middle.chinese-pavilion', 'enchanted.foreground.chinese-peach-blossoms'],
       ['enchanted.background.japanese-moon-garden', 'japanese', 'enchanted.middle.japanese-torii', 'enchanted.foreground.japanese-moon-moss'],
+      ['enchanted.background.celestial-observatory', 'observatory', 'enchanted.middle.celestial-arch', 'enchanted.foreground.starflowers'],
+      ['enchanted.background.mythic-waterside', 'waterside', 'enchanted.middle.lantern-bridge', 'enchanted.foreground.river-reeds'],
+      ['enchanted.background.lotus-sanctuary', 'lotus-sanctuary', 'enchanted.middle.lotus-pavilion', 'enchanted.foreground.lotus-flowers'],
     ] as const;
     for (const [backgroundId, story, expectedId, expectedForegroundId] of stories) {
       const scene = createScene('enchanted');
@@ -230,6 +260,36 @@ describe('the published library', () => {
       expect(scene.nodes.some((node) => node.assetId === expectedId), `${story} landmark missing`).toBe(true);
       expect(scene.nodes.some((node) => node.assetId === expectedForegroundId), `${story} foreground accent missing`).toBe(true);
       expect(findStyleClashes(scene, lib)).toEqual([]);
+      if (story === 'waterside' || story === 'lotus-sanctuary') {
+        expect(bgNode.animation?.type).toBe('water-shimmer');
+        expect(bgNode.animation?.enabled).toBe(true);
+        expect(scene.nodes.some((node) => lib.get(node.assetId)?.rig?.type === 'fall')).toBe(false);
+        const landmark = scene.nodes.find((node) => node.assetId === expectedId)!;
+        if (story === 'waterside') expect(landmark.x / scene.canvas.width).toBeCloseTo(0.5, 1);
+        else {
+          expect(landmark.x / scene.canvas.width < 0.25 || landmark.x / scene.canvas.width > 0.75).toBe(true);
+          expect(scene.nodes.filter((node) => node.layer === 'foreground').every((node) =>
+            landmark.x < scene.canvas.width / 2 ? node.x > scene.canvas.width / 2 : node.x < scene.canvas.width / 2)).toBe(true);
+        }
+        expect(scene.nodes.filter((node) => node.layer === 'foreground').every((node) =>
+          node.x / scene.canvas.width < 0.25 || node.x / scene.canvas.width > 0.75)).toBe(true);
+      }
+      for (const targetStyle of ['moonlit', 'autumn', 'enchanted']) {
+        switchStyle(scene, lib, targetStyle);
+        expect(findStyleClashes(scene, lib), `${story} clashes in ${targetStyle}`).toEqual([]);
+        if (story === 'waterside' || story === 'lotus-sanctuary') {
+          const id = story === 'waterside' ? 'mythic-waterside' : 'lotus-sanctuary';
+          const fresh = createAssetNode(lib.get(`${targetStyle}.background.${id}`)!, scene);
+          expect(fresh.animation?.type).toBe('water-shimmer');
+          expect(fresh.animation?.enabled).toBe(true);
+          expect(bgNode.animation?.enabled).toBe(true);
+        }
+        for (const originalId of [backgroundId, expectedId, expectedForegroundId]) {
+          const counterpartId = originalId.replace('enchanted.', `${targetStyle}.`);
+          expect(scene.nodes.some((node) => node.assetId === counterpartId),
+            `${story} counterpart ${counterpartId} missing`).toBe(true);
+        }
+      }
     }
   });
 

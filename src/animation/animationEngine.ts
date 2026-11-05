@@ -67,6 +67,15 @@ export interface FallSpec {
   mist: number;        // 0..1.2 big rising & drifting mist plumes
 }
 
+export interface LocalAtmosphereSpec {
+  /** Fireplace: x, y, width, height. Steam: origin x/y, width and rise height. */
+  region: [number, number, number, number];
+  phase: number;
+  amplitude: number;
+  turbulence: number;
+  seed: number;
+}
+
 export interface NodeRenderState {
   offsetX: number;
   offsetY: number;
@@ -89,6 +98,8 @@ export interface NodeRenderState {
   };
   scroll: RegionScroll | null;
   fall: FallSpec | null;
+  flame: LocalAtmosphereSpec | null;
+  steam: LocalAtmosphereSpec | null;
   animated: boolean;
 }
 
@@ -96,7 +107,7 @@ export type Quality = 'preview' | 'export';
 
 const IDENTITY: NodeRenderState = {
   offsetX: 0, offsetY: 0, rotation: 0, scale: 1, alpha: 1, glow: 0,
-  warp: null, scroll: null, fall: null, animated: false,
+  warp: null, scroll: null, fall: null, flame: null, steam: null, animated: false,
 };
 
 export class AnimationEngine {
@@ -292,6 +303,19 @@ export class AnimationEngine {
 
       case 'lantern-glow':
         state.glow = (0.55 + 0.45 * Math.sin(TAU * u)) * (0.35 + amp * 0.65);
+        break;
+
+      case 'hearth-fire':
+        state.flame = { region: meta?.rig?.region ?? [0.35, 0.45, 0.3, 0.3],
+          phase: u, amplitude: amp, turbulence: turb, seed };
+        if (meta?.rig?.steamRegion) {
+          state.steam = { region: meta.rig.steamRegion, phase: u, amplitude: amp, turbulence: turb, seed };
+        }
+        break;
+
+      case 'coffee-steam':
+        state.steam = { region: meta?.rig?.region ?? [0.5, 0.12, 0.3, 0.65],
+          phase: u, amplitude: amp, turbulence: turb, seed };
         break;
 
       case 'cloud-drift': {
