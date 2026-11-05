@@ -190,8 +190,8 @@ rather than half-configured.
 
 | To add | Touch |
 | --- | --- |
-| A new artistic style | `assets-src/<style>/`, `tools/prepare_assets.py`, manifest `styles[]` |
-| A new asset | Drop a plate in `assets-src/`, re-run `npm run assets` |
+| A new artistic style | `assets-src/plates/<layer>/`, `tools/prepare_assets.py`, manifest `styles[]` |
+| A new asset | Drop a plate in `assets-src/plates/<layer>/`, re-run `npm run assets` |
 | A new animation technique | `AnimationType` in `types.ts`, a case in `animationEngine.evaluate` |
 | A new atmospheric effect | One entry in `EFFECTS` with a param schema and a pure `draw` |
 | A new theme preset | One entry in `THEME_PRESETS` |

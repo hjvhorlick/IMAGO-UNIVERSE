@@ -37,6 +37,7 @@ function pixels(arg: { cv: { width: number; height: number }; ctx: Ctx }) {
 
 describe('painted foreground artwork', () => {
   it('preserves the red, pink and golden petals in the blue-keyed close-up flowers', async () => {
+    const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/library/manifest.json'), 'utf8'));
     const cases = [
       { name: 'wild-poppies', match: (r: number, g: number, b: number) => r > 120 && r > g * 1.5 && r > b * 1.5 },
       { name: 'rose-peonies', match: (r: number, g: number, b: number) => r > 150 && r > g * 1.2 && b > g * 1.05 },
@@ -44,7 +45,10 @@ describe('painted foreground artwork', () => {
       { name: 'golden-irises', match: (r: number, g: number, b: number) => r > 150 && g > 90 && b < g * 0.75 },
     ];
     for (const { name, match } of cases) {
-      const img = await loadImage(path.join(ROOT, 'public/library/enchanted', `${name}.webp`));
+      const meta = manifest.assets.find((a: { style: string; file: string }) =>
+        a.style === 'enchanted' && a.file.endsWith(`/${name}.webp`));
+      expect(meta, `enchanted/${name} is in the manifest`).toBeTruthy();
+      const img = await loadImage(path.join(ROOT, 'public/library', meta.file));
       const { cv, ctx } = ctx2d(img.width, img.height);
       ctx.drawImage(img, 0, 0);
       const data = pixels({ cv, ctx });
@@ -61,6 +65,7 @@ describe('painted foreground artwork', () => {
   });
 
   it('keeps the keyed objects transparent around their full boundary in every palette', async () => {
+    const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/library/manifest.json'), 'utf8'));
     for (const style of ['enchanted', 'moonlit', 'autumn']) {
       for (const name of ['celestial-arch', 'starflowers', 'lantern-bridge', 'river-reeds',
         'woodland-foxgloves', 'wild-roses', 'woodland-anemones', 'wild-poppies', 'rose-peonies', 'golden-irises',
@@ -68,7 +73,11 @@ describe('painted foreground artwork', () => {
         'contemporary-oak-door', 'contemporary-oak-chair', 'contemporary-oak-table',
         'oak-bookshelf', 'indoor-fig', 'oak-floor-lamp', 'lotus-flowers', 'lotus-pavilion',
         'chinese-moon-gate', 'japanese-stone-lantern', 'norse-dragon-boat']) {
-        const img = await loadImage(path.join(ROOT, 'public/library', style, `${name}.webp`));
+        // Look the file up through the manifest rather than hard-coding the folder layout.
+        const meta = manifest.assets.find((a: { style: string; file: string }) =>
+          a.style === style && a.file.endsWith(`/${name}.webp`));
+        expect(meta, `${style}/${name} is in the manifest`).toBeTruthy();
+        const img = await loadImage(path.join(ROOT, 'public/library', meta.file));
         const { cv, ctx } = ctx2d(img.width, img.height);
         ctx.drawImage(img, 0, 0);
         const data = pixels({ cv, ctx });

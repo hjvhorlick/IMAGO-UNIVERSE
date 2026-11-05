@@ -5,7 +5,7 @@
 The application contains **no generative AI**. Nothing is generated at runtime; there is no model,
 no API key, no token cost. The runtime library is a fixed set of WebP files plus a JSON manifest.
 
-The **source artwork plates** in `assets-src/` were produced during development with an image
+The **source artwork plates** in `assets-src/plates/` were produced during development with an image
 generator, then processed by a conventional Python pipeline. This is disclosed because the master
 brief forbids generative AI *in the product*, and it matters that the distinction is clear:
 
@@ -19,7 +19,7 @@ than buried in a README.
 
 | `origin` | Count | Meaning |
 | --- | --- | --- |
-| `painted` | 61 | A dedicated source plate exists in `assets-src/` |
+| `painted` | 61 | A dedicated source plate exists in `assets-src/plates/` |
 | `graded` | 117 | Colour-graded from a painted plate to build the sibling styles |
 | `composed` | 5 | Built procedurally by the pipeline from extracted artwork chips |
 | `derived` | 3 | Geometric/colour variant of another asset (mirror, narrow, golden) |
@@ -151,14 +151,27 @@ python3 -m venv .venv
 6. **Procedural plants** — green-biased foliage chips are extracted from the painted plates and
    assembled into ferns, bushes, ivy and pebble scatter with a shared ground line.
 7. **Encode** to WebP (quality 90, or 95 for close-up botanical plates; method 6, exact) plus 256 px thumbnails, and write
-   `public/library/manifest.json` (`imago.asset-library/1`).
+   `public/library/manifest.json` (`imago.asset-library/1`) and `docs/ASSET_CATALOG.md`.
+
+### Where to find things
+
+| Looking for | Location |
+| --- | --- |
+| A source plate | `assets-src/plates/<layer>/` (`bg-` → background, `mid-` → middle, `fg-` → foreground) |
+| A runtime image | `public/library/<style>/<layer>/<name>.webp` |
+| A thumbnail | `public/library/<style>/<layer>/thumbs/<name>.webp` |
+| Everything, visually | `docs/ASSET_CATALOG.md` (generated; thumbnails grouped by style and layer) |
+| Metadata for any asset | `public/library/manifest.json` (`id`, `file`, `thumb`, `origin`, …) |
+
+Asset ids are `<style>.<layer>.<name>`, e.g. `enchanted.middle.ancient-oak`. Ids do not change when
+files move, so saved projects keep working.
 
 Output: 186 assets; file sizes depend on the WebP encoder used.
 
 ## Adding a style
 
-1. Create `assets-src/style-<name>/` and add plates on a magenta backdrop. Name them
-   `bg-*`, `mid-*`, `fg-*`.
+1. Add plates on a magenta backdrop to the matching layer folder under `assets-src/plates/`
+   (`background/`, `middle/`, `foreground/`). Name them `bg-*`, `mid-*`, `fg-*`.
 2. Add the style entry and any per-asset metadata to the pipeline's style table.
 3. Run `npm run assets`.
 4. The style appears in the New World and Change Style dialogs only once its five reference pieces

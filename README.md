@@ -28,7 +28,7 @@ npm run dev          # http://localhost:5173
 | `npm test` | 141 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
-| `npm run assets` | Rebuild the runtime art library from `assets-src/` (needs Pillow + numpy) |
+| `npm run assets` | Rebuild the runtime art library and `docs/ASSET_CATALOG.md` from `assets-src/` (needs Pillow + numpy, ~11 min) |
 
 The app opens on a fully composed demo world so there is something real to look at immediately.
 
@@ -177,8 +177,9 @@ src/
   export/      export manager, capability detection, presets
   ui/          application shell, stage, panels, dialogs
   styles/      design system
-assets-src/    source artwork plates (pipeline input)
-public/library/  runtime WebP assets + thumbnails + manifest.json
+assets-src/plates/<layer>/  source artwork plates (pipeline input), one folder per layer
+public/library/<style>/<layer>/  runtime WebP assets + thumbs/ + manifest.json
+docs/ASSET_CATALOG.md  every asset with a thumbnail, grouped by style and layer
 tools/         asset preparation pipeline, headless render verification
 tests/         141 tests across 11 files
 docs/          architecture, assets, limitations
