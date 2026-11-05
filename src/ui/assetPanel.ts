@@ -15,6 +15,7 @@ import type { LayerId } from '../core/types';
 import { LAYER_HINT, LAYER_LABEL } from '../core/types';
 import { EFFECTS, FAMILY_LABEL, THEME_PRESETS } from '../animation/effects';
 import type { EffectDef } from '../animation/effects';
+import { SPIRITUAL_SUBCATEGORIES } from '../animation/spiritualOverlays';
 import { escapeHtml, icon, on, qsa, qs } from './dom';
 
 export interface AssetPanelCallbacks {
@@ -27,6 +28,7 @@ export class AssetPanel {
   layer: LayerId = 'background';
   query = '';
   category = 'all';
+  subcategory = 'all';
   favouritesOnly = false;
   active = false;
   private previews = new Map<string, HTMLCanvasElement>();
@@ -45,6 +47,7 @@ export class AssetPanel {
     if (this.layer === layer) return;
     this.layer = layer;
     this.category = 'all';
+    this.subcategory = 'all';
     this.query = '';
     if (this.active) this.render();
   }
@@ -74,6 +77,7 @@ export class AssetPanel {
       </div>
       <div class="rail-hint">${escapeHtml(LAYER_HINT[this.layer])} <span class="gate-note"></span></div>
       <div class="chips" id="category-chips"></div>
+      <div id="spiritual-subcategories"></div>
       <div class="asset-scroll"><div class="asset-grid big" id="asset-grid"></div></div>
       <div class="rail-foot">Drag onto the canvas to place. Drag a corner handle to scale in proportion.</div>
     `;
@@ -101,9 +105,20 @@ export class AssetPanel {
       .join('');
     qsa<HTMLElement>('.chip', host).forEach((b) => on(b, 'click', () => {
       this.category = b.dataset.cat!;
+      this.subcategory = 'all';
       this.renderChips();
       this.renderGrid();
     }));
+    const subs = qs<HTMLElement>('#spiritual-subcategories', this.root);
+    if (subs) {
+      subs.innerHTML = this.layer === 'atmosphere' && this.category === 'spiritual'
+        ? `<label class="spiritual-filter">Collection <select aria-label="Spiritual overlay subcategory">
+            <option value="all">All spiritual overlays</option>
+            ${SPIRITUAL_SUBCATEGORIES.map((name) => `<option value="${escapeHtml(name)}"${this.subcategory === name ? ' selected' : ''}>${escapeHtml(name)}</option>`).join('')}
+          </select></label>` : '';
+      const select = qs<HTMLSelectElement>('select', subs);
+      on(select, 'change', () => { this.subcategory = select!.value; this.renderGrid(); });
+    }
   }
 
   private renderGrid() {
@@ -116,7 +131,8 @@ export class AssetPanel {
       const q = this.query.toLowerCase();
       const list = EFFECTS.filter((e) =>
         (this.category === 'all' || e.family === this.category)
-        && (!q || e.name.toLowerCase().includes(q) || e.description.toLowerCase().includes(q) || e.family.includes(q)));
+        && (this.category !== 'spiritual' || this.subcategory === 'all' || e.subcategory === this.subcategory)
+        && (!q || e.name.toLowerCase().includes(q) || e.description.toLowerCase().includes(q) || e.family.includes(q) || e.subcategory?.toLowerCase().includes(q)));
       if (!list.length) {
         grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><strong>No effects match</strong>Try a different search or category.</div>`;
         return;
@@ -176,7 +192,7 @@ export class AssetPanel {
     card.innerHTML = `
       <div class="effect-preview"><canvas width="220" height="140"></canvas></div>
       <div class="asset-label">${escapeHtml(def.name)}</div>
-      <div class="effect-family">${escapeHtml(FAMILY_LABEL[def.family])} - ${def.defaultLoop}s</div>`;
+      <div class="effect-family">${escapeHtml(def.subcategory ?? FAMILY_LABEL[def.family])} - ${def.defaultLoop}s</div>`;
     const canvas = qs<HTMLCanvasElement>('canvas', card)!;
     this.paintEffectPreview(canvas, def);
     this.previews.set(def.id, canvas);

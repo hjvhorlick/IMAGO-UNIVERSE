@@ -13,7 +13,7 @@ import type { AssetLibrary } from '../assets/library';
 import type { Scene, SceneNode } from '../core/types';
 import { clamp, frac, rng, rad, rgba, TAU } from '../core/util';
 import { animationEngine } from '../animation/animationEngine';
-import type { NodeRenderState, Quality } from '../animation/animationEngine';
+import type { LocalAtmosphereSpec, NodeRenderState, Quality } from '../animation/animationEngine';
 import { isActive, LoopManager } from '../animation/loopManager';
 import { EFFECT_MAP } from '../animation/effects';
 import type { EffectDrawContext } from '../animation/effectPrimitives';
@@ -176,6 +176,8 @@ export class Compositor {
     if (state.fall) {
       this.drawFall(ctx, source, rect, dest, state, opts, this.loops.effectiveLoop(scene, node), node.assetId ?? node.id);
     }
+    if (state.flame) this.drawHearthFire(ctx, source, rect, dest, crop, state.flame, opts.scale);
+    if (state.steam) this.drawCoffeeSteam(ctx, dest, crop, state.steam, opts.scale);
     if (state.glow > 0.01) {
       ctx.globalCompositeOperation = 'lighter';
       const g = ctx.createRadialGradient(dw / 2, dh * 0.42, 0, dw / 2, dh * 0.42, Math.max(dw, dh) * 0.42);
@@ -187,6 +189,98 @@ export class Compositor {
 
     ctx.restore();
     if (scratch) releaseScratch(scratch);
+  }
+
+  /** Animate only the painted flames, keeping the mantel and room still. */
+  private drawHearthFire(
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    source: CanvasImageSource,
+    rect: { sx: number; sy: number; sw: number; sh: number },
+    dest: { dx: number; dy: number; dw: number; dh: number },
+    crop: { x: number; y: number; w: number; h: number },
+    fire: LocalAtmosphereSpec, scale: number,
+  ) {
+    const [x, y, w, h] = fire.region;
+    const x0 = clamp((x - crop.x) / crop.w, 0, 1);
+    const y0 = clamp((y - crop.y) / crop.h, 0, 1);
+    const x1 = clamp((x + w - crop.x) / crop.w, 0, 1);
+    const y1 = clamp((y + h - crop.y) / crop.h, 0, 1);
+    if (x1 <= x0 || y1 <= y0 || fire.amplitude <= 0) return;
+    const dw = (x1 - x0) * dest.dw, dh = (y1 - y0) * dest.dh;
+    if (dw * scale < 1 || dh * scale < 1) return;
+    const scratch = acquireScratch(Math.max(24, Math.min(600, dw * scale)), Math.max(24, Math.min(600, dh * scale)));
+    const c = scratch.ctx, W = scratch.w, H = scratch.h;
+    const sx = rect.sx + rect.sw * x0, sy = rect.sy + rect.sh * y0;
+    const sw = rect.sw * (x1 - x0), sh = rect.sh * (y1 - y0);
+    // Sample the detailed painted flame in narrow bands, with a periodic
+    // travelling sway. Feather the overlay so the stonework never jumps.
+    const bands = 24;
+    for (let i = 0; i < bands; i++) {
+      const v = i / bands, next = (i + 1) / bands;
+      const reach = Math.sin(Math.PI * v) * W * 0.045 * fire.amplitude;
+      const wave = Math.sin(TAU * (fire.phase * 2 + v * 1.5))
+        + 0.45 * fire.turbulence * Math.sin(TAU * (fire.phase * 3 - v * 2));
+      c.drawImage(source, sx, sy + sh * v, sw, sh * (next - v),
+        wave * reach, H * v, W, H * (next - v) + 1);
+    }
+    c.globalCompositeOperation = 'destination-in';
+    const mask = c.createRadialGradient(W * 0.5, H * 0.55, 0, W * 0.5, H * 0.55, Math.max(W, H) * 0.7);
+    mask.addColorStop(0, 'rgba(255,255,255,0.95)');
+    mask.addColorStop(0.55, 'rgba(255,255,255,0.8)');
+    mask.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = mask;
+    c.fillRect(0, 0, W, H);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(dest.dw * x0, dest.dh * y0, dw, dh);
+    ctx.clip();
+    ctx.drawImage(scratch.canvas, 0, 0, W, H, dest.dw * x0, dest.dh * y0, dw, dh);
+    // A restrained local glow adds firelight without illuminating the window.
+    ctx.globalCompositeOperation = 'lighter';
+    const flicker = 0.5 + 0.25 * Math.sin(TAU * fire.phase * 2) + 0.25 * Math.sin(TAU * fire.phase * 3);
+    const glow = ctx.createRadialGradient(dest.dw * (x0 + x1) / 2, dest.dh * (y0 + y1) / 2, 0,
+      dest.dw * (x0 + x1) / 2, dest.dh * (y0 + y1) / 2, Math.max(dw, dh) * 0.48);
+    glow.addColorStop(0, `rgba(255,100,12,${0.10 * fire.amplitude * (0.4 + flicker)})`);
+    glow.addColorStop(1, 'rgba(255,100,12,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(dest.dw * x0, dest.dh * y0, dw, dh);
+    ctx.restore();
+    releaseScratch(scratch);
+  }
+
+  /** Three soft, independently rising wisps start at the cup's coffee surface. */
+  private drawCoffeeSteam(
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    dest: { dx: number; dy: number; dw: number; dh: number },
+    crop: { x: number; y: number; w: number; h: number },
+    steam: LocalAtmosphereSpec, scale: number,
+  ) {
+    const [x, y, width, height] = steam.region;
+    if (x < crop.x || x > crop.x + crop.w || y < crop.y || y > crop.y + crop.h) return;
+    const cx = (x - crop.x) / crop.w * dest.dw;
+    const cy = (y - crop.y) / crop.h * dest.dh;
+    const spread = width / crop.w * dest.dw, rise = height / crop.h * dest.dh;
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.shadowColor = 'rgba(231,241,239,0.55)';
+    ctx.shadowBlur = Math.max(1, spread * 0.14 * scale);
+    for (let i = 0; i < 4; i++) {
+      const p = frac(steam.phase + i / 4);
+      const life = Math.sin(Math.PI * p) ** 1.5 * steam.amplitude;
+      const drift = Math.sin(TAU * (steam.phase + i * 0.23)) * spread * (0.08 + steam.turbulence * 0.1);
+      const bx = cx + (i - 1.5) * spread * 0.14 + drift;
+      const by = cy - p * rise * 0.62;
+      const len = rise * (0.24 + p * 0.18);
+      ctx.strokeStyle = `rgba(230,240,238,${0.34 * life})`;
+      ctx.lineWidth = Math.max(0.8, spread * (0.05 + p * 0.03));
+      ctx.beginPath();
+      ctx.moveTo(bx, by);
+      ctx.bezierCurveTo(bx - spread * 0.18, by - len * 0.35,
+        bx + spread * 0.21, by - len * 0.65, bx + drift * 1.3, by - len);
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   /**
@@ -856,7 +950,13 @@ export class Compositor {
     if (!isActive(node, opts.time, opts.onlyNode === node.id)) return;
     const u = this.loops.phaseAt(scene, node, opts.time);
     ctx.save();
-    ctx.globalAlpha = clamp(node.opacity, 0, 1);
+    let timingAlpha = 1;
+    if (def.family === 'spiritual') {
+      const fade = typeof inst.params.windowFade === 'number' ? Math.max(0, inst.params.windowFade) : 1;
+      if (fade > 0 && inst.start > 0) timingAlpha *= clamp((opts.time - inst.start) / fade, 0, 1);
+      if (fade > 0 && inst.end > 0) timingAlpha *= clamp((inst.end - opts.time) / fade, 0, 1);
+    }
+    ctx.globalAlpha = clamp(node.opacity, 0, 1) * timingAlpha;
     ctx.globalCompositeOperation = (node.blend && node.blend !== 'source-over'
       ? node.blend : def.blend) as GlobalCompositeOperation;
     ctx.translate(node.x, node.y);

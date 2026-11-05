@@ -14,8 +14,9 @@ import {
   num, petalShape, pr, runeGlyph, snowflake, sparkleStar, str, withAlpha,
 } from './effectPrimitives';
 import type { Ctx2D, EffectDrawContext } from './effectPrimitives';
+import { SPIRITUAL_EFFECTS } from './spiritualOverlays';
 
-export type EffectFamily = 'magical' | 'symbols' | 'celestial' | 'fantasy' | 'natural' | 'weather';
+export type EffectFamily = 'magical' | 'symbols' | 'celestial' | 'fantasy' | 'natural' | 'weather' | 'spiritual';
 
 export interface ParamDef {
   key: string;
@@ -32,6 +33,7 @@ export interface EffectDef {
   id: string;
   name: string;
   family: EffectFamily;
+  subcategory?: string;
   description: string;
   defaultLoop: number;
   blend: GlobalCompositeOperation;
@@ -1319,6 +1321,7 @@ export const EFFECTS: EffectDef[] = [
       }
     },
   },
+  ...SPIRITUAL_EFFECTS,
 ];
 
 export const EFFECT_MAP = new Map(EFFECTS.map((e) => [e.id, e]));
@@ -1330,6 +1333,7 @@ export const FAMILY_LABEL: Record<EffectFamily, string> = {
   fantasy: 'Fantasy',
   natural: 'Natural',
   weather: 'Weather',
+  spiritual: 'Spiritual & Mystical Overlays',
 };
 
 export function effectDefaults(id: string): Record<string, number | string | boolean> {

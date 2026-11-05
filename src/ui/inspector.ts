@@ -474,6 +474,8 @@ function techniqueHint(t: AnimationType): string {
     case 'spin': return 'A whole number of turns per cycle, so the boundary is exact.';
     case 'pulse': return 'Brightness and scale breathing.';
     case 'lantern-glow': return 'Warm additive bloom that swells and fades.';
+    case 'hearth-fire': return 'Flickers the painted flames inside the hearth without moving the surrounding room.';
+    case 'coffee-steam': return 'Soft wisps rise from the coffee and fade away.';
     case 'cloud-drift': return 'The sky band scrolls horizontally as a tiling strip.';
     case 'water-shimmer': return 'Gentle wave distortion across the lower part of the plate.';
     case 'parallax': return 'Very slow scale breathing for depth.';
@@ -485,10 +487,12 @@ export function makeEffectNode(effectId: string, scene: { canvas: { width: numbe
   const def = EFFECT_MAP.get(effectId)!;
   const params: Record<string, number | string | boolean> = {};
   for (const p of def.params) params[p.key] = p.default;
+  const ornamentSize = Math.min(scene.canvas.width, scene.canvas.height) * 0.55;
   return {
     id: uid('fx'), kind: 'effect', layer: 'atmosphere', name: def.name,
     x: scene.canvas.width / 2, y: scene.canvas.height / 2,
-    width: scene.canvas.width, height: scene.canvas.height,
+    width: def.family === 'spiritual' ? ornamentSize : scene.canvas.width,
+    height: def.family === 'spiritual' ? ornamentSize : scene.canvas.height,
     rotation: 0, flipX: false, opacity: 1, visible: true, locked: false,
     order, depth: 1,
     crop: { x: 0, y: 0, w: 1, h: 1 },

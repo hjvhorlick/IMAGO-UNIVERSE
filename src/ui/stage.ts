@@ -10,6 +10,7 @@ import type { SceneNode } from '../core/types';
 import { clamp, rad, rotatePoint } from '../core/util';
 import { paintOrder } from '../scene/sceneModel';
 import type { PreviewRenderer } from '../render/previewRenderer';
+import { EFFECT_MAP } from '../animation/effects';
 import { on, qs } from './dom';
 
 type HandleId = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'rot';
@@ -37,6 +38,7 @@ export interface StageCallbacks {
   onDropAsset: (assetId: string, x: number, y: number) => void;
   onDropEffect: (effectId: string, x: number, y: number) => void;
   onDoubleClick: (node: SceneNode | null) => void;
+  canSelectSpiritual: () => boolean;
 }
 
 export class Stage {
@@ -54,6 +56,7 @@ export class Stage {
   private drag: DragState | null = null;
   private spaceDown = false;
   private ro?: ResizeObserver;
+  private windowListeners: (() => void)[] = [];
 
   constructor(
     root: HTMLElement,
@@ -138,8 +141,8 @@ export class Stage {
 
   private bind() {
     on(this.container, 'pointerdown', (e) => this.onPointerDown(e as PointerEvent));
-    on(window, 'pointermove', (e) => this.onPointerMove(e as PointerEvent));
-    on(window, 'pointerup', (e) => this.onPointerUp(e as PointerEvent));
+    this.windowListeners.push(on(window, 'pointermove', (e) => this.onPointerMove(e as PointerEvent)));
+    this.windowListeners.push(on(window, 'pointerup', (e) => this.onPointerUp(e as PointerEvent)));
     on(this.container, 'wheel', (e) => {
       const ev = e as WheelEvent;
       ev.preventDefault();
@@ -216,9 +219,12 @@ export class Stage {
       if (!n.visible || n.locked) continue;
       const p = rotatePoint(x, y, n.x, n.y, -rad(n.rotation));
       if (Math.abs(p.x - n.x) <= n.width / 2 && Math.abs(p.y - n.y) <= n.height / 2) {
-        // Effects cover the whole canvas by default; only select them when the
-        // pointer is not over a concrete object, so they never block editing.
-        if (n.kind === 'effect') continue;
+        // Full-scene effects never intercept object editing. The individually
+        // bounded spiritual ornaments can be selected when Layer 4 is active.
+        if (n.kind === 'effect') {
+          if (this.cb.canSelectSpiritual() && n.effect && EFFECT_MAP.get(n.effect.effectId)?.family === 'spiritual') return n;
+          continue;
+        }
         return n;
       }
     }
@@ -439,5 +445,5 @@ export class Stage {
     ctx.restore();
   }
 
-  dispose() { this.ro?.disconnect(); }
+  dispose() { this.ro?.disconnect(); this.windowListeners.splice(0).forEach((remove) => remove()); }
 }

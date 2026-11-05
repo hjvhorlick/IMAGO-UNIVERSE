@@ -61,6 +61,8 @@ export type AnimationType =
   | 'spin'
   | 'pulse'
   | 'lantern-glow'
+  | 'hearth-fire'
+  | 'coffee-steam'
   | 'cloud-drift'
   | 'water-shimmer'
   | 'parallax';
@@ -192,7 +194,11 @@ export interface AssetRig {
   stiffness?: number;
   gusts?: number;
   region?: [number, number, number, number];
+  /** Optional steam origin and size for a cup painted into a room overlay. */
+  steamRegion?: [number, number, number, number];
   speed?: number;
+  /** Enable the asset's first listed animation when it is placed. */
+  autoplay?: boolean;
 }
 
 export interface AssetMeta {
@@ -293,6 +299,8 @@ export const DEFAULT_LOOP: Record<AnimationType, number> = {
   spin: 12,
   pulse: 6,
   'lantern-glow': 5,
+  'hearth-fire': 4,
+  'coffee-steam': 8,
   'cloud-drift': 24,
   'water-shimmer': 8,
   parallax: 12,
@@ -311,6 +319,8 @@ export const ANIMATION_LABEL: Record<AnimationType, string> = {
   spin: 'Rotation',
   pulse: 'Pulse / breathe',
   'lantern-glow': 'Lantern glow',
+  'hearth-fire': 'Flickering hearth fire',
+  'coffee-steam': 'Rising coffee steam',
   'cloud-drift': 'Cloud drift',
   'water-shimmer': 'Water shimmer',
   parallax: 'Parallax breathing',

@@ -25,7 +25,7 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 109 unit / integration / UI tests (Vitest) |
+| `npm test` | 135 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library from `assets-src/` (needs Pillow + numpy) |
@@ -52,11 +52,19 @@ there are no style-conflict dialogs, because the conflict cannot be created in t
 
 ## What is implemented
 
-**Asset library** — 54 assets across 3 complete styles, with four fairy/Norse/Chinese/Japanese-
-inspired vistas, matching landmarks and foreground accents, plus lounge-window overlays that reveal
-the current composition through the room. Rich metadata includes
+**Asset library** — 186 assets across 3 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
+a celestial observatory, a moonlit waterside and a lotus sanctuary with animated water, a timber
+meditation pavilion and close-up lotus blossoms. Placeable Chinese-inspired moon gate, Japanese-inspired
+stone lantern and Norse-inspired dragon boat add garden and waterside details.
+Detailed close-up flowers add foreground variety. Eight room views reveal the current composition
+through their windows, including present-day timber-beamed rooms as well as modern and futuristic
+high-ceiling spaces, and an asymmetrical brick-and-timber room with windows on adjoining walls.
+Animated fireplaces, a steaming coffee cup and contemporary furniture and doors
+can be placed independently, including an oak bookshelf, potted fig and floor lamp. Assets come in Enchanted,
+Moonlit and Autumn palettes.
+Rich metadata includes
 dimensions, alpha, depth, perspective, ground-contact point, lighting direction, palette,
-animation capabilities, rig, variants). Visual browser with categories, search, theme filters,
+animation capabilities, rig and variants. Visual browser with categories, search, theme filters,
 thumbnails, favourites, preview, import and remove. Imported files are stored in IndexedDB and
 survive reloads.
 
@@ -71,19 +79,23 @@ Two genuinely different crops: *image crop* (which part of the asset is used) an
 overflow* (whether the scene clips at its own bounds). All editing is non-destructive.
 Solo preview auditions a single animation or effect on its own, or one whole layer.
 
-**Animation** — 15 techniques chosen per asset type, evaluated independently of the compositor:
+**Animation** — 16 techniques chosen per asset type, evaluated independently of the compositor:
 canopy sway with a planted trunk and desynchronised branches, grass deformation, stem bending,
-water shimmer and flow, waterfall cascades with splash and rising mist, cloud drift, ripples, flag waves, floating, spinning,
-pulsing, glow and parallax. A tree is never rotated as a whole.
+water shimmer and flow, waterfall cascades with splash and rising mist, flickering hearth fire,
+rising coffee steam, cloud drift, ripples, flag waves, floating, spinning, pulsing, glow and parallax.
+A tree is never rotated as a whole.
 
 **Loop Manager** — a dedicated module that analyses every animated node, snaps cycle lengths to a
 0.5 s grid, computes the master cycle as their least common multiple (capped at 60 s), and reports
 honestly whether the scene returns *exactly* to its initial state. Video duration is completely
 decoupled from cycle length.
 
-**Effects** — 27 atmospheric effects in 6 families, plus 8 theme presets, including Norse, Greek,
-Chinese-inspired fantasy, a Japanese moon garden, fairy tale, and a mythic zodiac. These are artistic
-interpretations, not claims of cultural authenticity. Every effect exposes only relevant controls.
+**Effects** — 52 universal atmospheric effects in 7 families, plus 8 theme presets, including Norse,
+Greek, Chinese-inspired fantasy, a Japanese moon garden, fairy tale, and a mythic zodiac. The new
+**Spiritual & Mystical Overlays** category offers 25 individually placeable vector ornaments across
+eight subcategories, with materials, movement, rotation, glow, particles and timing controls. Select
+Layer 4 to drag or click ornaments; use Properties and Animation to edit each one. Their simulated
+materials and perspective are 2D artistic interpretations, not religiously authoritative diagrams.
 
 **Export** — PNG / JPEG / WebP stills with zero editor UI in the output. MP4 (H.264) and WebM video
 via WebCodecs with a MediaRecorder fallback. 16:9, 9:16, 1:1, 4:3, 21:9 and custom aspect ratios;
@@ -123,7 +135,7 @@ npm run render-check  loop boundary: 0 differing subpixels
                       mid-cycle motion: about 10.9% of pixels
                       all effects exactly periodic
                       no chroma-key residue in any asset
-                      7 composed environments, one per background
+                      28 composed environments, one per background
 ```
 
 `tools/render_check.ts` runs the **real** compositor, animation engine, Loop Manager and effect
@@ -164,6 +176,6 @@ src/
 assets-src/    source artwork plates (pipeline input)
 public/library/  runtime WebP assets + thumbnails + manifest.json
 tools/         asset preparation pipeline, headless render verification
-tests/         103 tests across 8 files
+tests/         135 tests across 11 files
 docs/          architecture, assets, limitations
 ```
