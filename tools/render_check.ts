@@ -171,6 +171,9 @@ async function main() {
     ['chinese-moon-gate', 'chinese-mist-mountains', 0.5, 0.56, 0.63],
     ['japanese-stone-lantern', 'japanese-moon-garden', 0.23, 0.66, 0.58],
     ['norse-dragon-boat', 'mythic-waterside', 0.50, 0.78, 0.24],
+    ['fairy-mushroom-cottage', 'fairy-court', 0.50, 0.61, 0.52],
+    ['japanese-garden-bridge', 'japanese-moon-garden', 0.50, 0.70, 0.30],
+    ['norse-stone-well', 'fairy-court', 0.72, 0.63, 0.38],
   ] as const) {
     const detailScene = createScene('enchanted');
     const bg = lib.get(`enchanted.background.${bgId}`)!;
@@ -190,7 +193,28 @@ async function main() {
     });
     fs.writeFileSync(path.join(OUT, `${id}.png`), cv.toBuffer('image/png'));
   }
-  console.log('rendered three independently placeable cultural details');
+  console.log('rendered six independently placeable garden and cultural details');
+
+  // Review the close-up flowers individually over a background, not as a flattened arrangement.
+  for (const [id, x, y, height] of [
+    ['scarlet-dahlias', 0.30, 0.70, 0.60],
+    ['golden-sunflowers', 0.70, 0.68, 0.65],
+    ['white-orchids', 0.50, 0.68, 0.62],
+  ] as const) {
+    const flowers = createScene('enchanted');
+    const bg = lib.get('enchanted.background.enchanted-lake')!;
+    const meta = lib.get(`enchanted.foreground.${id}`)!;
+    await images.ensure([bg.id, meta.id]);
+    flowers.nodes.push(createAssetNode(bg, flowers));
+    const node = createAssetNode(meta, flowers);
+    node.x = flowers.canvas.width * x; node.y = flowers.canvas.height * y;
+    node.height = flowers.canvas.height * height; node.width = node.height * meta.width / meta.height;
+    flowers.nodes.push(node);
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, flowers, { scale, quality: 'export', time: 0 });
+    fs.writeFileSync(path.join(OUT, `${id}.png`), cv.toBuffer('image/png'));
+  }
+  console.log('rendered three independently placeable close-up flowers');
 
   /* ---- acceptance: the master cycle boundary must be pixel-identical ---- */
   const a = renderAt(0).cv.getContext('2d').getImageData(0, 0, W, H).data;

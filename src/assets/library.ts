@@ -44,8 +44,8 @@ export class AssetLibrary {
   }
 
   /**
-   * Style gate for layers 1-3. Layer 4 never passes through here: atmospheric
-   * effects are universal and are not filtered by artistic style.
+   * Style gate for artwork. Atmospheric effects bypass the asset library
+   * and remain universal; room art retains its foreground source metadata.
    */
   forStyle(styleId: string, layer?: LayerId): AssetMeta[] {
     return this.assets.filter((a) => {

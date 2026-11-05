@@ -489,6 +489,50 @@ def load_obj(path: str) -> Image.Image:
     return autocrop(key_magenta(Image.open(path)))
 
 
+def publish_garden_structures(p: Publisher, src: str, style: str, label: str, transform=None):
+    """Publish individually placeable garden features, with matching palette siblings."""
+    folder = os.path.join(src, "style-fantasy")
+    seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
+    for aid, filename, name, themes, tags, scale, notes in [
+        ("fairy-mushroom-cottage", "mid-fairy-mushroom-cottage.png", "Fairy Mushroom Cottage",
+         ["fairy", "forest"], ["fairy", "mushroom", "cottage", "woodland"], 0.38,
+         "A detailed mushroom-roof cottage with painted warm windows; independently placeable."),
+        ("japanese-garden-bridge", "mid-japanese-garden-bridge.png", "Japanese-Inspired Garden Bridge",
+         ["japanese", "garden", "water"], ["japanese", "bridge", "garden", "wood"], 0.30,
+         "An arched timber garden bridge with transparent openings between its rails."),
+        ("norse-stone-well", "mid-norse-stone-well.png", "Norse-Inspired Stone Well",
+         ["norse", "forest", "garden"], ["norse", "well", "stone", "wood"], 0.32,
+         "A carved wooden well with a mossy stone base; independently placeable."),
+    ]:
+        image = autocrop(key_magenta(Image.open(os.path.join(folder, filename)), lo=20, hi=100))
+        p.publish(Asset(f"{style}.middle.{aid}", f"{label}{name}", style, "middle", "decorations",
+                        grade(image, transform) if transform else image,
+                        origin="graded" if transform else "painted", themes=themes + seasonal,
+                        tags=tags, depth=0.56, default_scale=scale, animations=[], rig={},
+                        notes=notes, max_dim=1400))
+
+
+def publish_new_blooms(p: Publisher, src: str, style: str, label: str, transform=None):
+    """Publish high-detail, independently placeable flowers in each look."""
+    folder = os.path.join(src, "style-fantasy")
+    seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
+    bend = {"type": "bend", "anchor": [0.5, 1.0], "stiffness": 0.18, "gusts": 4}
+    for aid, name, themes, tags, scale in [
+        ("scarlet-dahlias", "Scarlet Dahlias", ["garden", "meadow"], ["dahlia", "red", "flower", "botanical", "close-up"], 0.33),
+        ("golden-sunflowers", "Golden Sunflowers", ["garden", "meadow"], ["sunflower", "yellow", "flower", "botanical", "close-up"], 0.36),
+        ("white-orchids", "White Moth Orchids", ["garden", "meditation"], ["orchid", "white", "flower", "botanical", "close-up"], 0.34),
+    ]:
+        # Blue rather than magenta key preserves the saturated scarlet petals
+        # and the soft pink in the orchid's throat.
+        image = autocrop(key_blue(Image.open(os.path.join(folder, f"fg-{aid}.png"))))
+        p.publish(Asset(f"{style}.foreground.{aid}", f"{label}{name}", style, "foreground", "flowers",
+                        grade(image, transform) if transform else image,
+                        origin="graded" if transform else "painted", themes=themes + seasonal,
+                        tags=tags, depth=0.91, default_scale=scale, animations=["stem-bend"], rig=bend,
+                        notes="Detailed painted flowers for close-up use; stem bending is optional.",
+                        max_dim=1600, quality=95))
+
+
 def build(src: str, out: str) -> dict:
     p = Publisher(out)
     S = os.path.join(src, "style-fantasy")
@@ -776,7 +820,9 @@ def build(src: str, out: str) -> dict:
     publish_waterside(E, "")
     publish_lotus_sanctuary(E, "")
     publish_cultural_details(E, "")
+    publish_garden_structures(p, src, E, "")
     publish_closeup_flowers(E, "")
+    publish_new_blooms(p, src, E, "")
     publish_interiors(E, "")
     # `region` marks the water so the shimmer mesh stays off the sky and the
     # foliage. Plates without one fall back to a bottom-of-frame mask.
@@ -908,7 +954,9 @@ def build(src: str, out: str) -> dict:
     publish_waterside(M, "Silver ", night_grade)
     publish_lotus_sanctuary(M, "Moonlit ", night_grade)
     publish_cultural_details(M, "Moonlit ", night_grade)
+    publish_garden_structures(p, src, M, "Moonlit ", night_grade)
     publish_closeup_flowers(M, "Moonlit ", night_grade)
+    publish_new_blooms(p, src, M, "Moonlit ", night_grade)
     publish_interiors(M, "Moonlit ", night_grade)
     p.publish(Asset(f"{M}.background.moonlit-glade", "Moonlit Forest Glade", M, "background", "night",
                     bg_glade, themes=["night", "forest", "celestial"], tags=["moon", "night"],
@@ -993,7 +1041,9 @@ def build(src: str, out: str) -> dict:
     publish_waterside(A, "Autumn ", autumn_foliage)
     publish_lotus_sanctuary(A, "Autumn ", autumn_foliage)
     publish_cultural_details(A, "Autumn ", autumn_foliage)
+    publish_garden_structures(p, src, A, "Autumn ", autumn_foliage)
     publish_closeup_flowers(A, "Autumn ", autumn_foliage)
+    publish_new_blooms(p, src, A, "Autumn ", autumn_foliage)
     publish_interiors(A, "Autumn ", autumn_foliage)
     autumn_rig = {"type": "background", "region": [0.0, 0.68, 1.0, 0.32]}
     p.publish(Asset(f"{A}.background.autumn-river", "Autumn River Valley", A, "background", "nature",

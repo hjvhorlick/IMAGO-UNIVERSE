@@ -60,7 +60,9 @@ export function autoCompose(scene: Scene, library: AssetLibrary, opts: ComposeOp
 
   if (opts.replaceUnlocked) {
     const before = scene.nodes.length;
-    scene.nodes = scene.nodes.filter((n) => n.locked || n.kind === 'effect');
+    // Layer 4 holds user-placed rooms as well as effects; neither is part of
+    // the generated landscape and both survive rearrangement.
+    scene.nodes = scene.nodes.filter((n) => n.locked || n.layer === 'atmosphere' || n.kind === 'effect');
     result.removed = before - scene.nodes.length;
   }
 
@@ -261,7 +263,7 @@ export function reground(scene: Scene, library: AssetLibrary, only?: string[]) {
     if (n.kind !== 'asset' || n.layer === 'background' || n.locked) continue;
     if (only && !only.includes(n.id)) continue;
     const meta = library.get(n.assetId);
-    if (!meta) continue;
+    if (!meta || meta.rig?.type === 'window-overlay') continue;
     n.y = groundLine(scene, n.depth) - n.height * meta.groundContact + n.height * 0.5;
   }
 }

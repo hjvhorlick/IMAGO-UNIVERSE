@@ -42,6 +42,9 @@ describe('painted foreground artwork', () => {
       { name: 'rose-peonies', match: (r: number, g: number, b: number) => r > 150 && r > g * 1.2 && b > g * 1.05 },
       { name: 'lotus-flowers', match: (r: number, g: number, b: number) => r > 150 && r > g * 1.2 && b > g * 1.05 },
       { name: 'golden-irises', match: (r: number, g: number, b: number) => r > 150 && g > 90 && b < g * 0.75 },
+      { name: 'scarlet-dahlias', match: (r: number, g: number, b: number) => r > 120 && r > g * 1.5 && r > b * 1.5 },
+      { name: 'golden-sunflowers', match: (r: number, g: number, b: number) => r > 150 && g > 90 && b < g * 0.75 },
+      { name: 'white-orchids', match: (r: number, g: number, b: number) => r > 190 && g > 180 && b > 170 },
     ];
     for (const { name, match } of cases) {
       const img = await loadImage(path.join(ROOT, 'public/library/enchanted', `${name}.webp`));
@@ -67,7 +70,9 @@ describe('painted foreground artwork', () => {
         'modern-sectional', 'future-lounge-chair', 'modern-fireplace',
         'contemporary-oak-door', 'contemporary-oak-chair', 'contemporary-oak-table',
         'oak-bookshelf', 'indoor-fig', 'oak-floor-lamp', 'lotus-flowers', 'lotus-pavilion',
-        'chinese-moon-gate', 'japanese-stone-lantern', 'norse-dragon-boat']) {
+        'chinese-moon-gate', 'japanese-stone-lantern', 'norse-dragon-boat',
+        'fairy-mushroom-cottage', 'japanese-garden-bridge', 'norse-stone-well',
+        'scarlet-dahlias', 'golden-sunflowers', 'white-orchids']) {
         const img = await loadImage(path.join(ROOT, 'public/library', style, `${name}.webp`));
         const { cv, ctx } = ctx2d(img.width, img.height);
         ctx.drawImage(img, 0, 0);

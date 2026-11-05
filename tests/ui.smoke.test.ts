@@ -105,8 +105,17 @@ const click = (el: Element | null) => {
   el!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 };
 
-/** Open one accordion section in the right rail (exclusive). */
-const openSection = (id: string) => click(document.querySelector(`[data-head="${id}"]`));
+/** Select a side panel from the header dropdown. */
+const openSection = (id: string) => {
+  const select = document.querySelector('#panel-picker') as HTMLSelectElement;
+  select.value = id;
+  select.dispatchEvent(new Event('change', { bubbles: true }));
+};
+const chooseCategory = (id: string) => {
+  const select = document.querySelector('#category-picker') as HTMLSelectElement;
+  select.value = id;
+  select.dispatchEvent(new Event('change', { bubbles: true }));
+};
 /** The persistent body element a rail panel renders into. */
 const body = (id: string) => document.querySelector(`[data-body="${id}"]`);
 /** Open a top-bar dropdown and click one of its items by label. */
@@ -121,19 +130,25 @@ const press = (key: string, init: KeyboardEventInit = {}) =>
   window.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
 
 describe('application shell', () => {
-  it('mounts without errors and opens on a real composed world', async () => {
+  it('mounts without errors and opens on an empty canvas with the collection chooser', async () => {
     const errors: unknown[] = [];
     const spy = vi.spyOn(console, 'error').mockImplementation((...a) => { errors.push(a); });
     const app = await mountApp();
 
     expect(document.querySelector('.topbar')).toBeTruthy();
     expect(document.querySelector('#scene-canvas')).toBeTruthy();
-    expect(app.store.scene.nodes.length).toBeGreaterThan(10);
+    expect(app.store.scene.nodes).toEqual([]);
+    expect(document.querySelector('[aria-label="Season or look"]')).toBeTruthy();
+    expect(document.querySelector('[aria-label="World collection"]')).toBeTruthy();
+    expect(document.querySelector('#panel-picker')).toBeTruthy();
+    expect(document.querySelector('#library-search')).toBeTruthy();
+    expect(document.querySelector('[data-menu="world"]')).toBeNull();
+    expect((document.querySelector('#stage-empty') as HTMLElement).hidden).toBe(false);
     expect(app.library.assets.length).toBeGreaterThan(20);
     expect(app.library.styles.length).toBeGreaterThanOrEqual(2);
     // four layer buttons, always
     expect(document.querySelectorAll('.layer-tab').length).toBe(4);
-    // The rail is an exclusive accordion: only the open section has content.
+    // Only the selected panel is open; there are no stacked panel headers.
     expect(document.querySelectorAll('.rail-section').length).toBeGreaterThanOrEqual(6);
     openSection('canvas');
     expect(document.querySelectorAll('.layer-group').length).toBe(4);
@@ -144,6 +159,153 @@ describe('application shell', () => {
     expect(document.querySelector('.panel-left')).toBeNull();
     expect(errors, JSON.stringify(errors)).toEqual([]);
     spy.mockRestore();
+    app.dispose();
+  }, 60_000);
+
+  it('starts with a look and world, groups artwork across layers, and makes rooms easy to find', async () => {
+    const app = await mountApp();
+    const choose = (selector: string, value: string) => {
+      const select = document.querySelector(selector) as HTMLSelectElement;
+      select.value = value;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    choose('[aria-label="Season or look"]', 'autumn');
+    expect(app.store.scene.styleId).toBe('autumn');
+    expect(app.store.scene.nodes).toEqual([]);
+    choose('[aria-label="World collection"]', 'japanese');
+    expect(app.store.scene.theme).toBe('japanese');
+    expect(document.querySelector('[data-asset="autumn.background.japanese-moon-garden"]')).toBeTruthy();
+    expect(document.querySelector('[data-asset="autumn.background.norse-worldtree"]')).toBeNull();
+    click(document.querySelector('[data-asset="autumn.background.japanese-moon-garden"]'));
+    expect(app.store.scene.nodes).toHaveLength(1);
+    expect(app.store.scene.nodes[0].layer).toBe('background');
+    expect(app.store.scene.nodes.some((n) => n.kind === 'effect')).toBe(false);
+    expect((document.querySelector('#stage-empty') as HTMLElement).hidden).toBe(true);
+    expect(app.layer).toBe('middle');
+    expect((document.querySelector('[aria-label="World collection"]') as HTMLSelectElement).value).toBe('japanese');
+    expect(document.querySelector('[data-asset="autumn.middle.japanese-garden-bridge"]')).toBeTruthy();
+    expect(document.querySelector('[data-asset="autumn.middle.norse-rune-stones"]')).toBeNull();
+    click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
+    click(document.querySelector('[data-library-tab="rooms"]'));
+    expect(app.layer).toBe('atmosphere');
+    expect(document.querySelector('[data-library-tab="rooms"]')?.getAttribute('aria-selected')).toBe('true');
+    expect(document.querySelector('[data-asset="autumn.foreground.brick-timber-corner-room"]')).toBeTruthy();
+    const first = document.querySelector('#asset-grid .asset-card') as HTMLElement;
+    expect(app.library.get(first.dataset.asset!)?.rig?.type).toBe('window-overlay');
+    click(document.querySelector('[data-asset="autumn.foreground.brick-timber-corner-room"]'));
+    const room = app.store.primary!;
+    expect(room.layer).toBe('atmosphere');
+    expect(room.kind).toBe('asset');
+    openSection('object');
+    expect((document.querySelector('[data-body="object"] select') as HTMLSelectElement).value).toBe('atmosphere');
+    const { replaceDialog } = await import('../src/ui/dialogs');
+    replaceDialog(room, app.store, app.library, () => {});
+    expect(document.querySelectorAll('#replace-grid .asset-card').length).toBeGreaterThan(0);
+    click(document.querySelector('.modal [data-close]'));
+    const { reground, regenerate, DEFAULT_COMPOSE } = await import('../src/scene/composition');
+    const roomY = room.y;
+    reground(app.store.scene, app.library);
+    expect(room.y).toBe(roomY);
+    regenerate(app.store.scene, app.library, DEFAULT_COMPOSE);
+    expect(app.store.scene.nodes.some((n) => n.id === room.id && n.layer === 'atmosphere')).toBe(true);
+    openSection('canvas');
+    expect(document.querySelector('[data-layer="atmosphere"] .layer-item')?.textContent).toContain(room.name);
+    const { packageProject, readProject } = await import('../src/project/projectFormat');
+    const packageBlob = await packageProject(app.store.scene, app.library);
+    const loaded = await readProject(await packageBlob.arrayBuffer(), app.library);
+    expect(loaded.scene.nodes.find((n) => n.id === room.id)?.layer).toBe('atmosphere');
+    const { switchStyle, findStyleClashes } = await import('../src/scene/styleManager');
+    switchStyle(loaded.scene, app.library, 'moonlit');
+    expect(loaded.scene.nodes.find((n) => n.id === room.id)?.assetId).toBe('moonlit.foreground.brick-timber-corner-room');
+    expect(loaded.scene.nodes.find((n) => n.id === room.id)?.layer).toBe('atmosphere');
+    expect(findStyleClashes(loaded.scene, app.library)).toEqual([]);
+    openSection('assets');
+    choose('[aria-label="World collection"]', 'all');
+    click(document.querySelector('.layer-tab[data-layer="middle"]'));
+    expect(document.querySelector('[data-asset="autumn.middle.norse-rune-stones"]')).toBeTruthy();
+    app.dispose();
+  }, 60_000);
+
+  it('groups an all-worlds background automatically and replaces backgrounds undoably', async () => {
+    const app = await mountApp();
+    click(document.querySelector('[data-asset="enchanted.background.fairy-court"]'));
+    expect(app.store.scene.theme).toBe('fairy');
+    expect(document.querySelector('[data-asset="enchanted.middle.fairy-mushroom-cottage"]')).toBeTruthy();
+    click(document.querySelector('.layer-tab[data-layer="background"]'));
+    const world = document.querySelector('[aria-label="World collection"]') as HTMLSelectElement;
+    world.value = 'all'; world.dispatchEvent(new Event('change', { bubbles: true }));
+    click(document.querySelector('[data-asset="enchanted.background.japanese-moon-garden"]'));
+    expect(app.store.scene.nodes.filter((n) => n.layer === 'background')).toHaveLength(1);
+    expect(app.store.scene.nodes[0].assetId).toBe('enchanted.background.japanese-moon-garden');
+    expect(app.store.scene.theme).toBe('japanese');
+    app.store.undo();
+    expect(app.store.scene.nodes.filter((n) => n.layer === 'background')).toHaveLength(1);
+    expect(app.store.scene.nodes[0].assetId).toBe('enchanted.background.fairy-court');
+    expect(app.store.scene.nodes[0].locked).toBe(true);
+    app.dispose();
+  }, 60_000);
+
+  it('confirms look changes on existing artwork and supports undo', async () => {
+    const app = await mountApp();
+    click(document.querySelector('[data-asset="enchanted.background.japanese-moon-garden"]'));
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const select = document.querySelector('[aria-label="Season or look"]') as HTMLSelectElement;
+    select.value = 'moonlit'; select.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(app.store.scene.styleId).toBe('enchanted');
+    expect((document.querySelector('[aria-label="Season or look"]') as HTMLSelectElement).value).toBe('enchanted');
+    confirm.mockReturnValue(true);
+    const next = document.querySelector('[aria-label="Season or look"]') as HTMLSelectElement;
+    next.value = 'moonlit'; next.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(app.store.scene.styleId).toBe('moonlit');
+    expect(app.store.scene.nodes[0].assetId).toBe('moonlit.background.japanese-moon-garden');
+    app.store.undo();
+    expect(app.store.scene.styleId).toBe('enchanted');
+    expect(app.store.scene.nodes[0].assetId).toBe('enchanted.background.japanese-moon-garden');
+    confirm.mockRestore();
+    app.dispose();
+  }, 60_000);
+
+  it('uses compact header controls to search and filter Layer 4 rooms and atmosphere', async () => {
+    const app = await mountApp();
+    expect(document.querySelectorAll('.rail-head')).toHaveLength(0);
+    expect(document.querySelector('.topbar #btn-export')?.textContent).toContain('Download');
+    click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
+    expect(document.querySelector('[data-library-tab="effects"]')?.getAttribute('aria-selected')).toBe('true');
+    click(document.querySelector('[data-library-tab="rooms"]'));
+    chooseCategory('room-views');
+    expect(document.querySelector('[data-asset="enchanted.foreground.timber-great-room"]')).toBeTruthy();
+    expect(document.querySelector('[data-asset="enchanted.foreground.oak-bookshelf"]')).toBeNull();
+    const search = document.querySelector('#library-search') as HTMLInputElement;
+    search.value = 'brick'; search.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(document.querySelector('[data-asset="enchanted.foreground.brick-timber-corner-room"]')).toBeTruthy();
+    expect(document.querySelector('[data-asset="enchanted.foreground.timber-great-room"]')).toBeNull();
+    search.value = ''; search.dispatchEvent(new Event('input', { bubbles: true }));
+    chooseCategory('furniture');
+    expect(document.querySelector('[data-asset="enchanted.foreground.oak-bookshelf"]')).toBeTruthy();
+    expect(document.querySelector('[data-asset="enchanted.foreground.timber-great-room"]')).toBeNull();
+    click(document.querySelector('[data-library-tab="effects"]'));
+    search.value = 'fireflies'; search.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(document.querySelectorAll('.effect-card')).toHaveLength(1);
+    expect(document.querySelector('[data-effect="fireflies"]')).toBeTruthy();
+    openSection('scene');
+    expect(document.querySelector('[data-body="scene"]')?.children.length).toBeGreaterThan(0);
+    search.value = 'mist'; search.dispatchEvent(new Event('input', { bubbles: true }));
+    expect((document.querySelector('#panel-picker') as HTMLSelectElement).value).toBe('assets');
+    expect(document.querySelector('[data-effect="mist"]')).toBeTruthy();
+    app.dispose();
+  }, 60_000);
+
+  it('finds and places the new close-up flowers without starting motion automatically', async () => {
+    const app = await mountApp();
+    click(document.querySelector('.layer-tab[data-layer="foreground"]'));
+    chooseCategory('flowers');
+    const search = document.querySelector('#library-search') as HTMLInputElement;
+    search.value = 'dahlia'; search.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(document.querySelectorAll('#asset-grid .asset-card')).toHaveLength(1);
+    click(document.querySelector('[data-asset="enchanted.foreground.scarlet-dahlias"]'));
+    expect(app.store.primary?.animation?.type).toBe('stem-bend');
+    expect(app.store.primary?.animation?.enabled).toBe(false);
+    expect(app.store.scene.nodes).toHaveLength(1);
     app.dispose();
   }, 60_000);
 
@@ -226,7 +388,7 @@ describe('application shell', () => {
   it('browses, selects and edits the spiritual overlay collection on Layer 4', async () => {
     const app = await mountApp();
     click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
-    click(document.querySelector('[data-cat="spiritual"]'));
+    chooseCategory('spiritual');
     const filter = document.querySelector('[aria-label="Spiritual overlay subcategory"]') as HTMLSelectElement;
     expect(filter.options.length).toBe(9);
     filter.value = 'Sacred Geometry';
@@ -269,6 +431,9 @@ describe('application shell', () => {
 
   it('solo preview isolates one effect, then one layer, then everything', async () => {
     const app = await mountApp();
+    click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
+    click(document.querySelector('[data-effect="fireflies"]'));
+    click(document.querySelector('[data-effect="mist"]'));
     const fx = app.store.scene.nodes.filter((n) => n.kind === 'effect');
     expect(fx.length).toBeGreaterThan(1);
     const target = fx[0];
@@ -300,6 +465,8 @@ describe('application shell', () => {
 
   it('drops a solo preview when its subject is deleted', async () => {
     const app = await mountApp();
+    click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
+    click(document.querySelector('[data-effect="fireflies"]'));
     const target = app.store.scene.nodes.find((n) => n.kind === 'effect')!;
     app.store.select(target.id);
     openSection('animate');
@@ -317,6 +484,8 @@ describe('application shell', () => {
 
   it('enables object animation from the Animate tab', async () => {
     const app = await mountApp();
+    click(document.querySelector('.layer-tab[data-layer="middle"]'));
+    click(document.querySelector('[data-asset="enchanted.middle.ancient-oak"]'));
     const tree = app.store.scene.nodes.find((n) => app.library.get(n.assetId)?.category === 'trees')!;
     app.store.select(tree.id);
     openSection('animate');
@@ -345,9 +514,10 @@ describe('application shell', () => {
 
   it('rearranges without touching locked objects', async () => {
     const app = await mountApp();
+    click(document.querySelector('[data-asset="enchanted.background.enchanted-lake"]'));
     const locked = app.store.scene.nodes.filter((n) => n.locked).map((n) => ({ id: n.id, x: n.x, y: n.y }));
     expect(locked.length).toBeGreaterThan(0);
-    menuClick('world', 'Rearrange unlocked');
+    menuClick('edit', 'Rearrange unlocked');
     for (const l of locked) {
       const n = app.store.node(l.id)!;
       expect(n.x).toBe(l.x);
@@ -433,6 +603,8 @@ describe('application shell', () => {
     const app = await mountApp();
     const { cropDialog, replaceDialog, composeDialog, historyDialog, aboutDialog, changeStyleDialog, newWorldDialog, importDialog } =
       await import('../src/ui/dialogs');
+    click(document.querySelector('.layer-tab[data-layer="middle"]'));
+    click(document.querySelector('[data-asset="enchanted.middle.ancient-oak"]'));
     const node = app.store.scene.nodes.find((n) => n.kind === 'asset' && n.layer === 'middle')!;
     const meta = app.library.get(node.assetId)!;
 
@@ -505,6 +677,8 @@ describe('application shell', () => {
 
   it('exports a real still image with no editor furniture in it', async () => {
     const app = await mountApp();
+    click(document.querySelector('[data-asset="enchanted.background.enchanted-lake"]'));
+    await app.images.ensure(['enchanted.background.enchanted-lake']);
     const result = await app.exports.still.render(app.store.scene, {
       width: 640, height: 360, format: 'png', quality: 0.9, time: 1.5,
     });

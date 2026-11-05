@@ -18,7 +18,7 @@ no network call at runtime after the asset manifest and WebP files are fetched f
    Randomness comes from a hash of `(seed, particle index, channel)`, never from a running RNG. This
    is what makes exact looping and frame-accurate seeking possible.
 5. **Originals are never modified.** Crops, tints, warps and grades are all applied at draw time.
-6. **Layer 4 is universal.** Style gating applies to layers 1–3 only.
+6. **Effects are universal.** Artwork, including rooms placed on Layer 4, is style-gated; effects work with any style.
 
 ## Module map
 
@@ -35,7 +35,7 @@ scene/
   sceneModel.ts     createScene, createAssetNode, grounding, paint order, resizeCanvas, fitBackground
   composition.ts    autoCompose / regenerate / reground / sortByDepth (seeded, respects locks)
   styleManager.ts   reference collection, style stats, switchStyle, clash detection
-  demoScene.ts      The composed world the app opens on
+  demoScene.ts      Optional composed demonstration world
 
 animation/
   loopManager.ts    Cycle analysis, grid snapping, LCM master cycle, exactness report, plan()

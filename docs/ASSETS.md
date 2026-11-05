@@ -19,8 +19,8 @@ than buried in a README.
 
 | `origin` | Count | Meaning |
 | --- | --- | --- |
-| `painted` | 61 | A dedicated source plate exists in `assets-src/` |
-| `graded` | 117 | Colour-graded from a painted plate to build the sibling styles |
+| `painted` | 67 | A dedicated source plate exists in `assets-src/` |
+| `graded` | 129 | Colour-graded from a painted plate to build the sibling styles |
 | `composed` | 5 | Built procedurally by the pipeline from extracted artwork chips |
 | `derived` | 3 | Geometric/colour variant of another asset (mirror, narrow, golden) |
 
@@ -36,9 +36,9 @@ composition in that style is coherent.
 
 | Style | Character | Light | Assets |
 | --- | --- | --- | --- |
-| `enchanted` | Fantasy vistas, including an observatory and a moonlit waterside | upper-left | 67 |
-| `moonlit` | Cool nocturnal sibling, including moonlit grades of the seven story sets | upper-right | 58 |
-| `autumn` | Harvest sibling, including autumn grades of the seven story sets | upper-left | 61 |
+| `enchanted` | Fantasy vistas, including an observatory and a moonlit waterside | upper-left | 73 |
+| `moonlit` | Cool nocturnal sibling, including moonlit grades of the seven story sets | upper-right | 64 |
+| `autumn` | Harvest sibling, including autumn grades of the seven story sets | upper-left | 67 |
 
 `moonlit` and `autumn` are graded siblings of `enchanted`, not independently painted styles. They
 demonstrate that the style system, the light-direction metadata and the grading pipeline all work,
@@ -53,34 +53,33 @@ would read as a colour cast rather than a season.
 **Backgrounds (28)** — The 7 base Enchanted, Moonlit and Autumn vistas, plus Fairy Court Glade,
 Norse Worldtree Fjord, Chinese-Inspired Mist Mountains, Japanese Moon Garden, Celestial Observatory
 Garden, Moonlit Waterside and Lotus Sanctuary Lake in each palette. The waterside river shimmers automatically on placement.
-**Middle-ground (45)** — The 15 base trees, structures, rocks and waterfalls, plus a Fae Court
+**Middle-ground (54)** — The 15 base trees, structures, rocks and waterfalls, plus a Fae Court
 Willow, Norse rune stones, Chinese-inspired pavilion, Japanese torii gate, Celestial Astrolabe
 Arch, Lantern Bridge and a contemporary timber meditation pavilion in each palette. A Chinese-inspired
 moon gate, Japanese-inspired stone lantern and Norse-inspired dragon boat are separately placeable
 decorations in each palette. The lantern glows and the boat floats automatically; their motion can be edited.
-The boat's lower hull is cut along a gently wavy, transparent waterline, so place it over water for a submerged appearance.
-**Foreground (113)** — The 20 base plants, grasses, ground covers and room overlays, plus Fae Lantern
+The boat's lower hull is cut along a gently wavy, transparent waterline, so place it over water for a submerged appearance. A fairy mushroom cottage, Japanese-inspired arched garden bridge and Norse-inspired stone well are also individually placeable in each palette. Their artwork is static; atmospheric effects can be layered around them.
+**Foreground (122)** — The 20 base plants, grasses, ground covers and room overlays, plus Fae Lantern
 Mushrooms, Frost-Kissed Juniper, Peach Blossom Garden Cluster, Moon Garden Moss and Sakura,
-Starflower Cluster and River Reeds in Enchanted, Moonlit and Autumn palettes. Seven detailed botanical
-close-up plates — Woodland Foxgloves, Wild Roses, Woodland Anemones, Scarlet Wild Poppies, Rose Peonies
-Golden Irises and Lotus Blossoms — also come in each palette; they retain their source dimensions, use higher-quality
+Starflower Cluster and River Reeds in Enchanted, Moonlit and Autumn palettes. Ten detailed botanical
+close-up plates — Woodland Foxgloves, Wild Roses, Woodland Anemones, Scarlet Wild Poppies, Rose Peonies,
+Golden Irises, Lotus Blossoms, Scarlet Dahlias, Golden Sunflowers and White Moth Orchids — also come in each palette; they retain their source dimensions, use higher-quality
 WebP encoding and support stem bending. Each palette also has two additional windowed rooms with
 flickering hearths and steaming cups, plus a separate stone fireplace and coffee cup. A modern
 penthouse and futuristic sky lounge offer high ceilings and large transparent windows, with a separate
 modular sectional, futuristic chair and animated modern fireplace. Two present-day rooms have
 varnished oak beams, wooden doors, tiled floors and large windows; the great room includes an
 animated fireplace. An asymmetrical brick-and-timber room has a sloping roof and two transparent
-windows on adjacent walls. A separate oak door, lounge chair, coffee table, bookshelf, floor lamp and potted fig are also available. Find them in the foreground
-library's **Interiors** category; loose furniture and props can be moved and resized independently.
+windows on adjacent walls. A separate oak door, lounge chair, coffee table, bookshelf, floor lamp and potted fig are also available. Find them under **Layer 4 → Rooms & interiors**; loose furniture and props can be moved and resized independently. Their source assets remain foreground artwork in the manifest, but newly placed interiors are scene nodes on Layer 4.
 **Atmosphere (52 effects)** — procedural, not assets; see below.
 
 The brief's starter targets were 5 backgrounds / 8 middle / 8 foreground / 10 effects. **All four
-targets are met or exceeded** (28 / 45 / 113 / 52). `npm run render-check` composes and renders one
+targets are met or exceeded** (28 / 54 / 122 / 52). `npm run render-check` composes and renders one
 world per background plate to `.render-check/worlds.png` so the variety is verifiable at a glance.
 
 ## Atmospheric effects
 
-Layer 4 is procedural and never style-gated. 52 effects in 7 families:
+The effects in Layer 4 are procedural and never style-gated. The same layer also offers style-matched room artwork under a separate tab. 52 effects in 7 families:
 
 - **Magical:** fairy-dust, sparkles, glowing-orbs, light-beams, energy-rings
 - **Symbols:** magic-circle, mandala, floating-runes, glowing-symbols, mythic-emblem
@@ -153,7 +152,7 @@ python3 -m venv .venv
 7. **Encode** to WebP (quality 90, or 95 for close-up botanical plates; method 6, exact) plus 256 px thumbnails, and write
    `public/library/manifest.json` (`imago.asset-library/1`).
 
-Output: 186 assets; file sizes depend on the WebP encoder used.
+Output: 204 assets; file sizes depend on the WebP encoder used.
 
 ## Adding a style
 

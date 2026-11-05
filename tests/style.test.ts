@@ -216,7 +216,8 @@ describe('the published library', () => {
     const lib = shipped();
     const scene = createScene('enchanted');
     const ids = ['woodland-foxgloves', 'wild-roses', 'woodland-anemones',
-      'wild-poppies', 'rose-peonies', 'golden-irises', 'lotus-flowers'];
+      'wild-poppies', 'rose-peonies', 'golden-irises', 'lotus-flowers',
+      'scarlet-dahlias', 'golden-sunflowers', 'white-orchids'];
     for (const id of ids) {
       const meta = lib.get(`enchanted.foreground.${id}`)!;
       expect(meta.origin).toBe('painted');

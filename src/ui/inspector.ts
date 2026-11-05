@@ -198,8 +198,9 @@ export class Inspector {
       { value: 'background', label: '1 - Background' },
       { value: 'middle', label: '2 - Middle-ground' },
       { value: 'foreground', label: '3 - Foreground' },
+      { value: 'atmosphere', label: '4 - Atmosphere & rooms' },
     ], (v) => this.store.mutate((s) => moveNodeToLayer(s, node, v as SceneNode['layer']), 'Change layer'),
-    'Atmosphere is reserved for effects.'));
+    'Use the ordering controls to arrange objects and effects within a layer.'));
     this.slider(p, node, 'Depth', 'depth', 0, 1, 0.01, {
       hint: '0 = far away, 1 = right in front. Drives the ground line and haze.',
     });

@@ -15,7 +15,7 @@ export const LAYER_LABEL: Record<LayerId, string> = {
   background: 'Background',
   middle: 'Middle-ground',
   foreground: 'Foreground',
-  atmosphere: 'Atmosphere & Imagination',
+  atmosphere: 'Atmosphere, Rooms & Imagination',
 };
 
 export const LAYER_HINT: Record<LayerId, string> = {

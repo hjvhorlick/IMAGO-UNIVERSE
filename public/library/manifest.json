@@ -9954,6 +9954,951 @@
    "variants": [],
    "notes": "Transparent window opening reveals the current composed scene behind this foreground room overlay.",
    "bytes": 322490
+  },
+  {
+   "id": "enchanted.middle.fairy-mushroom-cottage",
+   "name": "Fairy Mushroom Cottage",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "fairy",
+    "forest"
+   ],
+   "tags": [
+    "fairy",
+    "mushroom",
+    "cottage",
+    "woodland"
+   ],
+   "origin": "painted",
+   "file": "enchanted/fairy-mushroom-cottage.webp",
+   "thumb": "enchanted/thumbs/fairy-mushroom-cottage.webp",
+   "format": "image/webp",
+   "width": 1030,
+   "height": 716,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#303030",
+    "#705030",
+    "#503030",
+    "#503010"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A detailed mushroom-roof cottage with painted warm windows; independently placeable.",
+   "bytes": 300582
+  },
+  {
+   "id": "enchanted.middle.japanese-garden-bridge",
+   "name": "Japanese-Inspired Garden Bridge",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "japanese",
+    "garden",
+    "water"
+   ],
+   "tags": [
+    "japanese",
+    "bridge",
+    "garden",
+    "wood"
+   ],
+   "origin": "painted",
+   "file": "enchanted/japanese-garden-bridge.webp",
+   "thumb": "enchanted/thumbs/japanese-garden-bridge.webp",
+   "format": "image/webp",
+   "width": 1180,
+   "height": 555,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#903030",
+    "#703030",
+    "#703010",
+    "#905030",
+    "#903010"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "An arched timber garden bridge with transparent openings between its rails.",
+   "bytes": 377744
+  },
+  {
+   "id": "enchanted.middle.norse-stone-well",
+   "name": "Norse-Inspired Stone Well",
+   "style": "enchanted",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "norse",
+    "forest",
+    "garden"
+   ],
+   "tags": [
+    "norse",
+    "well",
+    "stone",
+    "wood"
+   ],
+   "origin": "painted",
+   "file": "enchanted/norse-stone-well.webp",
+   "thumb": "enchanted/thumbs/norse-stone-well.webp",
+   "format": "image/webp",
+   "width": 692,
+   "height": 747,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#303010",
+    "#505030",
+    "#505050",
+    "#503030"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A carved wooden well with a mossy stone base; independently placeable.",
+   "bytes": 120256
+  },
+  {
+   "id": "moonlit.middle.fairy-mushroom-cottage",
+   "name": "Moonlit Fairy Mushroom Cottage",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "fairy",
+    "forest",
+    "night"
+   ],
+   "tags": [
+    "fairy",
+    "mushroom",
+    "cottage",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "moonlit/fairy-mushroom-cottage.webp",
+   "thumb": "moonlit/thumbs/fairy-mushroom-cottage.webp",
+   "format": "image/webp",
+   "width": 1030,
+   "height": 716,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#103030",
+    "#303030",
+    "#101030",
+    "#505050"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A detailed mushroom-roof cottage with painted warm windows; independently placeable.",
+   "bytes": 194986
+  },
+  {
+   "id": "moonlit.middle.japanese-garden-bridge",
+   "name": "Moonlit Japanese-Inspired Garden Bridge",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "japanese",
+    "garden",
+    "water",
+    "night"
+   ],
+   "tags": [
+    "japanese",
+    "bridge",
+    "garden",
+    "wood"
+   ],
+   "origin": "graded",
+   "file": "moonlit/japanese-garden-bridge.webp",
+   "thumb": "moonlit/thumbs/japanese-garden-bridge.webp",
+   "format": "image/webp",
+   "width": 1180,
+   "height": 555,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#303050",
+    "#101030",
+    "#301030",
+    "#505050"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "An arched timber garden bridge with transparent openings between its rails.",
+   "bytes": 268408
+  },
+  {
+   "id": "moonlit.middle.norse-stone-well",
+   "name": "Moonlit Norse-Inspired Stone Well",
+   "style": "moonlit",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "norse",
+    "forest",
+    "garden",
+    "night"
+   ],
+   "tags": [
+    "norse",
+    "well",
+    "stone",
+    "wood"
+   ],
+   "origin": "graded",
+   "file": "moonlit/norse-stone-well.webp",
+   "thumb": "moonlit/thumbs/norse-stone-well.webp",
+   "format": "image/webp",
+   "width": 692,
+   "height": 747,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303050",
+    "#103030",
+    "#101030",
+    "#303030",
+    "#305070"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A carved wooden well with a mossy stone base; independently placeable.",
+   "bytes": 77686
+  },
+  {
+   "id": "autumn.middle.fairy-mushroom-cottage",
+   "name": "Autumn Fairy Mushroom Cottage",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "fairy",
+    "forest",
+    "autumn"
+   ],
+   "tags": [
+    "fairy",
+    "mushroom",
+    "cottage",
+    "woodland"
+   ],
+   "origin": "graded",
+   "file": "autumn/fairy-mushroom-cottage.webp",
+   "thumb": "autumn/thumbs/fairy-mushroom-cottage.webp",
+   "format": "image/webp",
+   "width": 1030,
+   "height": 716,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#303010",
+    "#503030",
+    "#503010",
+    "#303030"
+   ],
+   "defaultScale": 0.38,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A detailed mushroom-roof cottage with painted warm windows; independently placeable.",
+   "bytes": 292538
+  },
+  {
+   "id": "autumn.middle.japanese-garden-bridge",
+   "name": "Autumn Japanese-Inspired Garden Bridge",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "japanese",
+    "garden",
+    "water",
+    "autumn"
+   ],
+   "tags": [
+    "japanese",
+    "bridge",
+    "garden",
+    "wood"
+   ],
+   "origin": "graded",
+   "file": "autumn/japanese-garden-bridge.webp",
+   "thumb": "autumn/thumbs/japanese-garden-bridge.webp",
+   "format": "image/webp",
+   "width": 1180,
+   "height": 555,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#903030",
+    "#703030",
+    "#703010",
+    "#905030",
+    "#903010"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "An arched timber garden bridge with transparent openings between its rails.",
+   "bytes": 354802
+  },
+  {
+   "id": "autumn.middle.norse-stone-well",
+   "name": "Autumn Norse-Inspired Stone Well",
+   "style": "autumn",
+   "layer": "middle",
+   "category": "decorations",
+   "themes": [
+    "norse",
+    "forest",
+    "garden",
+    "autumn"
+   ],
+   "tags": [
+    "norse",
+    "well",
+    "stone",
+    "wood"
+   ],
+   "origin": "graded",
+   "file": "autumn/norse-stone-well.webp",
+   "thumb": "autumn/thumbs/norse-stone-well.webp",
+   "format": "image/webp",
+   "width": 692,
+   "height": 747,
+   "alpha": true,
+   "depth": 0.56,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#303030",
+    "#505030",
+    "#503030",
+    "#705030"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {},
+   "variants": [],
+   "notes": "A carved wooden well with a mossy stone base; independently placeable.",
+   "bytes": 118374
+  },
+  {
+   "id": "enchanted.foreground.scarlet-dahlias",
+   "name": "Scarlet Dahlias",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "dahlia",
+    "red",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/scarlet-dahlias.webp",
+   "thumb": "enchanted/thumbs/scarlet-dahlias.webp",
+   "format": "image/webp",
+   "width": 610,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#701010",
+    "#901010",
+    "#305030",
+    "#501010",
+    "#b01010"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 217544
+  },
+  {
+   "id": "enchanted.foreground.golden-sunflowers",
+   "name": "Golden Sunflowers",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow"
+   ],
+   "tags": [
+    "sunflower",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/golden-sunflowers.webp",
+   "thumb": "enchanted/thumbs/golden-sunflowers.webp",
+   "format": "image/webp",
+   "width": 806,
+   "height": 708,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507030",
+    "#709050",
+    "#d09010",
+    "#905010",
+    "#f0d050"
+   ],
+   "defaultScale": 0.36,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 384568
+  },
+  {
+   "id": "enchanted.foreground.white-orchids",
+   "name": "White Moth Orchids",
+   "style": "enchanted",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meditation"
+   ],
+   "tags": [
+    "orchid",
+    "white",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "painted",
+   "file": "enchanted/white-orchids.webp",
+   "thumb": "enchanted/thumbs/white-orchids.webp",
+   "format": "image/webp",
+   "width": 1002,
+   "height": 676,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0d0",
+    "#f0d0d0",
+    "#507030",
+    "#305010",
+    "#f0f0f0"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 417006
+  },
+  {
+   "id": "moonlit.foreground.scarlet-dahlias",
+   "name": "Moonlit Scarlet Dahlias",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "dahlia",
+    "red",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/scarlet-dahlias.webp",
+   "thumb": "moonlit/thumbs/scarlet-dahlias.webp",
+   "format": "image/webp",
+   "width": 610,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#301030",
+    "#103030",
+    "#303030",
+    "#303050",
+    "#503050"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 150698
+  },
+  {
+   "id": "moonlit.foreground.golden-sunflowers",
+   "name": "Moonlit Golden Sunflowers",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "night"
+   ],
+   "tags": [
+    "sunflower",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/golden-sunflowers.webp",
+   "thumb": "moonlit/thumbs/golden-sunflowers.webp",
+   "format": "image/webp",
+   "width": 806,
+   "height": 708,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305050",
+    "#505050",
+    "#303030",
+    "#507070",
+    "#303050"
+   ],
+   "defaultScale": 0.36,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 277172
+  },
+  {
+   "id": "moonlit.foreground.white-orchids",
+   "name": "Moonlit White Moth Orchids",
+   "style": "moonlit",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meditation",
+    "night"
+   ],
+   "tags": [
+    "orchid",
+    "white",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "moonlit/white-orchids.webp",
+   "thumb": "moonlit/thumbs/white-orchids.webp",
+   "format": "image/webp",
+   "width": 1002,
+   "height": 676,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#7090b0",
+    "#507090",
+    "#7070b0",
+    "#103030",
+    "#305050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 290354
+  },
+  {
+   "id": "autumn.foreground.scarlet-dahlias",
+   "name": "Autumn Scarlet Dahlias",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "dahlia",
+    "red",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/scarlet-dahlias.webp",
+   "thumb": "autumn/thumbs/scarlet-dahlias.webp",
+   "format": "image/webp",
+   "width": 610,
+   "height": 639,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#701010",
+    "#901010",
+    "#501010",
+    "#705030",
+    "#b01010"
+   ],
+   "defaultScale": 0.33,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 204044
+  },
+  {
+   "id": "autumn.foreground.golden-sunflowers",
+   "name": "Autumn Golden Sunflowers",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meadow",
+    "autumn"
+   ],
+   "tags": [
+    "sunflower",
+    "yellow",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/golden-sunflowers.webp",
+   "thumb": "autumn/thumbs/golden-sunflowers.webp",
+   "format": "image/webp",
+   "width": 806,
+   "height": 708,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b07030",
+    "#d09010",
+    "#905010",
+    "#905030",
+    "#d09030"
+   ],
+   "defaultScale": 0.36,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 351990
+  },
+  {
+   "id": "autumn.foreground.white-orchids",
+   "name": "Autumn White Moth Orchids",
+   "style": "autumn",
+   "layer": "foreground",
+   "category": "flowers",
+   "themes": [
+    "garden",
+    "meditation",
+    "autumn"
+   ],
+   "tags": [
+    "orchid",
+    "white",
+    "flower",
+    "botanical",
+    "close-up"
+   ],
+   "origin": "graded",
+   "file": "autumn/white-orchids.webp",
+   "thumb": "autumn/thumbs/white-orchids.webp",
+   "format": "image/webp",
+   "width": 1002,
+   "height": 676,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0d0",
+    "#f0d0d0",
+    "#f0d0b0",
+    "#705010",
+    "#905030"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "stem-bend"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "stiffness": 0.18,
+    "gusts": 4
+   },
+   "variants": [],
+   "notes": "Detailed painted flowers for close-up use; stem bending is optional.",
+   "bytes": 367922
   }
  ]
 }

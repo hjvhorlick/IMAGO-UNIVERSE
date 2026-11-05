@@ -74,7 +74,7 @@ export function newWorldDialog(library: AssetLibrary, opts: {
 }) {
   let style = opts.currentStyle ?? library.styles[0]?.id ?? 'enchanted';
   let aspect = '16:9';
-  let seed: 'demo' | 'empty' | 'composed' = 'composed';
+  let seed: 'demo' | 'empty' | 'composed' = 'empty';
   let name = 'Untitled world';
 
   const body = el(`<div>
@@ -91,9 +91,9 @@ export function newWorldDialog(library: AssetLibrary, opts: {
     <div class="aspect-grid" id="aspect-grid"></div>
     <div class="section-title" style="margin-top:20px">3 - Starting point</div>
     <div class="segmented" id="seed-seg">
-      <button data-seed="composed" class="active">Auto-composed world</button>
+      <button data-seed="empty" class="active">Empty canvas</button>
+      <button data-seed="composed">Auto-composed world</button>
       <button data-seed="demo">Demo with effects</button>
-      <button data-seed="empty">Empty canvas</button>
     </div>
     <div class="field" style="margin-top:16px">
       <div class="field-label"><span>Project name</span></div>
@@ -396,7 +396,9 @@ export function cropDialog(
 
 export function replaceDialog(node: SceneNode, store: Store, library: AssetLibrary, onPick: (meta: AssetMeta) => void) {
   const current = library.get(node.assetId);
-  const list = library.forStyle(store.scene.styleId, node.layer);
+  const sourceLayer = current?.layer ?? node.layer;
+  const list = library.forStyle(store.scene.styleId, sourceLayer)
+    .filter((asset) => current?.category !== 'interiors' || asset.category === 'interiors');
   const body = el(`<div>
     <div class="info-box">Replacing keeps position, size, rotation, colour, animation and layer order.
       Only artwork from <b>${escapeHtml(library.style(store.scene.styleId)?.name ?? '')}</b> is offered.</div>

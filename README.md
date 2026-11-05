@@ -25,12 +25,14 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 135 unit / integration / UI tests (Vitest) |
+| `npm test` | 144 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library from `assets-src/` (needs Pillow + numpy) |
 
-The app opens on a fully composed demo world so there is something real to look at immediately.
+The app opens with an empty canvas and no effects. Choose a **season / look** and a **world** at the top of the artwork panel, then choose a background. The world filter follows you through the artwork layers; select **All worlds** to browse everything. Choose **Layer 4**, then the **Rooms & interiors** tab for room views and furniture or the **Atmosphere** tab for effects. The header has search, category and panel dropdowns, and a Download button. Add effects when you want them; some artwork, such as waterfalls and fires, animates when placed. A composed world and effects-filled demo are still available as optional starting points in **File → New world**.
+
+The available looks are Enchanted, Moonlit and Autumn; Moonlit and Autumn are palette grades rather than independently painted seasons. Room views and atmospheric effects work with any world.
 
 ---
 
@@ -42,21 +44,21 @@ Every scene is built from exactly four layers, painted back to front:
 2. **Middle-ground** — trees, structures, rock, water; the substance of the world.
 3. **Foreground** — grass, flowers, ferns, ground detail. Fully animatable, and allowed to
    extend past the canvas edge; only the visible part is rendered.
-4. **Atmosphere & Imagination** — particles, light, magic, weather. **Universal:** this layer is
-   never filtered by artistic style, so any effect can be used with any world.
+4. **Atmosphere, Rooms & Imagination** — effects, room views and interior furnishings. Effects are
+   universal; room artwork follows the chosen look. Room and effect order can be changed on canvas.
 
-Layers 1–3 are gated by the selected artistic style. Incompatible artwork is simply never shown —
-there are no style-conflict dialogs, because the conflict cannot be created in the first place.
+Artwork is gated by the selected artistic style, including rooms on Layer 4. Incompatible artwork is
+not shown in the library, while effects remain available with every look.
 
 ---
 
 ## What is implemented
 
-**Asset library** — 186 assets across 3 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
+**Asset library** — 204 assets across 3 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
 a celestial observatory, a moonlit waterside and a lotus sanctuary with animated water, a timber
 meditation pavilion and close-up lotus blossoms. Placeable Chinese-inspired moon gate, Japanese-inspired
-stone lantern and Norse-inspired dragon boat add garden and waterside details.
-Detailed close-up flowers add foreground variety. Eight room views reveal the current composition
+stone lantern and Norse-inspired dragon boat add garden and waterside details. A fairy mushroom cottage, Japanese-inspired garden bridge and Norse-inspired stone well are also separately placeable.
+Detailed close-up flowers, including dahlias, sunflowers and white orchids, add foreground variety. Eight room views reveal the current composition
 through their windows, including present-day timber-beamed rooms as well as modern and futuristic
 high-ceiling spaces, and an asymmetrical brick-and-timber room with windows on adjoining walls.
 Animated fireplaces, a steaming coffee cup and contemporary furniture and doors
@@ -176,6 +178,6 @@ src/
 assets-src/    source artwork plates (pipeline input)
 public/library/  runtime WebP assets + thumbnails + manifest.json
 tools/         asset preparation pipeline, headless render verification
-tests/         135 tests across 11 files
+tests/         144 tests across 13 files
 docs/          architecture, assets, limitations
 ```
