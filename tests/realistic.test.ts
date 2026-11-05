@@ -7,6 +7,7 @@ import { LoopManager } from '../src/animation/loopManager';
 import { Compositor } from '../src/render/compositor';
 import { createAssetNode, createScene, fitBackground } from '../src/scene/sceneModel';
 import { autoCompose, DEFAULT_COMPOSE } from '../src/scene/composition';
+import { inWorldCollection } from '../src/assets/worldCollections';
 import { switchStyle, findStyleClashes } from '../src/scene/styleManager';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
@@ -119,7 +120,7 @@ describe('photographic rooms', () => {
 
   it('measures every hearth region so the fire lands on the flames, not the wall', async () => {
     const lib = library();
-    for (const id of ROOMS) {
+    for (const id of [...ROOMS, 'stone-fireplace', 'linear-fireplace']) {
       const meta = lib.get(`realistic.foreground.${id}`)!;
       const region = meta.rig?.region as number[] | undefined;
       expect(region, `${id} has no hearth region`).toBeDefined();
@@ -203,6 +204,99 @@ describe('photographic rooms', () => {
     const before = table.x;
     bench.x += 60;
     expect(table.x, 'moving one prop moved another').toBe(before);
+  });
+});
+
+describe('photographic figures and fire', () => {
+  const FIGURES = ['seated-meditation', 'seated-meditation-side', 'standing-prayer',
+    'tree-pose', 'standing-mountain'];
+
+  it('ships meditating figures that are still until you ask them to breathe', async () => {
+    const lib = library();
+    const scene = createScene('realistic');
+    for (const id of FIGURES) {
+      const meta = lib.get(`realistic.middle.${id}`)!;
+      expect(meta, id).toBeDefined();
+      expect(meta.category).toBe('figures');
+      expect(meta.animations).toEqual(['creature-breathe']);
+      expect(inWorldCollection(meta, 'lotus-sanctuary'), `${id} not offered in the lotus world`).toBe(true);
+      const img = await loadImage(path.join(ROOT, 'public/library', meta.file));
+      const cv = createCanvas(img.width, img.height), ctx = cv.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const al = ctx.getImageData(0, 0, img.width, img.height).data;
+      let edge = 0, haze = 0;
+      for (let x = 0; x < img.width; x++) {
+        edge = Math.max(edge, al[x * 4 + 3], al[((img.height - 1) * img.width + x) * 4 + 3]);
+      }
+      for (let y = 0; y < img.height; y++) {
+        edge = Math.max(edge, al[y * img.width * 4 + 3], al[(y * img.width + img.width - 1) * 4 + 3]);
+      }
+      for (let i = 3; i < al.length; i += 4) if (al[i] > 5 && al[i] < 200) haze++;
+      expect(edge, `${id} touches its plate edge`).toBe(0);
+      // Figures shot against open backdrop key to a translucent veil unless the
+      // matte is crisper than the raw key.
+      expect(haze / (al.length / 4), `${id} is veiled in keyed background`).toBeLessThan(0.06);
+      const node = createAssetNode(meta, scene);
+      expect(node.animation?.enabled, `${id} must not breathe on its own`).toBe(false);
+      scene.nodes.push(node);
+    }
+    expect(new Set(scene.nodes.map((n) => n.id)).size).toBe(FIGURES.length);
+  });
+
+  it('breathes the figures exactly - no drift at the loop boundary', async () => {
+    for (const id of ['seated-meditation', 'standing-mountain']) {
+      const { node, loops, render } = await stage(`realistic.middle.${id}`, 240);
+      expect(render(0).equals(render(2.4)), `${id} is still before motion`).toBe(true);
+      node.animation!.enabled = true;
+      node.animation!.amplitude = 1;
+      loops.invalidate();
+      expect(render(0).equals(render(node.animation!.loop)), `${id} breathing must loop`).toBe(true);
+      expect(render(0).equals(render(node.animation!.loop * 0.3)), `${id} must breathe`).toBe(false);
+    }
+  });
+
+  it('ships placeable fireplaces whose fire is optional', () => {
+    const lib = library();
+    const scene = createScene('realistic');
+    for (const id of ['stone-fireplace', 'linear-fireplace']) {
+      const meta = lib.get(`realistic.foreground.${id}`)!;
+      expect(meta.category).toBe('interiors');
+      expect(meta.animations).toEqual(['hearth-fire']);
+      const node = createAssetNode(meta, scene);
+      expect(node.animation?.enabled, `${id} must not light itself`).toBe(false);
+      scene.nodes.push(node);
+    }
+    expect(new Set(scene.nodes.map((n) => n.id)).size).toBe(2);
+  });
+
+  it('draws no fire at zero strength and loops exactly at full strength', async () => {
+    const { node, loops, render } = await stage('realistic.foreground.stone-fireplace', 260);
+    const cold = render(0);
+    expect(cold.equals(render(2.9)), 'fire is off, nothing should move').toBe(true);
+    node.animation!.enabled = true;
+    node.animation!.amplitude = 0;
+    loops.invalidate();
+    expect(render(0).equals(cold), 'zero strength must draw nothing').toBe(true);
+    node.animation!.amplitude = 1;
+    loops.invalidate();
+    expect(render(0).equals(render(2.9)), 'fire is lit, it should move').toBe(false);
+    expect(render(0).equals(render(node.animation!.loop)), 'fire must loop exactly').toBe(true);
+  });
+
+  it('lifts glowing embers that rise above the flame bed', async () => {
+    const { node, loops, render } = await stage('realistic.foreground.stone-fireplace', 260);
+    node.animation!.enabled = true;
+    loops.invalidate();
+    // Sample several phases: an ember is only bright for part of its flight.
+    const lit = new Set<number>();
+    const base = render(0);
+    for (const f of [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]) {
+      const frame = render(node.animation!.loop * f);
+      for (let i = 0; i < frame.length; i += 4) {
+        if (frame[i] - base[i] > 10 && frame[i + 1] - base[i + 1] > 4) lit.add(i / 4);
+      }
+    }
+    expect(lit.size, 'no embers or flames appeared').toBeGreaterThan(50);
   });
 });
 

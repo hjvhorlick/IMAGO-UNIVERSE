@@ -245,6 +245,30 @@ export class Compositor {
     glow.addColorStop(1, 'rgba(255,100,12,0)');
     ctx.fillStyle = glow;
     ctx.fillRect(dest.dw * x0, dest.dh * y0, dw, dh);
+
+    // Embers. A fire that only sways reads as a moving picture of a fire;
+    // sparks lifting off the bed and dying as they rise is what sells it.
+    // Each one is frac(phase + i / n), so the whole swarm is exactly periodic.
+    const embers = Math.round(4 + 10 * fire.amplitude);
+    const midX = (x0 + x1) / 2, spanX = (x1 - x0) * 0.34;
+    for (let i = 0; i < embers; i++) {
+      const p = frac(fire.phase + i / embers);
+      const life = Math.sin(Math.PI * p) ** 1.4 * fire.amplitude;
+      if (life < 0.05) continue;
+      const drift = Math.sin(TAU * (fire.phase * 2 + i * 0.37)) * (0.5 + fire.turbulence)
+        + Math.sin(i * 2.3 + fire.seed) * 0.55;
+      const ex = dest.dw * (midX + drift * spanX);
+      const ey = dest.dh * (y1 - (y1 - y0) * p * 0.92);
+      const r = Math.max(0.7, Math.min(dw, dh) * 0.05 * (0.45 + 0.55 * life));
+      const spark = ctx.createRadialGradient(ex, ey, 0, ex, ey, r);
+      spark.addColorStop(0, `rgba(255,226,160,${0.6 * life})`);
+      spark.addColorStop(0.45, `rgba(255,150,40,${0.3 * life})`);
+      spark.addColorStop(1, 'rgba(255,90,10,0)');
+      ctx.fillStyle = spark;
+      ctx.beginPath();
+      ctx.arc(ex, ey, r, 0, TAU);
+      ctx.fill();
+    }
     ctx.restore();
     releaseScratch(scratch);
   }

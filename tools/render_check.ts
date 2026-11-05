@@ -342,6 +342,56 @@ async function main() {
   }
   console.log('rendered five photographic rooms with their fires lit');
 
+  // The figures in a quiet waterside setting, and both fireplaces burning.
+  const figures = createScene('realistic');
+  const figBg = lib.get('realistic.background.clearwater-lake')!;
+  await images.ensure([figBg.id, ...['seated-meditation', 'seated-meditation-side', 'standing-prayer',
+    'tree-pose', 'standing-mountain'].map((id) => `realistic.middle.${id}`)]);
+  const figBgNode = createAssetNode(figBg, figures);
+  fitBackground(figBgNode, figures, figBg.width, figBg.height);
+  figures.nodes.push(figBgNode);
+  const spots: Array<[string, number, number, number]> = [
+    ['seated-meditation', 0.30, 0.74, 0.30],
+    ['seated-meditation-side', 0.50, 0.76, 0.28],
+    ['standing-prayer', 0.70, 0.70, 0.34],
+    ['tree-pose', 0.84, 0.68, 0.36],
+    ['standing-mountain', 0.16, 0.70, 0.34],
+  ];
+  for (const [id, x, y, height] of spots) {
+    const meta = lib.get(`realistic.middle.${id}`)!;
+    const node = createAssetNode(meta, figures);
+    node.x = figures.canvas.width * x; node.y = figures.canvas.height * y;
+    node.height = figures.canvas.height * height; node.width = node.height * meta.width / meta.height;
+    node.animation!.enabled = true; node.animation!.amplitude = 0.8;
+    figures.nodes.push(node);
+  }
+  loops.invalidate();
+  const figCv = createCanvas(W, H);
+  comp.render(figCv.getContext('2d') as never, figures, {
+    scale, quality: 'export', time: 1.1, masterCycle: loops.analyse(figures).master,
+  });
+  fs.writeFileSync(path.join(OUT, 'clearwater-figures.png'), figCv.toBuffer('image/png'));
+
+  for (const id of ['stone-fireplace', 'linear-fireplace']) {
+    const fireScene = createScene('realistic');
+    const meta = lib.get(`realistic.foreground.${id}`)!;
+    await images.ensure([meta.id]);
+    const node = createAssetNode(meta, fireScene);
+    node.x = fireScene.canvas.width / 2; node.y = fireScene.canvas.height * 0.62;
+    node.height = fireScene.canvas.height * 0.5; node.width = node.height * meta.width / meta.height;
+    node.animation!.enabled = true; node.animation!.amplitude = 1;
+    fireScene.nodes = [node];
+    loops.invalidate();
+    for (const [name, t] of [[`fire-${id}`, 0.5], [`fire-${id}-later`, 1.9]] as const) {
+      const cv = createCanvas(W, H);
+      comp.render(cv.getContext('2d') as never, fireScene, {
+        scale, quality: 'export', time: t, masterCycle: loops.analyse(fireScene).master,
+      });
+      fs.writeFileSync(path.join(OUT, `${name}.png`), cv.toBuffer('image/png'));
+    }
+  }
+  console.log('rendered five meditating figures and both fireplaces burning');
+
   /* ---- acceptance: the master cycle boundary must be pixel-identical ---- */
   const a = renderAt(0).cv.getContext('2d').getImageData(0, 0, W, H).data;
   const b = renderAt(report.master).cv.getContext('2d').getImageData(0, 0, W, H).data;

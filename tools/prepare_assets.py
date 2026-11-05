@@ -808,6 +808,55 @@ def publish_realistic_rooms(p: Publisher, src: str, style: str):
                         animations=[], rig={}, max_dim=1400, quality=94))
 
 
+def publish_realistic_people(p: Publisher, src: str, style: str):
+    """Photographic figures and fireplaces for the realistic look.
+
+    Figures photographed against an open backdrop key to a wide band of
+    partial alpha rather than to clean edges, so most of these plates get a
+    crisper matte. Each fireplace's firebox was measured from the plate by
+    finding its flame pixels, and is re-checked by the tests.
+    """
+    R = os.path.join(src, "style-realistic")
+
+    def plate(name: str, crisp: tuple | None = None) -> Image.Image:
+        img = clean_edges(autocrop(key_magenta(Image.open(os.path.join(R, f"{name}.png")))))
+        return crisp_alpha(img, *crisp) if crisp else img
+
+    for aid, name, crisp, scale, tags in [
+        ("seated-meditation", "Seated Meditation", (0.65, 0.95), 0.30,
+         ["figure", "person", "sitting", "meditation", "calm"]),
+        ("seated-meditation-side", "Seated Meditation (side)", (0.65, 0.95), 0.30,
+         ["figure", "person", "sitting", "profile", "meditation"]),
+        ("standing-prayer", "Standing Prayer Pose", None, 0.34,
+         ["figure", "person", "standing", "namaste", "meditation"]),
+        ("tree-pose", "Standing Tree Pose", (0.35, 0.75), 0.36,
+         ["figure", "person", "standing", "yoga", "balance"]),
+        ("standing-mountain", "Standing Mountain Pose", (0.65, 0.95), 0.34,
+         ["figure", "person", "standing", "yoga", "calm"]),
+    ]:
+        p.publish(Asset(f"{style}.middle.{aid}", name, style, "middle", "figures",
+                        plate(f"mid-{aid}", crisp),
+                        themes=["meditation", "forest", "meadow", "garden", "water", "photoreal"],
+                        tags=tags + ["photoreal"], depth=0.62, default_scale=scale,
+                        animations=["creature-breathe"], rig={},
+                        notes="Photographic figure; slow breathing is optional and off by default.",
+                        max_dim=1100, quality=94))
+
+    for aid, name, region, scale, tags in [
+        ("stone-fireplace", "Real Stone Fireplace", [0.400, 0.345, 0.225, 0.290], 0.34,
+         ["fireplace", "stone", "fire", "hearth", "photoreal"]),
+        ("linear-fireplace", "Real Linear Fireplace", [0.570, 0.560, 0.245, 0.225], 0.26,
+         ["fireplace", "modern", "linear", "fire", "photoreal"]),
+    ]:
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", "interiors",
+                        plate(f"fg-{aid}"),
+                        themes=["interior", "fireplace", "photoreal"],
+                        tags=tags, depth=0.97, default_scale=scale,
+                        animations=["hearth-fire"], rig={"type": "hearth", "region": region},
+                        notes="Placeable photographic fireplace. The fire is optional and off by default.",
+                        max_dim=1400, quality=94))
+
+
 def build(src: str, out: str) -> dict:
     p = Publisher(out)
     S = os.path.join(src, "style-fantasy")
@@ -1415,6 +1464,7 @@ def build(src: str, out: str) -> dict:
     R = "realistic"
     publish_realistic(p, src, R)
     publish_realistic_rooms(p, src, R)
+    publish_realistic_people(p, src, R)
 
     W = "winter"
     publish_winter(p, src, W)

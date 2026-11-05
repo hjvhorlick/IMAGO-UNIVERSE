@@ -2352,8 +2352,8 @@
     "modern",
     "penthouse",
     "large windows",
-    "living room",
-    "window"
+    "window",
+    "living room"
    ],
    "origin": "painted",
    "file": "enchanted/modern-penthouse.webp",
@@ -2402,8 +2402,8 @@
     "future",
     "modern",
     "large windows",
-    "lounge",
-    "window"
+    "window",
+    "lounge"
    ],
    "origin": "painted",
    "file": "enchanted/future-sky-lounge.webp",
@@ -2454,8 +2454,8 @@
     "wood beams",
     "wooden door",
     "tile floor",
-    "fireplace",
-    "window"
+    "window",
+    "fireplace"
    ],
    "origin": "painted",
    "file": "enchanted/timber-great-room.webp",
@@ -2515,8 +2515,8 @@
     "oak beams",
     "wooden door",
     "tile floor",
-    "lounge",
-    "window"
+    "window",
+    "lounge"
    ],
    "origin": "painted",
    "file": "enchanted/oak-window-lounge.webp",
@@ -2568,8 +2568,8 @@
     "wood beams",
     "slanted roof",
     "corner windows",
-    "tile floor",
-    "window"
+    "window",
+    "tile floor"
    ],
    "origin": "painted",
    "file": "enchanted/brick-timber-corner-room.webp",
@@ -7049,8 +7049,8 @@
     "modern",
     "penthouse",
     "large windows",
-    "living room",
-    "window"
+    "window",
+    "living room"
    ],
    "origin": "graded",
    "file": "moonlit/modern-penthouse.webp",
@@ -7099,8 +7099,8 @@
     "future",
     "modern",
     "large windows",
-    "lounge",
-    "window"
+    "window",
+    "lounge"
    ],
    "origin": "graded",
    "file": "moonlit/future-sky-lounge.webp",
@@ -7151,8 +7151,8 @@
     "wood beams",
     "wooden door",
     "tile floor",
-    "fireplace",
-    "window"
+    "window",
+    "fireplace"
    ],
    "origin": "graded",
    "file": "moonlit/timber-great-room.webp",
@@ -7212,8 +7212,8 @@
     "oak beams",
     "wooden door",
     "tile floor",
-    "lounge",
-    "window"
+    "window",
+    "lounge"
    ],
    "origin": "graded",
    "file": "moonlit/oak-window-lounge.webp",
@@ -7265,8 +7265,8 @@
     "wood beams",
     "slanted roof",
     "corner windows",
-    "tile floor",
-    "window"
+    "window",
+    "tile floor"
    ],
    "origin": "graded",
    "file": "moonlit/brick-timber-corner-room.webp",
@@ -11290,8 +11290,8 @@
     "modern",
     "penthouse",
     "large windows",
-    "living room",
-    "window"
+    "window",
+    "living room"
    ],
    "origin": "graded",
    "file": "autumn/modern-penthouse.webp",
@@ -11340,8 +11340,8 @@
     "future",
     "modern",
     "large windows",
-    "lounge",
-    "window"
+    "window",
+    "lounge"
    ],
    "origin": "graded",
    "file": "autumn/future-sky-lounge.webp",
@@ -11392,8 +11392,8 @@
     "wood beams",
     "wooden door",
     "tile floor",
-    "fireplace",
-    "window"
+    "window",
+    "fireplace"
    ],
    "origin": "graded",
    "file": "autumn/timber-great-room.webp",
@@ -11453,8 +11453,8 @@
     "oak beams",
     "wooden door",
     "tile floor",
-    "lounge",
-    "window"
+    "window",
+    "lounge"
    ],
    "origin": "graded",
    "file": "autumn/oak-window-lounge.webp",
@@ -11506,8 +11506,8 @@
     "wood beams",
     "slanted roof",
     "corner windows",
-    "tile floor",
-    "window"
+    "window",
+    "tile floor"
    ],
    "origin": "graded",
    "file": "autumn/brick-timber-corner-room.webp",
@@ -14471,6 +14471,392 @@
    "bytes": 403400
   },
   {
+   "id": "realistic.middle.seated-meditation",
+   "name": "Seated Meditation",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "figures",
+   "themes": [
+    "meditation",
+    "forest",
+    "meadow",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "figure",
+    "person",
+    "sitting",
+    "meditation",
+    "calm",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/seated-meditation.webp",
+   "thumb": "realistic/thumbs/seated-meditation.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 600,
+   "alpha": true,
+   "depth": 0.62,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b0b0",
+    "#b09090",
+    "#f0d0d0",
+    "#d0d0b0",
+    "#d0b090"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Photographic figure; slow breathing is optional and off by default.",
+   "bytes": 73024
+  },
+  {
+   "id": "realistic.middle.seated-meditation-side",
+   "name": "Seated Meditation (side)",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "figures",
+   "themes": [
+    "meditation",
+    "forest",
+    "meadow",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "figure",
+    "person",
+    "sitting",
+    "profile",
+    "meditation",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/seated-meditation-side.webp",
+   "thumb": "realistic/thumbs/seated-meditation-side.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 600,
+   "alpha": true,
+   "depth": 0.62,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505050",
+    "#303030",
+    "#101010",
+    "#503030",
+    "#301010"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Photographic figure; slow breathing is optional and off by default.",
+   "bytes": 58422
+  },
+  {
+   "id": "realistic.middle.standing-prayer",
+   "name": "Standing Prayer Pose",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "figures",
+   "themes": [
+    "meditation",
+    "forest",
+    "meadow",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "figure",
+    "person",
+    "standing",
+    "namaste",
+    "meditation",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/standing-prayer.webp",
+   "thumb": "realistic/thumbs/standing-prayer.webp",
+   "format": "image/webp",
+   "width": 221,
+   "height": 725,
+   "alpha": true,
+   "depth": 0.62,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0b0b0",
+    "#f0d0d0",
+    "#b09090",
+    "#d0d0d0",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Photographic figure; slow breathing is optional and off by default.",
+   "bytes": 35330
+  },
+  {
+   "id": "realistic.middle.tree-pose",
+   "name": "Standing Tree Pose",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "figures",
+   "themes": [
+    "meditation",
+    "forest",
+    "meadow",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "figure",
+    "person",
+    "standing",
+    "yoga",
+    "balance",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/tree-pose.webp",
+   "thumb": "realistic/thumbs/tree-pose.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 600,
+   "alpha": true,
+   "depth": 0.62,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09090",
+    "#907070",
+    "#b0b0b0",
+    "#705050",
+    "#909090"
+   ],
+   "defaultScale": 0.36,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Photographic figure; slow breathing is optional and off by default.",
+   "bytes": 33814
+  },
+  {
+   "id": "realistic.middle.standing-mountain",
+   "name": "Standing Mountain Pose",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "figures",
+   "themes": [
+    "meditation",
+    "forest",
+    "meadow",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "figure",
+    "person",
+    "standing",
+    "yoga",
+    "calm",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/standing-mountain.webp",
+   "thumb": "realistic/thumbs/standing-mountain.webp",
+   "format": "image/webp",
+   "width": 1100,
+   "height": 600,
+   "alpha": true,
+   "depth": 0.62,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707070",
+    "#909090",
+    "#907070",
+    "#b0b0b0",
+    "#b09090"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "creature-breathe"
+   ],
+   "rig": {},
+   "variants": [],
+   "notes": "Photographic figure; slow breathing is optional and off by default.",
+   "bytes": 36958
+  },
+  {
+   "id": "realistic.foreground.stone-fireplace",
+   "name": "Real Stone Fireplace",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "fireplace",
+    "photoreal"
+   ],
+   "tags": [
+    "fireplace",
+    "stone",
+    "fire",
+    "hearth",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/stone-fireplace.webp",
+   "thumb": "realistic/thumbs/stone-fireplace.webp",
+   "format": "image/webp",
+   "width": 1400,
+   "height": 767,
+   "alpha": true,
+   "depth": 0.97,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#705030",
+    "#301010",
+    "#503030",
+    "#907050"
+   ],
+   "defaultScale": 0.34,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.4,
+     0.345,
+     0.225,
+     0.29
+    ]
+   },
+   "variants": [],
+   "notes": "Placeable photographic fireplace. The fire is optional and off by default.",
+   "bytes": 464542
+  },
+  {
+   "id": "realistic.foreground.linear-fireplace",
+   "name": "Real Linear Fireplace",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "interiors",
+   "themes": [
+    "interior",
+    "fireplace",
+    "photoreal"
+   ],
+   "tags": [
+    "fireplace",
+    "modern",
+    "linear",
+    "fire",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/linear-fireplace.webp",
+   "thumb": "realistic/thumbs/linear-fireplace.webp",
+   "format": "image/webp",
+   "width": 1276,
+   "height": 568,
+   "alpha": true,
+   "depth": 0.97,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909090",
+    "#b0b0b0",
+    "#101010",
+    "#301010",
+    "#b09090"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "hearth-fire"
+   ],
+   "rig": {
+    "type": "hearth",
+    "region": [
+     0.57,
+     0.56,
+     0.245,
+     0.225
+    ]
+   },
+   "variants": [],
+   "notes": "Placeable photographic fireplace. The fire is optional and off by default.",
+   "bytes": 208230
+  },
+  {
    "id": "winter.background.frostfall-valley",
    "name": "Frostfall Valley",
    "style": "winter",
@@ -15159,8 +15545,8 @@
     "modern",
     "penthouse",
     "large windows",
-    "living room",
-    "window"
+    "window",
+    "living room"
    ],
    "origin": "painted",
    "file": "winter/modern-penthouse.webp",
@@ -15209,8 +15595,8 @@
     "future",
     "modern",
     "large windows",
-    "lounge",
-    "window"
+    "window",
+    "lounge"
    ],
    "origin": "painted",
    "file": "winter/future-sky-lounge.webp",
@@ -15261,8 +15647,8 @@
     "wood beams",
     "wooden door",
     "tile floor",
-    "fireplace",
-    "window"
+    "window",
+    "fireplace"
    ],
    "origin": "painted",
    "file": "winter/timber-great-room.webp",
@@ -15322,8 +15708,8 @@
     "oak beams",
     "wooden door",
     "tile floor",
-    "lounge",
-    "window"
+    "window",
+    "lounge"
    ],
    "origin": "painted",
    "file": "winter/oak-window-lounge.webp",
@@ -15375,8 +15761,8 @@
     "wood beams",
     "slanted roof",
     "corner windows",
-    "tile floor",
-    "window"
+    "window",
+    "tile floor"
    ],
    "origin": "painted",
    "file": "winter/brick-timber-corner-room.webp",
