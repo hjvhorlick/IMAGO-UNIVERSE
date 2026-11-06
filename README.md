@@ -25,7 +25,7 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 203 unit / integration / UI tests (Vitest) |
+| `npm test` | 204 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library and `docs/ASSET_CATALOG.md` from `assets-src/` (needs Pillow + numpy, ~11 min) |
@@ -200,6 +200,6 @@ assets-src/plates/<layer>/  source artwork plates (pipeline input), one folder p
 public/library/<style>/<layer>/  runtime WebP assets + thumbs/ + manifest.json
 docs/ASSET_CATALOG.md  every asset with a thumbnail, grouped by style and layer
 tools/         asset preparation pipeline, headless render verification
-tests/         203 tests across 19 files
+tests/         204 tests across 19 files
 docs/          architecture, assets, limitations
 ```

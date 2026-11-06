@@ -26,7 +26,7 @@ animation engine, Loop Manager and effect library were exercised headlessly.
 | Still export produces a real file | 640×360 PNG > 5 kB asserted in the UI test |
 | Projects round-trip | scene → ZIP → scene, including embedded asset bytes |
 
-`npm test` → **203 passed** across 19 files. `npm run typecheck` → clean under `strict`,
+`npm test` → **204 passed** across 19 files. `npm run typecheck` → clean under `strict`,
 `noUnusedLocals` and `noUnusedParameters`. `npm run build` → succeeds.
 
 ## What was NOT verified — video export

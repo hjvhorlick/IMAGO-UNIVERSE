@@ -20,7 +20,7 @@ import { LoopManager } from '../src/animation/loopManager';
 import { Compositor } from '../src/render/compositor';
 import { AssetLibrary } from '../src/assets/library';
 import { createScene, createAssetNode, fitBackground } from '../src/scene/sceneModel';
-import { makeAnimation } from '../src/core/types';
+import { DEFAULT_LOOP, makeAnimation } from '../src/core/types';
 import { meta } from './helpers';
 
 const ROOT = process.cwd();   // vitest runs from the repository root
@@ -191,6 +191,73 @@ describe('falling water', () => {
     expect(down, `expected downward flow, got px/s: ${shown}`).toBe(vels.length);
     expect(mean, `mean vertical velocity was ${mean.toFixed(2)} px/s`).toBeGreaterThan(1);
   });
+
+  it('moves smoothly from frame to frame, without flicker in the spray and mist', async () => {
+    // The shipped waterfall on its painted plate: flicker only shows up against
+    // real rock and water, so a flat test plate would not catch it.
+    const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/library/manifest.json'), 'utf8'));
+    const lib = new AssetLibrary();
+    lib.manifest = manifest;
+    const falls = lib.assets.find((a) => a.animations.includes('waterfall-flow'))!;
+    const bg = lib.assets.find((a) => a.style === falls.style && a.layer === 'background')!;
+    const cache = new Map<string, { bitmap: unknown; width: number; height: number }>();
+    for (const m of [falls, bg]) {
+      const img = await loadImage(path.join(ROOT, 'public/library', m.file));
+      cache.set(m.id, { bitmap: img, width: img.width, height: img.height });
+    }
+    const images = {
+      peek: (id?: string) => (id ? cache.get(id) ?? null : null),
+      ensure: async () => {}, stats: { count: cache.size, bytes: 0, pending: 0 },
+    };
+    const loops = new LoopManager();
+    const comp = new Compositor(lib, images as never, loops);
+    const scene = createScene(falls.style);
+    const bn = createAssetNode(bg, scene);
+    fitBackground(bn, scene, cache.get(bg.id)!.width, cache.get(bg.id)!.height);
+    bn.locked = true;
+    scene.nodes.push(bn);
+    const node = createAssetNode(falls, scene);
+    node.animation = makeAnimation('waterfall-flow', DEFAULT_LOOP['waterfall-flow']);
+    node.animation.enabled = true;
+    scene.nodes.push(node);
+
+    const W = 480, H = 270;
+    const scale = W / scene.canvas.width;
+    const [rx, ry, rw, rh] = falls.rig!.region as number[];
+    const left = node.x - node.width / 2, top = node.y - node.height / 2;
+    const x0 = Math.max(0, Math.round((left + rx * node.width) * scale));
+    const x1 = Math.min(W, Math.round((left + (rx + rw) * node.width) * scale));
+    const y0 = Math.max(0, Math.round((top + ry * node.height) * scale));
+    const y1 = Math.min(H, Math.round((top + (ry + rh) * node.height) * scale));
+
+    // Step evenly through one loop. Steady, smooth motion changes evenly from one
+    // frame to the next; flicker shows up as the size of the change jumping.
+    const loop = loops.effectiveLoop(scene, node);
+    const N = 24;
+    const luma = (t: number) => {
+      const { cv, ctx } = ctx2d(W, H);
+      comp.render(ctx as never, scene, { scale, quality: 'export', time: t, skipLighting: true });
+      const px = pixels(cv, ctx);
+      const out: number[] = [];
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+        const i = (y * W + x) * 4;
+        out.push(0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2]);
+      }
+      return out;
+    };
+    const frames = Array.from({ length: N }, (_, k) => luma((k / N) * loop));
+    const change: number[] = [];
+    for (let k = 0; k < N; k++) {
+      const a = frames[k], b = frames[(k + 1) % N];
+      let sum = 0;
+      for (let i = 0; i < a.length; i++) sum += Math.abs(b[i] - a[i]);
+      change.push(sum / a.length);
+    }
+    const mean = change.reduce((p, c) => p + c, 0) / N;
+    const jitter = change.reduce((p, c, k) => p + Math.abs(change[(k + 1) % N] - c), 0) / N;
+    const ratio = jitter / mean;
+    expect(ratio, `frame-to-frame jitter ratio ${ratio.toFixed(3)}`).toBeLessThan(0.12);
+  }, 120_000);
 
   it('returns to its exact starting pixels after one cycle', () => {
     const { comp, scene, node } = flatFallScene();

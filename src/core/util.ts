@@ -27,6 +27,16 @@ export function rng(seed: number): () => number {
   };
 }
 
+/**
+ * A random stream for one particle of one pass. It depends only on (seed, pass,
+ * index), so a particle keeps its shape whatever happens to its neighbours. A
+ * single shared stream would shift every later particle whenever an earlier one
+ * was skipped that frame, which made droplets and mist jump about.
+ */
+export function particleRng(seed: number, pass: number, index: number): () => number {
+  return rng(((seed ^ Math.imul(pass + 1, 0x9e3779b1) ^ Math.imul(index + 1, 0x85ebca6b)) >>> 0) || 1);
+}
+
 export function hashString(s: string): number {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }

@@ -11,7 +11,7 @@
  */
 import type { AssetLibrary } from '../assets/library';
 import type { Scene, SceneNode } from '../core/types';
-import { clamp, frac, rng, rad, rgba, TAU } from '../core/util';
+import { clamp, frac, particleRng, rng, rad, rgba, TAU } from '../core/util';
 import { animationEngine } from '../animation/animationEngine';
 import type { LocalAtmosphereSpec, NodeRenderState, Quality, SparkleSpec } from '../animation/animationEngine';
 import { isActive, LoopManager } from '../animation/loopManager';
@@ -643,12 +643,15 @@ export class Compositor {
         const boilCycles = Math.max(2, f.cycles);
         const boilCount = 20;
         for (let i = 0; i < boilCount; i++) {
-          const q = (i + 0.15 + rnd() * 0.7) / boilCount;
-          const phase = rnd(), rSz = rnd();
+          // Every random value is drawn before any early exit, so this particle
+          // is the same whether or not its neighbours are visible this frame.
+          const pr = particleRng(f.seed, 2, i);
+          const q = (i + 0.15 + pr() * 0.7) / boilCount;
+          const phase = pr(), rSz = pr(), jx = pr();
           const p = frac(u * boilCycles + phase);
           const surge = Math.sin(Math.PI * p);
           if (surge <= 0.02) continue;
-          const bx = pickImpactX(q) + (rnd() - 0.5) * W * 0.03;
+          const bx = pickImpactX(q) + (jx - 0.5) * W * 0.03;
           const by = impactY + H * 0.01 - surge * H * (0.022 + 0.036 * rSz);
           const br = Math.min(W, H) * (0.028 + 0.036 * surge * (0.6 + rSz * 0.6));
           const bg = c.createRadialGradient(bx, by, 0, bx, by, br);
@@ -668,12 +671,13 @@ export class Compositor {
         const sprayCount = geo ? Math.round(54 * splashAmp) : Math.round(18 * splashAmp);
         c.lineCap = 'round';
         for (let i = 0; i < sprayCount; i++) {
-          const q = rnd(), phase = rnd(), r1 = rnd(), r2 = rnd();
+          const pr = particleRng(f.seed, 3, i);
+          const q = pr(), phase = pr(), r1 = pr(), r2 = pr(), jy = pr();
           const p = frac(u * sprayCycles + phase);
           const env = Math.sin(Math.PI * p);
           if (env <= 0.04) continue;
           const ox = pickImpactX(q);
-          const oy = impactY + (rnd() - 0.5) * H * 0.018;
+          const oy = impactY + (jy - 0.5) * H * 0.018;
           const vx = (r1 - 0.5) * W * 0.22;
           const vy = (0.11 + 0.15 * r2) * H;
           const grav = vy * 2.4;
@@ -698,31 +702,34 @@ export class Compositor {
         }
       }
 
-      // 2C. BIG rising & drifting mist clouds: volumetric vapor plumes that
-      // climb from the splash pool high across the grotto/cascades, expand,
-      // drift laterally in billowing eddies, and dissolve smoothly.
+      // 2C. Mist that floats. Each plume rises once per loop, slowly and
+      // smoothly: it starts and ends at rest (ease-in-out), rises only a short
+      // way, drifts gently sideways, grows as it thins, and fades in and out
+      // without popping. Every plume is one integer harmonic of the loop, so the
+      // loop still returns exactly to its start.
       const mistAmp = clamp(f.mist, 0, 1.25);
       if (mistAmp > 0.02) {
         const mistCount = 24;
         for (let i = 0; i < mistCount; i++) {
-          const q = (i + 0.5) / mistCount + (rnd() - 0.5) * 0.06;
-          const phase = rnd(), rRise = rnd(), rDrift = rnd(), rSize = rnd(), phSwirl = rnd();
-          // Two integer harmonics: grand rising canyon plumes (1x) + brisk base mist (2x).
-          const mCycles = i % 3 === 0 ? 2 : 1;
-          const p = frac(u * mCycles + phase);
-          const env = Math.pow(Math.sin(Math.PI * p), 1.25);
+          const pr = particleRng(f.seed, 4, i);
+          const q = (i + 0.5) / mistCount + (pr() - 0.5) * 0.06;
+          const phase = pr(), rRise = pr(), rDrift = pr(), rSize = pr(), phSwirl = pr();
+          const p = frac(u + phase);
+          // Soft in and out: nothing appears or vanishes abruptly.
+          const env = Math.pow(Math.sin(Math.PI * p), 2);
           if (env <= 0.01) continue;
+          // Ease-in-out: at rest at the start and the end, gentle in between.
+          const ease = 0.5 - 0.5 * Math.cos(Math.PI * p);
 
           const ox = pickImpactX(clamp(q, 0.04, 0.96));
-          const riseDist = H * (0.42 + 0.34 * rRise);
-          const my = impactY + H * 0.035 - riseDist * p;
-          const outward = ((ox / W) - 0.5) * 0.44 + (rDrift - 0.5) * 0.42;
-          const swirl = Math.sin(TAU * (u * mCycles + phSwirl)) * 0.085;
-          const mx = ox + (outward * p + swirl * Math.sin(Math.PI * p)) * W;
-          const radM = Math.min(W, H) * (0.12 + 0.10 * rSize) * (0.78 + 1.2 * p);
-          // Keep the vapor unmistakable over bright painted water as well as
-          // dark canyon walls; broad, overlapping clouds form visible plumes.
-          const peakA = Math.min(0.40, env * (0.24 + 0.12 * rSize) * mistAmp);
+          const riseDist = H * (0.16 + 0.12 * rRise);
+          const my = impactY + H * 0.02 - riseDist * ease;
+          const outward = ((ox / W) - 0.5) * 0.22 + (rDrift - 0.5) * 0.14;
+          const sway = Math.sin(TAU * (u + phSwirl)) * 0.03;
+          const mx = ox + (outward * ease + sway * Math.sin(Math.PI * p)) * W;
+          const radM = Math.min(W, H) * (0.10 + 0.07 * rSize) * (0.8 + 0.7 * ease);
+          // Quieter than before: mist should read as a soft veil, not clouds.
+          const peakA = Math.min(0.30, env * (0.18 + 0.10 * rSize) * mistAmp);
 
           c.save();
           c.translate(mx, my);
