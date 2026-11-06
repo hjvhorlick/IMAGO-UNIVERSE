@@ -65,6 +65,8 @@ export interface FallSpec {
   seed: number;
   splash: number;      // 0..1.2 plunge boil, leaping droplets & pool ripples
   mist: number;        // 0..1.2 big rising & drifting mist plumes
+  flow: boolean;       // flow the painted water texture itself (photographic falls)
+  companions: string[]; // splash and mist sprites animated over the pool
 }
 
 /** Specular glints twinkling across a wet or water surface. */
@@ -256,6 +258,8 @@ export class AnimationEngine {
           seed: a.seed || 1337,
           splash: clamp((0.45 + amp * 0.55) * (0.55 + turb * 0.65), 0, 1.2),
           mist: clamp((0.50 + amp * 0.50) * (0.55 + turb * 0.70), 0, 1.25),
+          flow: meta?.rig?.flow === true,
+          companions: meta?.rig?.companions ?? [],
         };
         // Deliberately NO mesh warp here. regionMask only gates vertically, so a
         // lateral wobble smeared rock and foliage across the full width of the

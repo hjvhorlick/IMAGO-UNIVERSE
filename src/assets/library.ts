@@ -50,6 +50,8 @@ export class AssetLibrary {
   forStyle(styleId: string, layer?: LayerId): AssetMeta[] {
     return this.assets.filter((a) => {
       if (a.style !== styleId && a.style !== 'universal') return false;
+      // Companions (waterfall splash and mist) are loaded by their waterfall, never placed directly.
+      if (a.rig?.type === 'companion') return false;
       if (layer && layer !== 'atmosphere' && a.layer !== layer) return false;
       return true;
     });

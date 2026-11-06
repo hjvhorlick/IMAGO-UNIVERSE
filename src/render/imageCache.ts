@@ -85,7 +85,14 @@ export class ImageCache {
   }
 
   async ensure(ids: (string | undefined)[]): Promise<void> {
-    await Promise.all(Array.from(new Set(ids.filter(Boolean) as string[])).map((id) => this.load(id)));
+    // A waterfall needs its companion sprites loaded too, or it would draw without them.
+    const all = new Set<string>();
+    for (const id of ids) {
+      if (!id) continue;
+      all.add(id);
+      for (const c of this.library.get(id)?.rig?.companions ?? []) all.add(c);
+    }
+    await Promise.all(Array.from(all).map((id) => this.load(id)));
   }
 
   private evict() {

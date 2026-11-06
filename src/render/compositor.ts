@@ -13,7 +13,7 @@ import type { AssetLibrary } from '../assets/library';
 import type { Scene, SceneNode } from '../core/types';
 import { clamp, frac, particleRng, rng, rad, rgba, TAU } from '../core/util';
 import { animationEngine } from '../animation/animationEngine';
-import type { LocalAtmosphereSpec, NodeRenderState, Quality, SparkleSpec } from '../animation/animationEngine';
+import type { FallSpec, LocalAtmosphereSpec, NodeRenderState, Quality, SparkleSpec } from '../animation/animationEngine';
 import { isActive, LoopManager } from '../animation/loopManager';
 import { EFFECT_MAP } from '../animation/effects';
 import type { EffectDrawContext } from '../animation/effectPrimitives';
@@ -45,6 +45,8 @@ interface WaterSpan {
 
 interface FallGeometry {
   waterMask: HTMLCanvasElement | OffscreenCanvas;
+  /** Sharp water mask: flowing water replaces the still artwork rather than sitting translucent over it. */
+  hardMask: HTMLCanvasElement | OffscreenCanvas;
   /** Distinct horizontal water spans on each row y (supports multi-stream cascades). */
   spans: WaterSpan[][];
   /** Row index (0..H-1) where the vertical cascades hit the plunge pool. */
@@ -393,6 +395,54 @@ export class Compositor {
    * Every motion phase is a pure function of frac(u * integerCycles + phase),
    * so u=0 and u=1 are bit-identical and nothing outside `region` ever moves.
    */
+  /**
+   * Splash and mist sprites over a photographic waterfall. Positions and sizes are
+   * derived from the fall region and the detected impact line, so they follow the
+   * waterfall wherever it is placed. Every motion term is periodic in u.
+   */
+  private drawCompanions(
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    f: FallSpec, u: number,
+    at: { dx: number; dy: number; dw: number; dh: number; impactFrac: number },
+  ) {
+    const [rx, ry, rw, rh] = f.region;
+    const regionW = rw * at.dw, regionH = rh * at.dh;
+    const xCentre = at.dx + rx * at.dw + regionW * 0.5;
+    const yImpact = at.dy + ry * at.dh + at.impactFrac * regionH;
+    const cycles = Math.max(1, f.cycles);
+
+    // Splash: stretched up and down about its base, which sits on the impact line.
+    const splashEntry = this.images.peek(f.companions.find((id) => id.endsWith('.splash')) ?? '');
+    if (splashEntry && f.splash > 0.02) {
+      const t = frac(u * cycles);
+      const sw = regionW * 1.05;
+      const sh = sw * (splashEntry.height / splashEntry.width);
+      const stretch = 1 + 0.12 * Math.sin(TAU * t);
+      ctx.save();
+      ctx.globalAlpha = clamp(f.splash, 0, 1) * 0.95;
+      ctx.drawImage(splashEntry.bitmap as CanvasImageSource, xCentre - sw / 2, yImpact - sh * stretch * 0.8, sw, sh * stretch);
+      ctx.restore();
+    }
+
+    // Mist: three plumes rising off the pool at offset phases; each fades in and out.
+    const mistEntry = this.images.peek(f.companions.find((id) => id.endsWith('.mist')) ?? '');
+    if (mistEntry && f.mist > 0.02) {
+      const mw = regionW * 0.72;
+      const mh = mw * (mistEntry.height / mistEntry.width);
+      for (let k = 0; k < 3; k++) {
+        const p = frac(u * cycles + k / 3);
+        const env = Math.sin(Math.PI * p);
+        if (env <= 0.02) continue;
+        const x = xCentre + Math.sin(TAU * p) * regionW * 0.05 - mw / 2;
+        const y = yImpact - regionH * 0.05 - p * regionH * 0.55 - mh * 0.55;
+        ctx.save();
+        ctx.globalAlpha = clamp(f.mist, 0, 1) * 0.3 * env;
+        ctx.drawImage(mistEntry.bitmap as CanvasImageSource, x, y, mw, mh);
+        ctx.restore();
+      }
+    }
+  }
+
   private drawFall(
     ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
     source: CanvasImageSource,
@@ -424,7 +474,7 @@ export class Compositor {
     const fullX = rx <= 0.001 && rx + rw >= 0.999;
     const fullY = ry <= 0.001 && ry + rh >= 0.999;
 
-    const featherEdges = (fx: number, fy: number) => {
+    const featherEdges = (fx: number, fyTop: number, fyBot: number) => {
       c.globalCompositeOperation = 'destination-in';
       if (!fullX) {
         const g = c.createLinearGradient(0, 0, W, 0);
@@ -438,8 +488,8 @@ export class Compositor {
       if (!fullY) {
         const g = c.createLinearGradient(0, 0, 0, H);
         g.addColorStop(0, 'rgba(0,0,0,0)');
-        g.addColorStop(fy, 'rgba(0,0,0,1)');
-        g.addColorStop(1 - fy, 'rgba(0,0,0,1)');
+        g.addColorStop(fyTop, 'rgba(0,0,0,1)');
+        g.addColorStop(1 - fyBot, 'rgba(0,0,0,1)');
         g.addColorStop(1, 'rgba(0,0,0,0)');
         c.fillStyle = g;
         c.fillRect(0, 0, W, H);
@@ -527,6 +577,98 @@ export class Compositor {
     c.globalCompositeOperation = 'source-over';
     c.clearRect(0, 0, W, H);
 
+    // 1-0. Photographic falls: flow the painted water itself. Two copies of the
+    // plate are cross-faded, each sliding down by a small step; the blend weight
+    // is zero exactly when a copy resets, so the motion is continuous and the
+    // loop closes. The result is masked to the water, so rock and sky stay put.
+    if (f.flow && geo) {
+      const sx = rect.sx + rx * rect.sw, sw = rw * rect.sw, sh = rh * rect.sh;
+      const sy0 = rect.sy + ry * rect.sh;
+      // Content moves down, so each copy samples from above its own position.
+      // Keep the step inside the artwork above the region so nothing samples off the plate.
+      const step = Math.min(ry * rect.sh * 0.9, sh * 0.12);
+      if (step > 0.5) {
+        const t = frac(u * f.cycles);
+        const tB = frac(t + 0.5);
+        const wB = Math.abs(2 * t - 1);
+        c.drawImage(source, sx, sy0 - t * step, sw, sh, 0, 0, W, H);
+        c.globalAlpha = wB;
+        c.drawImage(source, sx, sy0 - tB * step, sw, sh, 0, 0, W, H);
+        c.globalAlpha = 1;
+        c.globalCompositeOperation = 'destination-in';
+        c.drawImage(geo.hardMask, 0, 0, W, H);
+        c.globalCompositeOperation = 'source-over';
+      }
+
+      // 1-0b. Plunge-pool churn: the foam below the impact line is churned
+      // sideways by the same cross-fade. Foam has little fine detail, so the
+      // blend reads as turbulence rather than ghosting. Limited to the water
+      // mask below the impact line so rock and the pool floor stay still.
+      if (f.splash > 0.02 && geo) {
+        const sp = acquireScratch(W, H);
+        const s = sp.ctx;
+        const sx = rect.sx + rx * rect.sw, sw = rw * rect.sw, sh = rh * rect.sh;
+        const sy0 = rect.sy + ry * rect.sh;
+        // The splash rises and falls: the foam is stretched about the impact line
+        // by a periodic amount, cross-faded between two phases so there is no
+        // pop at a reset. Everything above the impact line is pulled with it,
+        // but the mask below only keeps the foam and the water beneath it.
+        const yc = clamp(geo.impactY, 0, H - 1);
+        const bulge = 0.09;
+        const t = frac(u * f.cycles);
+        const tB = frac(t + 0.5);
+        const wB = Math.abs(2 * t - 1);
+        const stretch = (ph: number) => 1 + bulge * Math.sin(TAU * ph);
+        s.save();
+        s.translate(0, yc);
+        s.scale(1, stretch(t));
+        s.translate(0, -yc);
+        s.drawImage(source, sx, sy0, sw, sh, 0, 0, W, H);
+        s.restore();
+        s.save();
+        s.globalAlpha = wB;
+        s.translate(0, yc);
+        s.scale(1, stretch(tB));
+        s.translate(0, -yc);
+        s.drawImage(source, sx, sy0, sw, sh, 0, 0, W, H);
+        s.restore();
+        const bandTop = clamp(geo.impactY * 0.86, 0, H - 1);
+        const g = s.createLinearGradient(0, bandTop, 0, bandTop + (H - bandTop) * 0.2);
+        g.addColorStop(0, 'rgba(0,0,0,0)');
+        g.addColorStop(1, 'rgba(0,0,0,1)');
+        // Soft shadow pockets drift across the churning foam. Pure white foam has
+        // nothing to shift, so these give the turbulence something to read by.
+        // Each pocket wraps at the edges, so the drift is periodic in u.
+        const bandH = H - bandTop;
+        for (let k = 0; k < 6; k++) {
+          const p = frac(u * f.cycles + k / 6);
+          const env = Math.sin(Math.PI * p);
+          if (env <= 0.02) continue;
+          const bx = -W * 0.12 + p * W * 1.24;
+          const by = bandTop + bandH * (0.25 + 0.5 * frac(k * 0.37));
+          const br = W * 0.09;
+          const rg = s.createRadialGradient(bx, by, 0, bx, by, br);
+          rg.addColorStop(0, `rgba(46,104,120,${(0.22 * env * clamp(f.splash, 0, 1)).toFixed(3)})`);
+          rg.addColorStop(1, 'rgba(46,104,120,0)');
+          s.fillStyle = rg;
+          s.beginPath();
+          s.arc(bx, by, br, 0, TAU);
+          s.fill();
+        }
+        s.globalCompositeOperation = 'destination-in';
+        s.fillStyle = g;
+        s.fillRect(0, 0, W, H);
+        s.drawImage(geo.hardMask, 0, 0, W, H);
+        s.globalCompositeOperation = 'source-over';
+        c.save();
+        c.globalCompositeOperation = 'source-over';
+        c.globalAlpha = clamp(f.splash, 0, 1);
+        c.drawImage(sp.canvas, 0, 0, W, H, 0, 0, W, H);
+        c.restore();
+        releaseScratch(sp);
+      }
+    }
+
     // 1A. Rushing water sheets: alternating deep translucent water troughs and
     // roaring aerated whitewater curtains plunging down every stream.
     for (let i = 0; i < f.density; i++) {
@@ -602,7 +744,8 @@ export class Compositor {
       }
     }
 
-    featherEdges(0.09, 0.09);
+    // Flow falls keep the pool foam at the bottom edge, so only the top is feathered there.
+    featherEdges(0.09, 0.09, f.flow ? 0 : 0.09);
     if (geo) {
       c.globalCompositeOperation = 'destination-in';
       c.drawImage(geo.waterMask, 0, 0, W, H);
@@ -612,6 +755,11 @@ export class Compositor {
     ctx.globalCompositeOperation = 'source-over';
     ctx.drawImage(scratch.canvas, 0, 0, W, H, dx, dy, dw, dh);
     ctx.restore();
+
+    // Companion sprites: a splash that rises and falls over the pool, and mist that
+    // rises and fades. Both are real photographic cut-outs, so their motion shows
+    // against the scene rather than against the white water.
+    this.drawCompanions(ctx, f, u, { dx, dy, dw, dh, impactFrac: geo ? geo.impactY / H : 0.8 });
 
     /* ------------------------- Pass 2: Impact splash + big rising mist */
     if (f.splash > 0.02 || f.mist > 0.02) {
@@ -746,7 +894,7 @@ export class Compositor {
         }
       }
 
-      featherEdges(0.08, 0.10);
+      featherEdges(0.08, 0.10, 0.10);
       ctx.save();
       ctx.globalCompositeOperation = 'source-over';
       ctx.drawImage(scratch.canvas, 0, 0, W, H, dx, dy, dw, dh);
@@ -935,9 +1083,24 @@ export class Compositor {
         d[i + 3] = Math.round(clamp(a[p] * 1.22, 0, 1) * 255);
       }
       c.putImageData(img, 0, 0);
+      // Hard mask from the same water measurement: fully opaque inside the water,
+      // so moving water covers the still artwork instead of showing through it.
+      const hardCanvas = typeof OffscreenCanvas !== 'undefined'
+        ? new OffscreenCanvas(W, H)
+        : Object.assign(document.createElement('canvas'), { width: W, height: H });
+      const hc = hardCanvas.getContext('2d') as CanvasRenderingContext2D;
+      const hImg = c.createImageData(W, H);
+      const hd = hImg.data;
+      for (let p = 0; p < N; p++) {
+        const t = clamp((a[p] - 0.2) / 0.35, 0, 1);
+        const i = p * 4;
+        hd[i] = 255; hd[i + 1] = 255; hd[i + 2] = 255;
+        hd[i + 3] = Math.round(t * t * (3 - 2 * t) * 255);
+      }
+      hc.putImageData(hImg, 0, 0);
       if (this.fallMasks.size > 24) this.fallMasks.delete(this.fallMasks.keys().next().value as string);
       const geo: FallGeometry = {
-        waterMask: canvas, spans, impactY, impactSpans, troughRgb, crestRgb, mistRgb,
+        waterMask: canvas, hardMask: hardCanvas, spans, impactY, impactSpans, troughRgb, crestRgb, mistRgb,
       };
       this.fallMasks.set(key, geo);
       return geo;

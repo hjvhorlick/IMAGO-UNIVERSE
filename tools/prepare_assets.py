@@ -958,12 +958,40 @@ def publish_realistic_waterfall(p: Publisher, src: str, style: str):
     ramp = np.linspace(1.0, 0.0, fade, dtype=np.float32)
     rgba[h - fade:, :, 3] *= ramp[:, None]
     img = Image.fromarray(np.clip(rgba, 0, 255).astype(np.uint8), "RGBA")
-    fall = {"type": "fall", "region": [0.27, 0.02, 0.46, 0.80], "speed": 1.0}
+    fall = {"type": "fall", "region": [0.27, 0.02, 0.46, 0.98], "speed": 1.0, "flow": True,
+            "companions": [f"{style}.fx.splash", f"{style}.fx.mist"]}
     p.publish(Asset(f"{style}.middle.waterfall", "Clearwater Waterfall", style, "middle", "water", img,
                     themes=["water", "forest", "photoreal"], tags=["waterfall", "cliff", "pool", "cascade", "photoreal"],
                     origin="painted", depth=0.42, default_scale=0.66,
                     animations=["waterfall-flow", "ripple"], rig=fall, max_dim=1300, quality=94,
                     notes="Photographic waterfall with the same falling-water rig as the painted looks."))
+
+
+def publish_waterfall_companions(p: Publisher, src: str, style: str):
+    """Splash and mist sprites that the photographic waterfall animates over its pool.
+
+    They are published with rig type "companion" so the library and auto-composition
+    never offer them; the waterfall loads them alongside itself (rig.companions).
+    """
+    specs = [
+        ("splash", "realistic-splash.png", "Waterfall Splash", ["splash", "foam"]),
+        ("mist", "realistic-mist.png", "Waterfall Mist", ["mist", "cloud"]),
+    ]
+    for key, fname, name, tags in specs:
+        raw = Image.open(os.path.join(src, "plates", "fx", fname)).convert("RGB")
+        img = autocrop(key_magenta(raw, lo=20, hi=60))
+        if key == "mist":
+            # The backdrop spills green into the soft edges of the cloud. Clamp green to
+            # the other channels so the edge reads as grey-white, not as a green rim.
+            arr = np.asarray(img.convert("RGBA"), dtype=np.uint8).copy()
+            r, g, b = arr[..., 0], arr[..., 1], arr[..., 2]
+            arr[..., 1] = np.minimum(g, np.maximum(r, b))
+            img = Image.fromarray(arr, "RGBA")
+        p.publish(Asset(f"{style}.fx.{key}", name, style, "middle", "water", img,
+                        themes=["water", "photoreal"], tags=tags + ["waterfall", "companion"],
+                        origin="painted", depth=0.42, default_scale=0.5, animations=[],
+                        rig={"type": "companion"}, max_dim=1000, quality=92,
+                        notes="Animated companion of the Clearwater waterfall. Not placed directly."))
 
 
 def build(src: str, out: str, catalog: str = "docs/ASSET_CATALOG.md") -> dict:
@@ -1574,6 +1602,7 @@ def build(src: str, out: str, catalog: str = "docs/ASSET_CATALOG.md") -> dict:
     publish_realistic_rooms(p, src, R)
     publish_realistic_people(p, src, R)
     publish_realistic_waterfall(p, src, R)
+    publish_waterfall_companions(p, src, R)
 
     W = "winter"
     publish_winter(p, src, W)

@@ -205,6 +205,14 @@ export interface AssetRig {
   speed?: number;
   /** Enable the asset's first listed animation when it is placed. */
   autoplay?: boolean;
+  /**
+   * Waterfall rigs only: move the water by flowing the painted texture itself
+   * inside the water mask, so the falls and the plunge-pool foam keep moving
+   * even where they are bright, featureless white.
+   */
+  flow?: boolean;
+  /** Asset ids drawn and animated by this waterfall (its splash and mist sprites). */
+  companions?: string[];
 }
 
 export interface AssetMeta {

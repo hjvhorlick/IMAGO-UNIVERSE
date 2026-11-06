@@ -14908,13 +14908,114 @@
      0.27,
      0.02,
      0.46,
-     0.8
+     0.98
     ],
-    "speed": 1.0
+    "speed": 1.0,
+    "flow": true,
+    "companions": [
+     "realistic.fx.splash",
+     "realistic.fx.mist"
+    ]
    },
    "variants": [],
    "notes": "Photographic waterfall with the same falling-water rig as the painted looks.",
    "bytes": 400168
+  },
+  {
+   "id": "realistic.fx.splash",
+   "name": "Waterfall Splash",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "water",
+   "themes": [
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "splash",
+    "foam",
+    "waterfall",
+    "companion"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/splash.webp",
+   "thumb": "realistic/middle/thumbs/splash.webp",
+   "format": "image/webp",
+   "width": 1000,
+   "height": 665,
+   "alpha": true,
+   "depth": 0.42,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0f0",
+    "#d0d0d0",
+    "#b0d0d0",
+    "#d0f0f0",
+    "#90b0d0"
+   ],
+   "defaultScale": 0.5,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "companion"
+   },
+   "variants": [],
+   "notes": "Animated companion of the Clearwater waterfall. Not placed directly.",
+   "bytes": 350142
+  },
+  {
+   "id": "realistic.fx.mist",
+   "name": "Waterfall Mist",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "water",
+   "themes": [
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "mist",
+    "cloud",
+    "waterfall",
+    "companion"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/mist.webp",
+   "thumb": "realistic/middle/thumbs/mist.webp",
+   "format": "image/webp",
+   "width": 852,
+   "height": 963,
+   "alpha": true,
+   "depth": 0.42,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#f0f0f0",
+    "#b0b0b0",
+    "#d0b0b0",
+    "#f0d0d0"
+   ],
+   "defaultScale": 0.5,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "companion"
+   },
+   "variants": [],
+   "notes": "Animated companion of the Clearwater waterfall. Not placed directly.",
+   "bytes": 72892
   },
   {
    "id": "winter.background.frostfall-valley",
