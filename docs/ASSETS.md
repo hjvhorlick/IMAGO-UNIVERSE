@@ -80,7 +80,7 @@ windows on adjacent walls. A separate oak door, lounge chair, coffee table, book
 **Atmosphere (52 effects)** — procedural, not assets; see below.
 
 The brief's starter targets were 5 backgrounds / 8 middle / 8 foreground / 10 effects. **All four
-targets are met or exceeded** (32 / 83 / 191 / 52). `npm run render-check` composes and renders one
+targets are met or exceeded** (32 / 84 / 191 / 52). `npm run render-check` composes and renders one
 world per background plate to `.render-check/worlds.png` so the variety is verifiable at a glance.
 
 ## Atmospheric effects
@@ -171,7 +171,7 @@ python3 -m venv .venv
 Asset ids are `<style>.<layer>.<name>`, e.g. `enchanted.middle.ancient-oak`. Ids do not change when
 files move, so saved projects keep working.
 
-Output: 306 assets; file sizes depend on the WebP encoder used.
+Output: 307 assets; file sizes depend on the WebP encoder used.
 
 ## Adding a style
 

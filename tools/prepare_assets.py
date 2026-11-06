@@ -931,6 +931,41 @@ def write_catalog(entries: list[dict], styles: list[dict], out: str, catalog: st
     print(f"catalog: {len(entries)} assets -> {catalog}")
 
 
+def publish_realistic_waterfall(p: Publisher, src: str, style: str):
+    """A photographic waterfall, painted in the realistic look from its own plate.
+
+    It uses the same falling-water rig as the painted waterfalls, so the water
+    animates identically. Its backdrop is a magenta close to but not exactly the
+    key colour, and the sun flare in the top corner sits near it, so the key is
+    tighter here than the default. The pool runs into the bottom edge of the
+    plate, so the bottom is feathered rather than left as a hard straight cut.
+    """
+    plate = Image.open(plate_path(src, "mid-realistic-waterfall.png")).convert("RGB")
+    arr = np.asarray(plate).copy()
+    ph, pw = arr.shape[:2]
+    # The sun flare in the top-left corner is pink-white and cannot be colour
+    # keyed without also taking the foam. Sunlit leaves are green-dominant, so
+    # they are kept. Flare pixels are repainted magenta so the key removes them.
+    corner = arr[: int(ph * 0.3), : int(pw * 0.3)].astype(int)
+    r, g, b = corner[..., 0], corner[..., 1], corner[..., 2]
+    flare = (r - g > 40) & (b - g > 30) & (corner.mean(axis=2) > 150)
+    corner[flare] = (255, 0, 255)
+    arr[: int(ph * 0.3), : int(pw * 0.3)] = corner
+    img = autocrop(key_magenta(Image.fromarray(arr), lo=10, hi=40))
+    rgba = np.asarray(img.convert("RGBA"), dtype=np.float32).copy()
+    h = rgba.shape[0]
+    fade = max(1, int(h * 0.06))
+    ramp = np.linspace(1.0, 0.0, fade, dtype=np.float32)
+    rgba[h - fade:, :, 3] *= ramp[:, None]
+    img = Image.fromarray(np.clip(rgba, 0, 255).astype(np.uint8), "RGBA")
+    fall = {"type": "fall", "region": [0.27, 0.02, 0.46, 0.80], "speed": 1.0}
+    p.publish(Asset(f"{style}.middle.waterfall", "Clearwater Waterfall", style, "middle", "water", img,
+                    themes=["water", "forest", "photoreal"], tags=["waterfall", "cliff", "pool", "cascade", "photoreal"],
+                    origin="painted", depth=0.42, default_scale=0.66,
+                    animations=["waterfall-flow", "ripple"], rig=fall, max_dim=1300, quality=94,
+                    notes="Photographic waterfall with the same falling-water rig as the painted looks."))
+
+
 def build(src: str, out: str, catalog: str = "docs/ASSET_CATALOG.md") -> dict:
     p = Publisher(out)
 
@@ -1538,6 +1573,7 @@ def build(src: str, out: str, catalog: str = "docs/ASSET_CATALOG.md") -> dict:
     publish_realistic(p, src, R)
     publish_realistic_rooms(p, src, R)
     publish_realistic_people(p, src, R)
+    publish_realistic_waterfall(p, src, R)
 
     W = "winter"
     publish_winter(p, src, W)

@@ -14857,6 +14857,66 @@
    "bytes": 208230
   },
   {
+   "id": "realistic.middle.waterfall",
+   "name": "Clearwater Waterfall",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "water",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "waterfall",
+    "cliff",
+    "pool",
+    "cascade",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/waterfall.webp",
+   "thumb": "realistic/middle/thumbs/waterfall.webp",
+   "format": "image/webp",
+   "width": 1300,
+   "height": 885,
+   "alpha": true,
+   "depth": 0.42,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0f0",
+    "#d0d0d0",
+    "#303030",
+    "#101010",
+    "#505030"
+   ],
+   "defaultScale": 0.66,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "waterfall-flow",
+    "ripple"
+   ],
+   "rig": {
+    "type": "fall",
+    "region": [
+     0.27,
+     0.02,
+     0.46,
+     0.8
+    ],
+    "speed": 1.0
+   },
+   "variants": [],
+   "notes": "Photographic waterfall with the same falling-water rig as the painted looks.",
+   "bytes": 400168
+  },
+  {
    "id": "winter.background.frostfall-valley",
    "name": "Frostfall Valley",
    "style": "winter",

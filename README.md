@@ -25,7 +25,7 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Dev server on `0.0.0.0:5173` |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build on port 4173 |
-| `npm test` | 204 unit / integration / UI tests (Vitest) |
+| `npm test` | 206 unit / integration / UI tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit`, strict |
 | `npm run render-check` | Headless pixel verification of the real render pipeline |
 | `npm run assets` | Rebuild the runtime art library and `docs/ASSET_CATALOG.md` from `assets-src/` (needs Pillow + numpy, ~11 min) |
@@ -58,7 +58,7 @@ not shown in the library, while effects remain available with every look.
 
 ## What is implemented
 
-**Asset library** — 306 assets across 5 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
+**Asset library** — 307 assets across 5 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
 a celestial observatory, a moonlit waterside and a lotus sanctuary with animated water, a timber
 meditation pavilion and close-up lotus blossoms. Placeable Chinese-inspired moon gate, Japanese-inspired
 stone lantern and Norse-inspired dragon boat add garden and waterside details. A fairy mushroom cottage, Japanese-inspired garden bridge and Norse-inspired stone well are also separately placeable.
@@ -200,6 +200,6 @@ assets-src/plates/<layer>/  source artwork plates (pipeline input), one folder p
 public/library/<style>/<layer>/  runtime WebP assets + thumbs/ + manifest.json
 docs/ASSET_CATALOG.md  every asset with a thumbnail, grouped by style and layer
 tools/         asset preparation pipeline, headless render verification
-tests/         204 tests across 19 files
+tests/         206 tests across 19 files
 docs/          architecture, assets, limitations
 ```

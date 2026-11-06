@@ -12,7 +12,7 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | Enchanted Realms (`enchanted`) | 10 | 25 | 54 | 89 |
 | Moonlit Reverie (`moonlit`) | 9 | 23 | 48 | 80 |
 | Harvest Season (`autumn`) | 9 | 24 | 50 | 83 |
-| Clearwater (`realistic`) | 2 | 8 | 15 | 25 |
+| Clearwater (`realistic`) | 2 | 9 | 15 | 26 |
 | Frostfall (`winter`) | 2 | 3 | 24 | 29 |
 
 ## Enchanted Realms (`enchanted`)
@@ -327,7 +327,7 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/realistic/background/thumbs/clearwater-lake.webp" width="96" alt="Clearwater Lake"> | Clearwater Lake | nature | painted | 1376×768 | [`realistic/background/clearwater-lake.webp`](../public/library/realistic/background/clearwater-lake.webp) |
 | <img src="../public/library/realistic/background/thumbs/forest-stream.webp" width="96" alt="Forest Stream"> | Forest Stream | nature | painted | 1376×768 | [`realistic/background/forest-stream.webp`](../public/library/realistic/background/forest-stream.webp) |
 
-### Middle (8)
+### Middle (9)
 
 | Preview | Name | Category | Origin | Size | File |
 | --- | --- | --- | --- | ---: | --- |
@@ -339,6 +339,7 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/realistic/middle/thumbs/driftwood.webp" width="96" alt="Half-Submerged Driftwood"> | Half-Submerged Driftwood | nature | painted | 1290×629 | [`realistic/middle/driftwood.webp`](../public/library/realistic/middle/driftwood.webp) |
 | <img src="../public/library/realistic/middle/thumbs/lily-pads.webp" width="96" alt="Water Lily Pads"> | Water Lily Pads | plants | painted | 1307×675 | [`realistic/middle/lily-pads.webp`](../public/library/realistic/middle/lily-pads.webp) |
 | <img src="../public/library/realistic/middle/thumbs/water-rocks.webp" width="96" alt="Rocks in Clear Water"> | Rocks in Clear Water | rocks | painted | 1332×675 | [`realistic/middle/water-rocks.webp`](../public/library/realistic/middle/water-rocks.webp) |
+| <img src="../public/library/realistic/middle/thumbs/waterfall.webp" width="96" alt="Clearwater Waterfall"> | Clearwater Waterfall | water | painted | 1300×885 | [`realistic/middle/waterfall.webp`](../public/library/realistic/middle/waterfall.webp) |
 
 ### Foreground (15)
 

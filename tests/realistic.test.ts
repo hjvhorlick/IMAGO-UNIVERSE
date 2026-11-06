@@ -368,3 +368,46 @@ describe('water sparkle', () => {
     expect(diff, 'different seeds produced identical glitter').toBeGreaterThan(20);
   });
 });
+
+describe('the photographic waterfall', () => {
+  it('is published as a realistic water asset with the falling-water rig', () => {
+    const meta = library().get('realistic.middle.waterfall');
+    expect(meta, 'realistic.middle.waterfall is in the manifest').toBeDefined();
+    expect(meta!.name).toBe('Clearwater Waterfall');
+    expect(meta!.category).toBe('water');
+    expect(meta!.animations).toEqual(expect.arrayContaining(['waterfall-flow', 'ripple']));
+    expect(meta!.rig?.type).toBe('fall');
+    const [x, y, w, h] = meta!.rig!.region as number[];
+    expect(x).toBeGreaterThanOrEqual(0);
+    expect(y).toBeGreaterThanOrEqual(0);
+    expect(x + w).toBeLessThanOrEqual(1);
+    expect(y + h).toBeLessThanOrEqual(1);
+  });
+
+  it('keeps the bright falling water inside its rig region', async () => {
+    const lib = library();
+    const meta = lib.get('realistic.middle.waterfall')!;
+    const img = await loadImage(path.join(ROOT, 'public/library', meta.file));
+    const cv = createCanvas(img.width, img.height), ctx = cv.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const { data } = ctx.getImageData(0, 0, img.width, img.height);
+    const [rx, ry, rw, rh] = meta.rig!.region as number[];
+    const x0 = rx * img.width, x1 = (rx + rw) * img.width;
+    const y0 = ry * img.height, y1 = (ry + rh) * img.height;
+    // Only the central band is counted: the sun glare in the top-left corner is
+    // bright too, but it is not water and the rig should not cover it.
+    let water = 0, inside = 0;
+    for (let y = 0; y < img.height * 0.75; y++) {
+      for (let x = img.width * 0.25; x < img.width * 0.75; x++) {
+        const i = (y * img.width + x) * 4;
+        const lo = Math.min(data[i], data[i + 1], data[i + 2]);
+        const hi = Math.max(data[i], data[i + 1], data[i + 2]);
+        if (data[i + 3] < 200 || lo <= 190 || hi - lo >= 45) continue;
+        water++;
+        if (x >= x0 && x < x1 && y >= y0 && y < y1) inside++;
+      }
+    }
+    expect(water, 'the plate has bright falling water').toBeGreaterThan(1000);
+    expect(inside / water, 'share of falling water inside the rig region').toBeGreaterThan(0.95);
+  });
+});
