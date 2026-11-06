@@ -1,11 +1,11 @@
 /**
  * STYLE MANAGER
  * =============
- * Owns the rule that makes the first three layers look like one artwork:
+ * Owns the rule that makes artwork across the scene look coherent:
  * an asset may only appear in a scene whose style matches its own.
  *
- * Layer 4 is deliberately outside this system - atmospheric effects are
- * universal and are never swapped, filtered or removed by a style change.
+ * Atmospheric effects are universal and are never swapped, filtered or
+ * removed by a style change. Artwork, including Layer 4 rooms, is style-gated.
  */
 import type { AssetLibrary } from '../assets/library';
 import type { AssetMeta, Scene, SceneNode, StyleMeta } from '../core/types';
@@ -92,7 +92,7 @@ export function switchStyle(scene: Scene, library: AssetLibrary, newStyleId: str
   return report;
 }
 
-/** Audit: any asset in layers 1-3 whose style does not match the scene. */
+/** Audit: any artwork whose style does not match the scene, on any layer. */
 export function findStyleClashes(scene: Scene, library: AssetLibrary): SceneNode[] {
   return scene.nodes.filter((n) => {
     if (n.kind !== 'asset') return false;

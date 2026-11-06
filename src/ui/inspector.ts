@@ -23,7 +23,8 @@ export interface InspectorCallbacks {
   onSoloLayer: (layer: SceneNode['layer'] | null) => void;
 }
 
-const GENERIC_ANIMS: AnimationType[] = ['float', 'spin', 'pulse', 'grass-wind', 'stem-bend', 'water-flow', 'ripple', 'flag-wave'];
+const GENERIC_ANIMS: AnimationType[] = ['float', 'spin', 'pulse', 'grass-wind', 'stem-bend', 'water-flow', 'ripple',
+  'flag-wave', 'creature-breathe', 'flutter', 'swim', 'sparkle'];
 const BLEND_OPTIONS = [
   { value: 'source-over', label: 'Normal' },
   { value: 'lighter', label: 'Add (glow)' },
@@ -198,8 +199,9 @@ export class Inspector {
       { value: 'background', label: '1 - Background' },
       { value: 'middle', label: '2 - Middle-ground' },
       { value: 'foreground', label: '3 - Foreground' },
+      { value: 'atmosphere', label: '4 - Atmosphere & rooms' },
     ], (v) => this.store.mutate((s) => moveNodeToLayer(s, node, v as SceneNode['layer']), 'Change layer'),
-    'Atmosphere is reserved for effects.'));
+    'Use the ordering controls to arrange objects and effects within a layer.'));
     this.slider(p, node, 'Depth', 'depth', 0, 1, 0.01, {
       hint: '0 = far away, 1 = right in front. Drives the ground line and haze.',
     });
@@ -289,7 +291,7 @@ export class Inspector {
 
     const m = this.section('Movement');
     this.slider(m, node, 'Strength', 'amplitude', 0, 1, 0.01, { target: 'animation', format: (v) => `${Math.round(v * 100)}%` });
-    if (['canopy-sway', 'grass-wind', 'stem-bend'].includes(anim.type)) {
+    if (['canopy-sway', 'grass-wind', 'stem-bend', 'creature-breathe', 'flutter', 'swim'].includes(anim.type)) {
       this.slider(m, node, 'Organic variation', 'turbulence', 0, 1, 0.01, {
         target: 'animation', hint: 'Adds out-of-phase gusts so nothing moves mechanically.',
       });
@@ -479,6 +481,10 @@ function techniqueHint(t: AnimationType): string {
     case 'cloud-drift': return 'The sky band scrolls horizontally as a tiling strip.';
     case 'water-shimmer': return 'Gentle wave distortion across the lower part of the plate.';
     case 'parallax': return 'Very slow scale breathing for depth.';
+    case 'creature-breathe': return 'Ribcage rise and fall with a weight shift between the legs, anchored at the feet.';
+    case 'flutter': return 'Fast shallow wing beats over a slow wandering flight path.';
+    case 'swim': return 'Body-length travelling wave plus a slow drift, as if carried by a current.';
+    case 'sparkle': return 'A field of specular glints that wink in and out across the wet region. Raise Strength for more sparkle, and Organic variation to vary how fast each glint flashes.';
     default: return 'No motion applied.';
   }
 }

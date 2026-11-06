@@ -13,13 +13,16 @@ import { makeEffectNode } from '../ui/inspector';
 
 export function buildDemoScene(library: AssetLibrary, opts: {
   styleId?: string; aspect?: string; name?: string; withEffects?: boolean; composed?: boolean;
+  worldId?: string;
 } = {}): Scene {
   const styleId = opts.styleId ?? library.styles[0]?.id ?? 'enchanted';
   const scene = createScene(styleId, opts.name ?? 'Enchanted Lake', opts.aspect ?? '16:9');
+  if (opts.worldId) scene.worldId = opts.worldId;
   if (opts.composed === false) return scene;
 
-  // Prefer the lake plate so the demo always opens on the same hero view.
-  const preferred = library.get(`${styleId}.background.enchanted-lake`)
+  // Prefer the requested world, else the lake plate, so the demo has a fixed hero view.
+  const preferred = (opts.worldId ? library.get(`${styleId}.background.${opts.worldId}`) : undefined)
+    ?? library.get(`${styleId}.background.enchanted-lake`)
     ?? library.forStyle(styleId, 'background')[0];
   if (preferred) {
     const bg = createAssetNode(preferred, scene);

@@ -4,8 +4,9 @@ import type { Store } from '../core/store';
 import type { AssetMeta, SceneNode } from '../core/types';
 import { CANVAS_PRESETS } from '../scene/sceneModel';
 import { DEFAULT_COMPOSE } from '../scene/composition';
+import { WORLD_CATEGORIES, backgroundFor, listWorlds } from '../scene/worlds';
 import type { ComposeOptions } from '../scene/composition';
-import { referenceCollection, styleStats, switchStyle } from '../scene/styleManager';
+import { referenceCollection, switchStyle } from '../scene/styleManager';
 import { loopManager } from '../animation/loopManager';
 import {
   DURATIONS, QUALITY_BITRATE, RESOLUTIONS, dimensionsFor, describeProgress,
@@ -67,33 +68,48 @@ export function button(label: string, cls: string, fn: () => void, ic?: string):
 
 /* ------------------------------------------------------------ new world */
 
+export type StartingPoint = 'background' | 'composed' | 'demo';
+
+/**
+ * Choose a world, then a look, then a canvas. A world starts with its background
+ * only; the rest is up to the designer. The starting-point choice exists for
+ * anyone who wants a pre-filled sketch instead.
+ */
 export function newWorldDialog(library: AssetLibrary, opts: {
-  onCreate: (styleId: string, aspect: string, name: string, seedScene: 'demo' | 'empty' | 'composed') => void;
+  onCreate: (worldId: string, styleId: string, aspect: string, name: string, start: StartingPoint) => void;
   currentStyle?: string;
   title?: string;
-}) {
-  let style = opts.currentStyle ?? library.styles[0]?.id ?? 'enchanted';
+  subtitle?: string;
+  dismissable?: boolean;
+}): ModalHandle {
+  const worlds = listWorlds(library);
+  const worldOf = (id: string) => worlds.find((w) => w.id === id);
+  let worldId = worlds[0]?.id ?? '';
+  const preferredLook = opts.currentStyle ?? library.styles[0]?.id ?? 'enchanted';
+  let styleId = worldOf(worldId)?.looks.includes(preferredLook)
+    ? preferredLook : (worldOf(worldId)?.looks[0] ?? preferredLook);
   let aspect = '16:9';
-  let seed: 'demo' | 'empty' | 'composed' = 'composed';
+  let start: StartingPoint = 'background';
   let name = 'Untitled world';
 
   const body = el(`<div>
     <div class="welcome-hero">
       <div class="welcome-title">IMAGO UNIVERSE</div>
       <div class="welcome-tag">Create worlds. Bring them to life.</div>
-      <div class="welcome-desc">Choose an artistic style. The background, middle-ground and foreground
-        libraries will only ever show artwork from that style, so your world stays visually coherent.
-        Atmosphere and imagination effects remain available in every style.</div>
+      <div class="welcome-desc">Pick the place first. A world starts with its background and nothing else;
+        you add trees, rocks, flowers and effects yourself, and as many of each as you like.</div>
     </div>
-    <div class="section-title" style="margin-top:6px">1 - Artistic style</div>
-    <div class="style-grid" id="style-grid"></div>
-    <div class="section-title" style="margin-top:20px">2 - Canvas</div>
+    <div class="section-title" style="margin-top:6px">1 - World</div>
+    <div id="world-cats"></div>
+    <div class="section-title" style="margin-top:14px">2 - Look</div>
+    <div class="look-chips" id="look-chips"></div>
+    <div class="section-title" style="margin-top:20px">3 - Canvas</div>
     <div class="aspect-grid" id="aspect-grid"></div>
-    <div class="section-title" style="margin-top:20px">3 - Starting point</div>
+    <div class="section-title" style="margin-top:20px">4 - Starting point</div>
     <div class="segmented" id="seed-seg">
-      <button data-seed="composed" class="active">Auto-composed world</button>
+      <button data-seed="background" class="active">Background only</button>
+      <button data-seed="composed">Background + auto-composed objects</button>
       <button data-seed="demo">Demo with effects</button>
-      <button data-seed="empty">Empty canvas</button>
     </div>
     <div class="field" style="margin-top:16px">
       <div class="field-label"><span>Project name</span></div>
@@ -101,34 +117,62 @@ export function newWorldDialog(library: AssetLibrary, opts: {
     </div>
   </div>`);
 
-  const grid = qs<HTMLElement>('#style-grid', body)!;
-  const paintStyles = () => {
-    grid.innerHTML = '';
-    for (const s of library.styles) {
-      const refs = referenceCollection(library, s);
-      const stats = styleStats(library, s.id);
-      const card = el<HTMLElement>(`<button class="style-card${s.id === style ? ' selected' : ''}" data-style="${s.id}">
-        <div class="style-ref">
-          ${refs[0] ? `<img src="${library.url(refs[0], true)}" alt="">` : '<div class="ref-cell"></div>'}
-          ${refs.slice(1, 5).map((r) => `<div class="ref-cell"><img src="${library.url(r, true)}" alt=""></div>`).join('')}
-        </div>
-        <div class="style-info">
-          <div class="style-sub">${escapeHtml(s.subtitle)}</div>
-          <div class="style-name">${escapeHtml(s.name)}</div>
-          <div class="style-desc">${escapeHtml(s.description)}</div>
-          <div class="theme-tags" style="margin-top:8px">
-            <span class="theme-tag">${stats.background} backgrounds</span>
-            <span class="theme-tag">${stats.middle} objects</span>
-            <span class="theme-tag">${stats.foreground} foreground</span>
-          </div>
-          <div class="field-hint" style="margin-top:6px">Reference collection: background, tree, structure, plant, ground.</div>
-        </div>
-      </button>`);
-      on(card, 'click', () => { style = s.id; paintStyles(); });
-      grid.appendChild(card);
+  const catHost = qs<HTMLElement>('#world-cats', body)!;
+  const lookHost = qs<HTMLElement>('#look-chips', body)!;
+
+  const bgThumb = (id: string, look: string) => {
+    const meta = backgroundFor(library, id, look);
+    return meta ? `<img src="${library.url(meta, true)}" alt="">` : '';
+  };
+
+  const paintLooks = () => {
+    lookHost.innerHTML = '';
+    const world = worldOf(worldId);
+    for (const look of world?.looks ?? []) {
+      const label = library.style(look)?.name ?? look;
+      const chip = el<HTMLElement>(`<button class="chip${look === styleId ? ' active' : ''}" data-look="${look}">${escapeHtml(label)}</button>`);
+      on(chip, 'click', () => { styleId = look; paintWorlds(); paintLooks(); });
+      lookHost.appendChild(chip);
     }
   };
-  paintStyles();
+
+  const paintWorlds = () => {
+    catHost.innerHTML = '';
+    const categories = [...WORLD_CATEGORIES];
+    const other = worlds.filter((w) => w.categoryId === 'other');
+    if (other.length) categories.push({ id: 'other', name: 'Other', worlds: other.map((w) => w.id) });
+    for (const cat of categories) {
+      const inCat = worlds.filter((w) => w.categoryId === cat.id);
+      const head = el<HTMLElement>(`<div class="world-cat-head">${escapeHtml(cat.name)}
+        <span class="field-value">${inCat.length} ${inCat.length === 1 ? 'world' : 'worlds'}</span></div>`);
+      catHost.appendChild(head);
+      if (!inCat.length) {
+        catHost.appendChild(el(`<div class="field-hint" style="margin:0 0 12px">${escapeHtml(
+          WORLD_CATEGORIES.find((c) => c.id === cat.id)?.note ?? 'No worlds in this category yet.')}</div>`));
+        continue;
+      }
+      const grid = el<HTMLElement>(`<div class="style-grid world-grid"></div>`);
+      for (const w of inCat) {
+        const look = w.looks.includes(styleId) ? styleId : w.looks[0];
+        const card = el<HTMLElement>(`<button class="style-card world-card${w.id === worldId ? ' selected' : ''}" data-world="${w.id}">
+          <div class="world-thumb">${bgThumb(w.id, look)}</div>
+          <div class="style-info">
+            <div class="style-name">${escapeHtml(w.name)}</div>
+            <div class="field-hint" style="margin-top:4px">${w.looks.length} ${w.looks.length === 1 ? 'look' : 'looks'}</div>
+          </div>
+        </button>`);
+        on(card, 'click', () => {
+          worldId = w.id;
+          if (!w.looks.includes(styleId)) styleId = w.looks[0];
+          paintWorlds(); paintLooks();
+        });
+        grid.appendChild(card);
+      }
+      catHost.appendChild(grid);
+    }
+  };
+  paintWorlds();
+  paintLooks();
 
   const ag = qs<HTMLElement>('#aspect-grid', body)!;
   const paintAspects = () => {
@@ -150,21 +194,23 @@ export function newWorldDialog(library: AssetLibrary, opts: {
   paintAspects();
 
   qsa<HTMLElement>('[data-seed]', body).forEach((b) => on(b, 'click', () => {
-    seed = b.dataset.seed as typeof seed;
+    start = b.dataset.seed as StartingPoint;
     qsa<HTMLElement>('[data-seed]', body).forEach((x) => x.classList.toggle('active', x === b));
   }));
   on(qs<HTMLInputElement>('#world-name', body)!, 'input', (e) => { name = (e.target as HTMLInputElement).value; });
 
+  const create = button('Create world', 'primary', () => {
+    if (!worldId) return;
+    opts.onCreate(worldId, styleId, aspect, name.trim() || 'Untitled world', start);
+    handle.close();
+  }, 'wand');
   const handle = openModal({
-    title: opts.title ?? 'Create a new world',
-    subtitle: 'Everything stays editable - nothing is ever flattened.',
-    size: 'wide', body,
+    title: opts.title ?? 'Choose a world',
+    subtitle: opts.subtitle ?? 'Everything stays editable - nothing is ever flattened.',
+    size: 'wide', body, dismissable: opts.dismissable,
     actions: [
-      button('Cancel', 'ghost', () => handle.close()),
-      button('Create world', 'primary', () => {
-        opts.onCreate(style, aspect, name.trim() || 'Untitled world', seed);
-        handle.close();
-      }, 'wand'),
+      ...(opts.dismissable === false ? [] : [button('Cancel', 'ghost', () => handle.close())]),
+      create,
     ],
   });
   return handle;
@@ -396,7 +442,9 @@ export function cropDialog(
 
 export function replaceDialog(node: SceneNode, store: Store, library: AssetLibrary, onPick: (meta: AssetMeta) => void) {
   const current = library.get(node.assetId);
-  const list = library.forStyle(store.scene.styleId, node.layer);
+  const sourceLayer = current?.layer ?? node.layer;
+  const list = library.forStyle(store.scene.styleId, sourceLayer)
+    .filter((asset) => current?.category !== 'interiors' || asset.category === 'interiors');
   const body = el(`<div>
     <div class="info-box">Replacing keeps position, size, rotation, colour, animation and layer order.
       Only artwork from <b>${escapeHtml(library.style(store.scene.styleId)?.name ?? '')}</b> is offered.</div>
@@ -529,19 +577,30 @@ export function projectsDialog(shelf: ProjectShelf, opts: {
 /* ---------------------------------------------------------------- history */
 
 export function historyDialog(store: Store) {
-  const body = el(`<div><div class="info-box">Every editing step is kept. Click any entry to jump back to
-    that point; later steps stay available as redo.</div><div id="hist"></div></div>`);
+  const body = el(`<div><div class="info-box">Every step is kept. Click any step to go to it - earlier or
+    later. Steps ahead stay available until you make a new change.</div><div id="hist"></div></div>`);
   const host = qs<HTMLElement>('#hist', body)!;
   const paint = () => {
     host.innerHTML = '';
+    if (!store.past.length && !store.future.length) {
+      host.appendChild(el(`<div class="empty-state">No history yet.</div>`));
+    }
+    // Earlier steps, oldest first.
     store.past.forEach((h, i) => {
       const item = el<HTMLElement>(`<div class="history-item"><span class="history-index">${i + 1}</span>${escapeHtml(h.label)}</div>`);
       on(item, 'click', () => { store.jumpTo(i); paint(); });
       host.appendChild(item);
     });
-    const cur = el<HTMLElement>(`<div class="history-item current"><span class="history-index">${store.past.length + 1}</span>Current state</div>`);
-    host.appendChild(cur);
-    if (!store.past.length) host.prepend(el(`<div class="empty-state">No history yet.</div>`));
+    host.appendChild(el<HTMLElement>(`<div class="history-item current"><span class="history-index">${store.past.length + 1}</span>Current state</div>`));
+    // Later steps, nearest first. future[last] is the nearest; future[0] the farthest.
+    const ahead = store.future.length;
+    for (let idx = ahead - 1; idx >= 0; idx--) {
+      const distance = ahead - idx;               // redo presses needed to get there
+      const h = store.future[idx];
+      const item = el<HTMLElement>(`<div class="history-item ahead"><span class="history-index">${store.past.length + 1 + distance}</span>${escapeHtml(h.label)}<span class="history-tag">redo</span></div>`);
+      on(item, 'click', () => { store.goForward(distance); paint(); });
+      host.appendChild(item);
+    }
   };
   paint();
   openModal({ title: 'History', body });

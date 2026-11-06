@@ -19,7 +19,21 @@ Pipeline stages
 Nothing here talks to a network service and nothing here uses generative AI at
 runtime: this is a conventional, reproducible image-processing build step.
 
+Layout
+------
+Source plates live in `assets-src/plates/<layer>/`, one folder per layer:
+
+    assets-src/plates/background/   bg-*.png   (layer 1)
+    assets-src/plates/middle/       mid-*.png  (layer 2)
+    assets-src/plates/foreground/   fg-*.png   (layer 3)
+
+Runtime output lives in `public/library/<style>/<layer>/`, with thumbnails in a
+`thumbs/` folder beside each layer. `docs/ASSET_CATALOG.md` is written on every
+run and lists every asset with a thumbnail, so you can find an image without
+opening folders.
+
 Usage:  python3 tools/prepare_assets.py [--src assets-src] [--out public/library]
+                                       [--catalog docs/ASSET_CATALOG.md]
 """
 from __future__ import annotations
 
@@ -39,6 +53,17 @@ from PIL import Image, ImageDraw, ImageFilter
 # --------------------------------------------------------------------------
 
 KEY = np.array([255.0, 0.0, 255.0])
+
+# Plate filenames carry their layer as a prefix; the folder is derived from it.
+PLATE_LAYER_DIRS = {"bg": "background", "mid": "middle", "fg": "foreground"}
+
+
+def plate_path(src: str, name: str) -> str:
+    """Path to a painted source plate, e.g. plate_path(src, 'mid-ancient-oak.png')."""
+    prefix = name.split("-", 1)[0]
+    if prefix not in PLATE_LAYER_DIRS:
+        raise ValueError(f"plate name must start with bg-, mid- or fg-: {name}")
+    return os.path.join(src, "plates", PLATE_LAYER_DIRS[prefix], name)
 
 
 def key_magenta(img: Image.Image, lo: float = 28.0, hi: float = 150.0) -> Image.Image:
@@ -87,6 +112,34 @@ def key_blue(img: Image.Image, lo: float = 20.0, hi: float = 100.0) -> Image.Ima
     alpha[alpha < 0.05] = 0.0
     alpha[alpha > 0.96] = 1.0
     return Image.fromarray(np.dstack([obj, alpha * 255.0]).astype(np.uint8), "RGBA")
+
+
+def clean_edges(img: Image.Image, px: int = 3) -> Image.Image:
+    """Zero a hairline frame so keyed ripples never leave a faint rectangle edge."""
+    if px <= 0:
+        return img
+    a = np.array(img)
+    h, w = a.shape[:2]
+    if min(h, w) <= px * 2:
+        return img
+    a[:px, :, 3] = 0
+    a[h - px:, :, 3] = 0
+    a[:, :px, 3] = 0
+    a[:, w - px:, 3] = 0
+    return Image.fromarray(a, "RGBA")
+
+
+def crisp_alpha(img: Image.Image, cut: float = 0.25, hi: float = 0.60) -> Image.Image:
+    """Harden a soft alpha matte.
+
+    Small subjects painted against a blue sky key to a wide band of very low
+    alpha haze rather than to clean edges. Ramping that band away keeps the
+    antialiasing on the subject while deleting the haze around it.
+    """
+    a = np.asarray(img).astype(np.float32)
+    al = a[..., 3] / 255.0
+    a[..., 3] = np.clip((al - cut) / (hi - cut), 0, 1) * 255.0
+    return Image.fromarray(a.astype(np.uint8), "RGBA")
 
 
 def autocrop(img: Image.Image, pad: int = 4) -> Image.Image:
@@ -440,10 +493,10 @@ class Publisher:
 
     def publish(self, a: Asset) -> dict:
         img = fit(a.image, a.max_dim)
-        folder = os.path.join(self.out, a.style)
+        folder = os.path.join(self.out, a.style, a.layer)
         os.makedirs(os.path.join(folder, "thumbs"), exist_ok=True)
         fname = a.id.split(".")[-1] + ".webp"
-        rel = f"{a.style}/{fname}"
+        rel = f"{a.style}/{a.layer}/{fname}"
         img.save(os.path.join(self.out, rel), "WEBP", quality=a.quality, method=6, exact=True)
         thumb = fit(img.copy(), 256)
         thumb.save(os.path.join(folder, "thumbs", fname), "WEBP", quality=82, method=6, exact=True)
@@ -459,7 +512,7 @@ class Publisher:
             "tags": a.tags,
             "origin": a.origin,
             "file": rel,
-            "thumb": f"{a.style}/thumbs/{fname}",
+            "thumb": f"{a.style}/{a.layer}/thumbs/{fname}",
             "format": "image/webp",
             "width": img.width,
             "height": img.height,
@@ -489,77 +542,465 @@ def load_obj(path: str) -> Image.Image:
     return autocrop(key_magenta(Image.open(path)))
 
 
-def build(src: str, out: str) -> dict:
+def publish_garden_structures(p: Publisher, src: str, style: str, label: str, transform=None):
+    """Publish individually placeable garden features, with matching palette siblings."""
+    seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
+    for aid, filename, name, themes, tags, scale, notes in [
+        ("fairy-mushroom-cottage", "mid-fairy-mushroom-cottage.png", "Fairy Mushroom Cottage",
+         ["fairy", "forest"], ["fairy", "mushroom", "cottage", "woodland"], 0.38,
+         "A detailed mushroom-roof cottage with painted warm windows; independently placeable."),
+        ("japanese-garden-bridge", "mid-japanese-garden-bridge.png", "Japanese-Inspired Garden Bridge",
+         ["japanese", "garden", "water"], ["japanese", "bridge", "garden", "wood"], 0.30,
+         "An arched timber garden bridge with transparent openings between its rails."),
+        ("norse-stone-well", "mid-norse-stone-well.png", "Norse-Inspired Stone Well",
+         ["norse", "forest", "garden"], ["norse", "well", "stone", "wood"], 0.32,
+         "A carved wooden well with a mossy stone base; independently placeable."),
+    ]:
+        image = autocrop(key_magenta(Image.open(plate_path(src, filename)), lo=20, hi=100))
+        p.publish(Asset(f"{style}.middle.{aid}", f"{label}{name}", style, "middle", "decorations",
+                        grade(image, transform) if transform else image,
+                        origin="graded" if transform else "painted", themes=themes + seasonal,
+                        tags=tags, depth=0.56, default_scale=scale, animations=[], rig={},
+                        notes=notes, max_dim=1400))
+
+
+def publish_new_blooms(p: Publisher, src: str, style: str, label: str, transform=None):
+    """Publish high-detail, independently placeable flowers in each look."""
+    seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
+    bend = {"type": "bend", "anchor": [0.5, 1.0], "stiffness": 0.18, "gusts": 4}
+    for aid, name, themes, tags, scale in [
+        ("scarlet-dahlias", "Scarlet Dahlias", ["garden", "meadow"], ["dahlia", "red", "flower", "botanical", "close-up"], 0.33),
+        ("golden-sunflowers", "Golden Sunflowers", ["garden", "meadow"], ["sunflower", "yellow", "flower", "botanical", "close-up"], 0.36),
+        ("white-orchids", "White Moth Orchids", ["garden", "meditation"], ["orchid", "white", "flower", "botanical", "close-up"], 0.34),
+        ("tulips", "Garden Tulips", ["garden", "meadow"], ["tulip", "red", "yellow", "flower", "botanical", "close-up"], 0.33),
+        ("daffodils", "Daffodils", ["garden", "meadow"], ["daffodil", "yellow", "spring", "flower", "botanical", "close-up"], 0.33),
+        ("cosmos", "Cosmos Spray", ["garden", "meadow"], ["cosmos", "pink", "flower", "botanical", "close-up"], 0.30),
+    ]:
+        # Blue rather than magenta key preserves the saturated scarlet petals
+        # and the soft pink in the orchid's throat.
+        image = clean_edges(autocrop(key_blue(Image.open(plate_path(src, f"fg-{aid}.png")))))
+        p.publish(Asset(f"{style}.foreground.{aid}", f"{label}{name}", style, "foreground", "flowers",
+                        grade(image, transform) if transform else image,
+                        origin="graded" if transform else "painted", themes=themes + seasonal,
+                        tags=tags, depth=0.91, default_scale=scale, animations=["stem-bend"], rig=bend,
+                        notes="Detailed painted flowers for close-up use; stem bending is optional.",
+                        max_dim=1600, quality=95))
+
+
+def publish_creatures(p: Publisher, src: str, style: str, label: str, transform=None):
+    """Publish independently placeable animals, each with its own motion."""
+    seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
+    for aid, name, layer, themes, tags, scale, anim, notes in [
+        ("white-stag", "White Stag", "middle", ["forest", "meadow", "fairy"],
+         ["stag", "deer", "animal", "wildlife", "woodland"], 0.40, "creature-breathe",
+         "A pale forest stag; breathing and a slow weight shift are optional."),
+        ("red-fox", "Red Fox", "foreground", ["forest", "meadow"],
+         ["fox", "animal", "wildlife", "woodland"], 0.30, "creature-breathe",
+         "A sitting red fox; breathing and a slow weight shift are optional."),
+        ("mute-swans", "Mute Swans", "middle", ["water", "garden"],
+         ["swan", "bird", "animal", "water", "wildlife"], 0.42, "swim",
+         "A pair of swans with their reflections; drifting on the current is optional."),
+        ("koi-fish", "Koi Fish", "foreground", ["water", "garden", "japanese", "chinese"],
+         ["koi", "fish", "animal", "pond", "water"], 0.34, "swim",
+         "Koi seen from above; place them over water. Swimming is optional."),
+        ("butterflies", "Butterflies", "foreground", ["meadow", "garden"],
+         ["butterfly", "insect", "animal", "wildlife", "swarm"], 0.26, "flutter",
+         "A loose group of butterflies in flight. Fluttering is optional."),
+        ("great-owl", "Great Owl", "middle", ["forest", "fairy"],
+         ["owl", "bird", "animal", "wildlife", "nocturnal"], 0.30, "creature-breathe",
+         "A perched owl; breathing and a slow weight shift are optional."),
+        ("rabbit", "Brown Rabbit", "foreground", ["meadow", "forest"],
+         ["rabbit", "bunny", "animal", "wildlife"], 0.22, "creature-breathe",
+         "A rabbit listening in the grass; breathing is optional."),
+        ("red-squirrel", "Red Squirrel", "foreground", ["forest", "meadow"],
+         ["squirrel", "animal", "wildlife", "woodland"], 0.22, "creature-breathe",
+         "An alert red squirrel; breathing is optional."),
+        ("mallard-ducks", "Mallard Ducks", "middle", ["water", "garden"],
+         ["duck", "mallard", "bird", "animal", "water"], 0.34, "swim",
+         "A drake and a hen; drifting on the current is optional."),
+        ("hedgehog", "Hedgehog", "foreground", ["forest", "garden"],
+         ["hedgehog", "animal", "wildlife", "woodland"], 0.18, "creature-breathe",
+         "A hedgehog in the grass; breathing is optional."),
+        ("deer-fawn", "Deer Fawn", "middle", ["forest", "meadow"],
+         ["fawn", "deer", "animal", "wildlife", "young"], 0.32, "creature-breathe",
+         "A fawn lying in long grass; breathing is optional."),
+        ("moor-frog", "Moor Frog", "foreground", ["water", "garden"],
+         ["frog", "amphibian", "animal", "pond", "wildlife"], 0.16, "creature-breathe",
+         "A pond frog; breathing is optional."),
+        ("songbird-flock", "Songbird Flock", "middle", ["forest", "meadow", "water", "garden"],
+         ["birds", "flock", "flight", "animal", "sky"], 0.30, "flutter",
+         "A scattered flock in flight; wing beats and drift are optional."),
+    ]:
+        # Blue key: every one of these subjects is warm or white, so a blue
+        # backdrop separates cleanly without eating into fur, feathers or scales.
+        plate = Image.open(plate_path(src, f"{'mid' if layer == 'middle' else 'fg'}-{aid}.png"))
+        image = clean_edges(autocrop(key_blue(plate)))
+        # Birds painted against an open sky key to a haze rather than to edges.
+        if aid == "songbird-flock":
+            image = crisp_alpha(image)
+        p.publish(Asset(f"{style}.{layer}.{aid}", f"{label}{name}", style, layer, "creatures",
+                        grade(image, transform) if transform else image,
+                        origin="graded" if transform else "painted", themes=themes + seasonal,
+                        tags=tags, depth=0.88 if layer == "foreground" else 0.60,
+                        default_scale=scale, animations=[anim], rig={}, notes=notes,
+                        max_dim=1500, quality=94))
+
+
+def publish_winter(p: Publisher, src: str, style: str):
+    """A genuinely painted winter collection - not a grade of the fantasy plates.
+
+    Snow is blue-shadowed, so these plates are keyed on magenta: the blue key
+    used for warm petals would erase the snow itself. Plates whose subject is
+    painted against open sky or bare snow key to a wide band of near-zero
+    alpha rather than to clean edges, so those get a crisper matte.
+    """
+    sway = {"type": "canopy", "anchor": [0.5, 1.0], "canopyStart": 0.66, "stiffness": 0.72, "gusts": 3}
+    bend = {"type": "bend", "anchor": [0.5, 1.0], "stiffness": 0.18, "gusts": 4}
+
+    def bg(name: str) -> Image.Image:
+        # Backgrounds are opaque rectangles: no keying, no alpha channel to key.
+        return Image.open(plate_path(src, f"bg-{name}.png")).convert("RGB").convert("RGBA")
+
+    def obj(name: str, crisp: tuple | None = None) -> Image.Image:
+        img = clean_edges(autocrop(key_magenta(Image.open(plate_path(src, f"{name}.png")))))
+        return crisp_alpha(img, *crisp) if crisp else img
+
+    for aid, name, img, themes, tags, depth, scale in [
+        ("frostfall-valley", "Frostfall Valley", bg("frostfall-valley"), ["forest", "water", "winter"],
+         ["background", "vista", "snow", "valley"], 0.0, 1.0),
+        ("frozen-lake", "Frozen Lake", bg("frozen-lake"), ["water", "forest", "winter"],
+         ["background", "vista", "ice", "lake"], 0.0, 1.0),
+    ]:
+        p.publish(Asset(f"{style}.background.{aid}", name, style, "background", "nature", img,
+                        themes=themes, tags=tags, depth=depth, default_scale=scale,
+                        # The water is frozen over: animating it would be wrong.
+                        animations=["cloud-drift", "parallax"], rig={"type": "background"},
+                        max_dim=1920))
+
+    for aid, name, img, cat, themes, tags, depth, scale, anims, rig in [
+        ("snow-pine", "Snow-Laden Pine", obj("mid-snow-pine", (0.25, 0.60)), "trees",
+         ["forest", "meadow", "winter"], ["pine", "conifer", "snow", "tree"], 0.50, 0.55,
+         ["canopy-sway"], {**sway, "canopyStart": 0.90, "stiffness": 0.86}),
+        ("bare-winter-tree", "Frosted Bare Tree", obj("mid-bare-winter-tree", (0.30, 0.70)), "trees",
+         ["forest", "meadow", "winter"], ["tree", "bare", "frost", "winter"], 0.50, 0.50,
+         ["canopy-sway"], {**sway, "canopyStart": 0.45, "stiffness": 0.55}),
+        ("ice-pavilion", "Frostfall Pavilion", obj("mid-ice-pavilion"), "structures",
+         ["forest", "garden", "winter"], ["pavilion", "shelter", "icicles", "snow"], 0.55, 0.45,
+         ["lantern-glow"], {}),
+    ]:
+        p.publish(Asset(f"{style}.middle.{aid}", name, style, "middle", cat, img,
+                        themes=themes, tags=tags, depth=depth, default_scale=scale,
+                        animations=anims, rig=rig, max_dim=1500))
+
+    for aid, name, img, cat, themes, tags, depth, scale, anims, rig in [
+        ("snow-drift", "Snow Drift", obj("fg-snow-drift"), "ground",
+         ["meadow", "forest", "water", "garden", "winter"], ["snow", "drift", "ground"], 0.95, 0.35, [], {}),
+        ("snowdrops", "Snowdrops", obj("fg-snowdrops", (0.45, 0.80)), "flowers",
+         ["meadow", "forest", "garden", "winter"], ["snowdrop", "white", "flower", "winter"], 0.90, 0.26,
+         ["stem-bend"], bend),
+        ("frost-grasses", "Frost Grasses", obj("fg-frost-grasses"), "grass",
+         ["meadow", "forest", "winter"], ["grass", "frost", "winter"], 0.93, 0.22, ["grass-wind"], bend),
+        ("winter-berries", "Winter Berry Branch", obj("fg-winter-berries"), "plants",
+         ["forest", "garden", "winter"], ["holly", "berries", "red", "winter"], 0.92, 0.30,
+         ["stem-bend"], bend),
+        ("frost-fern", "Frost Fern", obj("fg-frost-fern"), "plants",
+         ["forest", "garden", "winter"], ["fern", "frost", "winter"], 0.90, 0.28, ["grass-wind"], bend),
+    ]:
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", cat, img,
+                        themes=themes, tags=tags, depth=depth, default_scale=scale,
+                        animations=anims, rig=rig, max_dim=1400, quality=93))
+
+
+def publish_realistic(p: Publisher, src: str, style: str):
+    """An ultra-realistic water collection - photographic, not painterly.
+
+    Water is blue-green and its highlights are white, so a magenta key
+    separates it cleanly where a blue key would dissolve the water itself.
+    """
+    bend = {"type": "bend", "anchor": [0.5, 1.0], "stiffness": 0.18, "gusts": 4}
+
+    def bg(name: str) -> Image.Image:
+        return Image.open(plate_path(src, f"bg-{name}.png")).convert("RGB").convert("RGBA")
+
+    def obj(name: str) -> Image.Image:
+        return clean_edges(autocrop(key_magenta(Image.open(plate_path(src, f"{name}.png")))))
+
+    for aid, name, img, themes, tags, region in [
+        ("clearwater-lake", "Clearwater Lake", bg("clearwater-lake"), ["water", "forest"],
+         ["background", "vista", "lake", "clear water", "photoreal"], [0.0, 0.34, 1.0, 0.66]),
+        ("forest-stream", "Forest Stream", bg("forest-stream"), ["water", "forest"],
+         ["background", "vista", "stream", "caustics", "photoreal"], [0.0, 0.22, 1.0, 0.78]),
+    ]:
+        p.publish(Asset(f"{style}.background.{aid}", name, style, "background", "nature", img,
+                        themes=themes + ["photoreal"], tags=tags, depth=0.0, default_scale=1.0,
+                        animations=["water-shimmer", "sparkle", "cloud-drift", "parallax"],
+                        rig={"type": "background", "region": region},
+                        notes="Photographic clear water with refraction and caustics.",
+                        max_dim=1920, quality=93))
+
+    for aid, name, img, cat, themes, tags, depth, scale, region, anims in [
+        ("water-rocks", "Rocks in Clear Water", obj("mid-water-rocks"), "rocks",
+         ["water", "forest"], ["rocks", "granite", "wet", "ripples", "photoreal"], 0.56, 0.46,
+         [0.0, 0.42, 1.0, 0.58], ["water-shimmer", "sparkle"]),
+        ("driftwood", "Half-Submerged Driftwood", obj("mid-driftwood"), "nature",
+         ["water", "forest"], ["driftwood", "wood", "refraction", "photoreal"], 0.54, 0.44,
+         [0.0, 0.30, 1.0, 0.70], ["water-shimmer", "sparkle"]),
+        ("lily-pads", "Water Lily Pads", obj("mid-lily-pads"), "plants",
+         ["water", "garden"], ["lily", "pads", "floating", "pond", "photoreal"], 0.58, 0.40,
+         [0.0, 0.28, 1.0, 0.72], ["float", "water-shimmer", "sparkle"]),
+    ]:
+        p.publish(Asset(f"{style}.middle.{aid}", name, style, "middle", cat, img,
+                        themes=themes + ["photoreal"], tags=tags, depth=depth, default_scale=scale,
+                        animations=anims, rig={"type": "water", "region": region},
+                        max_dim=1600, quality=94))
+
+    for aid, name, img, cat, themes, tags, depth, scale, anims, rig in [
+        ("water-surface", "Clear Water Surface", obj("fg-water-surface"), "water",
+         ["water"], ["water", "surface", "sparkle", "ripples", "close-up", "photoreal"],
+         0.94, 0.46, ["sparkle", "water-flow", "water-shimmer"], {"type": "water", "region": [0, 0, 1, 1]}),
+        ("shallow-ripples", "Shallow Ripples and Caustics", obj("fg-shallow-ripples"), "water",
+         ["water"], ["water", "caustics", "pebbles", "ripples", "close-up", "photoreal"],
+         0.93, 0.44, ["sparkle", "water-flow"], {"type": "water", "region": [0, 0, 1, 1]}),
+        ("river-stones", "Wet River Stones", obj("fg-river-stones"), "rocks",
+         ["water", "forest"], ["stones", "pebbles", "wet", "glistening", "photoreal"],
+         0.90, 0.34, ["sparkle"], {"type": "water", "region": [0, 0, 1, 1]}),
+        ("reeds", "Reeds at the Water's Edge", obj("fg-reeds"), "plants",
+         ["water", "forest"], ["reeds", "rushes", "waterside", "photoreal"],
+         0.89, 0.34, ["grass-wind"], bend),
+        ("water-droplets", "Water Droplets on Stone", obj("fg-water-droplets"), "water",
+         ["water", "garden"], ["droplets", "dew", "macro", "stone", "photoreal"],
+         0.95, 0.38, ["sparkle"], {"type": "water", "region": [0, 0, 1, 1]}),
+    ]:
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", cat, img,
+                        themes=themes + ["photoreal"], tags=tags, depth=depth, default_scale=scale,
+                        animations=anims, rig=rig,
+                        notes="Photographic water texture; sparkle adds specular glints.",
+                        max_dim=1600, quality=95))
+
+
+def publish_realistic_rooms(p: Publisher, src: str, style: str):
+    """Photographic rooms: floor-to-roof glass, wood and stone, minimal.
+
+    The glass is plated as flat magenta so it keys out into a real opening and
+    the composed world shows through. Each hearth region was measured from the
+    finished plate by finding the flame pixels in it, and is asserted by tests.
+    """
+
+    def plate(name: str) -> Image.Image:
+        return key_magenta(Image.open(plate_path(src, f"fg-{name}.png")))
+
+    def prop(name: str) -> Image.Image:
+        return clean_edges(autocrop(key_magenta(Image.open(plate_path(src, f"fg-{name}.png")))))
+
+    # aid, name, hearth region (or None), tags
+    for aid, name, hearth, tags in [
+        ("japanese-modern-room", "Modern Japanese Room", [0.825, 0.415, 0.135, 0.255],
+         ["japanese", "modern", "tatami", "wood", "stone", "fireplace"]),
+        ("glass-pavilion-lounge", "Glass Pavilion Lounge", [0.615, 0.605, 0.080, 0.180],
+         ["pavilion", "open plan", "glass", "corner", "fireplace"]),
+        ("woodstone-lounge", "Wood and Stone Lounge", [0.120, 0.515, 0.150, 0.155],
+         ["lounge", "oak", "stone", "fireplace"]),
+        ("minimal-glass-loft", "Minimal Glass Loft", [0.810, 0.560, 0.150, 0.165],
+         ["loft", "minimal", "linear fireplace", "concrete"]),
+        ("japanese-engawa-room", "Japanese Engawa Room", [0.788, 0.730, 0.110, 0.145],
+         ["japanese", "engawa", "tatami", "sunken hearth"]),
+    ]:
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", "interiors",
+                        plate(aid), themes=["interior", "lounge", "window"] + ["photoreal"],
+                        tags=tags + ["room", "window", "photoreal"], depth=0.98, default_scale=0.82,
+                        # Fire is an option, never automatic: a scene starts still.
+                        animations=["hearth-fire"] if hearth else [],
+                        rig={"type": "window-overlay"} if not hearth
+                        else {"type": "window-overlay", "region": hearth},
+                        notes="Floor-to-roof glass keys out into a real opening; the fire is optional."
+                        if hearth else "Floor-to-roof glass keys out into a real opening.",
+                        max_dim=1600, quality=94))
+
+    for aid, name, tags, scale, depth in [
+        ("minimal-wood-bench", "Minimal Oak Bench", ["bench", "oak", "seating", "minimal"], 0.22, 0.96),
+        ("low-wood-table", "Low Oak Table", ["table", "oak", "coffee table", "minimal"], 0.20, 0.97),
+        ("linen-floor-cushions", "Linen Floor Cushions", ["cushions", "zabuton", "linen", "seating"], 0.16, 0.98),
+    ]:
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", "interiors",
+                        prop(aid), themes=["interior", "furniture"] + ["photoreal"],
+                        tags=tags + ["furniture", "photoreal"], depth=depth, default_scale=scale,
+                        animations=[], rig={}, max_dim=1400, quality=94))
+
+
+def publish_realistic_people(p: Publisher, src: str, style: str):
+    """Photographic figures and fireplaces for the realistic look.
+
+    Figures photographed against an open backdrop key to a wide band of
+    partial alpha rather than to clean edges, so most of these plates get a
+    crisper matte. Each fireplace's firebox was measured from the plate by
+    finding its flame pixels, and is re-checked by the tests.
+    """
+
+    def plate(name: str, crisp: tuple | None = None) -> Image.Image:
+        img = clean_edges(autocrop(key_magenta(Image.open(plate_path(src, f"{name}.png")))))
+        return crisp_alpha(img, *crisp) if crisp else img
+
+    for aid, name, crisp, scale, tags in [
+        ("seated-meditation", "Seated Meditation", (0.65, 0.95), 0.30,
+         ["figure", "person", "sitting", "meditation", "calm"]),
+        ("seated-meditation-side", "Seated Meditation (side)", (0.65, 0.95), 0.30,
+         ["figure", "person", "sitting", "profile", "meditation"]),
+        ("standing-prayer", "Standing Prayer Pose", None, 0.34,
+         ["figure", "person", "standing", "namaste", "meditation"]),
+        ("tree-pose", "Standing Tree Pose", (0.35, 0.75), 0.36,
+         ["figure", "person", "standing", "yoga", "balance"]),
+        ("standing-mountain", "Standing Mountain Pose", (0.65, 0.95), 0.34,
+         ["figure", "person", "standing", "yoga", "calm"]),
+    ]:
+        p.publish(Asset(f"{style}.middle.{aid}", name, style, "middle", "figures",
+                        plate(f"mid-{aid}", crisp),
+                        themes=["meditation", "forest", "meadow", "garden", "water", "photoreal"],
+                        tags=tags + ["photoreal"], depth=0.62, default_scale=scale,
+                        animations=["creature-breathe"], rig={},
+                        notes="Photographic figure; slow breathing is optional and off by default.",
+                        max_dim=1100, quality=94))
+
+    for aid, name, region, scale, tags in [
+        ("stone-fireplace", "Real Stone Fireplace", [0.400, 0.345, 0.225, 0.290], 0.34,
+         ["fireplace", "stone", "fire", "hearth", "photoreal"]),
+        ("linear-fireplace", "Real Linear Fireplace", [0.570, 0.560, 0.245, 0.225], 0.26,
+         ["fireplace", "modern", "linear", "fire", "photoreal"]),
+    ]:
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", "interiors",
+                        plate(f"fg-realistic-{aid}" if aid == "stone-fireplace" else f"fg-{aid}"),
+                        themes=["interior", "fireplace", "photoreal"],
+                        tags=tags, depth=0.97, default_scale=scale,
+                        animations=["hearth-fire"], rig={"type": "hearth", "region": region},
+                        notes="Placeable photographic fireplace. The fire is optional and off by default.",
+                        max_dim=1400, quality=94))
+
+
+LAYER_ORDER = ["background", "middle", "foreground"]
+
+
+def write_catalog(entries: list[dict], styles: list[dict], out: str, catalog: str) -> None:
+    """Write a browsable Markdown catalog: one thumbnail row per asset, grouped by style and layer."""
+    base = os.path.dirname(os.path.abspath(catalog))
+
+    def rel_to_catalog(path: str) -> str:
+        return os.path.relpath(os.path.join(os.path.abspath(out), path), base).replace(os.sep, "/")
+
+    style_names = {s["id"]: s["name"] for s in styles}
+    lines = [
+        "# Asset catalog",
+        "",
+        "> Generated by `tools/prepare_assets.py` on every run. Do not edit by hand.",
+        "",
+        "Every runtime asset, grouped by style and layer. Thumbnails link to the full WebP.",
+        "The same layout exists on disk as `public/library/<style>/<layer>/`.",
+        "",
+        "## Summary",
+        "",
+        "| Style | Background | Middle | Foreground | Total |",
+        "| --- | ---: | ---: | ---: | ---: |",
+    ]
+    for s in styles:
+        counts = [sum(1 for e in entries if e["style"] == s["id"] and e["layer"] == layer)
+                  for layer in LAYER_ORDER]
+        lines.append(f"| {style_names.get(s['id'], s['id'])} (`{s['id']}`) | "
+                     + " | ".join(str(c) for c in counts) + f" | {sum(counts)} |")
+    lines.append("")
+
+    for s in styles:
+        lines += [f"## {style_names.get(s['id'], s['id'])} (`{s['id']}`)", ""]
+        for layer in LAYER_ORDER:
+            group = sorted((e for e in entries if e["style"] == s["id"] and e["layer"] == layer),
+                           key=lambda e: (e["category"], e["name"]))
+            if not group:
+                continue
+            lines += [f"### {layer.capitalize()} ({len(group)})", "",
+                      "| Preview | Name | Category | Origin | Size | File |",
+                      "| --- | --- | --- | --- | ---: | --- |"]
+            for e in group:
+                thumb = rel_to_catalog(e["thumb"])
+                full = rel_to_catalog(e["file"])
+                lines.append(
+                    f"| <img src=\"{thumb}\" width=\"96\" alt=\"{e['name']}\"> "
+                    f"| {e['name']} | {e['category']} | {e['origin']} | {e['width']}×{e['height']} "
+                    f"| [`{e['file']}`]({full}) |")
+            lines.append("")
+
+    os.makedirs(os.path.dirname(os.path.abspath(catalog)), exist_ok=True)
+    with open(catalog, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    print(f"catalog: {len(entries)} assets -> {catalog}")
+
+
+def build(src: str, out: str, catalog: str = "docs/ASSET_CATALOG.md") -> dict:
     p = Publisher(out)
-    S = os.path.join(src, "style-fantasy")
 
     print("keying + refining painted plates ...")
-    bg_lake = fit(load_bg(f"{S}/bg-enchanted-lake.png"), 1920)
-    bg_glade = fit(load_bg(f"{S}/bg-moonlit-glade.png"), 1920)
-    bg_high = fit(load_bg(f"{S}/bg-crystal-highlands.png"), 1920)
-    bg_hollow = fit(load_bg(f"{S}/bg-forest-hollow.png"), 1920)
-    bg_autumn = fit(load_bg(f"{S}/bg-autumn-river.png"), 1920)
-    bg_fairy = fit(load_bg(f"{S}/bg-fairy-court.png"), 1920)
-    bg_norse = fit(load_bg(f"{S}/bg-norse-worldtree.png"), 1920)
-    bg_chinese = fit(load_bg(f"{S}/bg-chinese-mist-mountains.png"), 1920)
-    bg_japanese = fit(load_bg(f"{S}/bg-japanese-moon-garden.png"), 1920)
-    bg_observatory = fit(load_bg(f"{S}/bg-celestial-observatory.png"), 1920)
-    bg_waterside = fit(load_bg(f"{S}/bg-mythic-waterside.png"), 1920)
-    bg_lotus = fit(load_bg(f"{S}/bg-lotus-sanctuary.png"), 1920)
-    lotus_pavilion = autocrop(key_magenta(Image.open(f"{S}/mid-lotus-meditation-pavilion.png"), lo=20, hi=100))
-    lotus_flowers = autocrop(key_blue(Image.open(f"{S}/fg-lotus-flowers.png")))
-    moon_gate = autocrop(key_magenta(Image.open(f"{S}/mid-chinese-moon-gate.png"), lo=20, hi=100))
-    stone_lantern = autocrop(key_magenta(Image.open(f"{S}/mid-japanese-stone-lantern.png"), lo=20, hi=100))
-    dragon_boat = autocrop(boat_waterline(key_magenta(Image.open(f"{S}/mid-norse-dragon-boat.png"), lo=20, hi=100)))
+    bg_lake = fit(load_bg(plate_path(src, "bg-enchanted-lake.png")), 1920)
+    bg_glade = fit(load_bg(plate_path(src, "bg-moonlit-glade.png")), 1920)
+    bg_high = fit(load_bg(plate_path(src, "bg-crystal-highlands.png")), 1920)
+    bg_hollow = fit(load_bg(plate_path(src, "bg-forest-hollow.png")), 1920)
+    bg_autumn = fit(load_bg(plate_path(src, "bg-autumn-river.png")), 1920)
+    bg_fairy = fit(load_bg(plate_path(src, "bg-fairy-court.png")), 1920)
+    bg_norse = fit(load_bg(plate_path(src, "bg-norse-worldtree.png")), 1920)
+    bg_chinese = fit(load_bg(plate_path(src, "bg-chinese-mist-mountains.png")), 1920)
+    bg_japanese = fit(load_bg(plate_path(src, "bg-japanese-moon-garden.png")), 1920)
+    bg_observatory = fit(load_bg(plate_path(src, "bg-celestial-observatory.png")), 1920)
+    bg_waterside = fit(load_bg(plate_path(src, "bg-mythic-waterside.png")), 1920)
+    bg_lotus = fit(load_bg(plate_path(src, "bg-lotus-sanctuary.png")), 1920)
+    lotus_pavilion = autocrop(key_magenta(Image.open(plate_path(src, "mid-lotus-meditation-pavilion.png")), lo=20, hi=100))
+    lotus_flowers = autocrop(key_blue(Image.open(plate_path(src, "fg-lotus-flowers.png"))))
+    moon_gate = autocrop(key_magenta(Image.open(plate_path(src, "mid-chinese-moon-gate.png")), lo=20, hi=100))
+    stone_lantern = autocrop(key_magenta(Image.open(plate_path(src, "mid-japanese-stone-lantern.png")), lo=20, hi=100))
+    dragon_boat = autocrop(boat_waterline(key_magenta(Image.open(plate_path(src, "mid-norse-dragon-boat.png")), lo=20, hi=100)))
     # These plates have slightly desaturated magenta at their edges.
-    lantern_bridge = autocrop(key_magenta(Image.open(f"{S}/mid-lantern-bridge.png"), lo=20, hi=100))
-    river_reeds = autocrop(key_magenta(Image.open(f"{S}/fg-river-reeds.png"), lo=20, hi=100))
-    celestial_arch = load_obj(f"{S}/mid-celestial-ruins.png")
+    lantern_bridge = autocrop(key_magenta(Image.open(plate_path(src, "mid-lantern-bridge.png")), lo=20, hi=100))
+    river_reeds = autocrop(key_magenta(Image.open(plate_path(src, "fg-river-reeds.png")), lo=20, hi=100))
+    celestial_arch = load_obj(plate_path(src, "mid-celestial-ruins.png"))
     # This painted plate's backdrop is less saturated near its edges; a
     # tighter key removes that spill without leaving a translucent rectangle.
-    starflowers = autocrop(key_magenta(Image.open(f"{S}/fg-starflowers.png"), lo=20, hi=80))
-    foxgloves = autocrop(key_magenta(Image.open(f"{S}/fg-woodland-foxgloves.png"), lo=20, hi=80))
-    wild_roses = load_obj(f"{S}/fg-wild-roses.png")
-    anemones = autocrop(key_magenta(Image.open(f"{S}/fg-woodland-anemones.png"), lo=20, hi=100))
+    starflowers = autocrop(key_magenta(Image.open(plate_path(src, "fg-starflowers.png")), lo=20, hi=80))
+    foxgloves = autocrop(key_magenta(Image.open(plate_path(src, "fg-woodland-foxgloves.png")), lo=20, hi=80))
+    wild_roses = load_obj(plate_path(src, "fg-wild-roses.png"))
+    anemones = autocrop(key_magenta(Image.open(plate_path(src, "fg-woodland-anemones.png")), lo=20, hi=100))
     # Blue studio plates preserve the saturated red and pink petals that a
     # magenta key would mistakenly erase.
-    poppies = autocrop(key_blue(Image.open(f"{S}/fg-wild-poppies.png")))
-    peonies = autocrop(key_blue(Image.open(f"{S}/fg-rose-peonies.png")))
-    irises = autocrop(key_blue(Image.open(f"{S}/fg-golden-irises.png")))
-    oak = load_obj(f"{S}/mid-ancient-oak.png")
-    willow = load_obj(f"{S}/mid-willow-tree.png")
-    bridge = load_obj(f"{S}/mid-stone-bridge.png")
-    pavilion = load_obj(f"{S}/mid-garden-pavilion.png")
-    boulders = load_obj(f"{S}/mid-mossy-boulders.png")
-    waterfall = load_obj(f"{S}/mid-waterfall.png")
-    lounge_window = load_obj(f"{S}/fg-lounge-window.png")
-    room_hearth = load_obj(f"{S}/fg-room-hearth-nook.png")
-    room_window_seat = load_obj(f"{S}/fg-room-window-seat.png")
-    stone_fireplace = autocrop(key_magenta(Image.open(f"{S}/fg-stone-fireplace.png"), lo=20, hi=100))
-    coffee_cup = autocrop(key_magenta(Image.open(f"{S}/fg-coffee-cup.png"), lo=20, hi=100))
-    modern_room = load_obj(f"{S}/fg-room-modern-penthouse.png")
-    future_room = load_obj(f"{S}/fg-room-future-observatory.png")
-    modern_sofa = load_obj(f"{S}/fg-modern-sectional.png")
-    future_chair = load_obj(f"{S}/fg-future-lounge-chair.png")
-    modern_fireplace = load_obj(f"{S}/fg-modern-fireplace.png")
-    timber_room = load_obj(f"{S}/fg-room-timber-greatroom.png")
-    oak_lounge = load_obj(f"{S}/fg-room-oak-window-lounge.png")
-    brick_timber_room = load_obj(f"{S}/fg-room-asymmetric-brick-timber.png")
-    oak_door = load_obj(f"{S}/fg-contemporary-oak-door.png")
-    oak_chair = load_obj(f"{S}/fg-contemporary-oak-chair.png")
-    oak_table = load_obj(f"{S}/fg-contemporary-oak-table.png")
-    oak_bookshelf = load_obj(f"{S}/fg-oak-bookshelf.png")
-    indoor_plant = load_obj(f"{S}/fg-indoor-plant.png")
-    oak_floor_lamp = load_obj(f"{S}/fg-oak-floor-lamp.png")
-    fairy_mushrooms = load_obj(f"{S}/fg-fae-mushroom-cluster.png")
-    norse_frost_pine = load_obj(f"{S}/fg-norse-frost-pine.png")
-    chinese_peach = load_obj(f"{S}/fg-chinese-peach-blossoms.png")
-    japanese_moon_moss = load_obj(f"{S}/fg-japanese-moon-moss.png")
-    fairy_tree = load_obj(f"{S}/mid-fairy-tree.png")
-    norse_stones = load_obj(f"{S}/mid-norse-rune-stones.png")
-    chinese_pavilion = load_obj(f"{S}/mid-chinese-pavilion.png")
-    japanese_torii = load_obj(f"{S}/mid-japanese-torii-gate.png")
-    grass = load_obj(f"{S}/fg-grass-tuft.png")
+    poppies = autocrop(key_blue(Image.open(plate_path(src, "fg-wild-poppies.png"))))
+    peonies = autocrop(key_blue(Image.open(plate_path(src, "fg-rose-peonies.png"))))
+    irises = autocrop(key_blue(Image.open(plate_path(src, "fg-golden-irises.png"))))
+    oak = load_obj(plate_path(src, "mid-ancient-oak.png"))
+    willow = load_obj(plate_path(src, "mid-willow-tree.png"))
+    bridge = load_obj(plate_path(src, "mid-stone-bridge.png"))
+    pavilion = load_obj(plate_path(src, "mid-garden-pavilion.png"))
+    boulders = load_obj(plate_path(src, "mid-mossy-boulders.png"))
+    waterfall = load_obj(plate_path(src, "mid-waterfall.png"))
+    lounge_window = load_obj(plate_path(src, "fg-lounge-window.png"))
+    room_hearth = load_obj(plate_path(src, "fg-room-hearth-nook.png"))
+    room_window_seat = load_obj(plate_path(src, "fg-room-window-seat.png"))
+    stone_fireplace = autocrop(key_magenta(Image.open(plate_path(src, "fg-stone-fireplace.png")), lo=20, hi=100))
+    coffee_cup = autocrop(key_magenta(Image.open(plate_path(src, "fg-coffee-cup.png")), lo=20, hi=100))
+    modern_room = load_obj(plate_path(src, "fg-room-modern-penthouse.png"))
+    future_room = load_obj(plate_path(src, "fg-room-future-observatory.png"))
+    modern_sofa = load_obj(plate_path(src, "fg-modern-sectional.png"))
+    future_chair = load_obj(plate_path(src, "fg-future-lounge-chair.png"))
+    modern_fireplace = load_obj(plate_path(src, "fg-modern-fireplace.png"))
+    timber_room = load_obj(plate_path(src, "fg-room-timber-greatroom.png"))
+    oak_lounge = load_obj(plate_path(src, "fg-room-oak-window-lounge.png"))
+    brick_timber_room = load_obj(plate_path(src, "fg-room-asymmetric-brick-timber.png"))
+    oak_door = load_obj(plate_path(src, "fg-contemporary-oak-door.png"))
+    oak_chair = load_obj(plate_path(src, "fg-contemporary-oak-chair.png"))
+    oak_table = load_obj(plate_path(src, "fg-contemporary-oak-table.png"))
+    oak_bookshelf = load_obj(plate_path(src, "fg-oak-bookshelf.png"))
+    indoor_plant = load_obj(plate_path(src, "fg-indoor-plant.png"))
+    oak_floor_lamp = load_obj(plate_path(src, "fg-oak-floor-lamp.png"))
+    fairy_mushrooms = load_obj(plate_path(src, "fg-fae-mushroom-cluster.png"))
+    norse_frost_pine = load_obj(plate_path(src, "fg-norse-frost-pine.png"))
+    chinese_peach = load_obj(plate_path(src, "fg-chinese-peach-blossoms.png"))
+    japanese_moon_moss = load_obj(plate_path(src, "fg-japanese-moon-moss.png"))
+    fairy_tree = load_obj(plate_path(src, "mid-fairy-tree.png"))
+    norse_stones = load_obj(plate_path(src, "mid-norse-rune-stones.png"))
+    chinese_pavilion = load_obj(plate_path(src, "mid-chinese-pavilion.png"))
+    japanese_torii = load_obj(plate_path(src, "mid-japanese-torii-gate.png"))
+    grass = load_obj(plate_path(src, "fg-grass-tuft.png"))
 
     canopy = {"type": "canopy", "anchor": [0.5, 1.0], "canopyStart": 0.66,
               "stiffness": 0.72, "gusts": 3}
@@ -699,9 +1140,9 @@ def build(src: str, out: str) -> dict:
                             max_dim=1400))
         for aid, name, image, themes, tags in [
             ("modern-penthouse", "Modern Penthouse View", modern_room, ["modern", "interior", "window"],
-             ["modern", "penthouse", "large windows", "living room"]),
+             ["modern", "penthouse", "large windows", "window", "living room"]),
             ("future-sky-lounge", "Futuristic Sky Lounge", future_room, ["futuristic", "interior", "window"],
-             ["future", "modern", "large windows", "lounge"]),
+             ["future", "modern", "large windows", "window", "lounge"]),
         ]:
             p.publish(Asset(f"{style}.foreground.{aid}", f"{label}{name}", style, "foreground", "interiors",
                             plate(image), origin=origin, themes=themes, tags=tags, depth=0.98, default_scale=0.82,
@@ -711,7 +1152,7 @@ def build(src: str, out: str) -> dict:
         p.publish(Asset(f"{style}.foreground.timber-great-room", f"{label}Contemporary Timber Great Room",
                         style, "foreground", "interiors", plate(timber_room), origin=origin,
                         themes=["interior", "window", "contemporary", "timber"],
-                        tags=["modern", "wood beams", "wooden door", "tile floor", "fireplace"],
+                        tags=["modern", "wood beams", "wooden door", "tile floor", "window", "fireplace"],
                         depth=0.98, default_scale=0.82, animations=["hearth-fire"],
                         rig={"type": "window-overlay", "region": [0.082, 0.68, 0.07, 0.10], "autoplay": True},
                         notes="Present-day tiled great room with varnished beams, an animated fireplace and a transparent window.",
@@ -719,14 +1160,14 @@ def build(src: str, out: str) -> dict:
         p.publish(Asset(f"{style}.foreground.oak-window-lounge", f"{label}Contemporary Oak Window Lounge",
                         style, "foreground", "interiors", plate(oak_lounge), origin=origin,
                         themes=["interior", "window", "contemporary", "timber"],
-                        tags=["modern", "oak beams", "wooden door", "tile floor", "lounge"],
+                        tags=["modern", "oak beams", "wooden door", "tile floor", "window", "lounge"],
                         depth=0.98, default_scale=0.82, animations=[], rig={"type": "window-overlay"},
                         notes="Present-day oak-beam room with tiled floor and a transparent window onto the composed world.",
                         max_dim=1400))
         p.publish(Asset(f"{style}.foreground.brick-timber-corner-room", f"{label}Asymmetric Brick and Timber Room",
                         style, "foreground", "interiors", plate(brick_timber_room), origin=origin,
                         themes=["interior", "window", "contemporary", "timber"],
-                        tags=["modern", "brick", "wood beams", "slanted roof", "corner windows", "tile floor"],
+                        tags=["modern", "brick", "wood beams", "slanted roof", "corner windows", "window", "tile floor"],
                         depth=0.98, default_scale=0.82, animations=[], rig={"type": "window-overlay"},
                         notes="Asymmetric brick-and-wood room with a sloping roof and two transparent windows on adjacent walls.",
                         max_dim=1400))
@@ -776,7 +1217,10 @@ def build(src: str, out: str) -> dict:
     publish_waterside(E, "")
     publish_lotus_sanctuary(E, "")
     publish_cultural_details(E, "")
+    publish_garden_structures(p, src, E, "")
     publish_closeup_flowers(E, "")
+    publish_new_blooms(p, src, E, "")
+    publish_creatures(p, src, E, "")
     publish_interiors(E, "")
     # `region` marks the water so the shimmer mesh stays off the sky and the
     # foliage. Plates without one fall back to a bottom-of-frame mask.
@@ -908,7 +1352,10 @@ def build(src: str, out: str) -> dict:
     publish_waterside(M, "Silver ", night_grade)
     publish_lotus_sanctuary(M, "Moonlit ", night_grade)
     publish_cultural_details(M, "Moonlit ", night_grade)
+    publish_garden_structures(p, src, M, "Moonlit ", night_grade)
     publish_closeup_flowers(M, "Moonlit ", night_grade)
+    publish_new_blooms(p, src, M, "Moonlit ", night_grade)
+    publish_creatures(p, src, M, "Moonlit ", night_grade)
     publish_interiors(M, "Moonlit ", night_grade)
     p.publish(Asset(f"{M}.background.moonlit-glade", "Moonlit Forest Glade", M, "background", "night",
                     bg_glade, themes=["night", "forest", "celestial"], tags=["moon", "night"],
@@ -993,7 +1440,10 @@ def build(src: str, out: str) -> dict:
     publish_waterside(A, "Autumn ", autumn_foliage)
     publish_lotus_sanctuary(A, "Autumn ", autumn_foliage)
     publish_cultural_details(A, "Autumn ", autumn_foliage)
+    publish_garden_structures(p, src, A, "Autumn ", autumn_foliage)
     publish_closeup_flowers(A, "Autumn ", autumn_foliage)
+    publish_new_blooms(p, src, A, "Autumn ", autumn_foliage)
+    publish_creatures(p, src, A, "Autumn ", autumn_foliage)
     publish_interiors(A, "Autumn ", autumn_foliage)
     autumn_rig = {"type": "background", "region": [0.0, 0.68, 1.0, 0.32]}
     p.publish(Asset(f"{A}.background.autumn-river", "Autumn River Valley", A, "background", "nature",
@@ -1079,6 +1529,30 @@ def build(src: str, out: str) -> dict:
                     notes="Transparent window opening reveals the current composed scene behind this foreground room overlay.",
                     max_dim=1400))
 
+    # ---------------- style: winter (independently painted) ---------------
+    # Every other look is a grade of the fantasy plates. Winter is painted
+    # from its own plates, which is the only honest way to get snow.
+    # ---------------- style: realistic (photographic water) ---------------
+    # A different brief entirely: true water optics instead of painted fantasy.
+    R = "realistic"
+    publish_realistic(p, src, R)
+    publish_realistic_rooms(p, src, R)
+    publish_realistic_people(p, src, R)
+
+    W = "winter"
+    publish_winter(p, src, W)
+    # A room's walls and furniture have no season, so the interiors are shared
+    # with the Enchanted look rather than recoloured. Without them the Frostfall
+    # Rooms tab would be empty, and rooms have to be reachable in every look.
+    publish_interiors(W, "", None)
+    p.publish(Asset(f"{W}.foreground.lounge-window", "Frostfall Lounge Window View", W,
+                    "foreground", "interiors", lounge_window,
+                    themes=["interior", "lounge", "window"],
+                    tags=["room", "window", "living room", "view frame"], depth=0.98,
+                    default_scale=0.82, animations=[], rig={"type": "window-overlay"},
+                    notes="Transparent window opening reveals the current composed scene behind this foreground room overlay.",
+                    max_dim=1400))
+
     # ---------------- style registry --------------------------------------
     styles = [
         {
@@ -1134,6 +1608,44 @@ def build(src: str, out: str) -> dict:
             },
             "complete": True,
         },
+        {
+            "id": R,
+            "name": "Clearwater",
+            "subtitle": "Ultra-realistic",
+            "description": "Photographic realism rather than painted fantasy: true water optics "
+                           "with refraction, caustics on the bed and specular sparkle on the "
+                           "surface. Painted from its own plates. Ships no room interiors - a "
+                           "photoreal room needs photographing, not recolouring.",
+            "swatches": ["#07222b", "#0f5b6b", "#3fa7b5", "#9fd8dd", "#f2fbff"],
+            "lighting": "upper-left",
+            "reference": {
+                "background": f"{R}.background.clearwater-lake",
+                "tree": f"{R}.middle.water-rocks",
+                "structure": f"{R}.middle.driftwood",
+                "plant": f"{R}.foreground.reeds",
+                "ground": f"{R}.foreground.river-stones",
+            },
+            "complete": True,
+        },
+        {
+            "id": W,
+            "name": "Frostfall",
+            "subtitle": "Painted winter",
+            "description": "An independently painted winter collection, not a recolouring: "
+                           "snow-laden conifers, frosted bare branches, ice and low cold light. "
+                           "Outdoor artwork is painted from its own plates; interiors are shared with the "
+"Enchanted look because a room has no season.",
+            "swatches": ["#1b2b3a", "#3f5f7a", "#8fb2c9", "#d7e6ef", "#ffffff"],
+            "lighting": "upper-left",
+            "reference": {
+                "background": f"{W}.background.frostfall-valley",
+                "tree": f"{W}.middle.snow-pine",
+                "structure": f"{W}.middle.ice-pavilion",
+                "plant": f"{W}.foreground.snowdrops",
+                "ground": f"{W}.foreground.snow-drift",
+            },
+            "complete": True,
+        },
     ]
 
     manifest = {
@@ -1144,6 +1656,7 @@ def build(src: str, out: str) -> dict:
     }
     with open(os.path.join(out, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=1)
+    write_catalog(p.entries, styles, out, catalog)
 
     total = sum(e["bytes"] for e in p.entries)
     by_layer: dict[str, int] = {}
@@ -1158,5 +1671,6 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--src", default="assets-src")
     ap.add_argument("--out", default="public/library")
+    ap.add_argument("--catalog", default="docs/ASSET_CATALOG.md")
     args = ap.parse_args()
-    build(args.src, args.out)
+    build(args.src, args.out, args.catalog)

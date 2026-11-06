@@ -7,10 +7,11 @@
  * Layout philosophy: the canvas is the product. Chrome that can live behind a
  * click does. There is no left panel, no second toolbar row, no status bar and
  * no timeline strip - the motion is looping, so there is nothing to scrub to.
- * Commands live in top-bar menus; the four layers are tabs across the top; the
- * right rail is an exclusive accordion showing only the section in use.
+ * Commands live in top-bar menus; the four layers and a panel picker are in
+ * the header, leaving the side rail for the selected content.
  */
 import { AssetLibrary } from '../assets/library';
+import { collectionId, worldForBackground } from '../assets/worldCollections';
 import { Store } from '../core/store';
 import type { StatusMessage } from '../core/store';
 import type { AssetMeta, LayerId, Scene, SceneNode } from '../core/types';
@@ -26,8 +27,9 @@ import { ProjectShelf, openProjectFromFile, saveProjectToFile } from '../project
 import type { LoadedProject } from '../project/projectFormat';
 import { registerAudioBlob } from '../audio/audioStore';
 import { autoCompose, DEFAULT_COMPOSE, regenerate } from '../scene/composition';
-import { createAssetNode, createScene } from '../scene/sceneModel';
+import { createAssetNode, createScene, nextOrder } from '../scene/sceneModel';
 import { buildDemoScene } from '../scene/demoScene';
+import { createWorldScene } from '../scene/worlds';
 import { switchStyle } from '../scene/styleManager';
 import { AssetPanel, ThemesPanel } from './assetPanel';
 import { LayersPanel } from './layersPanel';
@@ -40,12 +42,13 @@ import type { MenuDef } from './menubar';
 import { Rail } from './rail';
 import { el, escapeHtml, icon, on, qs, qsa } from './dom';
 import {
-  aboutDialog, changeStyleDialog, composeDialog, cropDialog, exportDialog, historyDialog,
+  aboutDialog, composeDialog, cropDialog, exportDialog, historyDialog,
   importDialog, newWorldDialog, projectsDialog, replaceDialog,
 } from './dialogs';
+import type { ModalHandle, StartingPoint } from './dialogs';
 
 const LAYERS: LayerId[] = ['background', 'middle', 'foreground', 'atmosphere'];
-const LAYER_SHORT = ['Background', 'Middle', 'Foreground', 'Atmosphere'];
+const LAYER_SHORT = ['Background', 'Middle', 'Foreground', 'Atmosphere & Rooms'];
 
 const SHELL = `
 <div class="app">
@@ -59,12 +62,15 @@ const SHELL = `
         <span class="layer-num">${i + 1}</span><span class="layer-name">${LAYER_SHORT[i]}</span>
       </button>`).join('')}
     </div>
+    <select id="panel-picker" class="header-select" aria-label="Panel"></select>
+    <select id="category-picker" class="header-select" aria-label="Artwork category"></select>
+    <label class="search topbar-search">${icon('search', 13)}<input id="library-search" type="search" aria-label="Search artwork and effects" placeholder="Search..."></label>
     <span class="topbar-spacer"></span>
     <button class="loop-chip" id="loop-chip" title="Loop analysis"><span class="loop-dot"></span><span id="loop-text">Loop</span></button>
     <button class="btn icon" id="btn-play" title="Play / pause (Space)">${icon('play', 14)}</button>
     <button class="btn icon" id="btn-restart" title="Restart from the beginning">${icon('restart', 14)}</button>
     <button class="btn icon" id="btn-rail" title="Show / hide the side panel (\\)">${icon('right', 14)}</button>
-    <button class="btn primary" id="btn-export">${icon('download', 13)} Export</button>
+    <button class="btn primary" id="btn-export" title="Download or export">${icon('download', 13)} Download</button>
   </header>
 
   <main class="workspace">
@@ -74,6 +80,7 @@ const SHELL = `
           <canvas id="scene-canvas"></canvas>
           <canvas id="overlay-canvas"></canvas>
         </div>
+        <div class="stage-empty" id="stage-empty"><strong>Start with an empty world</strong><span>Choose a season or look and a world on the right, then pick a background.</span></div>
         <div class="stage-hud" id="stage-hud"></div>
         <div class="zoom-pill">
           <button class="zp-btn" id="btn-zoom-out" title="Zoom out">${icon('zoomOut', 12)}</button>
@@ -115,12 +122,14 @@ export class App {
   private hudTimer = 0;
   private windowListeners: (() => void)[] = [];
   private soloNode: string | null = null;
+  private worldDialog: ModalHandle | null = null;
 
   async mount(root: HTMLElement) {
     root.innerHTML = SHELL;
     await this.library.load();
 
-    const scene = buildDemoScene(this.library, { withEffects: true });
+    // Start empty. The designer chooses a world, and only its background appears.
+    const scene = createScene(this.library.styles[0]?.id ?? 'enchanted', 'Untitled world');
     this.store = new Store(scene);
     this.images = new ImageCache(this.library);
     this.compositor = new Compositor(this.library, this.images, this.loops);
@@ -142,6 +151,7 @@ export class App {
     this.preview.invalidate();
     this.refreshChrome();
     this.preview.play();
+    this.openWorldPicker(true);
 
     this.autosaveTimer = window.setInterval(() => { void this.autosave(); }, 45_000);
     this.hudTimer = window.setInterval(() => this.updateHud(), 500);
@@ -155,7 +165,7 @@ export class App {
   /* ----------------------------------------------------------------- rail */
 
   private buildRail(root: HTMLElement) {
-    this.rail = new Rail(qs<HTMLElement>('#rail', root)!);
+    this.rail = new Rail(qs<HTMLElement>('#rail', root)!, qs<HTMLSelectElement>('#panel-picker', root)!);
 
     const assetsBody = this.rail.add({
       id: 'assets',
@@ -168,11 +178,15 @@ export class App {
     this.assetPanel = new AssetPanel(assetsBody, this.store, this.library, {
       onAddAsset: (id) => this.addAsset(id),
       onAddEffect: (id) => this.addEffect(id),
+      onChooseStyle: (styleId) => this.chooseStyle(styleId),
+      onChooseWorld: (world) => {
+        if (this.store.scene.theme !== world) this.store.mutate((scene) => { scene.theme = world; }, 'Choose world collection');
+      },
       onImport: () => importDialog(this.library, this.store.scene.styleId, (meta) => {
         this.store.emit('library');
         this.store.status(`Imported "${meta.name}" into ${LAYER_LABEL[meta.layer]}.`, 'success');
       }),
-    });
+    }, qs<HTMLSelectElement>('#category-picker', root)!);
 
     const themesBody = this.rail.add({
       id: 'collections',
@@ -278,6 +292,9 @@ export class App {
           { separator: true },
           { label: 'Select all artwork', shortcut: 'Ctrl+A', action: () => this.store.select(this.store.scene.nodes.filter((n) => !n.locked && n.kind === 'asset').map((n) => n.id)) },
           { label: 'Deselect', shortcut: 'Esc', action: () => { this.store.select([]); this.setSolo(null); } },
+          { separator: true },
+          { label: 'Auto-compose…', icon: 'wand', action: () => this.openCompose() },
+          { label: 'Rearrange unlocked', icon: 'dice', action: () => this.doRegenerate() },
         ],
       },
       {
@@ -293,19 +310,22 @@ export class App {
           { label: 'Side panel', shortcut: '\\', checked: !this.railCollapsed, action: () => this.toggleRail() },
         ],
       },
-      {
-        id: 'world', label: 'World',
-        items: () => [
-          { label: 'Artistic style…', icon: 'grid', action: () => changeStyleDialog(this.store, this.library, () => this.afterSceneSwap()) },
-          { label: 'Auto-compose…', icon: 'wand', action: () => this.openCompose() },
-          { label: 'Rearrange unlocked', icon: 'dice', action: () => this.doRegenerate() },
-          { separator: true },
-          { label: 'Canvas, light & colour', icon: 'sun', action: () => this.rail.setOpen('scene') },
-          { label: 'Sound', icon: 'loop', action: () => this.rail.setOpen('sound') },
-        ],
-      },
     ];
     this.menubar = new MenuBar(qs<HTMLElement>('#menubar', root)!, menus);
+  }
+
+  private chooseStyle(styleId: string) {
+    if (styleId === this.store.scene.styleId || !this.library.style(styleId)) return;
+    if (this.store.scene.nodes.some((node) => node.kind === 'asset') &&
+        !window.confirm('Changing the season or look swaps existing artwork to matching pieces. Some items may be replaced or removed. You can undo this change. Continue?')) {
+      this.assetPanel.render();
+      return;
+    }
+    this.store.pushHistory('Change season or look');
+    const report = switchStyle(this.store.scene, this.library, styleId);
+    this.store.mutate(() => {});
+    this.afterSceneSwap();
+    this.store.status(`Look set to ${report.style?.name ?? styleId}. ${report.swapped} artwork items swapped${report.removed.length ? `; ${report.removed.length} removed` : ''}.`, report.removed.length ? 'warn' : 'success');
   }
 
   private openCompose() {
@@ -344,6 +364,20 @@ export class App {
   private wireTopbar(root: HTMLElement) {
     const nameInput = qs<HTMLInputElement>('#project-name', root)!;
     on(nameInput, 'change', () => this.store.mutate((s) => { s.name = nameInput.value || 'Untitled world'; }, 'Rename project'));
+    const search = qs<HTMLInputElement>('#library-search', root)!;
+    on(search, 'input', () => {
+      if (this.railCollapsed) this.toggleRail();
+      this.rail.setOpen('assets');
+      this.assetPanel.setQuery(search.value);
+    });
+    const category = qs<HTMLSelectElement>('#category-picker', root)!;
+    on(category, 'change', () => {
+      const chosen = category.value;
+      if (this.railCollapsed) this.toggleRail();
+      this.rail.setOpen('assets');
+      this.assetPanel.setCategory(chosen);
+    });
+    on(qs('#panel-picker', root), 'change', () => { if (this.railCollapsed) this.toggleRail(); });
 
     qsa<HTMLElement>('.layer-tab', root).forEach((b) => on(b, 'click', () => {
       this.setLayer(b.dataset.layer as LayerId);
@@ -400,7 +434,7 @@ export class App {
   private wireKeyboard() {
     this.windowListeners.push(on(window, 'keydown', (e) => {
       const target = e.target as HTMLElement;
-      const typing = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+      const typing = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable);
       if (e.code === 'Space' && !typing) {
         e.preventDefault();
         if (e.repeat) return;
@@ -440,7 +474,7 @@ export class App {
     this.windowListeners.push(on(window, 'keyup', (e) => {
       if (e.code === 'Space') {
         this.stage.setSpace(false);
-        if (!(e.target as HTMLElement)?.matches?.('input, textarea')) this.preview.toggle();
+        if (!(e.target as HTMLElement)?.matches?.('input, textarea, select')) this.preview.toggle();
       }
     }));
   }
@@ -480,6 +514,8 @@ export class App {
     const scene = this.store.scene;
     const nameInput = qs<HTMLInputElement>('#project-name');
     if (nameInput && document.activeElement !== nameInput) nameInput.value = scene.name;
+    const empty = qs<HTMLElement>('#stage-empty');
+    if (empty) empty.hidden = scene.nodes.length > 0;
     this.updateHud();
   }
 
@@ -519,19 +555,20 @@ export class App {
       return;
     }
     if (meta.layer === 'background') {
-      const existing = scene.nodes.filter((n) => n.layer === 'background' && !n.locked);
+      const existing = scene.nodes.filter((n) => n.layer === 'background');
       this.store.pushHistory('Set background');
-      scene.nodes = scene.nodes.filter((n) => !(n.layer === 'background' && !n.locked));
+      // Choosing a background is an explicit decision, so it replaces the current
+      // one whether or not it was locked. Nothing else is forced: the designer
+      // stays on whichever layer they are working in.
+      scene.nodes = scene.nodes.filter((n) => n.layer !== 'background');
+      if (collectionId(scene.theme) === 'all') scene.theme = worldForBackground(meta);
       const node = createAssetNode(meta, scene);
       node.locked = true;
       scene.nodes.push(node);
       this.store.mutate(() => {});
       this.store.select(node.id);
       void this.images.ensure([meta.id]).then(() => this.preview.invalidate());
-      this.store.status(`Background set to ${meta.name}${existing.length ? ' (previous unlocked background replaced)' : ''}.`, 'success');
-      // Guided flow: a background is the one thing you only place once, so move
-      // straight on to the middle-ground library.
-      this.setLayer('middle');
+      this.store.status(`Background set to ${meta.name}${existing.length ? ' (replaced the previous background)' : ''}.`, 'success');
       return;
     }
     // Room views are full-frame overlays even when dragged from the library;
@@ -539,6 +576,13 @@ export class App {
     const position = at && meta.rig?.type !== 'window-overlay'
       ? { x: at.x, y: at.y + node0Height(meta, scene) / 2 } : undefined;
     const node = createAssetNode(meta, scene, position);
+    // Interiors share Layer 4 with atmosphere. Existing saved rooms retain
+    // their original layer; newly placed rooms and props can be reordered
+    // together with effects in the On canvas panel.
+    if (meta.category === 'interiors') {
+      node.layer = 'atmosphere';
+      node.order = nextOrder(scene, 'atmosphere');
+    }
     this.store.addNode(node, `Add ${meta.name}`);
     if (node.animation?.enabled && !this.preview.playing) this.preview.play();
     void this.images.ensure([meta.id]).then(() => this.preview.invalidate());
@@ -548,7 +592,7 @@ export class App {
     const def = EFFECT_MAP.get(effectId);
     if (!def) return;
     const scene = this.store.scene;
-    const order = scene.nodes.filter((n) => n.layer === 'atmosphere').length;
+    const order = nextOrder(scene, 'atmosphere');
     const node = makeEffectNode(effectId, scene, order);
     if (at) {
       node.x = at.x; node.y = at.y;
@@ -566,7 +610,7 @@ export class App {
     const preset = THEME_PRESETS.find((t) => t.id === themeId);
     if (!preset) return;
     this.store.pushHistory(`Apply ${preset.name}`);
-    let order = this.store.scene.nodes.filter((n) => n.layer === 'atmosphere').length;
+    let order = nextOrder(this.store.scene, 'atmosphere');
     for (const e of preset.effects) {
       if (!EFFECT_MAP.has(e.id)) continue;
       const node = makeEffectNode(e.id, this.store.scene, order++);
@@ -659,23 +703,36 @@ export class App {
 
   /* -------------------------------------------------------------- projects */
 
-  private newWorld() {
-    newWorldDialog(this.library, {
+  private newWorld() { this.openWorldPicker(false); }
+
+  /**
+   * The world picker. On first launch it cannot be dismissed with Escape or a
+   * backdrop click, because the app starts with nothing in it.
+   */
+  private openWorldPicker(first: boolean) {
+    this.worldDialog = newWorldDialog(this.library, {
       currentStyle: this.store.scene.styleId,
-      onCreate: (styleId, aspect, name, seedMode) => {
-        const scene = seedMode === 'empty'
-          ? createScene(styleId, name, aspect)
-          : buildDemoScene(this.library, { styleId, aspect, name, withEffects: seedMode === 'demo', composed: true });
-        scene.name = name;
-        this.store.replaceScene(scene);
-        this.store.lastSavedName = name;
-        this.afterSceneSwap();
-        this.setLayer('background');
-        this.preview.restart();
-        this.preview.play();
-        this.store.status(`"${name}" created.`, 'success');
-      },
+      title: first ? 'Choose a world' : 'New world',
+      subtitle: 'Every world starts with its background only. Add the rest yourself.',
+      dismissable: !first,
+      onCreate: (worldId, styleId, aspect, name, start) => this.startWorld(worldId, styleId, aspect, name, start),
     });
+  }
+
+  /** Replace the scene with a new world. A plain background unless the designer asked for a sketch. */
+  startWorld(worldId: string, styleId: string, aspect: string, name: string, start: StartingPoint = 'background') {
+    const scene = start === 'background'
+      ? createWorldScene(this.library, { worldId, styleId, aspect, name })
+      : buildDemoScene(this.library, { styleId, aspect, name, withEffects: start === 'demo', composed: true, worldId });
+    scene.name = name;
+    this.store.replaceScene(scene);
+    this.store.lastSavedName = name;
+    this.worldDialog?.close();
+    this.worldDialog = null;
+    this.afterSceneSwap();
+    this.setLayer('background');
+    this.preview.restart();
+    this.store.status(`"${name}" started with its background. Add trees, rocks, flowers and effects from the library.`, 'success');
   }
 
   private openProjects() {

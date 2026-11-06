@@ -26,7 +26,7 @@ animation engine, Loop Manager and effect library were exercised headlessly.
 | Still export produces a real file | 640×360 PNG > 5 kB asserted in the UI test |
 | Projects round-trip | scene → ZIP → scene, including embedded asset bytes |
 
-`npm test` → **141 passed** across 11 files. `npm run typecheck` → clean under `strict`,
+`npm test` → **203 passed** across 19 files. `npm run typecheck` → clean under `strict`,
 `noUnusedLocals` and `noUnusedParameters`. `npm run build` → succeeds.
 
 ## What was NOT verified — video export
@@ -61,15 +61,22 @@ rather than a broken file — but that error path itself is untested against a r
 
 ## Known functional constraints
 
-**Library size.** 186 assets across 3 styles (28 backgrounds / 45 middle / 113 foreground), which
+**Library size.** 306 assets across 5 styles (32 backgrounds / 83 middle / 191 foreground), which
 exceeds the brief's starter targets. Fairy, Norse, Chinese-inspired, Japanese-inspired, celestial
 observatory, waterside and lotus sanctuary vistas, landmarks and foreground accents have Enchanted, Moonlit and Autumn
 palette variants, but the
-latter two remain colour grades rather than independently painted styles. The general fern, bush,
+latter two remain colour grades rather than independently painted styles. Frostfall is the exception: it is
+painted from its own plates, though it is a small collection (10 outdoor pieces) and its room interiors are
+shared with the Enchanted look rather than repainted, since a room has no season. The general fern, bush,
 ivy and pebble ground covers are still procedurally assembled from foliage and rock chips; the story-
 specific foreground accents are painted plates. This is enough to build varied scenes but is not a
 large commercial library. Adding a genuinely independent style means
 commissioning or painting a new plate set, not more grading.
+
+**Hearth regions are measured, not guessed.** Each fireplace animation flicks painted flames inside a
+declared rectangle. For the Clearwater rooms that rectangle was located by finding the flame pixels
+in the finished plate, and a test re-measures it against the shipped file, so the fire cannot drift
+onto a wall unnoticed.
 
 **Master cycle cap.** The LCM of all animation cycles is capped at 60 s. With many co-prime cycle
 lengths the true LCM can exceed this; the Loop Manager snaps cycles to a 0.5 s grid to keep the LCM

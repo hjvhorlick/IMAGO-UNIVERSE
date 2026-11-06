@@ -171,6 +171,9 @@ async function main() {
     ['chinese-moon-gate', 'chinese-mist-mountains', 0.5, 0.56, 0.63],
     ['japanese-stone-lantern', 'japanese-moon-garden', 0.23, 0.66, 0.58],
     ['norse-dragon-boat', 'mythic-waterside', 0.50, 0.78, 0.24],
+    ['fairy-mushroom-cottage', 'fairy-court', 0.50, 0.61, 0.52],
+    ['japanese-garden-bridge', 'japanese-moon-garden', 0.50, 0.70, 0.30],
+    ['norse-stone-well', 'fairy-court', 0.72, 0.63, 0.38],
   ] as const) {
     const detailScene = createScene('enchanted');
     const bg = lib.get(`enchanted.background.${bgId}`)!;
@@ -190,7 +193,204 @@ async function main() {
     });
     fs.writeFileSync(path.join(OUT, `${id}.png`), cv.toBuffer('image/png'));
   }
-  console.log('rendered three independently placeable cultural details');
+  console.log('rendered six independently placeable garden and cultural details');
+
+  // Review the close-up flowers individually over a background, not as a flattened arrangement.
+  for (const [id, x, y, height] of [
+    ['scarlet-dahlias', 0.30, 0.70, 0.60],
+    ['golden-sunflowers', 0.70, 0.68, 0.65],
+    ['white-orchids', 0.50, 0.68, 0.62],
+    ['tulips', 0.32, 0.74, 0.62],
+    ['daffodils', 0.68, 0.74, 0.60],
+    ['cosmos', 0.50, 0.72, 0.58],
+  ] as const) {
+    const flowers = createScene('enchanted');
+    const bg = lib.get('enchanted.background.enchanted-lake')!;
+    const meta = lib.get(`enchanted.foreground.${id}`)!;
+    await images.ensure([bg.id, meta.id]);
+    flowers.nodes.push(createAssetNode(bg, flowers));
+    const node = createAssetNode(meta, flowers);
+    node.x = flowers.canvas.width * x; node.y = flowers.canvas.height * y;
+    node.height = flowers.canvas.height * height; node.width = node.height * meta.width / meta.height;
+    flowers.nodes.push(node);
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, flowers, { scale, quality: 'export', time: 0 });
+    fs.writeFileSync(path.join(OUT, `${id}.png`), cv.toBuffer('image/png'));
+  }
+  console.log('rendered six independently placeable close-up flowers');
+
+  // Review each animal on its own, then all of them together in one scene.
+  const CREATURE_PLACEMENTS: Array<[string, string, number, number, number]> = [
+    ['white-stag', 'middle', 0.30, 0.60, 0.46],
+    ['red-fox', 'foreground', 0.68, 0.82, 0.30],
+    ['mute-swans', 'middle', 0.62, 0.72, 0.34],
+    ['koi-fish', 'foreground', 0.34, 0.86, 0.26],
+    ['butterflies', 'foreground', 0.50, 0.52, 0.22],
+    ['great-owl', 'middle', 0.78, 0.48, 0.26],
+    ['rabbit', 'foreground', 0.16, 0.86, 0.16],
+    ['red-squirrel', 'foreground', 0.86, 0.84, 0.18],
+    ['mallard-ducks', 'middle', 0.46, 0.70, 0.26],
+    ['hedgehog', 'foreground', 0.24, 0.92, 0.13],
+    ['deer-fawn', 'middle', 0.70, 0.66, 0.24],
+    ['moor-frog', 'foreground', 0.56, 0.94, 0.12],
+    ['songbird-flock', 'middle', 0.50, 0.30, 0.30],
+  ];
+  for (const [id, layer, x, y, height] of CREATURE_PLACEMENTS) {
+    const scene = createScene('enchanted');
+    const bg = lib.get('enchanted.background.enchanted-lake')!;
+    const meta = lib.get(`enchanted.${layer}.${id}`)!;
+    await images.ensure([bg.id, meta.id]);
+    scene.nodes.push(createAssetNode(bg, scene));
+    const node = createAssetNode(meta, scene);
+    node.x = scene.canvas.width * x; node.y = scene.canvas.height * y;
+    node.height = scene.canvas.height * height; node.width = node.height * meta.width / meta.height;
+    scene.nodes.push(node);
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, scene, { scale, quality: 'export', time: 0 });
+    fs.writeFileSync(path.join(OUT, `${id}.png`), cv.toBuffer('image/png'));
+  }
+
+  const wildlife = createScene('enchanted');
+  const wildBg = lib.get('enchanted.background.enchanted-lake')!;
+  await images.ensure([wildBg.id, ...CREATURE_PLACEMENTS.map(([id, layer]) => `enchanted.${layer}.${id}`)]);
+  const wildBgNode = createAssetNode(wildBg, wildlife);
+  fitBackground(wildBgNode, wildlife, wildBg.width, wildBg.height);
+  wildlife.nodes.push(wildBgNode);
+  for (const [id, layer, x, y, height] of CREATURE_PLACEMENTS) {
+    const meta = lib.get(`enchanted.${layer}.${id}`)!;
+    const node = createAssetNode(meta, wildlife);
+    node.x = wildlife.canvas.width * x; node.y = wildlife.canvas.height * y;
+    node.height = wildlife.canvas.height * height; node.width = node.height * meta.width / meta.height;
+    node.animation!.enabled = true;      // the animals are the point of the check
+    node.animation!.seed = 100 + wildlife.nodes.length * 37;
+    wildlife.nodes.push(node);
+  }
+  loops.invalidate();
+  const wildCv = createCanvas(W, H);
+  comp.render(wildCv.getContext('2d') as never, wildlife, {
+    scale, quality: 'export', time: 1.4, masterCycle: loops.analyse(wildlife).master,
+  });
+  fs.writeFileSync(path.join(OUT, 'wildlife-scene.png'), wildCv.toBuffer('image/png'));
+  console.log(`rendered ${CREATURE_PLACEMENTS.length} independently placeable creatures and wildlife-scene.png`);
+
+  // The winter look is painted, not graded, so it gets its own composed sample.
+  const winter = createScene('winter');
+  autoCompose(winter, lib, { ...DEFAULT_COMPOSE, seed: 99 });
+  await images.ensure(winter.nodes.map((n) => n.assetId));
+  loops.invalidate();
+  const winterCv = createCanvas(W, H);
+  comp.render(winterCv.getContext('2d') as never, winter, {
+    scale, quality: 'export', time: 1.2, masterCycle: loops.analyse(winter).master,
+  });
+  fs.writeFileSync(path.join(OUT, 'winter-world.png'), winterCv.toBuffer('image/png'));
+  console.log(`rendered winter-world.png with ${winter.nodes.length} painted winter objects`);
+
+  // The realistic look, and a look at the sparkle on its own.
+  const real = createScene('realistic');
+  autoCompose(real, lib, { ...DEFAULT_COMPOSE, seed: 7 });
+  for (const node of real.nodes) {
+    if (node.kind === 'effect' || !node.animation) continue;
+    const meta = lib.get(node.assetId);
+    if (meta?.animations.includes('sparkle')) { node.animation.enabled = true; node.animation.type = 'sparkle'; }
+  }
+  await images.ensure(real.nodes.map((n) => n.assetId));
+  loops.invalidate();
+  const realCv = createCanvas(W, H);
+  comp.render(realCv.getContext('2d') as never, real, {
+    scale, quality: 'export', time: 1.05, masterCycle: loops.analyse(real).master,
+  });
+  fs.writeFileSync(path.join(OUT, 'clearwater-world.png'), realCv.toBuffer('image/png'));
+
+  const glint = createScene('realistic');
+  const surface = lib.get('realistic.foreground.water-surface')!;
+  await images.ensure([surface.id]);
+  const gNode = createAssetNode(surface, glint);
+  gNode.x = glint.canvas.width / 2; gNode.y = glint.canvas.height * 0.78;
+  gNode.height = glint.canvas.height * 0.62; gNode.width = gNode.height * surface.width / surface.height;
+  gNode.animation!.enabled = true;
+  gNode.animation!.type = 'sparkle';
+  gNode.animation!.amplitude = 1;
+  glint.nodes = [gNode];
+  loops.invalidate();
+  for (const [name, t] of [['sparkle-a', 0.9], ['sparkle-b', 1.6]] as const) {
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, glint, {
+      scale, quality: 'export', time: t, masterCycle: loops.analyse(glint).master,
+    });
+    fs.writeFileSync(path.join(OUT, `${name}.png`), cv.toBuffer('image/png'));
+  }
+  console.log('rendered clearwater-world.png with sparkle, and two sparkle phases');
+
+  // Each photographic room over its own world, with the fire lit.
+  for (const id of ['japanese-modern-room', 'glass-pavilion-lounge', 'woodstone-lounge',
+    'minimal-glass-loft', 'japanese-engawa-room']) {
+    const roomScene = createScene('realistic');
+    const roomBg = lib.get('realistic.background.clearwater-lake')!;
+    await images.ensure([roomBg.id, `realistic.foreground.${id}`]);
+    const roomBgNode = createAssetNode(roomBg, roomScene);
+    fitBackground(roomBgNode, roomScene, roomBg.width, roomBg.height);
+    roomScene.nodes.push(roomBgNode);
+    const roomNode = createAssetNode(lib.get(`realistic.foreground.${id}`)!, roomScene);
+    if (roomNode.animation) { roomNode.animation.enabled = true; roomNode.animation.amplitude = 0.9; }
+    roomScene.nodes.push(roomNode);
+    loops.invalidate();
+    const cv = createCanvas(W, H);
+    comp.render(cv.getContext('2d') as never, roomScene, {
+      scale, quality: 'export', time: 0.8, masterCycle: loops.analyse(roomScene).master,
+    });
+    fs.writeFileSync(path.join(OUT, `room-${id}.png`), cv.toBuffer('image/png'));
+  }
+  console.log('rendered five photographic rooms with their fires lit');
+
+  // The figures in a quiet waterside setting, and both fireplaces burning.
+  const figures = createScene('realistic');
+  const figBg = lib.get('realistic.background.clearwater-lake')!;
+  await images.ensure([figBg.id, ...['seated-meditation', 'seated-meditation-side', 'standing-prayer',
+    'tree-pose', 'standing-mountain'].map((id) => `realistic.middle.${id}`)]);
+  const figBgNode = createAssetNode(figBg, figures);
+  fitBackground(figBgNode, figures, figBg.width, figBg.height);
+  figures.nodes.push(figBgNode);
+  const spots: Array<[string, number, number, number]> = [
+    ['seated-meditation', 0.30, 0.74, 0.30],
+    ['seated-meditation-side', 0.50, 0.76, 0.28],
+    ['standing-prayer', 0.70, 0.70, 0.34],
+    ['tree-pose', 0.84, 0.68, 0.36],
+    ['standing-mountain', 0.16, 0.70, 0.34],
+  ];
+  for (const [id, x, y, height] of spots) {
+    const meta = lib.get(`realistic.middle.${id}`)!;
+    const node = createAssetNode(meta, figures);
+    node.x = figures.canvas.width * x; node.y = figures.canvas.height * y;
+    node.height = figures.canvas.height * height; node.width = node.height * meta.width / meta.height;
+    node.animation!.enabled = true; node.animation!.amplitude = 0.8;
+    figures.nodes.push(node);
+  }
+  loops.invalidate();
+  const figCv = createCanvas(W, H);
+  comp.render(figCv.getContext('2d') as never, figures, {
+    scale, quality: 'export', time: 1.1, masterCycle: loops.analyse(figures).master,
+  });
+  fs.writeFileSync(path.join(OUT, 'clearwater-figures.png'), figCv.toBuffer('image/png'));
+
+  for (const id of ['stone-fireplace', 'linear-fireplace']) {
+    const fireScene = createScene('realistic');
+    const meta = lib.get(`realistic.foreground.${id}`)!;
+    await images.ensure([meta.id]);
+    const node = createAssetNode(meta, fireScene);
+    node.x = fireScene.canvas.width / 2; node.y = fireScene.canvas.height * 0.62;
+    node.height = fireScene.canvas.height * 0.5; node.width = node.height * meta.width / meta.height;
+    node.animation!.enabled = true; node.animation!.amplitude = 1;
+    fireScene.nodes = [node];
+    loops.invalidate();
+    for (const [name, t] of [[`fire-${id}`, 0.5], [`fire-${id}-later`, 1.9]] as const) {
+      const cv = createCanvas(W, H);
+      comp.render(cv.getContext('2d') as never, fireScene, {
+        scale, quality: 'export', time: t, masterCycle: loops.analyse(fireScene).master,
+      });
+      fs.writeFileSync(path.join(OUT, `${name}.png`), cv.toBuffer('image/png'));
+    }
+  }
+  console.log('rendered five meditating figures and both fireplaces burning');
 
   /* ---- acceptance: the master cycle boundary must be pixel-identical ---- */
   const a = renderAt(0).cv.getContext('2d').getImageData(0, 0, W, H).data;
