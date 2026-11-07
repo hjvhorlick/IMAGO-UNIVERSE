@@ -11,13 +11,15 @@
  */
 import type { AssetLibrary } from '../assets/library';
 import type { Scene, SceneNode } from '../core/types';
-import { clamp, frac, rng, rad, rgba, TAU } from '../core/util';
+import { clamp, frac, rad, rgba, smoothstep, TAU } from '../core/util';
 import { animationEngine } from '../animation/animationEngine';
 import type { LocalAtmosphereSpec, NodeRenderState, Quality, SparkleSpec } from '../animation/animationEngine';
 import { isActive, LoopManager } from '../animation/loopManager';
 import { EFFECT_MAP } from '../animation/effects';
 import type { EffectDrawContext } from '../animation/effectPrimitives';
 import { acquireScratch, meshWarp, releaseScratch, stripWarp } from './deform';
+import { buildFallGeometry, drawFallSheet, drawFallSpray, verticalWarp } from './waterfall';
+import type { FallGeometry } from './waterfall';
 import type { ImageCache } from './imageCache';
 import { paintOrder } from '../scene/sceneModel';
 
@@ -38,23 +40,18 @@ export interface RenderOptions {
   onMissingAsset?: (id: string) => void;
 }
 
-interface WaterSpan {
-  x0: number;
-  x1: number;
-}
-
-interface FallGeometry {
-  waterMask: HTMLCanvasElement | OffscreenCanvas;
-  /** Distinct horizontal water spans on each row y (supports multi-stream cascades). */
-  spans: WaterSpan[][];
-  /** Row index (0..H-1) where the vertical cascades hit the plunge pool. */
-  impactY: number;
-  /** Flattened impact spans along the splash line. */
-  impactSpans: WaterSpan[];
-  /** Scene-adapted RGB strings for deep water troughs, sunlit crests and mist. */
-  troughRgb: string;
-  crestRgb: string;
-  mistRgb: string;
+/**
+ * Pixel size of the waterfall working canvas. The segmentation cache is keyed
+ * on this size, so the plate split and the water pass must agree on it.
+ */
+function fallScratchSize(dw: number, dh: number, quality: Quality) {
+  const maxDim = quality === 'export' ? 1500 : 820;
+  const spanDim = Math.max(dw, dh, 1);
+  const ratio = clamp(Math.max(360 / spanDim, 1), 1, Math.max(1, maxDim / spanDim));
+  return {
+    W: Math.max(8, Math.round(dw * ratio)),
+    H: Math.max(8, Math.round(dh * ratio)),
+  };
 }
 
 export class Compositor {
@@ -160,10 +157,21 @@ export class Compositor {
     ctx.filter = filter;
     const dest = { dx: 0, dy: 0, dw, dh };
 
+    let plateDrawn = false;
     if (state.warp) {
       const { mode, cols, rows, field, breaks, active } = state.warp;
       if (mode === 'strip') stripWarp(ctx, source, rect, dest, rows, (v) => field(0.5, v));
       else meshWarp(ctx, source, rect, dest, cols, rows, field, Math.max(1, 1.6 / opts.scale), breaks, active);
+    } else if (state.fall) {
+      // Falling water gets a two-layer draw: the painted rock stays perfectly
+      // still while the painted WATER is lifted onto its own layer and pushed
+      // down the falls by a travelling wave. That is what makes the artwork
+      // itself read as moving water instead of a still picture with streaks
+      // over it. Falls back to a plain blit when the plate has no water mask.
+      const u = frac(opts.time / Math.max(0.001, this.loops.effectiveLoop(scene, node)));
+      plateDrawn = this.drawFallPlate(ctx, source, rect, dest, state.fall, opts,
+        node.assetId ?? node.id, u);
+      if (!plateDrawn) ctx.drawImage(source, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, dw, dh);
     } else {
       ctx.drawImage(source, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, dw, dh);
     }
@@ -373,25 +381,110 @@ export class Compositor {
   }
 
   /**
-   * Falling water: bright streaks travelling DOWN over stationary artwork,
-   * plus a foam pulse at the base.
+   * Draw a waterfall plate as two layers: still rock and a movable film of
+   * painted water.
    *
-   * Each streak's vertical position is frac(u * cycles * k + phase) with integer
-   * cycles and integer k, so every streak completes whole traversals per loop and
-   * the field is bit-identical at u=0 and u=1. The mist uses sin(TAU*u), which is
-   * periodic for the same reason. Nothing here accumulates state between frames.
+   * The water silhouette extracted by `waterfall.ts` is used twice - once to
+   * erase the water from the plate (leaving rock, moss and fern) and once to
+   * lift the water onto its own layer. The rock is blitted untouched; the water
+   * is displaced by a travelling wave whose phase runs down the fall, so the
+   * painted cascade itself flows and undulates.
+   *
+   * Only water moves, and only by a few pixels, so the lip and the pool stay
+   * where the artist painted them. Returns false when this plate has no usable
+   * water mask (flat synthetic plates, for instance).
    */
+  private drawFallPlate(
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    source: CanvasImageSource,
+    rect: { sx: number; sy: number; sw: number; sh: number },
+    dest: { dx: number; dy: number; dw: number; dh: number },
+    f: NonNullable<NodeRenderState['fall']>,
+    opts: RenderOptions, cacheKey: string, u: number,
+  ): boolean {
+    const [rx, ry, rw, rh] = f.region;
+    const size = fallScratchSize(rw * dest.dw, rh * dest.dh, opts.quality);
+    const geo = this.waterGeometry(cacheKey, source, rect, f.region, size.W, size.H);
+    if (!geo) return false;
+
+    const maxDim = opts.quality === 'export' ? 2048 : 1024;
+    const ratio = Math.min(1, maxDim / Math.max(dest.dw, dest.dh));
+
+    // The still rock layer needs the whole node; only the fall region moves.
+    const cw = Math.max(2, Math.round(dest.dw * ratio));
+    const ch = Math.max(2, Math.round(dest.dh * ratio));
+    const rw2 = Math.max(2, Math.round(rw * dest.dw * ratio));
+    const rh2 = Math.max(2, Math.round(rh * dest.dh * ratio));
+    const rx2 = rx * dest.dw * ratio, ry2 = ry * dest.dh * ratio;
+
+    const rock = acquireScratch(cw, ch);
+    const film = acquireScratch(rw2, rh2);
+    const warped = acquireScratch(rw2, rh2);
+    try {
+      // The full plate, exactly as painted.
+      rock.ctx.globalCompositeOperation = 'source-over';
+      rock.ctx.drawImage(source, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, cw, ch);
+
+      // The fall region of that plate, still opaque.
+      film.ctx.globalCompositeOperation = 'source-over';
+      film.ctx.drawImage(rock.canvas, rx2, ry2, rw2, rh2, 0, 0, rw2, rh2);
+
+      // Still rock: the plate with the water punched out.
+      rock.ctx.globalCompositeOperation = 'destination-out';
+      rock.ctx.drawImage(geo.mask as CanvasImageSource, 0, 0, size.W, size.H,
+        rx2, ry2, rw2, rh2);
+      rock.ctx.globalCompositeOperation = 'source-over';
+      ctx.drawImage(rock.canvas, 0, 0, cw, ch, 0, 0, dest.dw, dest.dh);
+
+      // Warp the OPAQUE crop, then cut the water out of the result. Warping a
+      // cut-out water layer instead leaves a ladder of bright seams wherever
+      // two translucent bands meet; on an opaque picture the band joins carry
+      // identical pixels and vanish.
+      const cycles = Math.max(1, Math.round(f.cycles));
+      const rows = opts.quality === 'export' ? 120 : 80;
+      const ampPx = rh2 * 0.022 * clamp(f.opacity, 0, 1);
+      verticalWarp(warped.ctx, film.canvas, rw2, rh2, rows, (v) => {
+        // Two travelling waves down the fall, faded out at the lip and the
+        // foot so the crest and the plunge pool stay anchored.
+        const window = smoothstep(clamp(v / 0.06, 0, 1)) * smoothstep(clamp((1 - v) / 0.12, 0, 1));
+        const wave = Math.sin(TAU * (v * 2 - u * cycles)) * 0.68
+          + Math.sin(TAU * (v * 5 - u * cycles * 2) + 1.1) * 0.32;
+        const shear = Math.sin(TAU * (v * 3 - u * cycles) + 0.4);
+        return { dx: shear * ampPx * 0.30 * window, dy: wave * ampPx * window };
+      });
+      warped.ctx.globalCompositeOperation = 'destination-in';
+      warped.ctx.drawImage(geo.mask as CanvasImageSource, 0, 0, size.W, size.H, 0, 0, rw2, rh2);
+      warped.ctx.globalCompositeOperation = 'source-over';
+
+      // Clipped to the fall region: the displaced film moves a few pixels and
+      // must not smear a hair of water onto the rock outside it.
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(rx * dest.dw, ry * dest.dh, rw * dest.dw, rh * dest.dh);
+      ctx.clip();
+      ctx.drawImage(warped.canvas, 0, 0, rw2, rh2,
+        rx * dest.dw, ry * dest.dh, rw * dest.dw, rh * dest.dh);
+      ctx.restore();
+      return true;
+    } finally {
+      releaseScratch(rock);
+      releaseScratch(film);
+      releaseScratch(warped);
+    }
+  }
+
   /**
-   * Spectacular multi-stage waterfall renderer:
-   *  1. Water-masked rushing cascade curtains (deep translucent water troughs +
-   *     roaring whitewater crests), glistening falling water droplets, and
-   *     expanding plunge-pool surface ripples.
-   *  2. Churning whitewater boil at the impact line, ballistic splashing water
-   *     droplets arcing up and raining back into the pool, and big billowing
-   *     mist clouds rising and drifting across the grotto and pool.
+   * Falling water.
    *
-   * Every motion phase is a pure function of frac(u * integerCycles + phase),
-   * so u=0 and u=1 are bit-identical and nothing outside `region` ever moves.
+   * The geometry (water silhouette, one tube per cascade, lip and foot rows,
+   * ledge breaks) is built once per plate/size by `waterfall.ts` and cached;
+   * this method only draws. Two passes, because spray behaves differently from
+   * the sheet: the sheet is masked to the painted water so no streak can touch
+   * rock, while the lip crest, ledge bursts and mist deliberately hang in the
+   * air just outside it, feathered at the region border instead.
+   *
+   * Both passes are pure functions of the loop phase, so the frame at the end
+   * of a cycle is the frame at the start of the next one, exactly.
    */
   private drawFall(
     ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
@@ -408,338 +501,37 @@ export class Compositor {
     if (dw < 2 || dh < 2) return;
 
     const u = frac(opts.time / Math.max(0.001, loopSeconds));
-    const maxDim = opts.quality === 'export' ? 1400 : 760;
-    const spanDim = Math.max(dw, dh);
-    const ratio = clamp(Math.max(360 / spanDim, 1), 1, Math.max(1, maxDim / spanDim));
-    const scratch = acquireScratch(dw * ratio, dh * ratio);
+    const detail = opts.quality === 'export' ? 1 : 0.7;
+    const size = fallScratchSize(dw, dh, opts.quality);
+    const scratch = acquireScratch(size.W, size.H);
     const c = scratch.ctx;
     const W = scratch.w, H = scratch.h;
-    const rnd = rng(f.seed);
-    const geo = this.fallMask(cacheKey, source, rect, f.region, W, H);
-
-    const troughRgb = geo ? geo.troughRgb : '16,64,84';
-    const crestRgb = geo ? geo.crestRgb : '248,253,255';
-    const mistRgb = geo ? geo.mistRgb : '236,248,255';
-    const impactY = geo ? geo.impactY : H * 0.78;
+    const geo = this.waterGeometry(cacheKey, source, rect, f.region, W, H);
     const fullX = rx <= 0.001 && rx + rw >= 0.999;
     const fullY = ry <= 0.001 && ry + rh >= 0.999;
 
     const featherEdges = (fx: number, fy: number) => {
       c.globalCompositeOperation = 'destination-in';
-      if (!fullX) {
-        const g = c.createLinearGradient(0, 0, W, 0);
-        g.addColorStop(0, 'rgba(0,0,0,0)');
-        g.addColorStop(fx, 'rgba(0,0,0,1)');
-        g.addColorStop(1 - fx, 'rgba(0,0,0,1)');
-        g.addColorStop(1, 'rgba(0,0,0,0)');
-        c.fillStyle = g;
-        c.fillRect(0, 0, W, H);
-      }
-      if (!fullY) {
-        const g = c.createLinearGradient(0, 0, 0, H);
-        g.addColorStop(0, 'rgba(0,0,0,0)');
-        g.addColorStop(fy, 'rgba(0,0,0,1)');
-        g.addColorStop(1 - fy, 'rgba(0,0,0,1)');
-        g.addColorStop(1, 'rgba(0,0,0,0)');
-        c.fillStyle = g;
-        c.fillRect(0, 0, W, H);
-      }
+      c.drawImage(this.featherMask(W, H, fx, fy, fullX, fullY), 0, 0, W, H);
     };
 
-    const pickSpanAt = (row0: number, pick: number): WaterSpan | null => {
-      if (!geo) return null;
-      for (let dRow = 0; dRow <= 16; dRow++) {
-        for (const sgn of dRow === 0 ? [0] : [-1, 1]) {
-          const rr = row0 + dRow * sgn;
-          if (rr < 0 || rr >= H) continue;
-          const list = geo.spans[rr];
-          if (!list.length) continue;
-          let totalW = 0;
-          for (const sp of list) totalW += sp.x1 - sp.x0;
-          let target = pick * totalW;
-          for (const sp of list) {
-            target -= sp.x1 - sp.x0;
-            if (target <= 0) return sp;
-          }
-          return list[list.length - 1];
-        }
-      }
-      return null;
-    };
-
-    const fillRibbon = (
-      streamPick: number, uLat: number, yTop: number, yBot: number, widthScale: number,
-    ) => {
-      const yEnd = Math.min(impactY * 1.04, yBot);
-      const yStart = Math.max(0, yTop);
-      if (yEnd - yStart < 2) return;
-      if (!geo) {
-        const half = Math.max(1.8, f.width * W * 0.5 * widthScale);
-        const cx = (0.06 + uLat * 0.88) * W;
-        c.fillRect(cx - half, yStart, half * 2, yEnd - yStart);
-        return;
-      }
-      const anchorRow = clamp(Math.round((yStart + yEnd) * 0.5), 0, H - 1);
-      const seedSpan = pickSpanAt(anchorRow, streamPick);
-      if (!seedSpan) return;
-
-      let prevMid = (seedSpan.x0 + seedSpan.x1) * 0.5;
-      const step = Math.max(2, Math.round(H / 95));
-      let left: [number, number][] = [];
-      let right: [number, number][] = [];
-      const flush = () => {
-        if (left.length >= 2) {
-          c.beginPath();
-          c.moveTo(left[0][0], left[0][1]);
-          for (const [lx, ly] of left) c.lineTo(lx, ly);
-          for (let k = right.length - 1; k >= 0; k--) c.lineTo(right[k][0], right[k][1]);
-          c.closePath();
-          c.fill();
-        }
-        left = [];
-        right = [];
-      };
-
-      for (let yy = yStart; yy <= yEnd + 0.5; yy += step) {
-        const row = clamp(Math.round(yy), 0, H - 1);
-        const list = geo.spans[row];
-        let best: WaterSpan | null = null;
-        let bestDist = W * 0.08;
-        for (const sp of list) {
-          const dist = prevMid < sp.x0 ? sp.x0 - prevMid : prevMid > sp.x1 ? prevMid - sp.x1 : 0;
-          if (dist < bestDist) { bestDist = dist; best = sp; }
-        }
-        if (!best) { flush(); continue; }
-        const sw = best.x1 - best.x0;
-        prevMid = (best.x0 + best.x1) * 0.5;
-        const cx = best.x0 + (0.07 + uLat * 0.86) * sw;
-        const half = clamp(sw * 0.23 * widthScale, 1.8, W * 0.085);
-        left.push([cx - half, yy]);
-        right.push([cx + half, yy]);
-      }
-      flush();
-    };
-
-    /* -------------------------------------- Pass 1: Falling water + pool */
-    c.setTransform(1, 0, 0, 1, 0, 0);
-    c.globalAlpha = 1;
-    c.filter = 'none';
-    c.globalCompositeOperation = 'source-over';
-    c.clearRect(0, 0, W, H);
-
-    // 1A. Rushing water sheets: alternating deep translucent water troughs and
-    // roaring aerated whitewater curtains plunging down every stream.
-    for (let i = 0; i < f.density; i++) {
-      const streamPick = rnd(), uLat = rnd(), phase = rnd(), lenJit = rnd();
-      const len = Math.max(8, f.length * impactY * (0.65 + lenJit * 0.85));
-      const travel = impactY * 1.03 + len;
-      const y = frac(u * f.cycles + phase) * travel - len;
-      const a = f.opacity * (0.48 + 0.52 * lenJit);
-      const plungeFade = 1 - clamp((y + len * 0.5 - impactY * 0.96) / Math.max(6, H * 0.12), 0, 1);
-      if (plungeFade <= 0.02) continue;
-
-      const g = c.createLinearGradient(0, y, 0, y + len);
-      const troughA = (a * 0.58 * plungeFade).toFixed(3);
-      const midA = (a * 0.22 * plungeFade).toFixed(3);
-      const crestA = Math.min(0.95, a * 0.92 * plungeFade).toFixed(3);
-      g.addColorStop(0, `rgba(${troughRgb},0)`);
-      g.addColorStop(0.24, `rgba(${troughRgb},${troughA})`);
-      g.addColorStop(0.50, `rgba(${crestRgb},${midA})`);
-      g.addColorStop(0.85, `rgba(${crestRgb},${crestA})`);
-      g.addColorStop(1, `rgba(${crestRgb},0)`);
-      c.fillStyle = g;
-      fillRibbon(streamPick, uLat, y, y + len, 0.72 + lenJit * 0.65);
-    }
-
-    // 1B. Individual glistening water droplets & fast jets dropping down the face.
-    const dropCount = Math.round(f.density * 1.15);
-    for (let i = 0; i < dropCount; i++) {
-      const streamPick = rnd(), uLat = rnd(), phase = rnd(), sz = rnd();
-      const len = Math.max(5, impactY * (0.055 + sz * 0.065));
-      const travel = impactY * 1.02 + len;
-      const y = frac(u * f.cycles + phase) * travel - len;
-      const a = Math.min(0.96, f.opacity * (0.58 + 0.42 * sz));
-      const g = c.createLinearGradient(0, y, 0, y + len);
-      g.addColorStop(0, `rgba(${crestRgb},0)`);
-      g.addColorStop(0.65, `rgba(${crestRgb},${(a * 0.65).toFixed(3)})`);
-      g.addColorStop(0.90, `rgba(255,255,255,${a.toFixed(3)})`);
-      g.addColorStop(1, 'rgba(255,255,255,0)');
-      c.fillStyle = g;
-      fillRibbon(streamPick, uLat, y, y + len, 0.28 + sz * 0.22);
-    }
-
-    // 1C. Plunge-pool expanding ripples radiating across the water below impactY.
-    if (f.splash > 0.02 && impactY < H * 0.94) {
-      const rippleCentres: number[] = [];
-      if (geo && geo.impactSpans.length) {
-        for (const sp of geo.impactSpans) {
-          const sw = sp.x1 - sp.x0;
-          const nC = Math.max(1, Math.min(3, Math.round(sw / (W * 0.2))));
-          for (let k = 0; k < nC; k++) rippleCentres.push(sp.x0 + ((k + 0.5) / nC) * sw);
-        }
-      } else {
-        rippleCentres.push(W * 0.32, W * 0.5, W * 0.68);
-      }
-      const rippleCycles = Math.max(2, Math.round(f.cycles * 0.5));
-      const splashAmp = clamp(f.splash, 0, 1.2);
-      c.lineCap = 'round';
-      for (let ci = 0; ci < rippleCentres.length; ci++) {
-        const cxR = rippleCentres[ci];
-        const jit = rnd();
-        for (let k = 0; k < 3; k++) {
-          const p = frac(u * rippleCycles + k / 3 + jit);
-          const env = Math.sin(Math.PI * p);
-          if (env <= 0.03) continue;
-          const rxR = W * (0.025 + p * 0.14);
-          const ryR = rxR * 0.21;
-          const cyR = Math.min(H * 0.94, impactY + H * (0.018 + p * 0.11));
-          c.strokeStyle = `rgba(${crestRgb},${(env * 0.52 * splashAmp).toFixed(3)})`;
-          c.lineWidth = Math.max(1.2, (1 - p * 0.55) * Math.min(W, H) * 0.008);
-          c.beginPath();
-          c.ellipse(cxR, cyR, rxR, ryR, 0, 0, TAU);
-          c.stroke();
-        }
-      }
-    }
-
-    featherEdges(0.09, 0.09);
+    /* Pass 1 - the body of the water, clipped to the painted water. */
+    drawFallSheet(c, W, H, geo, f, u, detail);
+    featherEdges(0.09, 0.06);
     if (geo) {
       c.globalCompositeOperation = 'destination-in';
-      c.drawImage(geo.waterMask, 0, 0, W, H);
+      c.drawImage(geo.mask, 0, 0, W, H);
+      c.globalCompositeOperation = 'source-over';
     }
-
     ctx.save();
     ctx.globalCompositeOperation = 'source-over';
     ctx.drawImage(scratch.canvas, 0, 0, W, H, dx, dy, dw, dh);
     ctx.restore();
 
-    /* ------------------------- Pass 2: Impact splash + big rising mist */
+    /* Pass 2 - the lip crest, ledge bursts, plunge-pool spray and mist. */
     if (f.splash > 0.02 || f.mist > 0.02) {
-      c.setTransform(1, 0, 0, 1, 0, 0);
-      c.globalAlpha = 1;
-      c.filter = 'none';
-      c.globalCompositeOperation = 'source-over';
-      c.clearRect(0, 0, W, H);
-
-      const impactSpans: WaterSpan[] = geo && geo.impactSpans.length
-        ? geo.impactSpans
-        : [{ x0: W * 0.18, x1: W * 0.82 }];
-      let totalImpactW = 0;
-      for (const sp of impactSpans) totalImpactW += sp.x1 - sp.x0;
-      const pickImpactX = (q: number): number => {
-        let t = clamp(q, 0, 1) * Math.max(1, totalImpactW);
-        for (const sp of impactSpans) {
-          const sw = sp.x1 - sp.x0;
-          if (t <= sw) return sp.x0 + t;
-          t -= sw;
-        }
-        const last = impactSpans[impactSpans.length - 1];
-        return (last.x0 + last.x1) * 0.5;
-      };
-
-      const splashAmp = clamp(f.splash, 0, 1.2);
-      if (splashAmp > 0.02) {
-        // 2A. Churning whitewater boil & surging foam crowns along the impact line.
-        const boilCycles = Math.max(2, f.cycles);
-        const boilCount = 20;
-        for (let i = 0; i < boilCount; i++) {
-          const q = (i + 0.15 + rnd() * 0.7) / boilCount;
-          const phase = rnd(), rSz = rnd();
-          const p = frac(u * boilCycles + phase);
-          const surge = Math.sin(Math.PI * p);
-          if (surge <= 0.02) continue;
-          const bx = pickImpactX(q) + (rnd() - 0.5) * W * 0.03;
-          const by = impactY + H * 0.01 - surge * H * (0.022 + 0.036 * rSz);
-          const br = Math.min(W, H) * (0.028 + 0.036 * surge * (0.6 + rSz * 0.6));
-          const bg = c.createRadialGradient(bx, by, 0, bx, by, br);
-          bg.addColorStop(0, `rgba(255,255,255,${Math.min(0.92, surge * 0.58 * splashAmp).toFixed(3)})`);
-          bg.addColorStop(0.55, `rgba(${crestRgb},${(surge * 0.28 * splashAmp).toFixed(3)})`);
-          bg.addColorStop(1, `rgba(${crestRgb},0)`);
-          c.fillStyle = bg;
-          c.beginPath();
-          c.arc(bx, by, br, 0, TAU);
-          c.fill();
-        }
-
-        // 2B. Ballistic splashing water droplets erupting upward and arcing back
-        // down into the pool under gravity. Only active on painted waterfalls
-        // (geo !== null) or scaled gently so net cascade flow stays downward.
-        const sprayCycles = Math.max(2, f.cycles);
-        const sprayCount = geo ? Math.round(54 * splashAmp) : Math.round(18 * splashAmp);
-        c.lineCap = 'round';
-        for (let i = 0; i < sprayCount; i++) {
-          const q = rnd(), phase = rnd(), r1 = rnd(), r2 = rnd();
-          const p = frac(u * sprayCycles + phase);
-          const env = Math.sin(Math.PI * p);
-          if (env <= 0.04) continue;
-          const ox = pickImpactX(q);
-          const oy = impactY + (rnd() - 0.5) * H * 0.018;
-          const vx = (r1 - 0.5) * W * 0.22;
-          const vy = (0.11 + 0.15 * r2) * H;
-          const grav = vy * 2.4;
-          const sx = ox + vx * p;
-          const sy = oy - vy * p + 0.5 * grav * p * p;
-          const vxp = vx, vyp = -vy + grav * p;
-          const vLen = Math.hypot(vxp, vyp) || 1;
-          const tail = Math.min(W, H) * (0.012 + 0.014 * r2);
-          const tx = sx - (vxp / vLen) * tail;
-          const ty = sy - (vyp / vLen) * tail;
-          const alpha = Math.min(0.95, env * 0.85 * splashAmp);
-          c.strokeStyle = `rgba(255,255,255,${(alpha * 0.78).toFixed(3)})`;
-          c.lineWidth = Math.max(1.3, Math.min(W, H) * (0.004 + 0.004 * r2));
-          c.beginPath();
-          c.moveTo(tx, ty);
-          c.lineTo(sx, sy);
-          c.stroke();
-          c.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
-          c.beginPath();
-          c.arc(sx, sy, c.lineWidth * 0.62, 0, TAU);
-          c.fill();
-        }
-      }
-
-      // 2C. BIG rising & drifting mist clouds: volumetric vapor plumes that
-      // climb from the splash pool high across the grotto/cascades, expand,
-      // drift laterally in billowing eddies, and dissolve smoothly.
-      const mistAmp = clamp(f.mist, 0, 1.25);
-      if (mistAmp > 0.02) {
-        const mistCount = 24;
-        for (let i = 0; i < mistCount; i++) {
-          const q = (i + 0.5) / mistCount + (rnd() - 0.5) * 0.06;
-          const phase = rnd(), rRise = rnd(), rDrift = rnd(), rSize = rnd(), phSwirl = rnd();
-          // Two integer harmonics: grand rising canyon plumes (1x) + brisk base mist (2x).
-          const mCycles = i % 3 === 0 ? 2 : 1;
-          const p = frac(u * mCycles + phase);
-          const env = Math.pow(Math.sin(Math.PI * p), 1.25);
-          if (env <= 0.01) continue;
-
-          const ox = pickImpactX(clamp(q, 0.04, 0.96));
-          const riseDist = H * (0.42 + 0.34 * rRise);
-          const my = impactY + H * 0.035 - riseDist * p;
-          const outward = ((ox / W) - 0.5) * 0.44 + (rDrift - 0.5) * 0.42;
-          const swirl = Math.sin(TAU * (u * mCycles + phSwirl)) * 0.085;
-          const mx = ox + (outward * p + swirl * Math.sin(Math.PI * p)) * W;
-          const radM = Math.min(W, H) * (0.12 + 0.10 * rSize) * (0.78 + 1.2 * p);
-          // Keep the vapor unmistakable over bright painted water as well as
-          // dark canyon walls; broad, overlapping clouds form visible plumes.
-          const peakA = Math.min(0.40, env * (0.24 + 0.12 * rSize) * mistAmp);
-
-          c.save();
-          c.translate(mx, my);
-          c.scale(1.68, 0.74);
-          const mg = c.createRadialGradient(0, 0, 0, 0, 0, radM);
-          mg.addColorStop(0, `rgba(${mistRgb},${peakA.toFixed(3)})`);
-          mg.addColorStop(0.46, `rgba(${mistRgb},${(peakA * 0.52).toFixed(3)})`);
-          mg.addColorStop(1, `rgba(${mistRgb},0)`);
-          c.fillStyle = mg;
-          c.beginPath();
-          c.arc(0, 0, radM, 0, TAU);
-          c.fill();
-          c.restore();
-        }
-      }
-
-      featherEdges(0.08, 0.10);
+      drawFallSpray(c, W, H, geo, f, u, detail, opts.quality);
+      featherEdges(0.07, 0.09);
       ctx.save();
       ctx.globalCompositeOperation = 'source-over';
       ctx.drawImage(scratch.canvas, 0, 0, W, H, dx, dy, dw, dh);
@@ -750,193 +542,72 @@ export class Compositor {
   }
 
   /**
-   * Scene-adaptive soft water silhouette + multi-stream span geometry inside a
-   * fall region. Normalises RGB against the region's own median colour balance
-   * so daylight, moonlit night, and autumn-graded waterfalls all segment every
-   * cascade stream and plunge pool cleanly while keeping cliffs and ferns still.
+   * Reusable soft-edge mask for a fall scratch canvas, built once per size and
+   * feather width. Two full-canvas gradient fills per pass were the most
+   * expensive single thing in the waterfall render.
    */
-  private fallMasks = new Map<string, FallGeometry>();
+  private featherMasks = new Map<string, HTMLCanvasElement | OffscreenCanvas>();
 
-  private fallMask(
+  private featherMask(
+    W: number, H: number, fx: number, fy: number, fullX: boolean, fullY: boolean,
+  ): HTMLCanvasElement | OffscreenCanvas {
+    const key = `${W}x${H}|${fx.toFixed(3)}|${fy.toFixed(3)}|${fullX}|${fullY}`;
+    const hit = this.featherMasks.get(key);
+    if (hit) return hit;
+    const canvas = typeof OffscreenCanvas !== 'undefined'
+      ? new OffscreenCanvas(W, H)
+      : Object.assign(document.createElement('canvas'), { width: W, height: H });
+    const c = canvas.getContext('2d') as CanvasRenderingContext2D;
+    c.fillStyle = fullX ? '#fff' : '#000';
+    c.fillRect(0, 0, W, H);
+    if (!fullX) {
+      const g = c.createLinearGradient(0, 0, W, 0);
+      g.addColorStop(0, 'rgba(255,255,255,0)');
+      g.addColorStop(fx, 'rgba(255,255,255,1)');
+      g.addColorStop(1 - fx, 'rgba(255,255,255,1)');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      c.fillStyle = g;
+      c.fillRect(0, 0, W, H);
+    }
+    if (!fullY) {
+      c.globalCompositeOperation = 'multiply';
+      const g = c.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, 'rgba(255,255,255,0)');
+      g.addColorStop(fy, 'rgba(255,255,255,1)');
+      g.addColorStop(1 - fy * 0.6, 'rgba(255,255,255,1)');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      c.fillStyle = g;
+      c.fillRect(0, 0, W, H);
+      c.globalCompositeOperation = 'source-over';
+    }
+    if (this.featherMasks.size > 8) {
+      this.featherMasks.delete(this.featherMasks.keys().next().value as string);
+    }
+    this.featherMasks.set(key, canvas);
+    return canvas;
+  }
+
+  /**
+   * Cached segmentation of a waterfall plate: the water silhouette plus the
+   * lip-to-foot tube of every cascade. Keyed by asset, region and scratch
+   * size, and `null` results are cached too so a flat synthetic plate does not
+   * re-run a full-frame image read on every frame.
+   */
+  private waterGeometries = new Map<string, FallGeometry | null>();
+
+  private waterGeometry(
     assetId: string, source: CanvasImageSource,
     rect: { sx: number; sy: number; sw: number; sh: number },
     region: [number, number, number, number], W: number, H: number,
   ): FallGeometry | null {
     const key = `${assetId}|${region.join(',')}|${W}x${H}`;
-    const hit = this.fallMasks.get(key);
-    if (hit) return hit;
-    try {
-      const canvas = typeof OffscreenCanvas !== 'undefined'
-        ? new OffscreenCanvas(W, H)
-        : Object.assign(document.createElement('canvas'), { width: W, height: H });
-      const c = canvas.getContext('2d') as CanvasRenderingContext2D;
-      if (!c) return null;
-      const [rx, ry, rw, rh] = region;
-      c.drawImage(source, rect.sx + rx * rect.sw, rect.sy + ry * rect.sh,
-        rw * rect.sw, rh * rect.sh, 0, 0, W, H);
-      const img = c.getImageData(0, 0, W, H);
-      const d = img.data;
-      const N = W * H;
-
-      // Sample opaque pixels to measure scene luminance variance and colour balance.
-      const rSamples: number[] = [];
-      const gSamples: number[] = [];
-      const bSamples: number[] = [];
-      const lSamples: number[] = [];
-      const stride = Math.max(1, Math.floor(N / 4000));
-      let lSum = 0, lSq = 0, nOp = 0;
-      for (let p = 0; p < N; p += stride) {
-        const i = p * 4;
-        if (d[i + 3] < 102) continue;
-        const r = d[i] / 255, g = d[i + 1] / 255, b = d[i + 2] / 255;
-        const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-        rSamples.push(r); gSamples.push(g); bSamples.push(b); lSamples.push(lum);
-        lSum += lum; lSq += lum * lum; nOp++;
-      }
-      if (nOp < 16) return null;
-      const lMean = lSum / nOp;
-      const lStd = Math.sqrt(Math.max(0, lSq / nOp - lMean * lMean));
-      // Flat synthetic plates have zero rock/water contrast: treat the whole
-      // declared region as water rather than guessing a silhouette.
-      if (lStd < 0.025) return null;
-
-      rSamples.sort((x, y) => x - y);
-      gSamples.sort((x, y) => x - y);
-      bSamples.sort((x, y) => x - y);
-      lSamples.sort((x, y) => x - y);
-      const qVal = (arr: number[], q: number) => arr[clamp(Math.floor(arr.length * q), 0, arr.length - 1)];
-      const medR = Math.max(0.06, qVal(rSamples, 0.5));
-      const medG = Math.max(0.06, qVal(gSamples, 0.5));
-      const medB = Math.max(0.06, qVal(bSamples, 0.5));
-      const p80B = Math.max(medB + 0.08, qVal(bSamples, 0.8));
-      const medLum = qVal(lSamples, 0.5);
-      const p80Lum = Math.max(medLum + 0.08, qVal(lSamples, 0.8));
-      const p85Lum = Math.max(medLum + 0.1, qVal(lSamples, 0.85));
-
-      const a = new Float32Array(N);
-      const foamScore = new Float32Array(N);
-      for (let i = 0, p = 0; i < d.length; i += 4, p++) {
-        const al = d[i + 3] / 255;
-        if (al < 0.04) continue;
-        const r = d[i] / 255, g = d[i + 1] / 255, b = d[i + 2] / 255;
-        const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-        const nr = r / medR, ng = g / medG, nb = b / medB;
-
-        const bright = clamp((lum - medLum * 1.22) / Math.max(0.07, p80Lum - medLum * 1.02), 0, 1)
-          * clamp((b - medB * 0.90) / Math.max(0.07, p80B - medB * 0.85), 0, 1);
-        const cool = clamp((nb / Math.max(0.12, nr) - 1.14) / 0.32, 0, 1)
-          * clamp((lum - medLum * 0.76) / Math.max(0.07, medLum * 0.52), 0, 1);
-        const foliage = clamp((ng / Math.max(0.12, nb) - 1.04) / 0.18, 0, 1);
-        const warmRock = clamp((nr / Math.max(0.12, nb) - 1.16) / 0.22, 0, 1)
-          * (1 - clamp((lum - p85Lum) / Math.max(0.06, 1 - p85Lum), 0, 1));
-
-        const raw = clamp(Math.max(bright, cool * 0.92) * (1 - foliage) * (1 - warmRock) * 1.35, 0, 1);
-        a[p] = raw * raw * (3 - 2 * raw) * al;
-        foamScore[p] = clamp((lum - p85Lum * 0.92) / Math.max(0.05, 1 - p85Lum * 0.92), 0, 1) * a[p];
-      }
-
-      // Separable box blur so the water silhouette blends softly against cliffs.
-      const radBlur = Math.max(2, Math.round(Math.min(W, H) * 0.016));
-      const tmp = new Float32Array(N);
-      for (let y = 0; y < H; y++) {
-        for (let x = 0; x < W; x++) {
-          let sum = 0, n = 0;
-          for (let k = -radBlur; k <= radBlur; k++) {
-            const xx = x + k;
-            if (xx < 0 || xx >= W) continue;
-            sum += a[y * W + xx]; n++;
-          }
-          tmp[y * W + x] = sum / n;
-        }
-      }
-      for (let x = 0; x < W; x++) {
-        for (let y = 0; y < H; y++) {
-          let sum = 0, n = 0;
-          for (let k = -radBlur; k <= radBlur; k++) {
-            const yy = y + k;
-            if (yy < 0 || yy >= H) continue;
-            sum += tmp[yy * W + x]; n++;
-          }
-          a[y * W + x] = sum / n;
-        }
-      }
-
-      let total = 0;
-      for (let i = 0; i < N; i++) total += a[i];
-      if (total / N < 0.012) return null;
-
-      // Adapt trough, crest and mist colours to the painting's own water tones.
-      let trR = 0, trG = 0, trB = 0, trN = 0;
-      let crR = 0, crG = 0, crB = 0, crN = 0;
-      for (let p = 0; p < N; p += stride) {
-        if (a[p] < 0.35) continue;
-        const i = p * 4;
-        const lum = (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255;
-        if (lum < p80Lum) { trR += d[i]; trG += d[i + 1]; trB += d[i + 2]; trN++; }
-        else { crR += d[i]; crG += d[i + 1]; crB += d[i + 2]; crN++; }
-      }
-      const troughRgb = trN > 4
-        ? `${Math.round((trR / trN) * 0.30)},${Math.round((trG / trN) * 0.40)},${Math.round((trB / trN) * 0.50)}`
-        : '16,64,84';
-      const crestRgb = crN > 4
-        ? `${Math.round(crR / crN * 0.28 + 255 * 0.72)},${Math.round(crG / crN * 0.24 + 255 * 0.76)},${Math.round(crB / crN * 0.20 + 255 * 0.80)}`
-        : '248,253,255';
-      const mistRgb = crN > 4
-        ? `${Math.round(crR / crN * 0.40 + 245 * 0.60)},${Math.round(crG / crN * 0.35 + 250 * 0.65)},${Math.round(crB / crN * 0.30 + 255 * 0.70)}`
-        : '236,248,255';
-
-      // Locate the splash impact row where cascades meet the plunge pool.
-      const yLo = Math.floor(0.54 * H), yHi = Math.floor(0.85 * H);
-      let bestFoam = -1, impactY = Math.round(0.75 * H);
-      for (let y = yLo; y < yHi; y++) {
-        let s = 0;
-        for (let x = 0; x < W; x++) s += foamScore[y * W + x];
-        if (s > bestFoam) { bestFoam = s; impactY = y; }
-      }
-
-      // Extract connected horizontal water spans per row so multi-stream falls
-      // track each cascade cleanly without crossing dry rock between chutes.
-      const minGap = Math.max(2, Math.round(W * 0.015));
-      const minWidth = Math.max(2, Math.round(W * 0.012));
-      const extractRowSpans = (row: number, thresh: number): WaterSpan[] => {
-        const rawSpans: WaterSpan[] = [];
-        let inSpan = false, s0 = 0;
-        for (let x = 0; x < W; x++) {
-          if (a[row * W + x] >= thresh) {
-            if (!inSpan) { inSpan = true; s0 = x; }
-          } else if (inSpan) {
-            rawSpans.push({ x0: s0, x1: x });
-            inSpan = false;
-          }
-        }
-        if (inSpan) rawSpans.push({ x0: s0, x1: W });
-        const merged: WaterSpan[] = [];
-        for (const sp of rawSpans) {
-          const prev = merged[merged.length - 1];
-          if (prev && sp.x0 - prev.x1 <= minGap) prev.x1 = sp.x1;
-          else merged.push({ ...sp });
-        }
-        return merged.filter((sp) => sp.x1 - sp.x0 >= minWidth);
-      };
-
-      const spans: WaterSpan[][] = new Array(H);
-      for (let y = 0; y < H; y++) spans[y] = extractRowSpans(y, 0.14);
-      const impactSpans = extractRowSpans(clamp(impactY, 0, H - 1), 0.16);
-
-      for (let i = 0, p = 0; i < d.length; i += 4, p++) {
-        d[i] = 255; d[i + 1] = 255; d[i + 2] = 255;
-        d[i + 3] = Math.round(clamp(a[p] * 1.22, 0, 1) * 255);
-      }
-      c.putImageData(img, 0, 0);
-      if (this.fallMasks.size > 24) this.fallMasks.delete(this.fallMasks.keys().next().value as string);
-      const geo: FallGeometry = {
-        waterMask: canvas, spans, impactY, impactSpans, troughRgb, crestRgb, mistRgb,
-      };
-      this.fallMasks.set(key, geo);
-      return geo;
-    } catch {
-      return null;
+    if (this.waterGeometries.has(key)) return this.waterGeometries.get(key)!;
+    const geo = buildFallGeometry(source, rect, region, W, H);
+    if (this.waterGeometries.size > 24) {
+      this.waterGeometries.delete(this.waterGeometries.keys().next().value as string);
     }
+    this.waterGeometries.set(key, geo);
+    return geo;
   }
 
   private drawShadow(

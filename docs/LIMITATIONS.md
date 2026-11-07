@@ -160,11 +160,29 @@ These were real bugs found by looking at output, not by reading code:
 
 ## Waterfalls and themed room views
 
-`waterfall-flow` uses an artwork-derived, cached multi-stream water mask and renders high-contrast
-falling curtains, droplets, plunge-pool ripples, splash arcs, and broad rising/drifting mist. The
-wide enchanted, moonlit, and autumn waterfalls are auto-enabled and showcased without a bridge or
-foreground clutter over their impact zone. Tests cover downward optical flow, scene-region locality,
-mid-cycle motion, splash/mist turbulence response, exact loop boundaries, and auto-enabled placement.
+`waterfall-flow` reads the painted water out of the plate once (a cached, artwork-derived silhouette
+plus one lip-to-foot tube per cascade) and then draws two things over it:
+
+- **the painted water itself, moving.** The water silhouette is used twice - to lift the water onto
+  its own layer and to punch it out of the rock beneath. The rock is blitted untouched while the
+  water layer rides a travelling wave down the fall, so the cascade undulates without the picture
+  sliding and without a tiling seam.
+- **water that has left the artwork.** A smooth travelling film inside each tube, bright streaks at
+  two speeds, a rounded crest and rivulets where the water tips over the lip (with a sheen on the
+  rock just upstream of it), splash bursts where the stream crosses a painted ledge, plunge-pool
+  boil, ballistic spray, expanding ripples, and mist puffs that rise, drift and *hover* over the
+  impact line.
+
+The wide enchanted, moonlit and autumn waterfalls are auto-enabled and showcased without a bridge or
+foreground clutter over their impact zone, and the photographic Clearwater look now has its own
+**Clearwater Falls** plate. Tests cover downward optical flow, scene-region locality, mid-cycle
+motion, splash/mist turbulence response, exact loop boundaries, auto-enabled placement, lip-overflow
+motion, and the guarantee that the rock around a fall never moves.
+
+The scene is still at the level of layered 2D canvas drawing, not a fluid simulation: mist is a set
+of soft billboards that loop exactly, and the water film is a displacement of the painted pixels,
+not a physical surface. It is built to read correctly at composition scale and to tile forever
+without a seam.
 
 The Layer 3 room views are keyed transparent foreground overlays in all three styles. Their openings
 show the composition underneath. In addition to the original lounge, a reading room and a window-seat

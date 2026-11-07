@@ -289,3 +289,140 @@ describe('falling water', () => {
     expect(changed, 'shipped waterfall must actually move').toBeGreaterThan(100);
   }, 120_000);
 });
+
+/**
+ * The second half of the job: the *painted* water has to move too, the way a
+ * real fall does - gathering at the lip, tipping over it and plunging - while
+ * the rock it runs over never moves a pixel.
+ */
+describe('painted water, not a picture of water', () => {
+  const FALLS = ['realistic.middle.waterfall', 'enchanted.middle.waterfall'];
+
+  async function stageFall(assetId: string) {
+    const manifestPath = path.join(ROOT, 'public/library/manifest.json');
+    if (!fs.existsSync(manifestPath)) return null;
+    const lib = new AssetLibrary();
+    lib.manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    const m = lib.get(assetId);
+    if (!m || !m.rig?.region) return null;
+    const img = await loadImage(path.join(ROOT, 'public/library', m.file));
+    const cache = new Map([[m.id, { bitmap: img, width: img.width, height: img.height }]]);
+    const images = {
+      peek: (id: string | undefined) => (id ? cache.get(id) ?? null : null),
+      ensure: async () => {}, stats: { count: 1, bytes: 0, pending: 0 },
+    };
+    const loops = new LoopManager();
+    const comp = new Compositor(lib, images as never, loops);
+    const scene = createScene(m.style);
+    scene.canvas.width = 380;
+    scene.canvas.height = 320;
+    const node = createAssetNode(m, scene);
+    node.width = 320;
+    node.height = node.width * (m.height / m.width);
+    node.x = 190;
+    node.y = 160;
+    node.animation = makeAnimation('waterfall-flow', 8);
+    node.animation.enabled = true;
+    node.animation.amplitude = 0.9;
+    node.animation.turbulence = 0.78;
+    node.animation.loop = 8;
+    scene.nodes = [node];
+
+    const draw = (t: number) => {
+      const { cv, ctx } = ctx2d(scene.canvas.width, scene.canvas.height);
+      comp.render(ctx as never, scene, { scale: 1, quality: 'export', time: t, skipLighting: true });
+      return pixels(cv, ctx);
+    };
+    return { lib, m, node, scene, draw, img };
+  }
+
+  it('extracts each painted cascade as a tube from its lip to its foot', async () => {
+    const { buildFallGeometry } = await import('../src/render/waterfall');
+    for (const id of FALLS) {
+      const s = await stageFall(id);
+      if (!s) continue;
+      const region = s.m.rig!.region as [number, number, number, number];
+      const GW = 320;
+      const GH = Math.round(GW * (region[3] * s.img.height) / (region[2] * s.img.width));
+      const geo = buildFallGeometry(
+        s.img as unknown as CanvasImageSource,
+        { sx: 0, sy: 0, sw: s.img.width, sh: s.img.height }, region, GW, GH,
+      );
+      expect(geo, `${id} must yield water geometry`).not.toBeNull();
+      expect(geo!.streams.length, `${id} must find at least one cascade`).toBeGreaterThan(0);
+      const hero = geo!.streams[0];
+      expect(hero.footY).toBeGreaterThan(hero.lipY);
+      expect(hero.coreW).toBeGreaterThan(1);
+      expect(hero.lipY).toBeLessThan(geo!.impactY);
+      expect(geo!.impactY).toBeLessThanOrEqual(GH);
+    }
+  }, 60_000);
+
+  it('runs water over the painted lip instead of switching on below it', async () => {
+    for (const id of FALLS) {
+      const s = await stageFall(id);
+      if (!s) continue;
+      const region = s.m.rig!.region as [number, number, number, number];
+      const GW = 320;
+      const GH = Math.round(GW * (region[3] * s.img.height) / (region[2] * s.img.width));
+      const { buildFallGeometry } = await import('../src/render/waterfall');
+      const geo = buildFallGeometry(
+        s.img as unknown as CanvasImageSource,
+        { sx: 0, sy: 0, sw: s.img.width, sh: s.img.height }, region, GW, GH,
+      )!;
+      const hero = geo.streams[0];
+      const left = s.node.x - s.node.width / 2;
+      const top = s.node.y - s.node.height / 2;
+      const regTop = top + region[1] * s.node.height;
+      const regH = region[3] * s.node.height;
+      const lipY = regTop + (hero.lipY / GH) * regH;
+      const lipX0 = left + (region[0] + (hero.lip.x0 / GW) * region[2]) * s.node.width;
+      const lipX1 = left + (region[0] + (hero.lip.x1 / GW) * region[2]) * s.node.width;
+      // The shelf a hair upstream of the lip - rock in the painting, water in
+      // the animation: sheen and rivulets must be moving there.
+      const bandTop = Math.max(regTop, lipY - regH * 0.05);
+      const a = s.draw(0.4), b = s.draw(1.15);
+      let changed = 0;
+      for (let y = Math.round(bandTop); y < Math.round(lipY); y++) {
+        for (let x = Math.round(lipX0 + 4); x < Math.round(lipX1 - 4); x++) {
+          const i = (y * s.scene.canvas.width + x) * 4;
+          if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 6) changed++;
+        }
+      }
+      expect(changed, `${id}: water must be seen going over the lip`).toBeGreaterThan(20);
+    }
+  }, 60_000);
+
+  it('moves the water while the surrounding rock stays put', async () => {
+    for (const id of FALLS) {
+      const s = await stageFall(id);
+      if (!s) continue;
+      const region = s.m.rig!.region as [number, number, number, number];
+      const left = s.node.x - s.node.width / 2;
+      const top = s.node.y - s.node.height / 2;
+      const x0 = Math.round(left + region[0] * s.node.width);
+      const x1 = Math.round(left + (region[0] + region[2]) * s.node.width);
+      const y0 = Math.round(top + region[1] * s.node.height);
+      const y1 = Math.round(top + (region[1] + region[3]) * s.node.height);
+      const a = s.draw(0.4), b = s.draw(1.05);
+      let inside = 0, insideN = 0;
+      let maxOutside = 0, outX = 0, outY = 0;
+      const W = s.scene.canvas.width, H = s.scene.canvas.height;
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const i = (y * W + x) * 4;
+          const d = Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
+          const inRegion = x >= x0 && x < x1 && y >= y0 && y < y1;
+          if (inRegion) { inside += d; insideN++; }
+          else if (d > maxOutside) { maxOutside = d; outX = x; outY = y; }
+        }
+      }
+      expect(insideN).toBeGreaterThan(1000);
+      expect(inside / insideN, `${id}: the painted water must actually move`).toBeGreaterThan(0.6);
+      // Antialiased boundary rows may differ by a hair; more is leakage.
+      // A photographic plate is resampled, so a handful of antialiased edge
+      // pixels may differ by a step or two of 255. Anything more is leakage.
+      expect(maxOutside, `${id}: nothing outside the fall may move (worst at ${outX},${outY}; region ${x0},${y0}-${x1},${y1})`).toBeLessThanOrEqual(4);
+    }
+  }, 60_000);
+});

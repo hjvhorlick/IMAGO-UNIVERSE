@@ -12,7 +12,7 @@ import { switchStyle, findStyleClashes } from '../src/scene/styleManager';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const PLATES = [
-  'middle.water-rocks', 'middle.driftwood', 'middle.lily-pads',
+  'middle.water-rocks', 'middle.driftwood', 'middle.lily-pads', 'middle.waterfall',
   'foreground.water-surface', 'foreground.shallow-ripples', 'foreground.river-stones',
   'foreground.reeds', 'foreground.water-droplets',
 ];

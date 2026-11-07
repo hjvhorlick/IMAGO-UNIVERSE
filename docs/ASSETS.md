@@ -19,7 +19,7 @@ than buried in a README.
 
 | `origin` | Count | Meaning |
 | --- | --- | --- |
-| `painted` | 137 | A dedicated source plate exists in `assets-src/plates/<layer>/` |
+| `painted` | 138 | A dedicated source plate exists in `assets-src/plates/<layer>/` |
 | `graded` | 161 | Colour-graded from a painted plate to build the sibling styles |
 | `composed` | 5 | Built procedurally by the pipeline from extracted artwork chips |
 | `derived` | 3 | Geometric/colour variant of another asset (mirror, narrow, golden) |
@@ -40,7 +40,7 @@ composition in that style is coherent.
 | `moonlit` | Cool nocturnal sibling, including moonlit grades of the seven story sets | upper-right | 80 |
 | `autumn` | Harvest sibling, including autumn grades of the seven story sets | upper-left | 83 |
 | `winter` | Frostfall: an independently painted winter collection, with shared interiors | upper-left | 29 |
-| `realistic` | Clearwater: ultra-realistic photographic water, rooms, figures and fire | upper-left | 25 |
+| `realistic` | Clearwater: ultra-realistic photographic water, rooms, figures and fire | upper-left | 26 |
 
 `moonlit` and `autumn` are graded siblings of `enchanted`, not independently painted styles. They
 demonstrate that the style system, the light-direction metadata and the grading pipeline all work,
@@ -55,7 +55,7 @@ would read as a colour cast rather than a season.
 **Backgrounds (28)** — The 7 base Enchanted, Moonlit and Autumn vistas, plus Fairy Court Glade,
 Norse Worldtree Fjord, Chinese-Inspired Mist Mountains, Japanese Moon Garden, Celestial Observatory
 Garden, Moonlit Waterside and Lotus Sanctuary Lake in each palette. The waterside river shimmers automatically on placement.
-**Middle-ground (54)** — The 15 base trees, structures, rocks and waterfalls, plus a Fae Court
+**Middle-ground (55)** — The 15 base trees, structures, rocks and waterfalls, plus a Fae Court
 Willow, Norse rune stones, Chinese-inspired pavilion, Japanese torii gate, Celestial Astrolabe
 Arch, Lantern Bridge and a contemporary timber meditation pavilion in each palette. A Chinese-inspired
 moon gate, Japanese-inspired stone lantern and Norse-inspired dragon boat are separately placeable
@@ -171,7 +171,7 @@ python3 -m venv .venv
 Asset ids are `<style>.<layer>.<name>`, e.g. `enchanted.middle.ancient-oak`. Ids do not change when
 files move, so saved projects keep working.
 
-Output: 306 assets; file sizes depend on the WebP encoder used.
+Output: 307 assets; file sizes depend on the WebP encoder used.
 
 ## Adding a style
 

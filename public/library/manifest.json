@@ -13724,6 +13724,67 @@
    "bytes": 472278
   },
   {
+   "id": "realistic.middle.waterfall",
+   "name": "Clearwater Falls",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "water",
+   "themes": [
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "waterfall",
+    "cascade",
+    "cliff",
+    "plunge pool",
+    "mist",
+    "photoreal"
+   ],
+   "origin": "painted",
+   "file": "realistic/middle/waterfall.webp",
+   "thumb": "realistic/middle/thumbs/waterfall.webp",
+   "format": "image/webp",
+   "width": 925,
+   "height": 646,
+   "alpha": true,
+   "depth": 0.42,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#101010",
+    "#303030",
+    "#505050",
+    "#505030"
+   ],
+   "defaultScale": 0.66,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "waterfall-flow",
+    "ripple"
+   ],
+   "rig": {
+    "type": "fall",
+    "region": [
+     0.235,
+     0.065,
+     0.625,
+     0.79
+    ],
+    "speed": 1.0
+   },
+   "variants": [],
+   "notes": "Photographic cascade over a mossy cliff. The water, splash and mist animate; the rock does not move.",
+   "bytes": 347798
+  },
+  {
    "id": "realistic.foreground.water-surface",
    "name": "Clear Water Surface",
    "style": "realistic",

@@ -754,6 +754,19 @@ def publish_realistic(p: Publisher, src: str, style: str):
                         animations=anims, rig={"type": "water", "region": region},
                         max_dim=1600, quality=94))
 
+    # The photographic falls is a whole scene prop, not an object chip: keyed,
+    # cleaned and rigged so the water, splash and mist animate over still rock.
+    falls = clean_edges(autocrop(key_magenta(Image.open(plate_path(src, "mid-realistic-waterfall.png")),
+                                            lo=28, hi=150)), px=2)
+    p.publish(Asset(f"{style}.middle.waterfall", "Clearwater Falls", style, "middle", "water", falls,
+                    themes=["water", "forest", "photoreal"],
+                    tags=["waterfall", "cascade", "cliff", "plunge pool", "mist", "photoreal"],
+                    depth=0.42, default_scale=0.66,
+                    animations=["waterfall-flow", "ripple"],
+                    rig={"type": "fall", "region": [0.235, 0.065, 0.625, 0.79], "speed": 1.0},
+                    notes="Photographic cascade over a mossy cliff. The water, splash and mist animate; the rock does not move.",
+                    max_dim=1600, quality=94))
+
     for aid, name, img, cat, themes, tags, depth, scale, anims, rig in [
         ("water-surface", "Clear Water Surface", obj("fg-water-surface"), "water",
          ["water"], ["water", "surface", "sparkle", "ripples", "close-up", "photoreal"],
