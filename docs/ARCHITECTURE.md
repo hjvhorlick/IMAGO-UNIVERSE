@@ -47,6 +47,7 @@ animation/
 render/
   imageCache.ts     Lazy ImageBitmap decode, LRU eviction at 420 MB
   deform.ts         stripWarp, meshWarp, texturedTriangle, pooled scratch canvases
+  waterfall.ts      water segmentation, cascade tubes, falling-water passes
   compositor.ts     The whole picture: assets, shadows, warps, effects, lighting
   previewRenderer.ts  rAF loop, DPR-aware, longest side <= 1400 px, solo-layer support
   stillRenderer.ts    One frame at export resolution, <= 40 MP

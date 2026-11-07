@@ -58,7 +58,7 @@ not shown in the library, while effects remain available with every look.
 
 ## What is implemented
 
-**Asset library** — 306 assets across 5 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
+**Asset library** — 307 assets across 5 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
 a celestial observatory, a moonlit waterside and a lotus sanctuary with animated water, a timber
 meditation pavilion and close-up lotus blossoms. Placeable Chinese-inspired moon gate, Japanese-inspired
 stone lantern and Norse-inspired dragon boat add garden and waterside details. A fairy mushroom cottage, Japanese-inspired garden bridge and Norse-inspired stone well are also separately placeable.
@@ -70,7 +70,9 @@ breathing, swimming or fluttering motion.
 frozen lake and an icicle pavilion — rather than another recolouring of the fantasy plates.
 **Clearwater** is a fifth, ultra-realistic photographic look built around water: refraction, caustics on
 the bed, and a **sparkle** animation that scatters specular glints which wink in and out across wet
-surfaces. It ships five photographic rooms — modern Japanese and open-plan, in wood and stone, with
+surfaces. A photographic **Clearwater Falls** pours over a mossy cliff: the painted water itself is
+lifted onto its own layer and pushed down the cascades while the rock stays still, with spray,
+hovering mist and plunge-pool ripples. It ships five photographic rooms — modern Japanese and open-plan, in wood and stone, with
 floor-to-roof glass that keys out into a real opening — each with a fireplace whose fire is optional,
 plus minimal oak and linen furniture. Two placeable photographic fireplaces have the same optional
 fire, now with glowing embers lifting off the bed and dying as they rise. Five photographic figures

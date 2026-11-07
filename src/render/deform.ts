@@ -200,7 +200,11 @@ export function acquireScratch(w: number, h: number): Scratch {
   s.w = W; s.h = H;
   s.busy = true;
   s.ctx.setTransform(1, 0, 0, 1, 0, 0);
-  s.ctx.clearRect(0, 0, s.canvas.width, s.canvas.height);
+  // Clear only the requested area. Callers always draw and sample through
+  // `w`/`h`, so pooled pixels beyond them can never be read - and a pooled
+  // buffer is often much larger than the request, which made clearing the
+  // whole backing store a measurable cost on full-screen animations.
+  s.ctx.clearRect(0, 0, W, H);
   s.ctx.globalAlpha = 1;
   s.ctx.globalCompositeOperation = 'source-over';
   s.ctx.filter = 'none';
