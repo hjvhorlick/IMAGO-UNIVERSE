@@ -160,29 +160,45 @@ These were real bugs found by looking at output, not by reading code:
 
 ## Waterfalls and themed room views
 
-`waterfall-flow` reads the painted water out of the plate once (a cached, artwork-derived silhouette
-plus one lip-to-foot tube per cascade) and then draws two things over it:
+`waterfall-flow` is a small water engine, not a warped picture. Once per plate it reads the artwork
+and caches:
 
-- **the painted water itself, moving.** The water silhouette is used twice - to lift the water onto
-  its own layer and to punch it out of the rock beneath. The rock is blitted untouched while the
-  water layer rides a travelling wave down the fall, so the cascade undulates without the picture
-  sliding and without a tiling seam.
-- **water that has left the artwork.** A smooth travelling film inside each tube, bright streaks at
-  two speeds, a rounded crest and rivulets where the water tips over the lip (with a sheen on the
-  rock just upstream of it), splash bursts where the stream crosses a painted ledge, plunge-pool
-  boil, ballistic spray, expanding ripples, and mist puffs that rise, drift and *hover* over the
-  impact line.
+- the water silhouette (luma + saturation, blurred so the pores of the spray close up, bright rock
+  islands thrown away) and one lip-to-foot **tube per cascade**, with width samples, ledge breaks and
+  the impact row;
+- a **tileable water tile**: the water-rich band of the plate, high-passed against its own local mean
+  and crossfaded head-to-tail so it can be scrolled forever without a seam.
 
-The wide enchanted, moonlit and autumn waterfalls are auto-enabled and showcased without a bridge or
-foreground clutter over their impact zone, and the photographic Clearwater look now has its own
-**Clearwater Falls** plate. Tests cover downward optical flow, scene-region locality, mid-cycle
-motion, splash/mist turbulence response, exact loop boundaries, auto-enabled placement, lip-overflow
-motion, and the guarantee that the rock around a fall never moves.
+Per frame it then draws, all of it clipped to the tube:
 
-The scene is still at the level of layered 2D canvas drawing, not a fluid simulation: mist is a set
-of soft billboards that loop exactly, and the water film is a displacement of the painted pixels,
-not a physical surface. It is built to read correctly at composition scale and to tile forever
-without a seam.
+- **the body** - cool, deep water in the middle of the fall, aerated white at the lip, foam at the
+  foot, rounded from edge to edge so the fall is a volume and not a bright patch;
+- **the film** - a surge that runs down the fall, the one pass that works even when a plate has no
+  usable water mask;
+- **the scrolling tile** - multiplied for the dark seams between columns of water and added for the
+  glints riding faster on top: this is what makes the water itself travel;
+- **veils** - broad sheets alternating light and shadow, each at its own speed, so the eye reads
+  water in front of water;
+- **streaks and seams** - bright threads and dark gaps, two speeds, thin enough not to read as a
+  barcode;
+- **the lip** - a rounded crest with rivulets where the water tips over, and a sheen on the rock just
+  upstream of it;
+- **the foot** - splash bursts at painted ledges, plunge-pool boil, expanding ripples, ballistic
+  droplets thrown clear of the water, and mist puffs that rise, drift and *hover* over the impact
+  line.
+
+Nothing in the artwork is displaced: the rock, foliage and framing are blitted untouched, so no
+pixel of the photograph can wobble or smear. Enchanted, moonlit and autumn waterfalls are
+auto-enabled and showcased without a bridge or foreground clutter over their impact zone, and the
+photographic Clearwater look has its own **Clearwater Falls** plate.
+
+Tests cover downward optical flow, scene-region locality, mid-cycle motion, splash/mist turbulence
+response, exact loop boundaries, auto-enabled placement, lip-overflow motion, and the guarantee that
+nothing outside the fall moves.
+
+The limits: this is layered 2D painting, not a fluid simulation. The tile carries the photograph's
+grain but repeats every few hundred pixels, and at very large scale the mist just above the impact
+line can still read as a soft smear.
 
 The Layer 3 room views are keyed transparent foreground overlays in all three styles. Their openings
 show the composition underneath. In addition to the original lounge, a reading room and a window-seat

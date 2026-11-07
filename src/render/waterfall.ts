@@ -68,12 +68,21 @@ export interface FallGeometry {
   height: number;
   /** Soft water silhouette, white RGB with the segmentation in alpha. */
   mask: HTMLCanvasElement | OffscreenCanvas;
+  /** The region exactly as painted: the base our water is drawn on top of. */
+  base: HTMLCanvasElement | OffscreenCanvas;
   streams: FallStream[];
   impactY: number;
   impactSpans: WaterSpan[];
   troughRgb: string;
   crestRgb: string;
   mistRgb: string;
+  /** Vertically periodic tiles of the plate's own water: scroll them and the
+   *  water moves. Shadow carries the lace, light carries the glints. Both are
+   *  null when the plate has too little water to sample. */
+  texDark: HTMLCanvasElement | OffscreenCanvas | null;
+  texLight: HTMLCanvasElement | OffscreenCanvas | null;
+  /** Height of one repeat of the tiles. */
+  texH: number;
   /** Reusable sprites - building gradients per frame is the main cost here. */
   sprites: FallSprites;
 }
@@ -83,6 +92,12 @@ interface FallSprites {
   puff: HTMLCanvasElement | OffscreenCanvas;
   foam: HTMLCanvasElement | OffscreenCanvas;
   crest: HTMLCanvasElement | OffscreenCanvas;
+  /** A broad soft-edged sheet of water: the body of the fall, not a detail. */
+  veil: HTMLCanvasElement | OffscreenCanvas;
+  /** The same sheet in shadow, so veils can both lighten and darken. */
+  veilDark: HTMLCanvasElement | OffscreenCanvas;
+  /** The gap between two columns of water: a dark seam, not a bright thread. */
+  streakDark: HTMLCanvasElement | OffscreenCanvas;
 }
 
 /* ------------------------------------------------------------------ utils */
@@ -165,11 +180,59 @@ function buildSprites(troughRgb: string, crestRgb: string, mistRgb: string): Fal
   cc.fill();
   cc.restore();
 
+  // A dark seam: the same lozenge as a streak, in the trough colour.
+  const streakDark = makeCanvas(8, 96);
+  const kc = ctxOf(streakDark)!;
+  const kg = kc.createLinearGradient(0, 0, 0, 96);
+  kg.addColorStop(0, `rgba(${troughRgb},0)`);
+  kg.addColorStop(0.25, `rgba(${troughRgb},0.25)`);
+  kg.addColorStop(0.6, `rgba(${troughRgb},0.65)`);
+  kg.addColorStop(0.9, `rgba(${troughRgb},0.85)`);
+  kg.addColorStop(1, `rgba(${troughRgb},0)`);
+  kc.fillStyle = kg;
+  kc.fillRect(0, 0, 8, 96);
+  kc.globalCompositeOperation = 'destination-in';
+  const kh = kc.createLinearGradient(0, 0, 8, 0);
+  kh.addColorStop(0, 'rgba(0,0,0,0)');
+  kh.addColorStop(0.45, 'rgba(0,0,0,1)');
+  kh.addColorStop(0.55, 'rgba(0,0,0,1)');
+  kh.addColorStop(1, 'rgba(0,0,0,0)');
+  kc.fillStyle = kh;
+  kc.fillRect(0, 0, 8, 96);
+
+  // A veil: a tall, soft-edged sheet with no hard ends, so overlapping veils
+  // read as one body of water rather than as stacked ribbons.
+  const buildVeil = (rgb: string, hot: string) => {
+    const cv = makeCanvas(48, 256);
+    const vc = ctxOf(cv)!;
+    const vh = vc.createLinearGradient(0, 0, 48, 0);
+    vh.addColorStop(0, `rgba(${rgb},0)`);
+    vh.addColorStop(0.28, `rgba(${rgb},0.55)`);
+    vh.addColorStop(0.5, `rgba(${hot},0.75)`);
+    vh.addColorStop(0.72, `rgba(${rgb},0.55)`);
+    vh.addColorStop(1, `rgba(${rgb},0)`);
+    vc.fillStyle = vh;
+    vc.fillRect(0, 0, 48, 256);
+    vc.globalCompositeOperation = 'destination-in';
+    const vv = vc.createLinearGradient(0, 0, 0, 256);
+    vv.addColorStop(0, 'rgba(0,0,0,0)');
+    vv.addColorStop(0.2, 'rgba(0,0,0,1)');
+    vv.addColorStop(0.8, 'rgba(0,0,0,1)');
+    vv.addColorStop(1, 'rgba(0,0,0,0)');
+    vc.fillStyle = vv;
+    vc.fillRect(0, 0, 48, 256);
+    return cv;
+  };
+  const veil = buildVeil(crestRgb, '255,255,255');
+  const veilDark = buildVeil(troughRgb, troughRgb);
   return {
     streak,
     puff: softSprite(mistRgb, 0.95, 0.42, 0.42),
     foam: softSprite(crestRgb, 1, 0.5, 0.38),
     crest,
+    veil,
+    veilDark,
+    streakDark,
   };
 }
 
@@ -212,6 +275,9 @@ export function buildFallGeometry(
   }
   const d = img.data;
   const N = W * H;
+  const base = makeCanvas(W, H);
+  const bctx = ctxOf(base);
+  if (bctx) bctx.putImageData(img, 0, 0);
 
   /* --- 1. Scene statistics ------------------------------------------- */
   const rSamples: number[] = [];
@@ -547,6 +613,102 @@ export function buildFallGeometry(
     impactSpans = footSpans.length ? footSpans : [{ x0: W * 0.2, x1: W * 0.8 }];
   }
 
+  /* --- 8. A tileable water texture ------------------------------------- *
+   * The photograph stays the base, but it cannot move. So the plate's own
+   * water is lifted into a tile and made vertically periodic by crossfading
+   * its tail into its head: scrolling that tile inside a stream gives water
+   * that really travels downward, carrying the photographic texture of the
+   * fall, and it wraps without a seam.
+   *
+   * The tile is a *local* high-pass of the water's luminance, not a global
+   * contrast curve: painted water is nearly white everywhere, and only the
+   * detail around each pixel (the lace of spray, the seams between columns of
+   * water) is dark enough to be seen moving.
+   */
+  let texDark: HTMLCanvasElement | OffscreenCanvas | null = null;
+  let texLight: HTMLCanvasElement | OffscreenCanvas | null = null;
+  let texH = 0;
+  {
+    // Local mean of the water's luminance, so the high-pass keeps the lace and
+    // drops the fall's overall brightness.
+    const lumField = new Float32Array(N);
+    for (let p = 0; p < N; p++) {
+      const i = p * 4;
+      lumField[p] = (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255;
+    }
+    const localMean = Float32Array.from(lumField);
+    blur(localMean, Math.max(3, Math.round(Math.min(W, H) * 0.045)));
+
+    let detail = 0, detailSq = 0, nDet = 0;
+    for (let p = 0; p < N; p++) {
+      if (a[p] < 0.6) continue;
+      const dv = lumField[p] - localMean[p];
+      detail += dv; detailSq += dv * dv; nDet++;
+    }
+    const detSd = nDet > 32 ? Math.sqrt(Math.max(1e-6, detailSq / nDet - (detail / nDet) ** 2)) : 0.02;
+
+    // Sample the water-rich band of the region, not a random stripe of rock.
+    const bandMax = Math.min(H, 288);
+    let bestY = 0, bestScore = -1;
+    for (let y = 0; y + bandMax <= H; y += Math.max(2, Math.round(H * 0.03))) {
+      let score = 0;
+      for (let i = 0; i < bandMax; i += 3) {
+        const row = y + i;
+        for (let x = 0; x < W; x += 4) score += a[row * W + x];
+      }
+      if (score > bestScore) { bestScore = score; bestY = y; }
+    }
+
+    if (bestScore > 0 && nDet > 32) {
+      const fade = Math.max(6, Math.round(bandMax * 0.34));
+      const tileH = Math.max(16, bandMax - fade);
+      // Half resolution on purpose: the tile is upscaled when it is drawn, so
+      // its grain lands soft instead of as a barcode of one-pixel stripes.
+      const tw = Math.max(8, Math.round(W / 2));
+      const th = Math.max(8, Math.round(tileH / 2));
+      texDark = makeCanvas(tw, th);
+      texLight = makeCanvas(tw, th);
+      const dc = ctxOf(texDark);
+      const lc = ctxOf(texLight);
+      if (dc && lc) {
+        const tImg = dc.createImageData(tw, th);
+        const td = tImg.data;
+        const lImg = lc.createImageData(tw, th);
+        const ld = lImg.data;
+        const gain = 1 / (2.6 * detSd);
+        for (let y = 0; y < th; y++) {
+          const sy2 = Math.min(tileH - 1, y * 2);
+          // Rows in the fade zone blend the head of the band with its tail, so
+          // the bottom row of the tile flows back into the top one.
+          const k = sy2 < fade ? 1 - sy2 / fade : 0;
+          const rA = Math.min(H - 1, bestY + sy2);
+          const rB = Math.min(H - 1, bestY + Math.min(bandMax - 1, tileH + sy2));
+          for (let x = 0; x < tw; x++) {
+            const sx2 = Math.min(W - 1, x * 2);
+            const pA = rA * W + sx2, pB = rB * W + sx2;
+            const dvA = lumField[pA] - localMean[pA];
+            const dvB = lumField[pB] - localMean[pB];
+            const dv = k * dvB + (1 - k) * dvA;
+            const am = clamp((k * a[pB] + (1 - k) * a[pA] - 0.22) / 0.55, 0, 1);
+            const t = clamp(0.5 + dv * gain, 0, 1);
+            const o = (y * tw + x) * 4;
+            // Shadow where the water is darker than its surroundings, light
+            // where it is brighter: two sprites, because one pixel cannot be
+            // both.
+            td[o] = 22; td[o + 1] = 48; td[o + 2] = 68;
+            td[o + 3] = Math.round((1 - t) * am * 245);
+            const lt = clamp((t - 0.55) / 0.45, 0, 1);
+            ld[o] = 255; ld[o + 1] = 255; ld[o + 2] = 255;
+            ld[o + 3] = Math.round(lt * am * 235);
+          }
+        }
+        dc.putImageData(tImg, 0, 0);
+        lc.putImageData(lImg, 0, 0);
+        texH = tileH;
+      }
+    }
+  }
+
   /* --- 8. Mask canvas -------------------------------------------------- */
   for (let i = 0, p = 0; i < d.length; i += 4, p++) {
     d[i] = 255; d[i + 1] = 255; d[i + 2] = 255;
@@ -555,8 +717,8 @@ export function buildFallGeometry(
   c.putImageData(img, 0, 0);
 
   return {
-    width: W, height: H, mask: canvas, streams, impactY, impactSpans,
-    troughRgb, crestRgb, mistRgb,
+    width: W, height: H, mask: canvas, base, streams, impactY, impactSpans,
+    troughRgb, crestRgb, mistRgb, texDark, texLight, texH,
     sprites: buildSprites(troughRgb, crestRgb, mistRgb),
   };
 }
@@ -609,28 +771,6 @@ function traceTube(c: Ctx2D, st: FallStream, y0: number, y1: number) {
 }
 
 /**
- * Piecewise-linear vertical warp at 1:1 scale.
- *
- * Each band maps its own source rows to the rows the displacement field sends
- * them to, so neighbouring bands meet exactly and the picture shears smoothly
- * instead of stepping. A sub-pixel extrapolation at both ends hides the
- * hairline canvas antialiasing would otherwise leave at every boundary.
- */
-export function verticalWarp(
-  c: Ctx2D, src: CanvasImageSource, w: number, h: number,
-  bands: number, field: (v: number) => { dx: number; dy: number },
-) {
-  const bleed = 0.75;
-  for (let i = 0; i < bands; i++) {
-    const v0 = i / bands, v1 = (i + 1) / bands;
-    const y0 = v0 * h, y1 = v1 * h;
-    const f0 = field(v0), f1 = field(v1);
-    const dh = (y1 - y0) + (f1.dy - f0.dy) + bleed;
-    c.drawImage(src, 0, y0, w, y1 - y0 + bleed, f0.dx, y0 + f0.dy, w, Math.max(0.5, dh));
-  }
-}
-
-/**
  * PASS 1 - the body of the water.
  *
  * Drawn into the fall scratch canvas and then masked by the painted water
@@ -680,66 +820,190 @@ export function drawFallSheet(
     traceTube(c, st, y0 - 1, y1 + 1);
     c.clip();
 
-    /* --- travelling film: light and shade running down the tube --- */
-    // A gradient, not a stack of bands. Bands gave the sheet a visible ladder
-    // of horizontal edges (one hard step per band); a multi-stop gradient is
-    // interpolated by the canvas, so the film reads as smooth moving water.
-    const stops = detail > 0.8 ? 56 : 36;
-    const waveAlpha = (v: number, phase: number) => {
-      const surge = 0.5 + 0.5 * Math.sin(TAU * (v * 2 - u * cycles) + si + phase);
-      const ripple = 0.5 + 0.5 * Math.sin(TAU * (v * 7 - u * cycles * 2) + si * 1.7);
-      return f.opacity * (0.055 + 0.16 * surge + 0.085 * ripple);
-    };
-    const deepAlpha = (v: number) => {
-      const surge = 0.5 + 0.5 * Math.sin(TAU * (v * 2 - u * cycles + 0.5) + si);
-      return f.opacity * 0.20 * (1 - surge);
-    };
-    const gCrest = c.createLinearGradient(0, y0, 0, y1);
-    const gDeep = c.createLinearGradient(0, y0, 0, y1);
-    for (let k = 0; k <= stops; k++) {
-      const v = k / stops;
-      gCrest.addColorStop(v, rgbaStr(crestRgb, clamp(waveAlpha(v, 0), 0, 0.85)));
-      gDeep.addColorStop(v, rgbaStr(troughRgb, clamp(deepAlpha(v), 0, 0.5)));
+    /* --- the body of the sheet: our water, over the painted water --- */
+    // The plate's water is only a base here. Everything that reads as falling
+    // water - the rounded body, the veils, the streaks, the foam - is drawn by
+    // this pass and moves; the photograph itself never does.
+    let tubeX0 = Infinity, tubeX1 = -Infinity, tubeSum = 0, tubeRows = 0;
+    for (const r of st.rows) {
+      const sp2 = curtainSpan(st, r.y);
+      tubeX0 = Math.min(tubeX0, sp2.x0);
+      tubeX1 = Math.max(tubeX1, sp2.x1);
+      tubeSum += (sp2.x0 + sp2.x1) / 2;
+      tubeRows++;
     }
-    c.fillStyle = gDeep;
-    c.fillRect(0, y0, W, span);
-    c.fillStyle = gCrest;
+    const tubeMid = tubeRows ? tubeSum / tubeRows : W / 2;
+    const tubeHalf = tubeRows ? Math.max(6, (tubeX1 - tubeX0) / 2) : W * 0.2;
+
+    // The plate's own water, laid down as the base of the sheet. Everything
+    // after this modulates *it*, so the fall keeps the photograph's colour and
+    // its texture - but none of it stays still.
+    if (geo?.base) {
+      c.globalAlpha = 0.55;
+      c.drawImage(geo.base, 0, 0, W, H);
+      c.globalAlpha = 1;
+    }
+
+    // The body: our water, not the photograph's. Cool and deep in the middle
+    // of the fall, aerated white at the lip and thrown into foam at the foot.
+    // Kept opaque enough that the moving structure drawn after it is visible:
+    // white on white is why the waterfall used to read as a still picture.
+    const deepBody = c.createLinearGradient(0, y0, 0, y1);
+    deepBody.addColorStop(0.00, rgbaStr(troughRgb, 0.20 * f.opacity));
+    deepBody.addColorStop(0.15, rgbaStr(troughRgb, 0.40 * f.opacity));
+    deepBody.addColorStop(0.55, rgbaStr(troughRgb, 0.46 * f.opacity));
+    deepBody.addColorStop(0.90, rgbaStr(troughRgb, 0.30 * f.opacity));
+    deepBody.addColorStop(1.00, rgbaStr(troughRgb, 0.18 * f.opacity));
+    c.fillStyle = deepBody;
     c.fillRect(0, y0, W, span);
 
-    /* --- bright streaks, the read of rushing water --- */
+    const body = c.createLinearGradient(0, y0, 0, y1);
+    body.addColorStop(0.00, rgbaStr(crestRgb, 0.60 * f.opacity));
+    body.addColorStop(0.10, rgbaStr('255,255,255', 0.46 * f.opacity));
+    body.addColorStop(0.40, rgbaStr(crestRgb, 0.34 * f.opacity));
+    body.addColorStop(0.78, rgbaStr(crestRgb, 0.44 * f.opacity));
+    body.addColorStop(0.94, rgbaStr('255,255,255', 0.62 * f.opacity));
+    body.addColorStop(1.00, rgbaStr('255,255,255', 0.66 * f.opacity));
+    c.fillStyle = body;
+    c.fillRect(0, y0, W, span);
+
+    /* --- the film: a surge that runs down the fall ------------------- */
+    // Coherent, always-down motion, and the one pass that works even when the
+    // plate has no usable water mask: the body itself travels.
+    const stops = detail > 0.8 ? 72 : 44;
+    const filmG = c.createLinearGradient(0, y0, 0, y1);
+    for (let k = 0; k <= stops; k++) {
+      const v = k / stops;
+      const surge = 0.5 + 0.5 * Math.sin(TAU * (v * 3 - u * cycles) + si * 1.3);
+      const ripple = 0.5 + 0.5 * Math.sin(TAU * (v * 7 - u * cycles * 2) + si * 1.7);
+      const shade = 0.5 + 0.5 * Math.sin(TAU * (v * 3 - u * cycles + 0.5) + si * 1.3);
+      const a2 = clamp(f.opacity * (0.05 + 0.20 * surge + 0.10 * ripple), 0, 0.85);
+      const dark = clamp(f.opacity * 0.16 * shade, 0, 0.5);
+      // Alternate between sheen and shadow along the fall: a light-only film on
+      // white water would be invisible.
+      const rgb = dark > a2 ? troughRgb : crestRgb;
+      filmG.addColorStop(v, rgbaStr(rgb, Math.max(a2, dark)));
+    }
+    c.fillStyle = filmG;
+    c.fillRect(0, y0, W, span);
+
+    // A rounded column, not a flat wash: cool shade at both edges, bright
+    // water down the middle. This is what makes the fall read as a solid
+    // volume of water instead of a bright patch on the rock.
+    const round = c.createLinearGradient(tubeMid - tubeHalf, 0, tubeMid + tubeHalf, 0);
+    round.addColorStop(0.00, rgbaStr(troughRgb, 0.30 * f.opacity));
+    round.addColorStop(0.16, rgbaStr(troughRgb, 0.08 * f.opacity));
+    round.addColorStop(0.50, rgbaStr(crestRgb, 0.08 * f.opacity));
+    round.addColorStop(0.84, rgbaStr(troughRgb, 0.10 * f.opacity));
+    round.addColorStop(1.00, rgbaStr(troughRgb, 0.32 * f.opacity));
+    c.fillStyle = round;
+    c.fillRect(0, y0, W, span);
+
+    /* --- the water itself, scrolling down the fall ------------------- */
+    // Two layers of the same tile at different speeds: the fast one reads as
+    // the surface rushing past, the slow one as the body of the fall.
+    if (geo && geo.texH > 4 && (geo.texDark || geo.texLight)) {
+      const tileH = geo.texH;
+      // The shadow tile is the lace of the fall - gaps between columns of
+      // water - and it scrolls at the speed of the water. The light tile rides
+      // faster, as the glints on the surface do.
+      // Multiply, not paint: the base is opaque water now, so the tile darkens
+      // the seams between columns of water as they travel down the fall. This
+      // is the motion - everything else is detail on top of it.
+      if (geo.texDark) {
+        c.globalCompositeOperation = 'multiply';
+        const offD = frac(u * cycles) * tileH;
+        c.globalAlpha = clamp(0.95 * f.opacity, 0, 1);
+        for (let ty = y0 - tileH + offD; ty < y1; ty += tileH) c.drawImage(geo.texDark, 0, ty, W, tileH);
+      }
+      // The glints ride faster than the water they sit on, as glints do.
+      if (geo.texLight) {
+        c.globalCompositeOperation = 'lighter';
+        const offL = frac(u * cycles * 1.75) * tileH;
+        c.globalAlpha = clamp(0.35 * f.opacity, 0, 1);
+        for (let ty = y0 - tileH + offL; ty < y1; ty += tileH) c.drawImage(geo.texLight, 0, ty, W, tileH);
+      }
+      c.globalCompositeOperation = 'source-over';
+      c.globalAlpha = 1;
+    }
+
     if (sprites) {
-      const streakCount = Math.max(10, Math.round((24 + f.density * 0.5) * (detail > 0.8 ? 1 : 0.7)));
+      /* --- veils: sheets of water sliding down at different speeds --- */
+      // Fast and slow veils together give the fall depth: the eye reads the
+      // speed difference as water in front of water.
+      const veilCount = Math.max(10, Math.round((detail > 0.8 ? 30 : 18) * (0.55 + f.density * 0.7)));
+      for (let i = 0; i < veilCount; i++) {
+        const q = pr(seed, i, 131 + si);
+        const sp2 = 0.5 + pr(seed, i, 137 + si) * 0.9;
+        const lenJit = pr(seed, i, 139 + si);
+        const len = span * (0.35 + 0.55 * lenJit);
+        const r = curtainSpan(st, y0 + span * (0.15 + 0.7 * pr(seed, i, 157 + si)));
+        const sw = Math.max(6, r.x1 - r.x0);
+        const cx = r.x0 + (0.10 + 0.80 * q) * sw;
+        const wpx = sw * (0.20 + 0.50 * pr(seed, i, 149 + si));
+        const y = y0 + frac(u * cycles * sp2 + pr(seed, i, 151 + si)) * (span + len) - len;
+        // Alternate shadow and sheen: a veil that only brightens white water is
+        // invisible, and the pair reads as one sheet of water catching light.
+        const dark = i % 2 === 1;
+        c.globalAlpha = clamp(f.opacity * (dark ? 0.16 + 0.16 * lenJit : 0.14 + 0.18 * lenJit), 0, 0.55);
+        c.drawImage(dark ? sprites.veilDark : sprites.veil, cx - wpx / 2, y, wpx, len);
+      }
+
+      /* --- bright streaks, the read of rushing water --- */
+      // Dense and thin: a handful of fat streaks reads as scratched film, many
+      // narrow ones with mixed speeds read as water.
+      const streakCount = Math.max(12, Math.round((28 + f.density * 22) * (detail > 0.8 ? 1 : 0.6)));
       for (let i = 0; i < streakCount; i++) {
         const q = pr(seed, i, 11 + si);          // lateral position 0..1
-        const k2 = pr(seed, i, 23 + si) < 0.38 ? 2 : 1;   // speed harmonic
+        const k2 = pr(seed, i, 23 + si) < 0.35 ? 2 : 1;   // speed harmonic
         const ph = pr(seed, i, 37 + si);
         const lenJit = pr(seed, i, 41 + si);
         const wide = pr(seed, i, 53 + si);
-        const len = span * (0.09 + 0.22 * lenJit) * (k2 === 2 ? 1.25 : 1);
+        const len = span * (0.10 + 0.26 * lenJit) * (k2 === 2 ? 1.25 : 1);
         const travel = span + len;
         const y = y0 + frac(u * cycles * k2 + ph) * travel - len;
         const r = curtainSpan(st, clamp(y + len * 0.5, y0, y1));
         const sw = r.x1 - r.x0;
-        const cx = r.x0 + (0.14 + 0.72 * q) * sw;
-        const wpx = Math.max(1.1, sw * (0.018 + 0.05 * wide));
+        const cx = r.x0 + (0.10 + 0.80 * q) * sw;
+        const wpx = Math.max(2, sw * (0.012 + 0.032 * wide));
         // The head of a streak fades as it nears the plunge pool.
         const head = clamp(1 - (y + len - impactY) / (H * 0.10), 0, 1);
-        c.globalAlpha = clamp(f.opacity * (0.30 + 0.42 * wide) * (0.35 + 0.65 * head), 0, 0.95);
+        c.globalAlpha = clamp(f.opacity * (0.26 + 0.34 * wide) * (0.35 + 0.65 * head), 0, 0.85);
         c.drawImage(sprites.streak, cx - wpx / 2, y, wpx, len);
+        // Every third streak is a dark seam instead of a bright thread: on
+        // white water it is the gaps between columns that read as movement.
+        if (i % 3 === 0) {
+          c.globalAlpha = clamp(f.opacity * (0.18 + 0.24 * wide), 0, 0.6);
+          c.drawImage(sprites.streakDark, cx + wpx * 0.8, y, wpx * 1.6, len);
+        }
       }
       // Hairline threads for the spray caught inside the sheet.
-      const threadCount = Math.round(streakCount * 0.55);
+      const threadCount = Math.round(streakCount * 0.45);
       for (let i = 0; i < threadCount; i++) {
         const q = pr(seed, i, 71 + si);
         const ph = pr(seed, i, 83 + si);
         const lenJit = pr(seed, i, 97 + si);
-        const len = span * (0.05 + 0.10 * lenJit);
+        const len = span * (0.05 + 0.13 * lenJit);
         const travel = span + len;
-        const y = y0 + frac(u * cycles * 2 + ph) * travel - len;
+        const y = y0 + frac(u * cycles * 2.6 + ph) * travel - len;
         const r = curtainSpan(st, clamp(y, y0, y1));
-        const cx = r.x0 + (0.06 + 0.88 * q) * (r.x1 - r.x0);
-        c.globalAlpha = clamp(f.opacity * 0.16 * (0.4 + 0.6 * lenJit), 0, 0.6);
-        c.drawImage(sprites.streak, cx, y, Math.max(0.8, (r.x1 - r.x0) * 0.012), len);
+        const cx = r.x0 + (0.04 + 0.92 * q) * (r.x1 - r.x0);
+        c.globalAlpha = clamp(f.opacity * 0.05 * (0.4 + 0.6 * lenJit), 0, 0.3);
+        c.drawImage(sprites.streak, cx, y, Math.max(0.7, (r.x1 - r.x0) * 0.0035), len);
+      }
+
+      /* --- foam riding the sheet down --- */
+      const foamCount = Math.max(4, Math.round(14 * (detail > 0.8 ? 1 : 0.6)));
+      for (let i = 0; i < foamCount; i++) {
+        const q = pr(seed, i, 211 + si);
+        const ph = pr(seed, i, 223 + si);
+        const size = pr(seed, i, 227 + si);
+        const y = y0 + frac(u * cycles * 1.3 + ph) * span;
+        const r = curtainSpan(st, clamp(y, y0, y1));
+        const cx = r.x0 + (0.12 + 0.76 * q) * (r.x1 - r.x0);
+        const rad = Math.max(2, (r.x1 - r.x0) * (0.05 + 0.10 * size));
+        c.globalAlpha = clamp(f.opacity * 0.10 * (0.4 + 0.6 * Math.sin(Math.PI * frac(u * cycles + ph))), 0, 0.35);
+        c.drawImage(sprites.foam, cx - rad * 1.4, y - rad * 0.7, rad * 2.8, rad * 1.5);
       }
       c.globalAlpha = 1;
     }
@@ -795,8 +1059,8 @@ export function drawFallSheet(
         if (env <= 0.03) continue;
         // Never wider than the water it sits on.
         const rxR = Math.min(span * 0.5, W * (0.02 + p * 0.11));
-        c.strokeStyle = rgbaStr(crestRgb, env * 0.40 * splashAmp);
-        c.lineWidth = Math.max(1, (1 - p * 0.55) * Math.min(W, H) * 0.006);
+        c.strokeStyle = rgbaStr(crestRgb, env * 0.26 * splashAmp);
+        c.lineWidth = Math.max(0.8, (1 - p * 0.55) * Math.min(W, H) * 0.0045);
         c.beginPath();
         c.ellipse(cxR, Math.min(H * 0.96, impactY + H * (0.012 + p * 0.07)),
           rxR, rxR * 0.18, 0, 0, TAU);

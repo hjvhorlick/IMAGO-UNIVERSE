@@ -11,14 +11,14 @@
  */
 import type { AssetLibrary } from '../assets/library';
 import type { Scene, SceneNode } from '../core/types';
-import { clamp, frac, rad, rgba, smoothstep, TAU } from '../core/util';
+import { clamp, frac, rad, rgba, TAU } from '../core/util';
 import { animationEngine } from '../animation/animationEngine';
 import type { LocalAtmosphereSpec, NodeRenderState, Quality, SparkleSpec } from '../animation/animationEngine';
 import { isActive, LoopManager } from '../animation/loopManager';
 import { EFFECT_MAP } from '../animation/effects';
 import type { EffectDrawContext } from '../animation/effectPrimitives';
 import { acquireScratch, meshWarp, releaseScratch, stripWarp } from './deform';
-import { buildFallGeometry, drawFallSheet, drawFallSpray, verticalWarp } from './waterfall';
+import { buildFallGeometry, drawFallSheet, drawFallSpray } from './waterfall';
 import type { FallGeometry } from './waterfall';
 import type { ImageCache } from './imageCache';
 import { paintOrder } from '../scene/sceneModel';
@@ -157,22 +157,14 @@ export class Compositor {
     ctx.filter = filter;
     const dest = { dx: 0, dy: 0, dw, dh };
 
-    let plateDrawn = false;
     if (state.warp) {
       const { mode, cols, rows, field, breaks, active } = state.warp;
       if (mode === 'strip') stripWarp(ctx, source, rect, dest, rows, (v) => field(0.5, v));
       else meshWarp(ctx, source, rect, dest, cols, rows, field, Math.max(1, 1.6 / opts.scale), breaks, active);
-    } else if (state.fall) {
-      // Falling water gets a two-layer draw: the painted rock stays perfectly
-      // still while the painted WATER is lifted onto its own layer and pushed
-      // down the falls by a travelling wave. That is what makes the artwork
-      // itself read as moving water instead of a still picture with streaks
-      // over it. Falls back to a plain blit when the plate has no water mask.
-      const u = frac(opts.time / Math.max(0.001, this.loops.effectiveLoop(scene, node)));
-      plateDrawn = this.drawFallPlate(ctx, source, rect, dest, state.fall, opts,
-        node.assetId ?? node.id, u);
-      if (!plateDrawn) ctx.drawImage(source, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, dw, dh);
     } else {
+      // Falls are drawn as a plain plate too: the rock and the setting are the
+      // photograph, the water on top of them is painted by `drawFall`, and no
+      // pixel of the picture is ever warped.
       ctx.drawImage(source, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, dw, dh);
     }
     ctx.filter = 'none';
@@ -381,99 +373,6 @@ export class Compositor {
   }
 
   /**
-   * Draw a waterfall plate as two layers: still rock and a movable film of
-   * painted water.
-   *
-   * The water silhouette extracted by `waterfall.ts` is used twice - once to
-   * erase the water from the plate (leaving rock, moss and fern) and once to
-   * lift the water onto its own layer. The rock is blitted untouched; the water
-   * is displaced by a travelling wave whose phase runs down the fall, so the
-   * painted cascade itself flows and undulates.
-   *
-   * Only water moves, and only by a few pixels, so the lip and the pool stay
-   * where the artist painted them. Returns false when this plate has no usable
-   * water mask (flat synthetic plates, for instance).
-   */
-  private drawFallPlate(
-    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
-    source: CanvasImageSource,
-    rect: { sx: number; sy: number; sw: number; sh: number },
-    dest: { dx: number; dy: number; dw: number; dh: number },
-    f: NonNullable<NodeRenderState['fall']>,
-    opts: RenderOptions, cacheKey: string, u: number,
-  ): boolean {
-    const [rx, ry, rw, rh] = f.region;
-    const size = fallScratchSize(rw * dest.dw, rh * dest.dh, opts.quality);
-    const geo = this.waterGeometry(cacheKey, source, rect, f.region, size.W, size.H);
-    if (!geo) return false;
-
-    const maxDim = opts.quality === 'export' ? 2048 : 1024;
-    const ratio = Math.min(1, maxDim / Math.max(dest.dw, dest.dh));
-
-    // The still rock layer needs the whole node; only the fall region moves.
-    const cw = Math.max(2, Math.round(dest.dw * ratio));
-    const ch = Math.max(2, Math.round(dest.dh * ratio));
-    const rw2 = Math.max(2, Math.round(rw * dest.dw * ratio));
-    const rh2 = Math.max(2, Math.round(rh * dest.dh * ratio));
-    const rx2 = rx * dest.dw * ratio, ry2 = ry * dest.dh * ratio;
-
-    const rock = acquireScratch(cw, ch);
-    const film = acquireScratch(rw2, rh2);
-    const warped = acquireScratch(rw2, rh2);
-    try {
-      // The full plate, exactly as painted.
-      rock.ctx.globalCompositeOperation = 'source-over';
-      rock.ctx.drawImage(source, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, cw, ch);
-
-      // The fall region of that plate, still opaque.
-      film.ctx.globalCompositeOperation = 'source-over';
-      film.ctx.drawImage(rock.canvas, rx2, ry2, rw2, rh2, 0, 0, rw2, rh2);
-
-      // Still rock: the plate with the water punched out.
-      rock.ctx.globalCompositeOperation = 'destination-out';
-      rock.ctx.drawImage(geo.mask as CanvasImageSource, 0, 0, size.W, size.H,
-        rx2, ry2, rw2, rh2);
-      rock.ctx.globalCompositeOperation = 'source-over';
-      ctx.drawImage(rock.canvas, 0, 0, cw, ch, 0, 0, dest.dw, dest.dh);
-
-      // Warp the OPAQUE crop, then cut the water out of the result. Warping a
-      // cut-out water layer instead leaves a ladder of bright seams wherever
-      // two translucent bands meet; on an opaque picture the band joins carry
-      // identical pixels and vanish.
-      const cycles = Math.max(1, Math.round(f.cycles));
-      const rows = opts.quality === 'export' ? 120 : 80;
-      const ampPx = rh2 * 0.022 * clamp(f.opacity, 0, 1);
-      verticalWarp(warped.ctx, film.canvas, rw2, rh2, rows, (v) => {
-        // Two travelling waves down the fall, faded out at the lip and the
-        // foot so the crest and the plunge pool stay anchored.
-        const window = smoothstep(clamp(v / 0.06, 0, 1)) * smoothstep(clamp((1 - v) / 0.12, 0, 1));
-        const wave = Math.sin(TAU * (v * 2 - u * cycles)) * 0.68
-          + Math.sin(TAU * (v * 5 - u * cycles * 2) + 1.1) * 0.32;
-        const shear = Math.sin(TAU * (v * 3 - u * cycles) + 0.4);
-        return { dx: shear * ampPx * 0.30 * window, dy: wave * ampPx * window };
-      });
-      warped.ctx.globalCompositeOperation = 'destination-in';
-      warped.ctx.drawImage(geo.mask as CanvasImageSource, 0, 0, size.W, size.H, 0, 0, rw2, rh2);
-      warped.ctx.globalCompositeOperation = 'source-over';
-
-      // Clipped to the fall region: the displaced film moves a few pixels and
-      // must not smear a hair of water onto the rock outside it.
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(rx * dest.dw, ry * dest.dh, rw * dest.dw, rh * dest.dh);
-      ctx.clip();
-      ctx.drawImage(warped.canvas, 0, 0, rw2, rh2,
-        rx * dest.dw, ry * dest.dh, rw * dest.dw, rh * dest.dh);
-      ctx.restore();
-      return true;
-    } finally {
-      releaseScratch(rock);
-      releaseScratch(film);
-      releaseScratch(warped);
-    }
-  }
-
-  /**
    * Falling water.
    *
    * The geometry (water silhouette, one tube per cascade, lip and foot rows,
@@ -523,9 +422,11 @@ export class Compositor {
       c.drawImage(geo.mask, 0, 0, W, H);
       c.globalCompositeOperation = 'source-over';
     }
+
     ctx.save();
     ctx.globalCompositeOperation = 'source-over';
     ctx.drawImage(scratch.canvas, 0, 0, W, H, dx, dy, dw, dh);
+
     ctx.restore();
 
     /* Pass 2 - the lip crest, ledge bursts, plunge-pool spray and mist. */
