@@ -18274,6 +18274,598 @@
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
    "bytes": 778326
+  },
+  {
+   "id": "realistic.middle.english-oak",
+   "name": "English Oak",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "woodland",
+    "photoreal"
+   ],
+   "tags": [
+    "oak",
+    "broadleaf",
+    "boughs",
+    "shade",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/middle/english-oak.webp",
+   "thumb": "realistic/middle/thumbs/english-oak.webp",
+   "format": "image/webp",
+   "width": 1336,
+   "height": 732,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#303010",
+    "#303030",
+    "#707030",
+    "#507030"
+   ],
+   "defaultScale": 0.8,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.55,
+    "stiffness": 0.85,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic whole-tree cutout; the crown sways in slow gusts.",
+   "bytes": 699198
+  },
+  {
+   "id": "realistic.middle.silver-birch",
+   "name": "Silver Birch",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "woodland",
+    "photoreal"
+   ],
+   "tags": [
+    "birch",
+    "white bark",
+    "airy",
+    "silver",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/middle/silver-birch.webp",
+   "thumb": "realistic/middle/thumbs/silver-birch.webp",
+   "format": "image/webp",
+   "width": 1115,
+   "height": 758,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#907050",
+    "#b09050",
+    "#705050",
+    "#707030",
+    "#909030"
+   ],
+   "defaultScale": 0.85,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.45,
+    "stiffness": 0.6,
+    "gusts": 3,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic whole-tree cutout; the crown sways in slow gusts.",
+   "bytes": 539972
+  },
+  {
+   "id": "realistic.middle.scots-pine",
+   "name": "Scots Pine",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "woodland",
+    "highlands",
+    "photoreal"
+   ],
+   "tags": [
+    "pine",
+    "conifer",
+    "needles",
+    "evergreen",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/middle/scots-pine.webp",
+   "thumb": "realistic/middle/thumbs/scots-pine.webp",
+   "format": "image/webp",
+   "width": 610,
+   "height": 711,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303030",
+    "#505050",
+    "#503050",
+    "#101010",
+    "#305050"
+   ],
+   "defaultScale": 0.95,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.45,
+    "stiffness": 0.9,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic whole-tree cutout; the crown sways in slow gusts.",
+   "bytes": 339974
+  },
+  {
+   "id": "realistic.middle.weeping-willow",
+   "name": "Weeping Willow",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "waterside",
+    "photoreal"
+   ],
+   "tags": [
+    "willow",
+    "drooping",
+    "waterside",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/middle/weeping-willow.webp",
+   "thumb": "realistic/middle/thumbs/weeping-willow.webp",
+   "format": "image/webp",
+   "width": 1178,
+   "height": 735,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505010",
+    "#707030",
+    "#909030",
+    "#907030",
+    "#303010"
+   ],
+   "defaultScale": 0.8,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.8,
+    "stiffness": 0.7,
+    "gusts": 3,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic whole-tree cutout; the crown sways in slow gusts.",
+   "bytes": 674294
+  },
+  {
+   "id": "realistic.middle.copper-beech",
+   "name": "Copper Beech",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "woodland",
+    "garden",
+    "photoreal"
+   ],
+   "tags": [
+    "beech",
+    "purple",
+    "dense",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/middle/copper-beech.webp",
+   "thumb": "realistic/middle/thumbs/copper-beech.webp",
+   "format": "image/webp",
+   "width": 1077,
+   "height": 721,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#503030",
+    "#303030",
+    "#301010",
+    "#303010"
+   ],
+   "defaultScale": 0.8,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.6,
+    "stiffness": 0.85,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic whole-tree cutout; the crown sways in slow gusts.",
+   "bytes": 532128
+  },
+  {
+   "id": "realistic.middle.hawthorn",
+   "name": "Hawthorn",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "meadow",
+    "woodland",
+    "photoreal"
+   ],
+   "tags": [
+    "hawthorn",
+    "gnarled",
+    "thorny",
+    "blossom",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/middle/hawthorn.webp",
+   "thumb": "realistic/middle/thumbs/hawthorn.webp",
+   "format": "image/webp",
+   "width": 1122,
+   "height": 721,
+   "alpha": true,
+   "depth": 0.52,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#505030",
+    "#303030",
+    "#707030",
+    "#305010"
+   ],
+   "defaultScale": 0.55,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.55,
+    "stiffness": 0.8,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic whole-tree cutout; the crown sways in slow gusts.",
+   "bytes": 487546
+  },
+  {
+   "id": "realistic.middle.rowan-tree",
+   "name": "Rowan Tree",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "highlands",
+    "woodland",
+    "photoreal"
+   ],
+   "tags": [
+    "rowan",
+    "mountain ash",
+    "berries",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/middle/rowan-tree.webp",
+   "thumb": "realistic/middle/thumbs/rowan-tree.webp",
+   "format": "image/webp",
+   "width": 1360,
+   "height": 711,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#707030",
+    "#705050",
+    "#909030",
+    "#b09050"
+   ],
+   "defaultScale": 0.65,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.5,
+    "stiffness": 0.7,
+    "gusts": 3,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic whole-tree cutout; the crown sways in slow gusts.",
+   "bytes": 593344
+  },
+  {
+   "id": "realistic.middle.flowering-cherry",
+   "name": "Flowering Cherry",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "garden",
+    "photoreal"
+   ],
+   "tags": [
+    "cherry",
+    "blossom",
+    "spring",
+    "pink",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/middle/flowering-cherry.webp",
+   "thumb": "realistic/middle/thumbs/flowering-cherry.webp",
+   "format": "image/webp",
+   "width": 1341,
+   "height": 713,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09090",
+    "#d0b0b0",
+    "#907070",
+    "#705050",
+    "#b07090"
+   ],
+   "defaultScale": 0.7,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.55,
+    "stiffness": 0.75,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic whole-tree cutout; the crown sways in slow gusts.",
+   "bytes": 706142
+  },
+  {
+   "id": "realistic.middle.aspen",
+   "name": "Aspen",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "woodland",
+    "photoreal"
+   ],
+   "tags": [
+    "aspen",
+    "poplar",
+    "trembling",
+    "pale bark",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/middle/aspen.webp",
+   "thumb": "realistic/middle/thumbs/aspen.webp",
+   "format": "image/webp",
+   "width": 1345,
+   "height": 743,
+   "alpha": true,
+   "depth": 0.5,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909050",
+    "#707050",
+    "#b0b050",
+    "#707030",
+    "#b0b070"
+   ],
+   "defaultScale": 0.8,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.45,
+    "stiffness": 0.55,
+    "gusts": 3,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic whole-tree cutout; the crown sways in slow gusts.",
+   "bytes": 845656
+  },
+  {
+   "id": "realistic.middle.olive-tree",
+   "name": "Olive Tree",
+   "style": "realistic",
+   "layer": "middle",
+   "category": "trees",
+   "themes": [
+    "garden",
+    "mediterranean",
+    "photoreal"
+   ],
+   "tags": [
+    "olive",
+    "gnarled",
+    "silvery",
+    "ancient",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/middle/olive-tree.webp",
+   "thumb": "realistic/middle/thumbs/olive-tree.webp",
+   "format": "image/webp",
+   "width": 999,
+   "height": 710,
+   "alpha": true,
+   "depth": 0.52,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707050",
+    "#b09070",
+    "#909070",
+    "#907070",
+    "#707070"
+   ],
+   "defaultScale": 0.6,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "canopy-sway"
+   ],
+   "rig": {
+    "type": "canopy",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "canopyStart": 0.55,
+    "stiffness": 0.85,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic whole-tree cutout; the crown sways in slow gusts.",
+   "bytes": 521808
   }
  ]
 }

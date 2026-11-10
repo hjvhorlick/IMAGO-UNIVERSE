@@ -12,7 +12,7 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | Enchanted Realms (`enchanted`) | 10 | 25 | 54 | 89 |
 | Moonlit Reverie (`moonlit`) | 9 | 23 | 48 | 80 |
 | Harvest Season (`autumn`) | 9 | 24 | 50 | 83 |
-| Clearwater (`realistic`) | 12 | 9 | 35 | 56 |
+| Clearwater (`realistic`) | 12 | 19 | 35 | 66 |
 | Frostfall (`winter`) | 2 | 3 | 24 | 29 |
 
 ## Enchanted Realms (`enchanted`)
@@ -337,7 +337,7 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/realistic/background/thumbs/rocky-coast-cove.webp" width="96" alt="Rocky Coast Cove"> | Rocky Coast Cove | nature | generated | 1376×768 | [`realistic/background/rocky-coast-cove.webp`](../public/library/realistic/background/rocky-coast-cove.webp) |
 | <img src="../public/library/realistic/background/thumbs/still-forest-pool.webp" width="96" alt="Still Forest Pool"> | Still Forest Pool | nature | generated | 1376×768 | [`realistic/background/still-forest-pool.webp`](../public/library/realistic/background/still-forest-pool.webp) |
 
-### Middle (9)
+### Middle (19)
 
 | Preview | Name | Category | Origin | Size | File |
 | --- | --- | --- | --- | ---: | --- |
@@ -350,6 +350,16 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/realistic/middle/thumbs/lily-pads.webp" width="96" alt="Water Lily Pads"> | Water Lily Pads | plants | painted | 1307×675 | [`realistic/middle/lily-pads.webp`](../public/library/realistic/middle/lily-pads.webp) |
 | <img src="../public/library/realistic/middle/thumbs/water-rocks.webp" width="96" alt="Rocks in Clear Water"> | Rocks in Clear Water | rocks | painted | 1332×675 | [`realistic/middle/water-rocks.webp`](../public/library/realistic/middle/water-rocks.webp) |
 | <img src="../public/library/realistic/middle/thumbs/waterfall.webp" width="96" alt="Clearwater Falls"> | Clearwater Falls | water | painted | 925×646 | [`realistic/middle/waterfall.webp`](../public/library/realistic/middle/waterfall.webp) |
+| <img src="../public/library/realistic/middle/thumbs/english-oak.webp" width="96" alt="English Oak"> | English Oak | trees | generated | 1336×732 | [`realistic/middle/english-oak.webp`](../public/library/realistic/middle/english-oak.webp) |
+| <img src="../public/library/realistic/middle/thumbs/silver-birch.webp" width="96" alt="Silver Birch"> | Silver Birch | trees | generated | 1115×758 | [`realistic/middle/silver-birch.webp`](../public/library/realistic/middle/silver-birch.webp) |
+| <img src="../public/library/realistic/middle/thumbs/scots-pine.webp" width="96" alt="Scots Pine"> | Scots Pine | trees | generated | 610×711 | [`realistic/middle/scots-pine.webp`](../public/library/realistic/middle/scots-pine.webp) |
+| <img src="../public/library/realistic/middle/thumbs/weeping-willow.webp" width="96" alt="Weeping Willow"> | Weeping Willow | trees | generated | 1178×735 | [`realistic/middle/weeping-willow.webp`](../public/library/realistic/middle/weeping-willow.webp) |
+| <img src="../public/library/realistic/middle/thumbs/copper-beech.webp" width="96" alt="Copper Beech"> | Copper Beech | trees | generated | 1077×721 | [`realistic/middle/copper-beech.webp`](../public/library/realistic/middle/copper-beech.webp) |
+| <img src="../public/library/realistic/middle/thumbs/hawthorn.webp" width="96" alt="Hawthorn"> | Hawthorn | trees | generated | 1122×721 | [`realistic/middle/hawthorn.webp`](../public/library/realistic/middle/hawthorn.webp) |
+| <img src="../public/library/realistic/middle/thumbs/rowan-tree.webp" width="96" alt="Rowan Tree"> | Rowan Tree | trees | generated | 1360×711 | [`realistic/middle/rowan-tree.webp`](../public/library/realistic/middle/rowan-tree.webp) |
+| <img src="../public/library/realistic/middle/thumbs/flowering-cherry.webp" width="96" alt="Flowering Cherry"> | Flowering Cherry | trees | generated | 1341×713 | [`realistic/middle/flowering-cherry.webp`](../public/library/realistic/middle/flowering-cherry.webp) |
+| <img src="../public/library/realistic/middle/thumbs/aspen.webp" width="96" alt="Aspen"> | Aspen | trees | generated | 1345×743 | [`realistic/middle/aspen.webp`](../public/library/realistic/middle/aspen.webp) |
+| <img src="../public/library/realistic/middle/thumbs/olive-tree.webp" width="96" alt="Olive Tree"> | Olive Tree | trees | generated | 999×710 | [`realistic/middle/olive-tree.webp`](../public/library/realistic/middle/olive-tree.webp) |
 
 ### Foreground (35)
 

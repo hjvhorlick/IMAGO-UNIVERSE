@@ -576,3 +576,92 @@ describe('the realistic grass and flower cutouts', () => {
     }
   });
 });
+
+describe('the ten realistic trees', () => {
+  const TREES = ['english-oak', 'silver-birch', 'scots-pine', 'weeping-willow', 'copper-beech',
+    'hawthorn', 'rowan-tree', 'flowering-cherry', 'aspen', 'olive-tree'];
+
+  it('ships whole-tree cutouts with canopy rigs', () => {
+    const lib = library();
+    for (const id of TREES) {
+      const meta = lib.get(`realistic.middle.${id}`)!;
+      expect(meta, id).toBeDefined();
+      expect(meta.layer).toBe('middle');
+      expect(meta.category).toBe('trees');
+      expect(meta.animations[0]).toBe('canopy-sway');
+      expect(meta.rig.autoplay, `${id} breathes in the wind when placed`).toBe(true);
+      expect(meta.rig.canopyStart, `${id} declares where the crown starts`).toBeGreaterThan(0.2);
+      expect(meta.rig.stiffness, `${id} keeps a stiff trunk`).toBeGreaterThanOrEqual(0.5);
+      expect(fs.existsSync(path.join(ROOT, 'public/library', meta.file))).toBe(true);
+      expect(fs.existsSync(path.join(ROOT, 'public/library', meta.thumb))).toBe(true);
+    }
+    // different varieties: crown shapes and stiffnesses are not all alike
+    const lib2 = library();
+    const starts = TREES.map((t) => lib2.get(`realistic.middle.${t}`)!.rig.canopyStart);
+    expect(new Set(starts).size).toBeGreaterThan(3);
+  });
+
+  it('keys each tree clean of its backdrop', async () => {
+    for (const id of TREES) {
+      const meta = library().get(`realistic.middle.${id}`)!;
+      const img = await loadImage(path.join(ROOT, 'public/library', meta.file));
+      const cv = createCanvas(img.width, img.height);
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const d = ctx.getImageData(0, 0, img.width, img.height).data;
+      const at = (x: number, y: number) => d[(y * img.width + x) * 4 + 3];
+      expect(at(0, 0), `${id} top-left`).toBe(0);
+      expect(at(img.width - 1, 0), `${id} top-right`).toBe(0);
+      expect(at(0, img.height - 1), `${id} bottom-left`).toBe(0);
+      let solid = 0;
+      for (let i = 3; i < d.length; i += 16) if (d[i] > 128) solid++;
+      const cover = solid / (d.length / 16);
+      expect(cover, `${id} crown has sky holes`).toBeGreaterThan(0.03);
+      expect(cover, `${id} is not a solid slab`).toBeLessThan(0.85);
+    }
+  });
+
+  it('sways the crown in slow gusts while the trunk stands', async () => {
+    for (const id of TREES) {
+      const { meta, node, render } = await stage(`realistic.middle.${id}`);
+      expect(node.animation, `${id} autoplays`).not.toBeNull();
+      const loop = node.animation!.loop;
+      const a = render(0), b = render(loop / 2);
+      expect(a.equals(b), `${id} must move`).toBe(false);
+      expect(a.equals(render(loop)), `${id} must loop exactly`).toBe(true);
+      const canopy = meta.rig.canopyStart!;
+      const crownCut = Math.round(node.y - node.height / 2 + canopy * node.height * 0.6);
+      const base = Math.round(node.y + node.height / 2 - 0.10 * node.height);
+      let crownMoved = 0, baseMoved = 0;
+      for (let y = 0; y < 260; y++) for (let x = 0; x < 360; x++) {
+        const i = (y * 360 + x) * 4;
+        const d = Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
+        if (d > 4) { if (y >= base) baseMoved++; else if (y < crownCut) crownMoved++; }
+      }
+      expect(baseMoved, `${id}: the trunk base stands still`).toBe(0);
+      expect(crownMoved, `${id}: the crown sways`).toBeGreaterThan(200);
+    }
+  });
+
+  it('keeps the sway slight and the trunk far stiffer than the crown', async () => {
+    for (const id of TREES) {
+      const { meta, scene, node, loops } = await stage(`realistic.middle.${id}`);
+      const loop = node.animation!.loop;
+      const xs: number[] = [];
+      for (let k = 0; k < 64; k++) {
+        const st = animationEngine.evaluate(scene, node, (k / 64) * loop, loops, meta, 'export', false);
+        xs.push(st.warp!.field(0.5, 0.12).dx);
+      }
+      const range = Math.max(...xs) - Math.min(...xs);
+      expect(range, `${id} crown moves`).toBeGreaterThan(1);
+      expect(range, `${id} stays slight`).toBeLessThanOrEqual(0.1 * node.width);
+      let crosses = 0; const mid = (Math.max(...xs) + Math.min(...xs)) / 2;
+      for (let k = 1; k < 64; k++) if ((xs[k] - mid) * (xs[k - 1] - mid) < 0) crosses++;
+      expect(crosses, `${id} slow gusts, no flutter`).toBeLessThanOrEqual(10);
+      const st = animationEngine.evaluate(scene, node, loop * 0.21, loops, meta, 'export', false);
+      const crown = Math.abs(st.warp!.field(0.5, 0.12).dx);
+      const trunk = Math.abs(st.warp!.field(0.5, 0.88).dx);
+      expect(crown, `${id} crown outruns trunk`).toBeGreaterThan(4 * trunk);
+    }
+  });
+});

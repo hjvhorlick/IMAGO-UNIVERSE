@@ -1085,6 +1085,51 @@ def publish_realistic_flora(p: Publisher, src: str, style: str,
                         origin="generated", max_dim=1400, quality=95))
 
 
+def publish_realistic_trees(p: Publisher, src: str, style: str):
+    """Ten photographic trees of different varieties for the realistic looks.
+
+    Whole-tree studio cutouts on a flat magenta backdrop, keyed to alpha. Each
+    carries a canopy rig so canopy-sway bends the crown in slow gusts while
+    the trunk stays almost rigid - trees breathe in the wind, they do not
+    wobble at the roots.
+    """
+
+    def obj(name: str) -> Image.Image:
+        return clean_edges(autocrop(key_flat(Image.open(plate_path(src, f"mid-{name}.png")))))
+
+    DEFS = [
+        # aid, name, themes, tags, depth, scale, canopyStart, stiffness, gusts
+        ("english-oak", "English Oak", ["woodland"],
+         ["oak", "broadleaf", "boughs", "shade", "photoreal"], 0.50, 0.80, 0.55, 0.85, 2),
+        ("silver-birch", "Silver Birch", ["woodland"],
+         ["birch", "white bark", "airy", "silver", "photoreal"], 0.50, 0.85, 0.45, 0.60, 3),
+        ("scots-pine", "Scots Pine", ["woodland", "highlands"],
+         ["pine", "conifer", "needles", "evergreen", "photoreal"], 0.50, 0.95, 0.45, 0.90, 2),
+        ("weeping-willow", "Weeping Willow", ["waterside"],
+         ["willow", "drooping", "waterside", "photoreal"], 0.50, 0.80, 0.80, 0.70, 3),
+        ("copper-beech", "Copper Beech", ["woodland", "garden"],
+         ["beech", "purple", "dense", "photoreal"], 0.50, 0.80, 0.60, 0.85, 2),
+        ("hawthorn", "Hawthorn", ["meadow", "woodland"],
+         ["hawthorn", "gnarled", "thorny", "blossom", "photoreal"], 0.52, 0.55, 0.55, 0.80, 2),
+        ("rowan-tree", "Rowan Tree", ["highlands", "woodland"],
+         ["rowan", "mountain ash", "berries", "photoreal"], 0.50, 0.65, 0.50, 0.70, 3),
+        ("flowering-cherry", "Flowering Cherry", ["garden"],
+         ["cherry", "blossom", "spring", "pink", "photoreal"], 0.50, 0.70, 0.55, 0.75, 2),
+        ("aspen", "Aspen", ["woodland"],
+         ["aspen", "poplar", "trembling", "pale bark", "photoreal"], 0.50, 0.80, 0.45, 0.55, 3),
+        ("olive-tree", "Olive Tree", ["garden", "mediterranean"],
+         ["olive", "gnarled", "silvery", "ancient", "photoreal"], 0.52, 0.60, 0.55, 0.85, 2),
+    ]
+    for aid, name, themes, tags, depth, scale, canopy_start, stiffness, gusts in DEFS:
+        p.publish(Asset(f"{style}.middle.{aid}", name, style, "middle", "trees", obj(aid),
+                        themes=themes + ["photoreal"], tags=tags, depth=depth, default_scale=scale,
+                        animations=["canopy-sway"],
+                        rig={"type": "canopy", "anchor": [0.5, 1.0], "canopyStart": canopy_start,
+                             "stiffness": stiffness, "gusts": gusts, "autoplay": True},
+                        notes="Photographic whole-tree cutout; the crown sways in slow gusts.",
+                        origin="generated", max_dim=1600, quality=94))
+
+
 def publish_realistic_rooms(p: Publisher, src: str, style: str):
     """Photographic rooms: floor-to-roof glass, wood and stone, minimal.
 
@@ -1845,6 +1890,7 @@ def build(src: str, out: str, catalog: str = "docs/ASSET_CATALOG.md") -> dict:
     publish_realistic(p, src, R)
     publish_realistic_scenes(p, src, R)
     publish_realistic_flora(p, src, R)
+    publish_realistic_trees(p, src, R)
     publish_realistic_rooms(p, src, R)
     publish_realistic_people(p, src, R)
 

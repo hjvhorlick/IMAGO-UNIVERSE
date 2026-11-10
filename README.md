@@ -115,7 +115,10 @@ lavender, bluebells, buttercups, daisies, thistles, yarrow, clover, foxglove and
 place into any look as detailed foreground plants, grown as irregular field clumps with a planted
 soil base so they sit naturally in a scene. Each is keyed off its studio backdrop and rigged with a calm
 **grass-wind** sway: one slow bending wave that lags with height, so tips travel a few percent of
-the width while the base stays planted. They sway; they never wobble. A photographic **Clearwater Falls** pours over a mossy cliff: the painted water itself is
+the width while the base stays planted. They sway; they never wobble. Ten photographic **trees** —
+English oak, silver birch, Scots pine, weeping willow, copper beech, hawthorn, rowan, flowering
+cherry, aspen and olive — stand as whole-tree cutouts with sky holes through the crown; each crown
+sways in slow gusts on a `canopy-sway` rig while the trunk below its pin line stands perfectly still. A photographic **Clearwater Falls** pours over a mossy cliff: the painted water itself is
 lifted onto its own layer and pushed down the cascades while the rock stays still, with spray,
 hovering mist and plunge-pool ripples. It ships five photographic rooms — modern Japanese and open-plan, in wood and stone, with
 floor-to-roof glass that keys out into a real opening — each with a fireplace whose fire is optional,

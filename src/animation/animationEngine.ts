@@ -158,12 +158,17 @@ export class AnimationEngine {
         const stiffness = meta?.rig?.stiffness ?? 0.7;
         const gusts = Math.max(1, Math.round(meta?.rig?.gusts ?? 3));
         const reach = w * 0.045 * amp;
+        // The trunk below the pin line stands perfectly still. Declaring the
+        // moving range also fixes the slice/triangle split by geometry, so a
+        // near-zero trunk displacement can never flip a band's rendering mode
+        // between frames and re-resample still bark.
+        const pin = Math.min(0.92, canopyStart + 0.2);
         const field: FieldFn = (uu, vv) => {
           const canopyWeight = vv < canopyStart
             ? smoothstep(clamp((canopyStart - vv) / Math.max(0.05, canopyStart), 0, 1))
             : 0;
           const trunkWeight = (1 - vv) ** 2 * (1 - stiffness) * 0.22;
-          const weight = canopyWeight + trunkWeight;
+          const weight = (canopyWeight + trunkWeight) * clamp((pin - vv) / 0.08, 0, 1);
           const branch = periodic2(u, uu * 3.1, vv * 2.3, seed, 3);
           const main = Math.sin(TAU * u) * 0.65 + Math.sin(TAU * gusts * u + 1.1) * 0.22;
           const sway = main * (1 - turb * 0.55) + branch * turb;
@@ -177,6 +182,7 @@ export class AnimationEngine {
           cols: Math.max(4, Math.round(7 * detail)),
           rows: Math.max(5, Math.round(9 * detail)),
           field,
+          active: [0, pin],
         };
         break;
       }
