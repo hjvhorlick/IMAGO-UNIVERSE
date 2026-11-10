@@ -17101,19 +17101,19 @@
    "file": "realistic/foreground/meadow-grass-tuft.webp",
    "thumb": "realistic/foreground/thumbs/meadow-grass-tuft.webp",
    "format": "image/webp",
-   "width": 1211,
-   "height": 696,
+   "width": 1347,
+   "height": 756,
    "alpha": true,
    "depth": 0.9,
    "groundContact": 1.0,
    "perspective": "eye-level",
    "lighting": "upper-left",
    "palette": [
-    "#305010",
-    "#507030",
-    "#709050",
-    "#509030",
-    "#909070"
+    "#707030",
+    "#505030",
+    "#303010",
+    "#705030",
+    "#505010"
    ],
    "defaultScale": 0.26,
    "placement": {
@@ -17137,7 +17137,7 @@
    },
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
-   "bytes": 637416
+   "bytes": 825274
   },
   {
    "id": "realistic.foreground.tall-wild-grass",
@@ -17160,19 +17160,19 @@
    "file": "realistic/foreground/tall-wild-grass.webp",
    "thumb": "realistic/foreground/thumbs/tall-wild-grass.webp",
    "format": "image/webp",
-   "width": 1210,
-   "height": 678,
+   "width": 1368,
+   "height": 742,
    "alpha": true,
    "depth": 0.88,
    "groundContact": 1.0,
    "perspective": "eye-level",
    "lighting": "upper-left",
    "palette": [
-    "#505030",
-    "#507030",
     "#707050",
-    "#305030",
-    "#b09090"
+    "#505030",
+    "#909070",
+    "#909050",
+    "#707030"
    ],
    "defaultScale": 0.32,
    "placement": {
@@ -17196,7 +17196,7 @@
    },
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
-   "bytes": 723222
+   "bytes": 871916
   },
   {
    "id": "realistic.foreground.feather-grass-plumes",
@@ -17219,19 +17219,19 @@
    "file": "realistic/foreground/feather-grass-plumes.webp",
    "thumb": "realistic/foreground/thumbs/feather-grass-plumes.webp",
    "format": "image/webp",
-   "width": 1064,
-   "height": 705,
+   "width": 1270,
+   "height": 698,
    "alpha": true,
    "depth": 0.86,
    "groundContact": 1.0,
    "perspective": "eye-level",
    "lighting": "upper-left",
    "palette": [
-    "#d0d0d0",
     "#d0b0b0",
-    "#b0b090",
-    "#d0b0d0",
-    "#d0d0b0"
+    "#907050",
+    "#d0b090",
+    "#907070",
+    "#705050"
    ],
    "defaultScale": 0.3,
    "placement": {
@@ -17255,7 +17255,7 @@
    },
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
-   "bytes": 667474
+   "bytes": 697248
   },
   {
    "id": "realistic.foreground.golden-oat-spikes",
@@ -17279,19 +17279,19 @@
    "file": "realistic/foreground/golden-oat-spikes.webp",
    "thumb": "realistic/foreground/thumbs/golden-oat-spikes.webp",
    "format": "image/webp",
-   "width": 464,
-   "height": 684,
+   "width": 1339,
+   "height": 682,
    "alpha": true,
    "depth": 0.87,
    "groundContact": 1.0,
    "perspective": "eye-level",
    "lighting": "upper-left",
    "palette": [
-    "#d09050",
-    "#b07030",
-    "#f0b070",
-    "#b05030",
-    "#d09030"
+    "#b07050",
+    "#705030",
+    "#907050",
+    "#b09050",
+    "#d09050"
    ],
    "defaultScale": 0.3,
    "placement": {
@@ -17315,7 +17315,7 @@
    },
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
-   "bytes": 299534
+   "bytes": 776486
   },
   {
    "id": "realistic.foreground.bronze-sedge-tuft",
@@ -17338,19 +17338,19 @@
    "file": "realistic/foreground/bronze-sedge-tuft.webp",
    "thumb": "realistic/foreground/thumbs/bronze-sedge-tuft.webp",
    "format": "image/webp",
-   "width": 1286,
-   "height": 716,
+   "width": 1356,
+   "height": 702,
    "alpha": true,
    "depth": 0.9,
    "groundContact": 1.0,
    "perspective": "eye-level",
    "lighting": "upper-left",
    "palette": [
+    "#907050",
     "#705030",
-    "#905050",
-    "#503010",
     "#503030",
-    "#703030"
+    "#b09070",
+    "#b07050"
    ],
    "defaultScale": 0.24,
    "placement": {
@@ -17374,7 +17374,7 @@
    },
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
-   "bytes": 860568
+   "bytes": 779124
   },
   {
    "id": "realistic.foreground.blue-fescue-mound",
@@ -17397,19 +17397,19 @@
    "file": "realistic/foreground/blue-fescue-mound.webp",
    "thumb": "realistic/foreground/thumbs/blue-fescue-mound.webp",
    "format": "image/webp",
-   "width": 1306,
-   "height": 679,
+   "width": 1341,
+   "height": 697,
    "alpha": true,
    "depth": 0.92,
    "groundContact": 1.0,
    "perspective": "eye-level",
    "lighting": "upper-left",
    "palette": [
+    "#505050",
     "#709090",
     "#507070",
-    "#90b0b0",
-    "#b0b0b0",
-    "#9090b0"
+    "#707070",
+    "#90b0b0"
    ],
    "defaultScale": 0.22,
    "placement": {
@@ -17433,7 +17433,7 @@
    },
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
-   "bytes": 725564
+   "bytes": 752502
   },
   {
    "id": "realistic.foreground.fountain-grass-plumes",
@@ -17457,19 +17457,19 @@
    "file": "realistic/foreground/fountain-grass-plumes.webp",
    "thumb": "realistic/foreground/thumbs/fountain-grass-plumes.webp",
    "format": "image/webp",
-   "width": 867,
-   "height": 677,
+   "width": 1326,
+   "height": 709,
    "alpha": true,
    "depth": 0.87,
    "groundContact": 1.0,
    "perspective": "eye-level",
    "lighting": "upper-left",
    "palette": [
-    "#b09090",
-    "#b07070",
     "#d0b0b0",
-    "#705050",
-    "#d09090"
+    "#b09090",
+    "#505030",
+    "#101010",
+    "#909070"
    ],
    "defaultScale": 0.3,
    "placement": {
@@ -17493,7 +17493,7 @@
    },
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
-   "bytes": 524326
+   "bytes": 821706
   },
   {
    "id": "realistic.foreground.dew-grass-blades",
@@ -17517,8 +17517,8 @@
    "file": "realistic/foreground/dew-grass-blades.webp",
    "thumb": "realistic/foreground/thumbs/dew-grass-blades.webp",
    "format": "image/webp",
-   "width": 1278,
-   "height": 640,
+   "width": 1352,
+   "height": 724,
    "alpha": true,
    "depth": 0.93,
    "groundContact": 1.0,
@@ -17526,10 +17526,10 @@
    "lighting": "upper-left",
    "palette": [
     "#507030",
-    "#709050",
-    "#709030",
-    "#305010",
-    "#b0d0b0"
+    "#101010",
+    "#303030",
+    "#507050",
+    "#305030"
    ],
    "defaultScale": 0.24,
    "placement": {
@@ -17553,7 +17553,7 @@
    },
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
-   "bytes": 809436
+   "bytes": 721398
   },
   {
    "id": "realistic.foreground.wheat-grass-spikes",
@@ -17577,19 +17577,19 @@
    "file": "realistic/foreground/wheat-grass-spikes.webp",
    "thumb": "realistic/foreground/thumbs/wheat-grass-spikes.webp",
    "format": "image/webp",
-   "width": 882,
-   "height": 707,
+   "width": 1355,
+   "height": 709,
    "alpha": true,
    "depth": 0.88,
    "groundContact": 1.0,
    "perspective": "eye-level",
    "lighting": "upper-left",
    "palette": [
-    "#909050",
-    "#707030",
-    "#909030",
     "#b09050",
-    "#907050"
+    "#907050",
+    "#705030",
+    "#907030",
+    "#707030"
    ],
    "defaultScale": 0.3,
    "placement": {
@@ -17613,7 +17613,7 @@
    },
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
-   "bytes": 555216
+   "bytes": 703062
   },
   {
    "id": "realistic.foreground.red-poppy-cluster",
@@ -17637,19 +17637,19 @@
    "file": "realistic/foreground/red-poppy-cluster.webp",
    "thumb": "realistic/foreground/thumbs/red-poppy-cluster.webp",
    "format": "image/webp",
-   "width": 717,
-   "height": 697,
+   "width": 1048,
+   "height": 730,
    "alpha": true,
    "depth": 0.89,
    "groundContact": 1.0,
    "perspective": "eye-level",
    "lighting": "upper-left",
    "palette": [
-    "#d01010",
-    "#b01010",
-    "#d03030",
+    "#707050",
+    "#f05030",
+    "#709050",
     "#707030",
-    "#f05030"
+    "#d05030"
    ],
    "defaultScale": 0.28,
    "placement": {
@@ -17673,7 +17673,7 @@
    },
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
-   "bytes": 354106
+   "bytes": 555344
   }
  ]
 }
