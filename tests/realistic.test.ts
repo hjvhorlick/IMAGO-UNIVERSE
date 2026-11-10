@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { AssetLibrary } from '../src/assets/library';
 import { LoopManager } from '../src/animation/loopManager';
+import { animationEngine } from '../src/animation/animationEngine';
 import { Compositor } from '../src/render/compositor';
 import { createAssetNode, createScene, fitBackground } from '../src/scene/sceneModel';
 import { autoCompose, DEFAULT_COMPOSE } from '../src/scene/composition';
@@ -300,12 +301,37 @@ describe('photographic figures and fire', () => {
   });
 });
 
+describe('gentle movement on existing water features', () => {
+  for (const id of ['realistic.foreground.water-surface', 'realistic.foreground.shallow-ripples']) {
+    it(`${id} starts with subtle, optional looping water motion`, async () => {
+      const { node, loops, render } = await stage(id);
+      expect(node.animation?.type).toBe('water-flow');
+      expect(node.animation?.enabled).toBe(true);
+      expect(node.animation!.amplitude).toBeLessThanOrEqual(0.25);
+      const a = render(0), b = render(1.3), seam = render(node.animation!.loop);
+      let changed = 0;
+      for (let i = 0; i < a.length; i += 4) {
+        if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 6) changed++;
+      }
+      expect(changed, 'water should move').toBeGreaterThan(100);
+      expect(a.equals(seam), 'water should loop exactly').toBe(true);
+      node.animation!.enabled = false;
+      loops.invalidate();
+      expect(render(0).equals(render(1.3)), 'water can be made still').toBe(true);
+    });
+  }
+});
+
 describe('water sparkle', () => {
   it('adds visible glints only once motion is enabled', async () => {
-    const { node, render } = await stage('realistic.foreground.water-surface');
+    const { node, loops, render } = await stage('realistic.foreground.water-surface');
+    node.animation!.type = 'sparkle';
+    node.animation!.enabled = false;
+    loops.invalidate();
     const still = render(0);
     expect(still.equals(render(2.2)), 'still before enabling').toBe(true);
     node.animation!.enabled = true;
+    loops.invalidate();
     const moved = render(2.2);
     let brighter = 0;
     for (let i = 0; i < still.length; i += 4) {
@@ -317,6 +343,7 @@ describe('water sparkle', () => {
   it('twinkles exactly - the loop boundary is pixel-identical', async () => {
     const { node, loops, render } = await stage('realistic.foreground.water-surface');
     node.animation!.enabled = true;
+    node.animation!.type = 'sparkle';
     node.animation!.seed = 2026;
     node.animation!.amplitude = 1;
     loops.invalidate();
@@ -355,16 +382,104 @@ describe('water sparkle', () => {
   it('gives every seed its own patch of glitter', async () => {
     const first = await stage('realistic.foreground.water-surface');
     first.node.animation!.enabled = true;
+    first.node.animation!.type = 'sparkle';
     first.node.animation!.seed = 11;
     first.loops.invalidate();
     const a = first.render(1.7);
     const second = await stage('realistic.foreground.water-surface');
     second.node.animation!.enabled = true;
+    second.node.animation!.type = 'sparkle';
     second.node.animation!.seed = 99;
     second.loops.invalidate();
     const b = second.render(1.7);
     let diff = 0;
     for (let i = 0; i < a.length; i += 4) if (Math.abs(a[i] - b[i]) > 6) diff++;
     expect(diff, 'different seeds produced identical glitter').toBeGreaterThan(20);
+  });
+});
+
+describe('the ten realistic scene backgrounds', () => {
+  const SCENES = ['zen-pond', 'misty-dawn-lake', 'bamboo-stream', 'zen-garden', 'wildflower-meadow',
+    'lavender-fields', 'creek-meadow', 'granite-tarn', 'rocky-coast-cove', 'still-forest-pool'];
+  const SHIMMER = ['zen-pond', 'misty-dawn-lake', 'granite-tarn', 'rocky-coast-cove', 'still-forest-pool'];
+  const FLOW = ['bamboo-stream', 'creek-meadow'];
+  const BREEZE = ['wildflower-meadow', 'lavender-fields'];
+
+  it('ships meditation, meadow and rocky scenes with calm motion rigs', () => {
+    const lib = library();
+    for (const id of SCENES) {
+      const meta = lib.get(`realistic.background.${id}`)!;
+      expect(meta, id).toBeDefined();
+      expect(meta.layer).toBe('background');
+      expect(meta.style).toBe('realistic');
+      expect(meta.themes).toContain('photoreal');
+      expect(fs.existsSync(path.join(ROOT, 'public/library', meta.file))).toBe(true);
+      expect(fs.existsSync(path.join(ROOT, 'public/library', meta.thumb))).toBe(true);
+      if (meta.animations.length) expect(meta.rig.autoplay, `${id} should move when placed`).toBe(true);
+    }
+    for (const id of SHIMMER) expect(lib.get(`realistic.background.${id}`)!.animations[0]).toBe('water-shimmer');
+    for (const id of FLOW) expect(lib.get(`realistic.background.${id}`)!.animations[0]).toBe('water-flow');
+    for (const id of BREEZE) expect(lib.get(`realistic.background.${id}`)!.animations[0]).toBe('grass-wind');
+    expect(lib.get('realistic.background.zen-garden')!.animations).toEqual([]);
+    // Motion stays inside the painted water / grass band, never in the sky.
+    for (const id of [...SHIMMER, ...FLOW, ...BREEZE]) {
+      const [, ry, , rh] = lib.get(`realistic.background.${id}`)!.rig.region!;
+      expect(ry).toBeGreaterThanOrEqual(0.3);
+      expect(ry + rh).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('moves only the rigged band, subtly, and loops exactly', async () => {
+    for (const id of ['zen-pond', 'bamboo-stream', 'wildflower-meadow']) {
+      const { meta, node, render } = await stage(`realistic.background.${id}`);
+      expect(node.animation, `${id} autoplays`).not.toBeNull();
+      expect(node.animation!.enabled).toBe(true);
+      const loop = node.animation!.loop;
+      const a = render(0), b = render(loop / 2);
+      expect(a.equals(b), `${id} must move`).toBe(false);
+      expect(a.equals(render(loop)), `${id} must loop exactly`).toBe(true);
+      const [, ry] = meta.rig.region!;
+      const cut = Math.round(node.y - node.height / 2 + ry * node.height) - 36;
+      let above = 0, below = 0;
+      for (let y = 0; y < 260; y++) for (let x = 0; x < 360; x++) {
+        const i = (y * 360 + x) * 4;
+        const d = Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
+        if (y < cut) above += d; else below += d;
+      }
+      expect(above, `${id}: sky and far bank stay still`).toBe(0);
+      expect(below, `${id}: the rigged band moves`).toBeGreaterThan(500);
+    }
+  });
+
+  it('flows streams downstream, shimmers lakes in place, breezes only the grass', async () => {
+    const fieldOf = async (id: string, t: number) => {
+      const { meta, scene, node, loops } = await stage(`realistic.background.${id}`);
+      const state = animationEngine.evaluate(scene, node, t, loops, meta, 'export', false);
+      return { state, meta };
+    };
+    const sample = (f: (uu: number, vv: number) => { dx: number; dy: number }, ry: number, rh: number) => {
+      let dx = 0, dy = 0, n = 0;
+      for (let vv = ry + 0.2 * rh; vv < ry + 0.8 * rh; vv += 0.04) {
+        const d = f(0.5, vv);
+        dx += Math.abs(d.dx); dy += Math.abs(d.dy); n++;
+      }
+      return { dx: dx / n, dy: dy / n };
+    };
+    const flow = await fieldOf('bamboo-stream', 1.3);
+    const shim = await fieldOf('zen-pond', 1.3);
+    const f = sample(flow.state.warp!.field, 0.42, 0.58);
+    const s = sample(shim.state.warp!.field, 0.45, 0.55);
+    expect(f.dy, 'stream water runs downstream').toBeGreaterThan(f.dx);
+    expect(s.dx, 'lake water shimmers, does not run').toBeGreaterThan(s.dy);
+    const meadow = await fieldOf('wildflower-meadow', 1.3);
+    const mf = meadow.state.warp!.field;
+    expect(mf(0.5, 0.3).dx).toBe(0);              // sky above the grass untouched
+    expect(Math.abs(mf(0.5, 0.9).dx)).toBeGreaterThan(0);
+  });
+
+  it('keeps the zen garden perfectly still', async () => {
+    const { render, node } = await stage('realistic.background.zen-garden');
+    expect(node.animation).toBeNull();
+    expect(render(0).equals(render(3.3))).toBe(true);
   });
 });

@@ -106,6 +106,7 @@ export class App {
   exports!: ExportManager;
   shelf!: ProjectShelf;
   stage!: Stage;
+  private hudQueued = false;
   loops: LoopManager = loopManager;
 
   private assetPanel!: AssetPanel;
@@ -132,6 +133,19 @@ export class App {
     const scene = createScene(this.library.styles[0]?.id ?? 'enchanted', 'Untitled world');
     this.store = new Store(scene);
     this.images = new ImageCache(this.library);
+    // Keep the editor honest about artwork still arriving: the HUD shows a
+    // loading badge whenever decodes are in flight, instead of the stage
+    // looking frozen with holes in it. Coalesced to one update per frame so a
+    // burst of decodes never adds DOM churn to the render budget, and wrapped
+    // so a HUD problem can never reject an image load.
+    this.images.onActivity = () => {
+      if (this.hudQueued) return;
+      this.hudQueued = true;
+      requestAnimationFrame(() => {
+        this.hudQueued = false;
+        try { this.updateHud(); } catch { /* HUD is cosmetic */ }
+      });
+    };
     this.compositor = new Compositor(this.library, this.images, this.loops);
     const canvas = qs<HTMLCanvasElement>('#scene-canvas', root)!;
     this.preview = new PreviewRenderer(canvas, this.store, this.compositor, this.images);
@@ -525,11 +539,13 @@ export class App {
     if (hud) {
       const s = this.preview.stats;
       const style = this.library.style(this.store.scene.styleId);
+      const loading = this.images.stats.pending;
       hud.innerHTML = `<span>${escapeHtml(style?.name ?? this.store.scene.styleId)}</span>
         <span>${this.store.scene.canvas.width}x${this.store.scene.canvas.height}</span>
         <span><b>${this.store.scene.nodes.length}</b> objects</span>
         <span><b>${s.renderMs.toFixed(1)}ms</b>/frame</span>
         <span>${this.store.dirty ? 'unsaved' : 'saved'}</span>
+        ${loading ? `<span class="hud-load"><b>${loading}</b> image${loading === 1 ? '' : 's'} loading</span>` : ''}
         ${this.soloLabel() ? `<span class="hud-solo"><b>SOLO</b> ${escapeHtml(this.soloLabel()!)}</span>` : ''}`;
     }
     const loopText = qs<HTMLElement>('#loop-text');
@@ -574,7 +590,7 @@ export class App {
     // Room views are full-frame overlays even when dragged from the library;
     // users can reposition them afterwards with the normal transform tools.
     const position = at && meta.rig?.type !== 'window-overlay'
-      ? { x: at.x, y: at.y + node0Height(meta, scene) / 2 } : undefined;
+      ? { x: at.x, y: at.y + (meta.rig?.type === 'flying-flock' ? 0 : node0Height(meta, scene) / 2) } : undefined;
     const node = createAssetNode(meta, scene, position);
     // Interiors share Layer 4 with atmosphere. Existing saved rooms retain
     // their original layer; newly placed rooms and props can be reordered
@@ -596,14 +612,15 @@ export class App {
     const node = makeEffectNode(effectId, scene, order);
     if (at) {
       node.x = at.x; node.y = at.y;
-      if (def.family !== 'spiritual') {
+      if (def.family !== 'spiritual' && !def.bounded) {
         node.width = scene.canvas.width * 0.5;
         node.height = scene.canvas.height * 0.5;
       }
     }
     this.store.addNode(node, `Add ${def.name}`);
     if (!this.preview.playing) this.preview.play();
-    this.store.status(`${def.name} placed on layer 4. Double-click it to adjust. Effects work in every style.`, 'success');
+    this.store.status(def.bounded ? `${def.name} placed on layer 4. Drag the round points to fit the water; double-click to adjust.`
+      : `${def.name} placed on layer 4. Double-click it to adjust. Effects work in every style.`, 'success');
   }
 
   private applyTheme(themeId: string) {

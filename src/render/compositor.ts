@@ -12,13 +12,17 @@
 import type { AssetLibrary } from '../assets/library';
 import type { Scene, SceneNode } from '../core/types';
 import { clamp, frac, rad, rgba, TAU } from '../core/util';
+import { readWaterShape, traceWaterShape } from '../core/waterShape';
+import { waterMeshResolution, waterReflectionDisplacement, waterSurfaceWarp } from '../core/waterSurface';
 import { animationEngine } from '../animation/animationEngine';
 import type { LocalAtmosphereSpec, NodeRenderState, Quality, SparkleSpec } from '../animation/animationEngine';
 import { isActive, LoopManager } from '../animation/loopManager';
-import { EFFECT_MAP } from '../animation/effects';
+import { EFFECT_MAP, rainRippleCount } from '../animation/effects';
+import { pr } from '../animation/effectPrimitives';
 import type { EffectDrawContext } from '../animation/effectPrimitives';
 import { acquireScratch, meshWarp, releaseScratch, stripWarp } from './deform';
-import { buildFallGeometry, drawFallSheet, drawFallSpray } from './waterfall';
+import { buildFallGeometry, drawFallPool, drawFallSheet, drawFallSpray, poolOutwardWarp } from './waterfall';
+import { drawFlyingFlock } from './flock';
 import type { FallGeometry } from './waterfall';
 import type { ImageCache } from './imageCache';
 import { paintOrder } from '../scene/sceneModel';
@@ -82,11 +86,19 @@ export class Compositor {
     }
     ctx.scale(scale, scale);
 
-    for (const node of paintOrder(scene)) {
+    const ordered = paintOrder(scene);
+    const soloIndex = opts.onlyNode ? ordered.findIndex((n) => n.id === opts.onlyNode) : -1;
+    const soloTarget = soloIndex >= 0 ? ordered[soloIndex] : undefined;
+    // A water effect needs the image underneath it, even when auditioned on its
+    // own. Draw the visible lower layers but omit everything above the effect.
+    const soloWater = soloTarget?.kind === 'effect' && soloTarget.effect
+      && EFFECT_MAP.get(soloTarget.effect.effectId)?.waterDistortion;
+    for (let i = 0; i < ordered.length; i++) {
+      const node = ordered[i];
       if (opts.onlyNode) {
-        // Auditioning a node overrides its hidden flag - the user explicitly
-        // asked to see this one thing, even if it is hidden in the full scene.
-        if (node.id !== opts.onlyNode) continue;
+        if (soloWater) {
+          if (i > soloIndex || (i < soloIndex && !node.visible)) continue;
+        } else if (node.id !== opts.onlyNode) continue;
       } else {
         if (!node.visible) continue;
         if (opts.layers && !opts.layers.includes(node.layer)) continue;
@@ -123,6 +135,11 @@ export class Compositor {
     const dh = node.height * state.scale;
     const cx = node.x + state.offsetX;
     const cy = node.y + state.offsetY;
+
+    if (meta.rig?.type === 'flying-flock') {
+      this.drawFlockAsset(ctx, scene, node, opts, state, src, iw, ih, dw, dh, cx, cy);
+      return;
+    }
 
     ctx.save();
     ctx.globalAlpha = clamp(node.opacity * state.alpha, 0, 1);
@@ -174,7 +191,7 @@ export class Compositor {
         this.loops.effectiveLoop(scene, node));
     }
     if (state.fall) {
-      this.drawFall(ctx, source, rect, dest, state, opts, this.loops.effectiveLoop(scene, node), node.assetId ?? node.id);
+      this.drawFall(ctx, source, rect, dest, state, opts, this.loops.effectiveLoop(scene, node), node.assetId ?? node.id, crop, src, iw, ih);
     }
     if (state.flame) this.drawHearthFire(ctx, source, rect, dest, crop, state.flame, opts.scale);
     if (state.steam) this.drawCoffeeSteam(ctx, dest, crop, state.steam, opts.scale);
@@ -190,6 +207,63 @@ export class Compositor {
 
     ctx.restore();
     if (scratch) releaseScratch(scratch);
+  }
+
+  /** Composite a flock from individual painted birds while preserving the
+   * regular asset transforms, crop, colour adjustment, shadow and loop. */
+  private drawFlockAsset(
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    scene: Scene, node: SceneNode, opts: RenderOptions, state: NodeRenderState,
+    source: CanvasImageSource, iw: number, ih: number,
+    dw: number, dh: number, cx: number, cy: number,
+  ) {
+    if (dw <= 0 || dh <= 0) return;
+    const maxSize = opts.quality === 'export' ? 2000 : 1200;
+    const scale = Math.min(Math.max(1, opts.scale), maxSize / Math.max(dw, dh));
+    const scratch = acquireScratch(Math.max(2, dw * scale), Math.max(2, dh * scale));
+    const { w: W, h: H } = scratch;
+    const active = state.animated && node.animation?.type === 'flutter';
+    const loop = this.loops.effectiveLoop(scene, node);
+    const phase = active ? this.loops.phaseAt(scene, node, opts.time) : 0;
+    const amplitude = active ? clamp(node.animation!.amplitude, 0, 1) : 0;
+    drawFlyingFlock(scratch.ctx, source, iw, ih, W, H, phase,
+      Math.max(1, Math.round(loop * 0.65)), amplitude, node.animation?.seed ?? 1,
+      clamp(node.animation?.turbulence ?? 0.45, 0, 1));
+    if (node.adjust.haze > 0.001 || Math.abs(node.adjust.warmth) > 0.001) applyTint(scratch, node, scene);
+    const crop = node.crop;
+    const sx = crop.x * W, sy = crop.y * H;
+    const sw = Math.max(1, crop.w * W), sh = Math.max(1, crop.h * H);
+    ctx.save();
+    ctx.globalAlpha = clamp(node.opacity * state.alpha, 0, 1);
+    ctx.globalCompositeOperation = (node.blend || 'source-over') as GlobalCompositeOperation;
+    if (node.shadow.enabled) this.drawShadow(ctx, node, scratch.canvas, sx, sy, sw, sh, dw, dh, cx, cy);
+    ctx.translate(cx, cy); ctx.rotate(rad(node.rotation + state.rotation));
+    if (node.flipX) ctx.scale(-1, 1);
+    ctx.translate(-dw / 2, -dh / 2);
+    ctx.filter = buildFilter(node);
+    const dest = { dx: 0, dy: 0, dw, dh };
+    let sourceForWarp: CanvasImageSource = scratch.canvas;
+    let rect = { sx, sy, sw, sh };
+    let cropped: ReturnType<typeof acquireScratch> | null = null;
+    // Other animation techniques remain usable on the flock. Mesh warps need
+    // a flattened crop, just like the ordinary artwork path.
+    if (state.warp?.mode === 'mesh' && (crop.w < 0.999 || crop.h < 0.999)) {
+      cropped = acquireScratch(sw, sh);
+      cropped.ctx.drawImage(scratch.canvas, sx, sy, sw, sh, 0, 0, cropped.w, cropped.h);
+      sourceForWarp = cropped.canvas;
+      rect = { sx: 0, sy: 0, sw: cropped.w, sh: cropped.h };
+    }
+    if (state.warp) {
+      const { mode, cols, rows, field, breaks, active: range } = state.warp;
+      if (mode === 'strip') stripWarp(ctx, sourceForWarp, rect, dest, rows, (v) => field(0.5, v));
+      else meshWarp(ctx, sourceForWarp, rect, dest, cols, rows, field, Math.max(1, 1.6 / opts.scale), breaks, range);
+    } else ctx.drawImage(sourceForWarp, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, dw, dh);
+    ctx.filter = 'none';
+    if (state.scroll) this.drawRegionScroll(ctx, sourceForWarp, rect, dest, state, opts, loop);
+    if (state.sparkle) this.drawSparkle(ctx, dest, crop, state.sparkle, opts);
+    ctx.restore();
+    if (cropped) releaseScratch(cropped);
+    releaseScratch(scratch);
   }
 
   /** Animate only the painted flames, keeping the mantel and room still. */
@@ -392,6 +466,8 @@ export class Compositor {
     dest: { dx: number; dy: number; dw: number; dh: number },
     state: NodeRenderState, opts: RenderOptions, loopSeconds: number,
     cacheKey: string,
+    crop: { x: number; y: number; w: number; h: number },
+    original: CanvasImageSource, imageWidth: number, imageHeight: number,
   ) {
     const f = state.fall!;
     const [rx, ry, rw, rh] = f.region;
@@ -405,7 +481,7 @@ export class Compositor {
     const scratch = acquireScratch(size.W, size.H);
     const c = scratch.ctx;
     const W = scratch.w, H = scratch.h;
-    const geo = this.waterGeometry(cacheKey, source, rect, f.region, W, H);
+    const geo = this.waterGeometry(cacheKey, source, rect, f.region, W, H, f.impactY);
     const fullX = rx <= 0.001 && rx + rw >= 0.999;
     const fullY = ry <= 0.001 && ry + rh >= 0.999;
 
@@ -429,6 +505,27 @@ export class Compositor {
 
     ctx.restore();
 
+    // The pool is a separately authored surface, extending beyond the fall's
+    // segmentation region. Map it through image crop and keep it within the
+    // node so cropping, rotation and flipping behave like the artwork.
+    if (f.poolRegion) {
+      const [px, py, pw, ph] = f.poolRegion;
+      const poolX = dest.dx + (px - crop.x) / crop.w * dest.dw;
+      const poolY = dest.dy + (py - crop.y) / crop.h * dest.dh;
+      const poolW = pw / crop.w * dest.dw, poolH = ph / crop.h * dest.dh;
+      if (poolW > 2 && poolH > 2) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(dest.dx, dest.dy, dest.dw, dest.dh);
+        ctx.clip();
+        ctx.translate(poolX, poolY);
+        this.drawPoolWater(ctx, original, imageWidth, imageHeight, f.poolRegion,
+          poolW, poolH, u, f.splash, opts);
+        drawFallPool(ctx, poolW, poolH, geo, f, u, detail);
+        ctx.restore();
+      }
+    }
+
     /* Pass 2 - the lip crest, ledge bursts, plunge-pool spray and mist. */
     if (f.splash > 0.02 || f.mist > 0.02) {
       drawFallSpray(c, W, H, geo, f, u, detail, opts.quality);
@@ -439,6 +536,95 @@ export class Compositor {
       ctx.restore();
     }
 
+    releaseScratch(scratch);
+  }
+
+  /** Cached image samples and feathered masks for the authored pool surface. */
+  private poolSamples = new Map<string, { source: CanvasImageSource; canvas: HTMLCanvasElement | OffscreenCanvas }>();
+  private poolMasks = new Map<string, HTMLCanvasElement | OffscreenCanvas>();
+
+  /** Soft oval keeps ripples away from the edge of a manually placed region. */
+  private waterOvalMask(W: number, H: number): HTMLCanvasElement | OffscreenCanvas {
+    let mask = this.poolMasks.get(`${W}x${H}`);
+    if (!mask) {
+      mask = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(W, H)
+        : Object.assign(document.createElement('canvas'), { width: W, height: H });
+      const c = mask.getContext('2d') as CanvasRenderingContext2D;
+      c.save();
+      c.translate(W * 0.5, H * 0.52);
+      c.scale(W * 0.49, H * 0.46);
+      const g = c.createRadialGradient(0, 0, 0, 0, 0, 1);
+      g.addColorStop(0, 'rgba(255,255,255,1)');
+      g.addColorStop(0.70, 'rgba(255,255,255,1)');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      c.fillStyle = g;
+      c.fillRect(-1, -1, 2, 2);
+      c.restore();
+      if (this.poolMasks.size > 8) this.poolMasks.delete(this.poolMasks.keys().next().value as string);
+      this.poolMasks.set(`${W}x${H}`, mask);
+    }
+    return mask;
+  }
+
+  private drawPoolWater(
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    source: CanvasImageSource, imageWidth: number, imageHeight: number,
+    region: [number, number, number, number], width: number, height: number,
+    u: number, strength: number, opts: RenderOptions,
+  ) {
+    if (strength <= 0.02) return;
+    // Keep a fixed-size, tightly cropped sample: the mesh helper needs the
+    // complete source canvas, not a larger pooled scratch buffer.
+    const maxWidth = opts.quality === 'export' ? 1200 : 640;
+    const W = Math.max(32, Math.round(Math.min(maxWidth, Math.max(320, width * opts.scale))));
+    const H = Math.max(8, Math.round(W * height / width));
+    const key = `${region.join(',')}|${imageWidth}x${imageHeight}|${W}x${H}`;
+    let sample = this.poolSamples.get(key);
+    if (!sample || sample.source !== source) {
+      const canvas = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(W, H)
+        : Object.assign(document.createElement('canvas'), { width: W, height: H });
+      const c = canvas.getContext('2d') as CanvasRenderingContext2D;
+      c.drawImage(source, region[0] * imageWidth, region[1] * imageHeight,
+        region[2] * imageWidth, region[3] * imageHeight, 0, 0, W, H);
+      sample = { source, canvas };
+      if (this.poolSamples.size > 8) this.poolSamples.delete(this.poolSamples.keys().next().value as string);
+      this.poolSamples.set(key, sample);
+    }
+    const mask = this.waterOvalMask(W, H);
+
+    const scratch = acquireScratch(W, H);
+    const layer = acquireScratch(W, H);
+    const c = scratch.ctx;
+    const amp = clamp(strength, 0, 1);
+    // Two overlapping, forward-only flows. Each fades in near the impact,
+    // travels outward, then fades out as the next replaces it. Opposite
+    // squared-sine weights sum to one, so the reset is invisible and there is
+    // no backward wobble or sudden jump at the end of a loop.
+    const phase = frac(u * 2);
+    for (const p of [phase, frac(phase + 0.5)]) {
+      const weight = Math.sin(Math.PI * p) ** 2;
+      if (weight < 0.0001) continue;
+      const lc = layer.ctx;
+      lc.setTransform(1, 0, 0, 1, 0, 0);
+      lc.globalAlpha = 1;
+      lc.globalCompositeOperation = 'source-over';
+      lc.clearRect(0, 0, W, H);
+      meshWarp(lc, sample.canvas, { sx: 0, sy: 0, sw: W, sh: H },
+        { dx: 0, dy: 0, dw: W, dh: H }, 12, 6,
+        (x, y) => poolOutwardWarp(x, y, p, W, H, amp), 0.7);
+      c.globalCompositeOperation = 'lighter';
+      c.globalAlpha = weight;
+      c.drawImage(layer.canvas, 0, 0, W, H, 0, 0, W, H);
+    }
+    c.globalAlpha = 1;
+    releaseScratch(layer);
+    c.globalCompositeOperation = 'destination-in';
+    c.drawImage(mask, 0, 0, W, H);
+    c.globalCompositeOperation = 'source-over';
+    ctx.save();
+    ctx.globalAlpha *= 0.95;
+    ctx.drawImage(scratch.canvas, 0, 0, W, H, 0, 0, width, height);
+    ctx.restore();
     releaseScratch(scratch);
   }
 
@@ -499,11 +685,11 @@ export class Compositor {
   private waterGeometry(
     assetId: string, source: CanvasImageSource,
     rect: { sx: number; sy: number; sw: number; sh: number },
-    region: [number, number, number, number], W: number, H: number,
+    region: [number, number, number, number], W: number, H: number, impactY?: number,
   ): FallGeometry | null {
-    const key = `${assetId}|${region.join(',')}|${W}x${H}`;
+    const key = `${assetId}|${region.join(',')}|${W}x${H}|${impactY ?? 'auto'}`;
     if (this.waterGeometries.has(key)) return this.waterGeometries.get(key)!;
-    const geo = buildFallGeometry(source, rect, region, W, H);
+    const geo = buildFallGeometry(source, rect, region, W, H, impactY);
     if (this.waterGeometries.size > 24) {
       this.waterGeometries.delete(this.waterGeometries.keys().next().value as string);
     }
@@ -633,11 +819,165 @@ export class Compositor {
       params: inst.params, seed: inst.seed, scale: opts.scale,
     };
     try {
+      if (def.waterDistortion) this.drawWaterDistortion(ctx, d, opts, def.waterDistortion);
       def.draw(ctx, d);
     } catch (err) {
       console.error(`[compositor] effect ${def.id} failed`, err);
     }
     ctx.restore();
+  }
+
+  private waterOverlaySamples = new Map<string, HTMLCanvasElement | OffscreenCanvas>();
+  private waterShapeMasks = new Map<string, HTMLCanvasElement | OffscreenCanvas>();
+
+  private waterPolygonMask(W: number, H: number, value: unknown): HTMLCanvasElement | OffscreenCanvas {
+    const points = readWaterShape(value);
+    const key = `${W}x${H}|${JSON.stringify(points)}`;
+    let mask = this.waterShapeMasks.get(key);
+    if (mask) return mask;
+    mask = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(W, H)
+      : Object.assign(document.createElement('canvas'), { width: W, height: H });
+    const c = mask.getContext('2d') as CanvasRenderingContext2D;
+    traceWaterShape(c, points, W, H);
+    c.save();
+    c.clip('evenodd');
+    c.fillStyle = '#fff';
+    c.fill('evenodd');
+    // Feather only INSIDE the polygon. A blurred outer edge would animate the
+    // shoreline outside the area the designer carefully traced.
+    c.globalCompositeOperation = 'destination-out';
+    c.lineJoin = 'round';
+    for (const [fraction, alpha] of [[0.16, 0.32], [0.10, 0.38], [0.055, 0.48], [0.025, 0.62]]) {
+      c.strokeStyle = `rgba(0,0,0,${alpha})`;
+      c.lineWidth = Math.max(1, Math.min(W, H) * fraction);
+      c.stroke();
+    }
+    c.restore();
+    if (this.waterShapeMasks.size > 8) this.waterShapeMasks.delete(this.waterShapeMasks.keys().next().value as string);
+    this.waterShapeMasks.set(key, mask);
+    return mask;
+  }
+
+  /**
+   * Capture what was already painted under the placed water effect, then
+   * refract that image inside an editable, softly feathered polygon. The effect follows node transforms
+   * and works for any underlying lake or river without changing its source.
+   */
+  private drawWaterDistortion(
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    d: EffectDrawContext, opts: RenderOptions, mode: 'lake' | 'lake-waves' | 'river',
+  ) {
+    const strength = typeof d.params.strength === 'number' ? clamp(d.params.strength, 0, 1) : 0.48;
+    if (strength <= 0 || d.w < 1 || d.h < 1) return;
+    const longest = Math.max(d.w, d.h) * opts.scale;
+    const limit = opts.quality === 'export' ? 2400 : 1300;
+    const scale = Math.min(opts.scale, limit / Math.max(1, Math.max(d.w, d.h)));
+    if (longest <= 0 || scale <= 0) return;
+    const W = Math.max(4, Math.round(d.w * scale)), H = Math.max(4, Math.round(d.h * scale));
+    const key = `${W}x${H}`;
+    let sample = this.waterOverlaySamples.get(key);
+    if (!sample) {
+      sample = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(W, H)
+        : Object.assign(document.createElement('canvas'), { width: W, height: H });
+      if (this.waterOverlaySamples.size > 8) this.waterOverlaySamples.delete(this.waterOverlaySamples.keys().next().value as string);
+      this.waterOverlaySamples.set(key, sample);
+    }
+    const sc = sample.getContext('2d') as CanvasRenderingContext2D;
+    sc.setTransform(1, 0, 0, 1, 0, 0);
+    sc.clearRect(0, 0, W, H);
+    const m = ctx.getTransform();
+    const det = m.a * m.d - m.b * m.c;
+    if (Math.abs(det) < 1e-12) return;
+    // Inverse of the effect's local-to-device transform, followed by the
+    // sample's scale. Rotation, flip, scene zoom and partial clipping all work.
+    sc.setTransform(W / d.w, 0, 0, H / d.h, 0, 0);
+    sc.transform(m.d / det, -m.b / det, -m.c / det, m.a / det,
+      (m.c * m.f - m.d * m.e) / det, (m.b * m.e - m.a * m.f) / det);
+    sc.drawImage(ctx.canvas as CanvasImageSource, 0, 0);
+    sc.setTransform(1, 0, 0, 1, 0, 0);
+
+    const scratch = acquireScratch(W, H);
+    const c = scratch.ctx;
+    const rate = typeof d.params.rate === 'number' ? Math.round(clamp(d.params.rate, 1, 4)) : 2;
+    const waveLength = typeof d.params.length === 'number' ? clamp(d.params.length, 0.4, 2) : 1;
+    const { cols, rows } = waterMeshResolution(opts.quality === 'export' ? 'export' : 'preview');
+    if (mode === 'lake') {
+      // The raindrop highlights and the distorted water share the same centres,
+      // radii and phases, so the actual picture ripples where the drops land.
+      const count = rainRippleCount(typeof d.params.density === 'number' ? d.params.density : 9);
+      const drops = Array.from({ length: count }, (_, i) => {
+        const p = frac(d.u * rate + pr(d.seed, i, 901));
+        return { x: 0.04 + pr(d.seed, i, 907) * 0.92, y: 0.04 + pr(d.seed, i, 911) * 0.92,
+          rx: (0.004 + p * 0.032) * waveLength, ry: (0.003 + p * 0.022) * waveLength,
+          life: Math.sin(Math.PI * p) };
+      });
+      // Index each ripple's influence into spatial bins. The finer mesh only
+      // tests nearby drops instead of every drop at every vertex.
+      const binCount = 16;
+      const bins = Array.from({ length: binCount * binCount }, () => [] as typeof drops);
+      for (const drop of drops) {
+        const x0 = Math.max(0, Math.floor((drop.x - 1.55 * drop.rx) * binCount));
+        const x1 = Math.min(binCount - 1, Math.floor((drop.x + 1.55 * drop.rx) * binCount));
+        const y0 = Math.max(0, Math.floor((drop.y - 1.55 * drop.ry) * binCount));
+        const y1 = Math.min(binCount - 1, Math.floor((drop.y + 1.55 * drop.ry) * binCount));
+        for (let by = y0; by <= y1; by++) for (let bx = x0; bx <= x1; bx++) bins[by * binCount + bx].push(drop);
+      }
+      meshWarp(c, sample, { sx: 0, sy: 0, sw: W, sh: H }, { dx: 0, dy: 0, dw: W, dh: H },
+        cols, rows, (x, y) => {
+          const edge = Math.sin(Math.PI * x) * Math.sin(Math.PI * y);
+          let dx = 0, dy = 0;
+          const bx = Math.min(binCount - 1, Math.floor(x * binCount));
+          const by = Math.min(binCount - 1, Math.floor(y * binCount));
+          for (const drop of bins[by * binCount + bx]) {
+            if (Math.abs(x - drop.x) > drop.rx * 1.55 || Math.abs(y - drop.y) > drop.ry * 1.55) continue;
+            const vx = (x - drop.x) / drop.rx, vy = (y - drop.y) / drop.ry;
+            const dist = Math.hypot(vx, vy);
+            const influence = Math.max(0, 1 - Math.abs(dist - 1) / 0.55) * drop.life;
+            if (dist > 0.001 && influence > 0) {
+              dx += influence * vx / dist;
+              dy += influence * vy / dist;
+            }
+          }
+          return { dx: W * strength * edge * 0.009 * clamp(dx, -2, 2),
+            dy: H * strength * edge * 0.035 * clamp(dy, -2, 2) };
+        }, 1);
+    } else {
+      // Crests can move across the surface while the reflected image only
+      // shimmers very slightly: a little vertical movement and less sideways.
+      meshWarp(c, sample, { sx: 0, sy: 0, sw: W, sh: H }, { dx: 0, dy: 0, dw: W, dh: H },
+        cols, rows, (x, y) => {
+          const edge = Math.sin(Math.PI * x) * Math.sin(Math.PI * y);
+          const warp = waterSurfaceWarp(x, y, d.u, rate, waveLength, mode, d.params.direction);
+          return waterReflectionDisplacement(warp, H, strength, edge, waveLength);
+        }, 1);
+      // Broad, softly blended wave faces make the chop visible even when the
+      // water photograph has few details. Their light and shadow follow the
+      // same travelling field as the underlying surface, not a sliding image.
+      const lightW = 160, lightH = 80;
+      const light = acquireScratch(lightW, lightH);
+      const lc = light.ctx;
+      const pixels = lc.createImageData(lightW, lightH);
+      for (let py = 0; py < lightH; py++) for (let px = 0; px < lightW; px++) {
+        const v = waterSurfaceWarp((px + 0.5) / lightW, (py + 0.5) / lightH,
+          d.u, rate, waveLength, mode, d.params.direction);
+        const vertical = d.params.direction === 'up' || d.params.direction === 'down';
+        const wave = vertical ? v.x / 0.052 : v.y / 0.026;
+        const level = clamp(wave, -1, 1);
+        const i = (py * lightW + px) * 4;
+        pixels.data[i] = level > 0 ? 220 : 30;
+        pixels.data[i + 1] = level > 0 ? 240 : 64;
+        pixels.data[i + 2] = level > 0 ? 240 : 74;
+        pixels.data[i + 3] = Math.round(Math.abs(level) * strength * (level > 0 ? 35 : 18));
+      }
+      lc.putImageData(pixels, 0, 0);
+      c.drawImage(light.canvas, 0, 0, lightW, lightH, 0, 0, W, H);
+      releaseScratch(light);
+    }
+    c.globalCompositeOperation = 'destination-in';
+    c.drawImage(this.waterPolygonMask(W, H, d.params.waterShape), 0, 0, W, H);
+    c.globalCompositeOperation = 'source-over';
+    ctx.drawImage(scratch.canvas, 0, 0, W, H, 0, 0, d.w, d.h);
+    releaseScratch(scratch);
   }
 
   /* ----------------------------------------------------------- lighting */

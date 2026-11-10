@@ -255,6 +255,9 @@ button { cursor: pointer; border: none; background: none; }
 }
 .hud-solo { color: var(--gold) !important; }
 .hud-solo b { color: var(--gold) !important; }
+.hud-load { color: var(--accent, #7fb7ff) !important; animation: hud-load-pulse 1.1s ease-in-out infinite; }
+.hud-load b { color: inherit !important; }
+@keyframes hud-load-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 
 /* ---------------------------------------------------------------- sound */
 

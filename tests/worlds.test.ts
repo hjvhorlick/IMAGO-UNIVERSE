@@ -40,9 +40,9 @@ describe('world categories', () => {
   it('holds the photographic worlds in the realistic category', () => {
     const realistic = WORLD_CATEGORIES.find((c) => c.id === 'realistic');
     expect(realistic).toBeTruthy();
-    expect(realistic!.worlds).toEqual(['clearwater-lake', 'forest-stream']);
+    expect(realistic!.worlds).toEqual(['clearwater-lake', 'forest-stream', 'zen-pond', 'misty-dawn-lake', 'bamboo-stream', 'zen-garden', 'wildflower-meadow', 'lavender-fields', 'creek-meadow', 'granite-tarn', 'rocky-coast-cove', 'still-forest-pool']);
     const realisticWorlds = listWorlds(lib).filter((w) => w.categoryId === 'realistic').map((w) => w.id);
-    expect(realisticWorlds.sort()).toEqual(['clearwater-lake', 'forest-stream']);
+    expect(realisticWorlds.sort()).toEqual([...realistic!.worlds].sort());
   });
 
   it('treats the three styles as looks of the same world, not as separate worlds', () => {

@@ -203,6 +203,12 @@ export interface AssetRig {
   /** Optional steam origin and size for a cup painted into a room overlay. */
   steamRegion?: [number, number, number, number];
   speed?: number;
+  /** Plunge line as a fraction of the fall region height, when known. */
+  impactY?: number;
+  /** Painted plunge-pool surface in asset coordinates. */
+  poolRegion?: [number, number, number, number];
+  /** Use broken, irregular photographic cascades instead of a smooth sheet. */
+  naturalFlow?: boolean;
   /** Enable the asset's first listed animation when it is placed. */
   autoplay?: boolean;
 }

@@ -38,7 +38,9 @@ export const WORLD_CATEGORIES: WorldCategory[] = [
   { id: 'night', name: 'Night',
     worlds: ['moonlit-glade', 'night-valley'] },
   { id: 'realistic', name: 'Realistic',
-    worlds: ['clearwater-lake', 'forest-stream'],
+    worlds: ['clearwater-lake', 'forest-stream',
+      'zen-pond', 'misty-dawn-lake', 'bamboo-stream', 'zen-garden', 'wildflower-meadow',
+      'lavender-fields', 'creek-meadow', 'granite-tarn', 'rocky-coast-cove', 'still-forest-pool'],
     note: 'Photographic worlds. More can be added here as they are painted.' },
 ];
 

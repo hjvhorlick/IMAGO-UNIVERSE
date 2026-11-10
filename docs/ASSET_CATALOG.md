@@ -320,12 +320,22 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 
 ## Clearwater (`realistic`)
 
-### Background (2)
+### Background (12)
 
 | Preview | Name | Category | Origin | Size | File |
 | --- | --- | --- | --- | ---: | --- |
 | <img src="../public/library/realistic/background/thumbs/clearwater-lake.webp" width="96" alt="Clearwater Lake"> | Clearwater Lake | nature | painted | 1376×768 | [`realistic/background/clearwater-lake.webp`](../public/library/realistic/background/clearwater-lake.webp) |
 | <img src="../public/library/realistic/background/thumbs/forest-stream.webp" width="96" alt="Forest Stream"> | Forest Stream | nature | painted | 1376×768 | [`realistic/background/forest-stream.webp`](../public/library/realistic/background/forest-stream.webp) |
+| <img src="../public/library/realistic/background/thumbs/zen-pond.webp" width="96" alt="Zen Pond"> | Zen Pond | nature | generated | 1376×768 | [`realistic/background/zen-pond.webp`](../public/library/realistic/background/zen-pond.webp) |
+| <img src="../public/library/realistic/background/thumbs/misty-dawn-lake.webp" width="96" alt="Misty Dawn Lake"> | Misty Dawn Lake | nature | generated | 1376×768 | [`realistic/background/misty-dawn-lake.webp`](../public/library/realistic/background/misty-dawn-lake.webp) |
+| <img src="../public/library/realistic/background/thumbs/bamboo-stream.webp" width="96" alt="Bamboo Stream"> | Bamboo Stream | nature | generated | 1376×768 | [`realistic/background/bamboo-stream.webp`](../public/library/realistic/background/bamboo-stream.webp) |
+| <img src="../public/library/realistic/background/thumbs/zen-garden.webp" width="96" alt="Zen Garden"> | Zen Garden | nature | generated | 1376×768 | [`realistic/background/zen-garden.webp`](../public/library/realistic/background/zen-garden.webp) |
+| <img src="../public/library/realistic/background/thumbs/wildflower-meadow.webp" width="96" alt="Wildflower Meadow"> | Wildflower Meadow | nature | generated | 1376×768 | [`realistic/background/wildflower-meadow.webp`](../public/library/realistic/background/wildflower-meadow.webp) |
+| <img src="../public/library/realistic/background/thumbs/lavender-fields.webp" width="96" alt="Lavender Fields"> | Lavender Fields | nature | generated | 1376×768 | [`realistic/background/lavender-fields.webp`](../public/library/realistic/background/lavender-fields.webp) |
+| <img src="../public/library/realistic/background/thumbs/creek-meadow.webp" width="96" alt="Creek Meadow"> | Creek Meadow | nature | generated | 1376×768 | [`realistic/background/creek-meadow.webp`](../public/library/realistic/background/creek-meadow.webp) |
+| <img src="../public/library/realistic/background/thumbs/granite-tarn.webp" width="96" alt="Granite Tarn"> | Granite Tarn | nature | generated | 1376×768 | [`realistic/background/granite-tarn.webp`](../public/library/realistic/background/granite-tarn.webp) |
+| <img src="../public/library/realistic/background/thumbs/rocky-coast-cove.webp" width="96" alt="Rocky Coast Cove"> | Rocky Coast Cove | nature | generated | 1376×768 | [`realistic/background/rocky-coast-cove.webp`](../public/library/realistic/background/rocky-coast-cove.webp) |
+| <img src="../public/library/realistic/background/thumbs/still-forest-pool.webp" width="96" alt="Still Forest Pool"> | Still Forest Pool | nature | generated | 1376×768 | [`realistic/background/still-forest-pool.webp`](../public/library/realistic/background/still-forest-pool.webp) |
 
 ### Middle (9)
 

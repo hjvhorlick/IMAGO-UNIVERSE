@@ -2195,16 +2195,19 @@
    ],
    "defaultScale": 0.3,
    "placement": {
-    "grounded": true,
+    "grounded": false,
     "minDepth": 0.15,
     "maxDepth": 0.9
    },
    "animations": [
     "flutter"
    ],
-   "rig": {},
+   "rig": {
+    "type": "flying-flock",
+    "autoplay": true
+   },
    "variants": [],
-   "notes": "A scattered flock in flight; wing beats and drift are optional.",
+   "notes": "Eighteen birds high in the sky as a loose, uneven flock: gliding on low swept wings between brief flap bursts of their own, the group streams across the sky, off the frame and back, in a seamless loop.",
    "bytes": 469328
   },
   {
@@ -6892,16 +6895,19 @@
    ],
    "defaultScale": 0.3,
    "placement": {
-    "grounded": true,
+    "grounded": false,
     "minDepth": 0.15,
     "maxDepth": 0.9
    },
    "animations": [
     "flutter"
    ],
-   "rig": {},
+   "rig": {
+    "type": "flying-flock",
+    "autoplay": true
+   },
    "variants": [],
-   "notes": "A scattered flock in flight; wing beats and drift are optional.",
+   "notes": "Eighteen birds high in the sky as a loose, uneven flock: gliding on low swept wings between brief flap bursts of their own, the group streams across the sky, off the frame and back, in a seamless loop.",
    "bytes": 255446
   },
   {
@@ -11133,16 +11139,19 @@
    ],
    "defaultScale": 0.3,
    "placement": {
-    "grounded": true,
+    "grounded": false,
     "minDepth": 0.15,
     "maxDepth": 0.9
    },
    "animations": [
     "flutter"
    ],
-   "rig": {},
+   "rig": {
+    "type": "flying-flock",
+    "autoplay": true
+   },
    "variants": [],
-   "notes": "A scattered flock in flight; wing beats and drift are optional.",
+   "notes": "Eighteen birds high in the sky as a loose, uneven flock: gliding on low swept wings between brief flap bursts of their own, the group streams across the sky, off the frame and back, in a seamless loop.",
    "bytes": 334050
   },
   {
@@ -13776,8 +13785,16 @@
      0.235,
      0.065,
      0.625,
-     0.79
+     0.855
     ],
+    "impactY": 0.86,
+    "poolRegion": [
+     0.16,
+     0.805,
+     0.72,
+     0.16
+    ],
+    "naturalFlow": true,
     "speed": 1.0
    },
    "variants": [],
@@ -13827,8 +13844,8 @@
     "maxDepth": 0.9
    },
    "animations": [
-    "sparkle",
     "water-flow",
+    "sparkle",
     "water-shimmer"
    ],
    "rig": {
@@ -13838,7 +13855,8 @@
      0,
      1,
      1
-    ]
+    ],
+    "autoplay": true
    },
    "variants": [],
    "notes": "Photographic water texture; sparkle adds specular glints.",
@@ -13887,8 +13905,8 @@
     "maxDepth": 0.9
    },
    "animations": [
-    "sparkle",
-    "water-flow"
+    "water-flow",
+    "sparkle"
    ],
    "rig": {
     "type": "water",
@@ -13897,7 +13915,8 @@
      0,
      1,
      1
-    ]
+    ],
+    "autoplay": true
    },
    "variants": [],
    "notes": "Photographic water texture; sparkle adds specular glints.",
@@ -16457,6 +16476,609 @@
    "variants": [],
    "notes": "Transparent window opening reveals the current composed scene behind this foreground room overlay.",
    "bytes": 332122
+  },
+  {
+   "id": "realistic.background.zen-pond",
+   "name": "Zen Pond",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "meditation",
+    "garden",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "zen",
+    "pond",
+    "stone lantern",
+    "meditation",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/background/zen-pond.webp",
+   "thumb": "realistic/background/thumbs/zen-pond.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#101010",
+    "#505010",
+    "#505030",
+    "#305010"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.45,
+     1.0,
+     0.55
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A still Japanese garden pond; the surface carries only small travelling ripples.",
+   "bytes": 445458
+  },
+  {
+   "id": "realistic.background.misty-dawn-lake",
+   "name": "Misty Dawn Lake",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "meditation",
+    "water",
+    "mountains",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "lake",
+    "mist",
+    "dawn",
+    "meditation",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/background/misty-dawn-lake.webp",
+   "thumb": "realistic/background/thumbs/misty-dawn-lake.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#505050",
+    "#909090",
+    "#f0f0f0",
+    "#707070"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.45,
+     1.0,
+     0.55
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A glassy mountain lake in dawn mist; faint ripples keep the water alive.",
+   "bytes": 150896
+  },
+  {
+   "id": "realistic.background.bamboo-stream",
+   "name": "Bamboo Stream",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "meditation",
+    "water",
+    "forest",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "bamboo",
+    "stream",
+    "pebbles",
+    "meditation",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/background/bamboo-stream.webp",
+   "thumb": "realistic/background/thumbs/bamboo-stream.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#303010",
+    "#707050",
+    "#305030",
+    "#507030"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-flow",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.42,
+     1.0,
+     0.58
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A clear stream runs over pebbles through a bamboo grove; the current flows downstream.",
+   "bytes": 535454
+  },
+  {
+   "id": "realistic.background.zen-garden",
+   "name": "Zen Garden",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "meditation",
+    "garden",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "zen",
+    "raked gravel",
+    "karesansui",
+    "meditation",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/background/zen-garden.webp",
+   "thumb": "realistic/background/thumbs/zen-garden.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#101010",
+    "#303010",
+    "#909090",
+    "#b0b090",
+    "#d0b0b0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [],
+   "rig": {
+    "type": "background"
+   },
+   "variants": [],
+   "notes": "Raked gravel and mossy stones; nothing moves but the light and cloud.",
+   "bytes": 430548
+  },
+  {
+   "id": "realistic.background.wildflower-meadow",
+   "name": "Wildflower Meadow",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "meadow",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "meadow",
+    "wildflowers",
+    "grass",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/background/wildflower-meadow.webp",
+   "thumb": "realistic/background/thumbs/wildflower-meadow.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#f0f0f0",
+    "#707030",
+    "#909050",
+    "#505010"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.55,
+     1.0,
+     0.45
+    ],
+    "gusts": 3,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Flat grass dotted with daisies, cornflowers and poppies; a light breeze stays in the grass.",
+   "bytes": 451146
+  },
+  {
+   "id": "realistic.background.lavender-fields",
+   "name": "Lavender Fields",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "meadow",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "lavender",
+    "rows",
+    "fields",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/background/lavender-fields.webp",
+   "thumb": "realistic/background/thumbs/lavender-fields.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705050",
+    "#503030",
+    "#505030",
+    "#705070",
+    "#f0d0b0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.45,
+     1.0,
+     0.55
+    ],
+    "gusts": 3,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Lavender rows on flat land to a soft horizon; the heads sway very slightly.",
+   "bytes": 431310
+  },
+  {
+   "id": "realistic.background.creek-meadow",
+   "name": "Creek Meadow",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "meadow",
+    "flowers",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "meadow",
+    "creek",
+    "buttercups",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/background/creek-meadow.webp",
+   "thumb": "realistic/background/thumbs/creek-meadow.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0f0",
+    "#303010",
+    "#d0d0d0",
+    "#505010",
+    "#d0f0f0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-flow",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.55,
+     1.0,
+     0.45
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A small clear creek winds through a flower meadow; its water keeps a gentle current.",
+   "bytes": 405310
+  },
+  {
+   "id": "realistic.background.granite-tarn",
+   "name": "Granite Tarn",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "mountains",
+    "water",
+    "rocks",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "tarn",
+    "granite",
+    "boulders",
+    "alpine",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/background/granite-tarn.webp",
+   "thumb": "realistic/background/thumbs/granite-tarn.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909090",
+    "#707070",
+    "#b0b0b0",
+    "#505050",
+    "#70b0f0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.42,
+     1.0,
+     0.45
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A rocky high-mountain tarn in a bowl of granite; small waves comb the surface.",
+   "bytes": 452184
+  },
+  {
+   "id": "realistic.background.rocky-coast-cove",
+   "name": "Rocky Coast Cove",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "coast",
+    "water",
+    "rocks",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "cove",
+    "boulders",
+    "sea",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/background/rocky-coast-cove.webp",
+   "thumb": "realistic/background/thumbs/rocky-coast-cove.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0f0",
+    "#707070",
+    "#505050",
+    "#d0f0f0",
+    "#b0d0d0"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.33,
+     1.0,
+     0.4
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Weathered boulders and a pebble beach; the sea laps with small breaking waves.",
+   "bytes": 401518
+  },
+  {
+   "id": "realistic.background.still-forest-pool",
+   "name": "Still Forest Pool",
+   "style": "realistic",
+   "layer": "background",
+   "category": "nature",
+   "themes": [
+    "meditation",
+    "forest",
+    "water",
+    "photoreal"
+   ],
+   "tags": [
+    "background",
+    "pool",
+    "forest",
+    "reflections",
+    "meditation",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/background/still-forest-pool.webp",
+   "thumb": "realistic/background/thumbs/still-forest-pool.webp",
+   "format": "image/webp",
+   "width": 1376,
+   "height": 768,
+   "alpha": false,
+   "depth": 0.0,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#303010",
+    "#101010",
+    "#505030",
+    "#707030",
+    "#505010"
+   ],
+   "defaultScale": 1.0,
+   "placement": {
+    "grounded": false,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "water-shimmer",
+    "sparkle"
+   ],
+   "rig": {
+    "type": "background",
+    "region": [
+     0.0,
+     0.5,
+     1.0,
+     0.5
+    ],
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "A mirror-still woodland pool; only faint ripples cross the reflections.",
+   "bytes": 523892
   }
  ]
 }

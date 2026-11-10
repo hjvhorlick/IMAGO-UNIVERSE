@@ -46,7 +46,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 # --------------------------------------------------------------------------
 # colour helpers
@@ -587,6 +587,123 @@ def publish_new_blooms(p: Publisher, src: str, style: str, label: str, transform
                         max_dim=1600, quality=95))
 
 
+def flock_thumbnail(image: Image.Image) -> Image.Image:
+    """Static preview of the runtime 18-bird loose group, from the same plate.
+
+    Keep the two crops, the seeded group positions and the winged attitudes
+    in sync with src/render/flock.ts. The runtime animates flap bursts over a
+    swept glide; the thumbnail shows each bird in its own resting glide.
+    """
+    width, height = 256, round(256 * 545 / 1000)
+    out = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    sx, sy = image.width / 1000, image.height / 545
+    specs = [(180, 30, 160, 190, (94, 95),
+              [(0, 0), (113, 0), (113, 72), (105, 81), (99, 85), (83, 100), (70, 114), (35, 116), (0, 102)],
+              [(0, 0), (160, 0), (160, 190), (53, 190), (53, 158), (0, 158)]),
+             (215, 335, 150, 170, (93, 67),
+              [(0, 0), (102, 0), (105, 46), (101, 55), (93, 65), (73, 88), (54, 104), (0, 108)],
+              None)]
+    birds = []
+    for x, y, w, h, pivot, wing, outline in specs:
+        rect = tuple(round(n) for n in (x * sx, y * sy, (x + w) * sx, (y + h) * sy))
+        cut = image.crop(rect).convert("RGBA")
+        if outline:
+            mask = Image.new("L", cut.size, 0)
+            ImageDraw.Draw(mask).polygon([(round(ox * cut.width / w), round(oy * cut.height / h))
+                                          for ox, oy in outline], fill=255)
+            cut.putalpha(ImageChops.multiply(cut.getchannel("A"), mask))
+        # Split the raised fan out of the body, exactly like the runtime.
+        wmask = Image.new("L", cut.size, 0)
+        ImageDraw.Draw(wmask).polygon([(round(ox * cut.width / w), round(oy * cut.height / h))
+                                       for ox, oy in wing], fill=255)
+        body = cut.copy()
+        body.putalpha(ImageChops.subtract(body.getchannel("A"), wmask))
+        shoulder = Image.new("L", cut.size, 0)
+        ImageDraw.Draw(shoulder).ellipse([round((pivot[0] - 10) * cut.width / w),
+                                          round((pivot[1] - 10) * cut.height / h),
+                                          round((pivot[0] + 10) * cut.width / w),
+                                          round((pivot[1] + 10) * cut.height / h)], fill=255)
+        body.putalpha(ImageChops.add(body.getchannel("A"), ImageChops.multiply(cut.getchannel("A"), shoulder)))
+        wingtile = cut.copy()
+        wingtile.putalpha(ImageChops.multiply(wingtile.getchannel("A"), wmask))
+        birds.append((body, wingtile, w, h, pivot))
+    for i, (px, py) in enumerate(_flock_formation(1)):
+        body, wingtile, w, h, pivot = birds[i % len(birds)]
+        # Resting glide: swept, foreshortened fan about the shoulder.
+        fold = -1.35 - 0.15 * _pr(1, i, 311) - 0.1 * 0.45
+        stretch = 0.72 + 0.12 * _pr(1, i, 313)
+        p0, p1 = pivot[0] * wingtile.width / w, pivot[1] * wingtile.height / h
+        c_, s_ = math.cos(fold), math.sin(fold)
+        fwd = np.array([[c_, -s_ * stretch, p0 - c_ * p0 + s_ * stretch * p1],
+                        [s_, c_ * stretch, p1 - s_ * p0 - c_ * stretch * p1],
+                        [0, 0, 1]])
+        inv = np.linalg.inv(fwd)
+        moved = wingtile.transform(wingtile.size, Image.AFFINE,
+                                   (inv[0, 0], inv[0, 1], inv[0, 2],
+                                    inv[1, 0], inv[1, 1], inv[1, 2]),
+                                   resample=Image.Resampling.BICUBIC)
+        sprite = moved.copy()
+        sprite.alpha_composite(body)
+        size = width * 0.064 * (0.94 + (i % 3) * 0.06)
+        bird_height = size * h / w
+        sprite = sprite.resize((max(1, round(size)), max(1, round(bird_height))), Image.Resampling.LANCZOS)
+        theta = LEVELS[i % len(LEVELS)]
+        sprite = sprite.rotate(-math.degrees(theta), resample=Image.Resampling.BICUBIC, expand=True)
+        cx = width * px + 0.11 * bird_height * math.sin(theta)
+        cy = height * py - 0.11 * bird_height * math.cos(theta)
+        out.alpha_composite(sprite, (round(cx - sprite.width / 2), round(cy - sprite.height / 2)))
+    return out
+
+
+LEVELS = [0.5, 0.66]  # keep in sync with the levelled attitudes in flock.ts
+
+
+def _pr(seed: int, i: int, k: int = 0) -> float:
+    """Port of the runtime pr() hash; keep in sync with effectPrimitives.ts."""
+    def s32(v: int) -> int:
+        v &= 0xFFFFFFFF
+        return v - 0x80000000 + 0x80000000 - 0x100000000 if v >= 0x80000000 else v
+
+    def imul(a: int, b: int) -> int:
+        return s32((a & 0xFFFFFFFF) * (b & 0xFFFFFFFF) & 0xFFFFFFFF)
+
+    n = s32(seed * 7919 + i * 104729 + k * 15485863)
+    n = imul(n ^ ((n & 0xFFFFFFFF) >> 15), 2246822507)
+    n = imul(n ^ ((n & 0xFFFFFFFF) >> 13), 3266489909)
+    return ((n ^ ((n & 0xFFFFFFFF) >> 16)) & 0xFFFFFFFF) / 4294967296
+
+
+def _flock_formation(seed: int = 1) -> list[tuple[float, float]]:
+    """Port of the runtime seeded group; keep in sync with flock.ts."""
+    clusters = 4 + int(_pr(seed, 0, 201) * 3)
+    centres = [(0.14 + 0.72 * _pr(seed, c, 203), 0.16 + 0.68 * _pr(seed, c, 205))
+               for c in range(clusters)]
+    radii = [0.05 + 0.15 * _pr(seed, c, 207) for c in range(clusters)]
+    points: list[tuple[float, float]] = []
+
+    def free(x: float, y: float) -> bool:
+        return all((x - px) ** 2 + (y - py) ** 2 >= 0.07 ** 2 for px, py in points)
+
+    for candidate in range(2400):
+        if len(points) == 18:
+            break
+        c = int(_pr(seed, candidate, 209) * clusters)
+        a = 2 * math.pi * _pr(seed, candidate, 211)
+        r = math.sqrt(_pr(seed, candidate, 213))
+        x = min(0.97, max(0.03, centres[c][0] + math.cos(a) * r * radii[c] * 1.7))
+        y = min(0.94, max(0.06, centres[c][1] + math.sin(a) * r * radii[c] * 1.1))
+        if free(x, y):
+            points.append((x, y))
+    for candidate in range(1200):
+        if len(points) == 18:
+            break
+        x = 0.03 + 0.94 * _pr(seed, candidate, 101)
+        y = 0.06 + 0.88 * _pr(seed, candidate, 103)
+        if free(x, y):
+            points.append((x, y))
+    return points
+
+
 def publish_creatures(p: Publisher, src: str, style: str, label: str, transform=None):
     """Publish independently placeable animals, each with its own motion."""
     seasonal = ["night"] if style == "moonlit" else (["autumn"] if style == "autumn" else [])
@@ -629,7 +746,9 @@ def publish_creatures(p: Publisher, src: str, style: str, label: str, transform=
          "A pond frog; breathing is optional."),
         ("songbird-flock", "Songbird Flock", "middle", ["forest", "meadow", "water", "garden"],
          ["birds", "flock", "flight", "animal", "sky"], 0.30, "flutter",
-         "A scattered flock in flight; wing beats and drift are optional."),
+         "Eighteen birds high in the sky as a loose, uneven flock: gliding on low swept wings "
+         "between brief flap bursts of their own, the group streams across the sky, off the frame "
+         "and back, in a seamless loop."),
     ]:
         # Blue key: every one of these subjects is warm or white, so a blue
         # backdrop separates cleanly without eating into fur, feathers or scales.
@@ -638,12 +757,18 @@ def publish_creatures(p: Publisher, src: str, style: str, label: str, transform=
         # Birds painted against an open sky key to a haze rather than to edges.
         if aid == "songbird-flock":
             image = crisp_alpha(image)
-        p.publish(Asset(f"{style}.{layer}.{aid}", f"{label}{name}", style, layer, "creatures",
+        rig = {"type": "flying-flock", "autoplay": True} if aid == "songbird-flock" else {}
+        entry = p.publish(Asset(f"{style}.{layer}.{aid}", f"{label}{name}", style, layer, "creatures",
                         grade(image, transform) if transform else image,
                         origin="graded" if transform else "painted", themes=themes + seasonal,
                         tags=tags, depth=0.88 if layer == "foreground" else 0.60,
-                        default_scale=scale, animations=[anim], rig={}, notes=notes,
+                        default_scale=scale, animations=[anim], rig=rig, notes=notes,
                         max_dim=1500, quality=94))
+        if aid == "songbird-flock":
+            entry["placement"]["grounded"] = False
+            with Image.open(os.path.join(p.out, entry["file"])) as published:
+                flock_thumbnail(published).save(os.path.join(p.out, entry["thumb"]),
+                                                 "WEBP", quality=82, method=6, exact=True)
 
 
 def publish_winter(p: Publisher, src: str, style: str):
@@ -763,17 +888,17 @@ def publish_realistic(p: Publisher, src: str, style: str):
                     tags=["waterfall", "cascade", "cliff", "plunge pool", "mist", "photoreal"],
                     depth=0.42, default_scale=0.66,
                     animations=["waterfall-flow", "ripple"],
-                    rig={"type": "fall", "region": [0.235, 0.065, 0.625, 0.79], "speed": 1.0},
+                    rig={"type": "fall", "region": [0.235, 0.065, 0.625, 0.855], "impactY": 0.86, "poolRegion": [0.16, 0.805, 0.72, 0.16], "naturalFlow": True, "speed": 1.0},
                     notes="Photographic cascade over a mossy cliff. The water, splash and mist animate; the rock does not move.",
                     max_dim=1600, quality=94))
 
     for aid, name, img, cat, themes, tags, depth, scale, anims, rig in [
         ("water-surface", "Clear Water Surface", obj("fg-water-surface"), "water",
          ["water"], ["water", "surface", "sparkle", "ripples", "close-up", "photoreal"],
-         0.94, 0.46, ["sparkle", "water-flow", "water-shimmer"], {"type": "water", "region": [0, 0, 1, 1]}),
+         0.94, 0.46, ["water-flow", "sparkle", "water-shimmer"], {"type": "water", "region": [0, 0, 1, 1], "autoplay": True}),
         ("shallow-ripples", "Shallow Ripples and Caustics", obj("fg-shallow-ripples"), "water",
          ["water"], ["water", "caustics", "pebbles", "ripples", "close-up", "photoreal"],
-         0.93, 0.44, ["sparkle", "water-flow"], {"type": "water", "region": [0, 0, 1, 1]}),
+         0.93, 0.44, ["water-flow", "sparkle"], {"type": "water", "region": [0, 0, 1, 1], "autoplay": True}),
         ("river-stones", "Wet River Stones", obj("fg-river-stones"), "rocks",
          ["water", "forest"], ["stones", "pebbles", "wet", "glistening", "photoreal"],
          0.90, 0.34, ["sparkle"], {"type": "water", "region": [0, 0, 1, 1]}),
@@ -789,6 +914,68 @@ def publish_realistic(p: Publisher, src: str, style: str):
                         animations=anims, rig=rig,
                         notes="Photographic water texture; sparkle adds specular glints.",
                         max_dim=1600, quality=95))
+
+
+def publish_realistic_scenes(p: Publisher, src: str, style: str):
+    """Ten photographic scene backgrounds for meditation and open-air looks.
+
+    Calm water surfaces get a rigged shimmer band (small travelling waves);
+    streams and creeks get the directional water-flow rig; meadows get a
+    gentle grass breeze limited to the grass band. Rocks and raked gravel
+    stay perfectly still.
+    """
+    SHIMMER = ["water-shimmer", "sparkle"]
+    FLOW = ["water-flow", "sparkle"]
+    for aid, name, themes, tags, anims, rig, notes in [
+        ("zen-pond", "Zen Pond", ["meditation", "garden", "water"],
+         ["background", "zen", "pond", "stone lantern", "meditation", "photoreal"],
+         SHIMMER, {"type": "background", "region": [0.0, 0.45, 1.0, 0.55], "autoplay": True},
+         "A still Japanese garden pond; the surface carries only small travelling ripples."),
+        ("misty-dawn-lake", "Misty Dawn Lake", ["meditation", "water", "mountains"],
+         ["background", "lake", "mist", "dawn", "meditation", "photoreal"],
+         SHIMMER, {"type": "background", "region": [0.0, 0.45, 1.0, 0.55], "autoplay": True},
+         "A glassy mountain lake in dawn mist; faint ripples keep the water alive."),
+        ("bamboo-stream", "Bamboo Stream", ["meditation", "water", "forest"],
+         ["background", "bamboo", "stream", "pebbles", "meditation", "photoreal"],
+         FLOW, {"type": "background", "region": [0.0, 0.42, 1.0, 0.58], "autoplay": True},
+         "A clear stream runs over pebbles through a bamboo grove; the current flows downstream."),
+        ("zen-garden", "Zen Garden", ["meditation", "garden"],
+         ["background", "zen", "raked gravel", "karesansui", "meditation", "photoreal"],
+         [], {"type": "background"},
+         "Raked gravel and mossy stones; nothing moves but the light and cloud."),
+        ("wildflower-meadow", "Wildflower Meadow", ["meadow", "flowers"],
+         ["background", "meadow", "wildflowers", "grass", "photoreal"],
+         ["grass-wind"],
+         {"type": "background", "region": [0.0, 0.55, 1.0, 0.45], "gusts": 3, "autoplay": True},
+         "Flat grass dotted with daisies, cornflowers and poppies; a light breeze stays in the grass."),
+        ("lavender-fields", "Lavender Fields", ["meadow", "flowers"],
+         ["background", "lavender", "rows", "fields", "photoreal"],
+         ["grass-wind"],
+         {"type": "background", "region": [0.0, 0.45, 1.0, 0.55], "gusts": 3, "autoplay": True},
+         "Lavender rows on flat land to a soft horizon; the heads sway very slightly."),
+        ("creek-meadow", "Creek Meadow", ["meadow", "flowers", "water"],
+         ["background", "meadow", "creek", "buttercups", "photoreal"],
+         FLOW, {"type": "background", "region": [0.0, 0.55, 1.0, 0.45], "autoplay": True},
+         "A small clear creek winds through a flower meadow; its water keeps a gentle current."),
+        ("granite-tarn", "Granite Tarn", ["mountains", "water", "rocks"],
+         ["background", "tarn", "granite", "boulders", "alpine", "photoreal"],
+         SHIMMER, {"type": "background", "region": [0.0, 0.42, 1.0, 0.45], "autoplay": True},
+         "A rocky high-mountain tarn in a bowl of granite; small waves comb the surface."),
+        ("rocky-coast-cove", "Rocky Coast Cove", ["coast", "water", "rocks"],
+         ["background", "cove", "boulders", "sea", "photoreal"],
+         SHIMMER, {"type": "background", "region": [0.0, 0.33, 1.0, 0.40], "autoplay": True},
+         "Weathered boulders and a pebble beach; the sea laps with small breaking waves."),
+        ("still-forest-pool", "Still Forest Pool", ["meditation", "forest", "water"],
+         ["background", "pool", "forest", "reflections", "meditation", "photoreal"],
+         SHIMMER, {"type": "background", "region": [0.0, 0.5, 1.0, 0.5], "autoplay": True},
+         "A mirror-still woodland pool; only faint ripples cross the reflections."),
+    ]:
+        img = Image.open(plate_path(src, f"bg-{aid}.png")).convert("RGB").convert("RGBA")
+        p.publish(Asset(f"{style}.background.{aid}", name, style, "background", "nature", img,
+                        themes=themes + ["photoreal"], tags=tags, depth=0.0, default_scale=1.0,
+                        origin="generated",
+                        animations=anims, rig=rig, notes=notes,
+                        max_dim=1920, quality=93))
 
 
 def publish_realistic_rooms(p: Publisher, src: str, style: str):
@@ -1549,6 +1736,7 @@ def build(src: str, out: str, catalog: str = "docs/ASSET_CATALOG.md") -> dict:
     # A different brief entirely: true water optics instead of painted fantasy.
     R = "realistic"
     publish_realistic(p, src, R)
+    publish_realistic_scenes(p, src, R)
     publish_realistic_rooms(p, src, R)
     publish_realistic_people(p, src, R)
 

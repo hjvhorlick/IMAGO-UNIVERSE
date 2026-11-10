@@ -57,6 +57,9 @@ export interface RegionScroll {
  */
 export interface FallSpec {
   region: [number, number, number, number];
+  impactY?: number;    // optional plunge line within the fall region, 0..1
+  poolRegion?: [number, number, number, number]; // surface in asset coordinates
+  naturalFlow?: boolean; // irregular, less opaque photographic water
   cycles: number;      // integer traversals per loop
   density: number;     // water curtain count
   length: number;      // curtain length, fraction of cascade height
@@ -180,16 +183,35 @@ export class AnimationEngine {
 
       /* Grass and bushes: anchored at the soil, tips travel furthest. */
       case 'grass-wind': {
-        const reach = w * 0.20 * amp;
+        // With a rig region (meadow backgrounds) the breeze stays inside the
+        // grass band and tips sway most; without one (plant assets) the whole
+        // subject sways from its base as before.
+        const region = meta?.rig?.region;
+        const reach = w * (region ? 0.03 : 0.20) * amp;
         const gusts = Math.max(1, Math.round(meta?.rig?.gusts ?? 4));
         const field: FieldFn = (_uu, vv) => {
-          const weight = (1 - vv) ** 1.7;
+          let weight = (1 - vv) ** 1.7, mask = 1;
+          if (region) {
+            const [, ry, , rh] = region;
+            weight = clamp((vv - ry) / rh, 0, 1) ** 1.7;
+            mask = regionMask(vv, ry, rh, 0.12);
+          }
           const gust = 0.62 + 0.38 * Math.sin(TAU * gusts * u + 0.7);
           const organic = periodic(u, seed, 4) * turb;
           const sway = (Math.sin(TAU * u) * 0.7 + organic * 0.9) * gust;
-          return { dx: sway * reach * weight * (dirX >= 0 ? 1 : -1), dy: -Math.abs(sway) * reach * 0.10 * weight };
+          return {
+            dx: sway * reach * weight * mask * (dirX >= 0 ? 1 : -1),
+            dy: -Math.abs(sway) * reach * 0.10 * weight * mask,
+          };
         };
-        state.warp = { mode: 'strip', cols: 1, rows: Math.max(10, Math.round(22 * detail)), field };
+        state.warp = {
+          mode: region ? 'mesh' : 'strip',
+          cols: region ? Math.max(4, Math.round(7 * detail)) : 1,
+          rows: Math.max(10, Math.round(22 * detail)),
+          field,
+          breaks: region ? [region[1], region[1] + region[3]] : undefined,
+          active: region ? [region[1], region[1] + region[3]] : undefined,
+        };
         break;
       }
 
@@ -210,7 +232,38 @@ export class AnimationEngine {
       }
 
       /* Water surfaces: travelling waves, not a sliding picture. */
-      case 'water-flow':
+      case 'water-flow': {
+        // Rivers and streams: the pattern runs downstream (towards the
+        // viewer) with a slow meander, so the current reads as flow rather
+        // than sloshing. Still small - a background stream, not rapids.
+        const reach = w * 0.014 * amp;
+        const region = meta?.rig?.region;
+        const field: FieldFn = (_uu, vv) => {
+          let mask = 1;
+          if (region) {
+            const [, ry, , rh] = region;
+            mask = regionMask(vv, ry, rh);
+          } else {
+            mask = smoothstep(clamp((vv - 0.55) / 0.2, 0, 1));
+          }
+          const run = Math.sin(TAU * (vv * 5 - u * 2)) + 0.4 * Math.sin(TAU * (vv * 9 - u * 3));
+          const meander = Math.sin(TAU * (vv * 3 - u));
+          const chop = Math.sin(TAU * (vv * 11 - u * 3));
+          return {
+            dx: (meander * 0.6 + chop * 0.35) * reach * mask,
+            dy: run * reach * 0.9 * mask,
+          };
+        };
+        state.warp = {
+          mode: 'mesh',
+          cols: Math.max(4, Math.round(7 * detail)),
+          rows: Math.max(10, Math.round(22 * detail)),
+          field,
+          breaks: region ? [region[1], region[1] + region[3]] : undefined,
+          active: region ? [region[1], region[1] + region[3]] : [0.55, 1],
+        };
+        break;
+      }
       case 'water-shimmer': {
         const reach = w * 0.012 * amp;
         const region = meta?.rig?.region;
@@ -219,7 +272,7 @@ export class AnimationEngine {
           if (region) {
             const [, ry, , rh] = region;
             mask = regionMask(vv, ry, rh);
-          } else if (a.type === 'water-shimmer') {
+          } else {
             mask = smoothstep(clamp((vv - 0.55) / 0.2, 0, 1));
           }
           const wave = Math.sin(TAU * (vv * 7 - u * 2)) + 0.5 * Math.sin(TAU * (vv * 13 - u * 3));
@@ -247,6 +300,9 @@ export class AnimationEngine {
         // and drifting across the canyon. The painted rock and foliage stay put.
         state.fall = {
           region,
+          impactY: meta?.rig?.impactY,
+          poolRegion: meta?.rig?.poolRegion,
+          naturalFlow: meta?.rig?.naturalFlow,
           cycles: Math.max(2, Math.round(3 * speed * (0.65 + amp * 0.65))),
           // Dense enough to read as continuously moving water at preview size.
           density: Math.max(48, Math.round(76 * detail)),
@@ -378,6 +434,11 @@ export class AnimationEngine {
          suggested by a fast, shallow size pulse over a slow wandering path -
          the whole group drifts together like a loose Swarm. */
       case 'flutter': {
+        if (meta?.rig?.type === 'flying-flock') {
+          // The compositor animates each bird and carries the whole group
+          // across its sky area; never pulse or rock the painted plate.
+          break;
+        }
         const beats = Math.max(2, Math.round(a.loop * 2.5));   // integer, so it loops
         state.offsetX = (Math.sin(TAU * u) * 0.6 + periodic(u, seed, 3) * turb * 0.5) * w * 0.035 * amp;
         state.offsetY = (Math.sin(TAU * 2 * u + 0.9) * 0.5 + periodic(u, seed + 7, 3) * turb * 0.5) * h * 0.05 * amp;

@@ -8,6 +8,8 @@
 import type { Store } from '../core/store';
 import type { SceneNode } from '../core/types';
 import { clamp, rad, rotatePoint } from '../core/util';
+import { readWaterShape, waterShapeFeather } from '../core/waterShape';
+import type { WaterPoint } from '../core/waterShape';
 import { paintOrder } from '../scene/sceneModel';
 import type { PreviewRenderer } from '../render/previewRenderer';
 import { EFFECT_MAP } from '../animation/effects';
@@ -25,12 +27,15 @@ function handleCursor(h: HandleId): string {
 }
 
 interface DragState {
-  mode: 'move' | 'resize' | 'rotate' | 'pan';
+  mode: 'move' | 'resize' | 'rotate' | 'pan' | 'water-point';
   startPointer: { x: number; y: number };
   handle?: HandleId;
   originals: { id: string; x: number; y: number; width: number; height: number; rotation: number }[];
   panStart: { x: number; y: number };
   aspect: number;
+  waterIndex?: number;
+  waterPoints?: WaterPoint[];
+  waterFlip?: boolean;
   moved: boolean;
 }
 
@@ -202,6 +207,29 @@ export class Stage {
     return (px / Math.max(1, r.width)) * this.store.scene.canvas.width;
   }
 
+  /** Water-mask vertices are circles; the usual resize handles stay square. */
+  private waterPointPositions(n: SceneNode): { index: number; x: number; y: number }[] {
+    const def = n.effect ? EFFECT_MAP.get(n.effect.effectId) : undefined;
+    if (!def?.waterShape) return [];
+    return readWaterShape(n.effect!.params.waterShape).map((pt, index) => {
+      const lx = (pt.x - 0.5) * n.width * (n.flipX ? -1 : 1);
+      const ly = (pt.y - 0.5) * n.height;
+      const p = rotatePoint(n.x + lx, n.y + ly, n.x, n.y, rad(n.rotation));
+      return { index, x: p.x, y: p.y };
+    });
+  }
+
+  private hitWaterPoint(x: number, y: number): { node: SceneNode; index: number } | null {
+    const tol = this.pxToScene(9);
+    for (const n of this.store.selected) {
+      if (n.locked) continue;
+      for (const pt of this.waterPointPositions(n)) {
+        if (Math.hypot(pt.x - x, pt.y - y) <= tol) return { node: n, index: pt.index };
+      }
+    }
+    return null;
+  }
+
   private hitHandle(x: number, y: number): { node: SceneNode; handle: HandleId } | null {
     const tol = this.pxToScene(9);
     for (const n of this.store.selected) {
@@ -222,7 +250,15 @@ export class Stage {
         // Full-scene effects never intercept object editing. The individually
         // bounded spiritual ornaments can be selected when Layer 4 is active.
         if (n.kind === 'effect') {
-          if (this.cb.canSelectSpiritual() && n.effect && EFFECT_MAP.get(n.effect.effectId)?.family === 'spiritual') return n;
+          const def = n.effect ? EFFECT_MAP.get(n.effect.effectId) : undefined;
+          if (this.cb.canSelectSpiritual() && (def?.family === 'spiritual' || def?.bounded)) {
+            if (def?.waterShape) {
+              const x = (p.x - n.x) * (n.flipX ? -1 : 1) + n.width / 2;
+              const y = p.y - n.y + n.height / 2;
+              if (waterShapeFeather(x, y, n.width, n.height, readWaterShape(n.effect!.params.waterShape)) <= 0) continue;
+            }
+            return n;
+          }
           continue;
         }
         return n;
@@ -243,6 +279,18 @@ export class Stage {
     }
     if (e.button !== 0) return;
     const p = this.screenToScene(e.clientX, e.clientY);
+
+    const wp = this.hitWaterPoint(p.x, p.y);
+    if (wp) {
+      this.store.pushHistory('Reshape water');
+      this.drag = {
+        mode: 'water-point', startPointer: p, originals: [this.snapshot(wp.node)],
+        waterIndex: wp.index, waterPoints: readWaterShape(wp.node.effect!.params.waterShape),
+        waterFlip: wp.node.flipX, panStart: { x: 0, y: 0 }, aspect: 1, moved: false,
+      };
+      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+      return;
+    }
 
     const hh = this.hitHandle(p.x, p.y);
     if (hh) {
@@ -286,8 +334,11 @@ export class Stage {
         const p = this.screenToScene(e.clientX, e.clientY);
         // Handle cursor first: a corner must announce that it scales in
         // proportion, an edge that it stretches one axis.
+        const wp = this.hitWaterPoint(p.x, p.y);
         const hh = this.hitHandle(p.x, p.y);
-        if (hh) {
+        if (wp) {
+          this.sceneCanvas.style.cursor = 'crosshair';
+        } else if (hh) {
           this.sceneCanvas.style.cursor = handleCursor(hh.handle);
         } else {
           this.sceneCanvas.style.cursor = '';
@@ -311,7 +362,9 @@ export class Stage {
       for (const o of d.originals) {
         const n = scene.nodes.find((x) => x.id === o.id);
         if (!n || n.locked) continue;
-        if (d.mode === 'move') {
+        if (d.mode === 'water-point') {
+          this.applyWaterPoint(n, o, p, d);
+        } else if (d.mode === 'move') {
           let dx = p.x - d.startPointer.x;
           let dy = p.y - d.startPointer.y;
           if (e.shiftKey) { if (Math.abs(dx) > Math.abs(dy)) dy = 0; else dx = 0; }
@@ -324,6 +377,29 @@ export class Stage {
         }
       }
     });
+  }
+
+  private applyWaterPoint(
+    n: SceneNode, o: DragState['originals'][number], p: { x: number; y: number }, d: DragState,
+  ) {
+    if (!n.effect || d.waterIndex === undefined || !d.waterPoints) return;
+    const local = rotatePoint(p.x, p.y, o.x, o.y, -rad(o.rotation));
+    const flip = d.waterFlip ? -1 : 1;
+    const px = (local.x - o.x) * flip + o.width / 2;
+    const py = local.y - o.y + o.height / 2;
+    // Expand the effect's rectangle when a vertex is dragged outside it; the
+    // other seven points stay in exactly the same place on the scene.
+    const left = Math.min(0, px), right = Math.max(o.width, px);
+    const top = Math.min(0, py), bottom = Math.max(o.height, py);
+    const width = Math.max(8, right - left), height = Math.max(8, bottom - top);
+    const shift = rotatePoint(((left + right) / 2 - o.width / 2) * flip,
+      (top + bottom) / 2 - o.height / 2, 0, 0, rad(o.rotation));
+    n.x = o.x + shift.x; n.y = o.y + shift.y;
+    n.width = width; n.height = height;
+    n.effect.params.waterShape = JSON.stringify(d.waterPoints.map((pt, i) => ({
+      x: clamp(((i === d.waterIndex ? px : pt.x * o.width) - left) / width, 0, 1),
+      y: clamp(((i === d.waterIndex ? py : pt.y * o.height) - top) / height, 0, 1),
+    })));
   }
 
   private applyResize(
@@ -395,6 +471,19 @@ export class Stage {
       const colour = n.locked ? '#f5c97b' : '#5eead4';
       this.outline(ctx, n, colour, px * 1.6, true);
       if (n.locked) continue;
+      const waterPoints = this.waterPointPositions(n);
+      if (waterPoints.length) {
+        ctx.save();
+        ctx.strokeStyle = '#9bdcf7';
+        ctx.lineWidth = px * 1.8;
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(waterPoints[0].x, waterPoints[0].y);
+        for (let i = 1; i < waterPoints.length; i++) ctx.lineTo(waterPoints[i].x, waterPoints[i].y);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.restore();
+      }
       const handles = this.handlePositions(n);
       const size = px * 4.5;
       const rot = handles.find((h) => h.id === 'rot')!;
@@ -428,6 +517,16 @@ export class Stage {
           ctx.lineTo(h.x + dx * s * 0.42, h.y + dy * s * 0.42);
           ctx.stroke();
         }
+      }
+      // Draw circles last so they remain distinguishable from square resize
+      // handles, even when a vertex is close to the rectangular frame.
+      for (const pt of waterPoints) {
+        ctx.fillStyle = '#d9f6ff';
+        ctx.strokeStyle = '#123f55';
+        ctx.lineWidth = px * 1.5;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, px * 6, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
       }
     }
     ctx.restore();

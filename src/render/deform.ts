@@ -145,30 +145,52 @@ export function meshWarp(
     ? (vs[j + 1] <= active[0] + 1e-6 || vs[j] >= active[1] - 1e-6)
     : (flatRow[j] && flatRow[j + 1]);
 
+  // Collect the bands first, then draw in two passes: warped triangle bands
+  // before the still slices. A shared boundary usually lands on a fractional
+  // pixel row, and the triangles' antialiased top edge would otherwise leave a
+  // sub-row sliver of moving artwork in the last still row above the water
+  // line. Drawing the slices last lets each of them claim the whole boundary
+  // row (stretched by less than a pixel, which is invisible on still art).
+  const bands: { slice: boolean; j: number; end: number }[] = [];
   let j = 0;
   while (j < nrows) {
     if (sliceBand(j)) {
       // Coalesce the longest run of flat bands into one drawImage.
       let end = j + 1;
       while (end < nrows && sliceBand(end)) end++;
-      const v0 = vs[j], v1 = vs[end];
-      ctx.drawImage(src,
-        s.sx, s.sy + v0 * s.sh, s.sw, (v1 - v0) * s.sh,
-        d.dx, d.dy + v0 * d.dh, d.dw, (v1 - v0) * d.dh);
+      bands.push({ slice: true, j, end });
       j = end;
-      continue;
+    } else {
+      bands.push({ slice: false, j, end: j + 1 });
+      j++;
     }
-    for (let i = 0; i < cols; i++) {
-      const u0 = s.sx + (i / cols) * s.sw, u1 = s.sx + ((i + 1) / cols) * s.sw;
-      const v0 = s.sy + vs[j] * s.sh, v1 = s.sy + vs[j + 1] * s.sh;
-      texturedTriangle(ctx, src, fullW, fullH,
-        px[j][i], py[j][i], px[j][i + 1], py[j][i + 1], px[j + 1][i + 1], py[j + 1][i + 1],
-        u0, v0, u1, v0, u1, v1, bleed);
-      texturedTriangle(ctx, src, fullW, fullH,
-        px[j][i], py[j][i], px[j + 1][i + 1], py[j + 1][i + 1], px[j + 1][i], py[j + 1][i],
-        u0, v0, u1, v1, u0, v1, bleed);
+  }
+  for (const b of bands) {
+    if (b.slice) continue;
+    for (let jj = b.j; jj < b.end; jj++) {
+      for (let i = 0; i < cols; i++) {
+        const u0 = s.sx + (i / cols) * s.sw, u1 = s.sx + ((i + 1) / cols) * s.sw;
+        const v0 = s.sy + vs[jj] * s.sh, v1 = s.sy + vs[jj + 1] * s.sh;
+        texturedTriangle(ctx, src, fullW, fullH,
+          px[jj][i], py[jj][i], px[jj][i + 1], py[jj][i + 1], px[jj + 1][i + 1], py[jj + 1][i + 1],
+          u0, v0, u1, v0, u1, v1, bleed);
+        texturedTriangle(ctx, src, fullW, fullH,
+          px[jj][i], py[jj][i], px[jj + 1][i + 1], py[jj + 1][i + 1], px[jj + 1][i], py[jj + 1][i],
+          u0, v0, u1, v1, u0, v1, bleed);
+      }
     }
-    j++;
+  }
+  for (const b of bands) {
+    if (!b.slice) continue;
+    const v0 = vs[b.j], v1 = vs[b.end];
+    let yTop = d.dy + v0 * d.dh, yBot = d.dy + v1 * d.dh;
+    // Runs are maximal, so any neighbouring band of a slice run is a warped one.
+    if (b.j > 0 && yTop > 0) yTop = Math.floor(yTop + 1e-6);
+    if (b.end < nrows) yBot = Math.ceil(yBot - 1e-6);
+    if (yBot <= yTop) continue;
+    ctx.drawImage(src,
+      s.sx, s.sy + v0 * s.sh, s.sw, (v1 - v0) * s.sh,
+      d.dx, yTop, d.dw, yBot - yTop);
   }
 }
 

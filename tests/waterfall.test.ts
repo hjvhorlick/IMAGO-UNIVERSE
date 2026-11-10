@@ -77,6 +77,19 @@ function flowDown(
   return den > 1e-9 ? -num / den : 0;
 }
 
+/** Horizontal counterpart of flowDown: positive is motion to the right. */
+function flowRight(a: { data: Float64Array; w: number; h: number },
+  b: { data: Float64Array; w: number; h: number }, dt: number): number {
+  let num = 0, den = 0;
+  for (let y = 1; y < a.h - 1; y++) for (let x = 1; x < a.w - 1; x++) {
+    const i = y * a.w + x;
+    const ix = (a.data[i + 1] - a.data[i - 1]) / 2;
+    num += ((b.data[i] - a.data[i]) / dt) * ix;
+    den += ix * ix;
+  }
+  return den > 1e-9 ? -num / den : 0;
+}
+
 /**
  * A flat grey plate with a declared fall region. Flat means the mesh wobble is
  * invisible, so the ONLY features in the profile are the falling streaks -
@@ -333,7 +346,7 @@ describe('painted water, not a picture of water', () => {
       comp.render(ctx as never, scene, { scale: 1, quality: 'export', time: t, skipLighting: true });
       return pixels(cv, ctx);
     };
-    return { lib, m, node, scene, draw, img };
+    return { lib, m, node, scene, draw, img, comp };
   }
 
   it('extracts each painted cascade as a tube from its lip to its foot', async () => {
@@ -356,6 +369,192 @@ describe('painted water, not a picture of water', () => {
       expect(hero.lipY).toBeLessThan(geo!.impactY);
       expect(geo!.impactY).toBeLessThanOrEqual(GH);
     }
+  }, 60_000);
+
+  it('carries Clearwater Falls through the lower cascade to its actual plunge pool', async () => {
+    const s = await stageFall('realistic.middle.waterfall');
+    expect(s).not.toBeNull();
+    if (!s) throw new Error('Clearwater Falls is missing');
+    const region = s.m.rig!.region!;
+    const impact = s.m.rig!.impactY;
+    expect(impact).toBeDefined();
+    const GW = 320;
+    const GH = Math.round(GW * (region[3] * s.img.height) / (region[2] * s.img.width));
+    const { buildFallGeometry } = await import('../src/render/waterfall');
+    const geo = buildFallGeometry(s.img as unknown as CanvasImageSource,
+      { sx: 0, sy: 0, sw: s.img.width, sh: s.img.height }, region, GW, GH, impact)!;
+    expect(geo.impactY / GH).toBeGreaterThan(0.8);
+    expect(geo.streams[0].footY / GH).toBeGreaterThan(0.8);
+
+    // Check the actual lower curtain, not the upper water or surrounding mist.
+    const left = s.node.x - s.node.width / 2;
+    const top = s.node.y - s.node.height / 2;
+    const x0 = Math.round(left + s.node.width * 0.48);
+    const x1 = Math.round(left + s.node.width * 0.66);
+    const y0 = Math.round(top + s.node.height * 0.60);
+    const y1 = Math.round(top + s.node.height * 0.74);
+    const a = s.draw(0.4), b = s.draw(1.05), loop = s.draw(8.4);
+    let changed = 0, seamDiff = 0;
+    for (let y = y0; y < y1; y++) {
+      for (let x = x0; x < x1; x++) {
+        const i = (y * s.scene.canvas.width + x) * 4;
+        if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 8) changed++;
+        for (let k = 0; k < 4; k++) seamDiff = Math.max(seamDiff, Math.abs(a[i + k] - loop[i + k]));
+      }
+    }
+    expect(changed, 'the lower curtain should visibly move').toBeGreaterThan(200);
+    expect(seamDiff, 'the lower curtain should loop seamlessly').toBeLessThanOrEqual(1);
+  }, 60_000);
+
+  it('keeps Clearwater water darker, irregular and moving downward', async () => {
+    const s = await stageFall('realistic.middle.waterfall');
+    if (!s || !s.m.rig) throw new Error('Clearwater Falls is missing');
+    expect(s.m.rig.naturalFlow).toBe(true);
+    const left = s.node.x - s.node.width / 2;
+    const top = s.node.y - s.node.height / 2;
+    const x0 = Math.round(left + s.node.width * 0.50);
+    const x1 = Math.round(left + s.node.width * 0.64);
+    const y0 = Math.round(top + s.node.height * 0.22);
+    const y1 = Math.round(top + s.node.height * 0.68);
+    const natural = s.draw(0.8);
+    s.m.rig.naturalFlow = false;
+    const smooth = s.draw(0.8);
+    s.m.rig.naturalFlow = true;
+    let darkLuma = 0, smoothLuma = 0, n = 0;
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+      const i = (y * s.scene.canvas.width + x) * 4;
+      darkLuma += natural[i] * 0.299 + natural[i + 1] * 0.587 + natural[i + 2] * 0.114;
+      smoothLuma += smooth[i] * 0.299 + smooth[i + 1] * 0.587 + smooth[i + 2] * 0.114;
+      n++;
+    }
+    expect(darkLuma / n, 'the cascade should be less washed out').toBeLessThan(smoothLuma / n - 10);
+    expect(darkLuma / n, 'the water should retain light as well as shadow').toBeGreaterThan(95);
+    const end = s.draw(8 - 0.0001), start = s.draw(0.0001);
+    let boundaryDiff = 0;
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+      const i = (y * s.scene.canvas.width + x) * 4;
+      boundaryDiff += Math.abs(end[i] - start[i]) + Math.abs(end[i + 1] - start[i + 1]) + Math.abs(end[i + 2] - start[i + 2]);
+    }
+    expect(boundaryDiff / (n * 3), 'water should not jump at the loop boundary').toBeLessThan(1.5);
+    for (const t of [0.3, 0.7, 1.2, 2.1, 3.2]) {
+      const a = lumaPlane(s.draw(t), s.scene.canvas.width, x0, x1, y0, y1);
+      const b = lumaPlane(s.draw(t + 0.03), s.scene.canvas.width, x0, x1, y0, y1);
+      expect(flowDown(a, b, 0.03), `water should fall at phase ${t}`).toBeGreaterThan(0);
+    }
+  }, 60_000);
+
+  it('animates the foreground pool independently and lets a little mist drift above it', async () => {
+    const s = await stageFall('realistic.middle.waterfall');
+    if (!s) throw new Error('Clearwater Falls is missing');
+    const pool = s.m.rig!.poolRegion;
+    expect(pool).toBeDefined();
+    const left = s.node.x - s.node.width / 2;
+    const top = s.node.y - s.node.height / 2;
+    // The pool extends below the waterfall's old animation rectangle.
+    const x0 = Math.round(left + s.node.width * 0.32);
+    const x1 = Math.round(left + s.node.width * 0.76);
+    const y0 = Math.round(top + s.node.height * 0.925);
+    const y1 = Math.round(top + s.node.height * 0.96);
+    const a = s.draw(0.4), b = s.draw(1.05), loop = s.draw(8.4);
+    let changed = 0, seamDiff = 0;
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+      const i = (y * s.scene.canvas.width + x) * 4;
+      const diff = Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
+      if (diff > 5) changed++;
+      for (let k = 0; k < 4; k++) seamDiff = Math.max(seamDiff, Math.abs(a[i + k] - loop[i + k]));
+    }
+    expect(changed, 'foreground pool water should move').toBeGreaterThan(30);
+    expect(seamDiff, 'pool should loop seamlessly').toBeLessThanOrEqual(1);
+
+    const { buildFallGeometry, drawFallPool } = await import('../src/render/waterfall');
+    const region = s.m.rig!.region!;
+    const geo = buildFallGeometry(s.img as unknown as CanvasImageSource,
+      { sx: 0, sy: 0, sw: s.img.width, sh: s.img.height }, region, 320, 306, s.m.rig!.impactY)!;
+    const f = { region, cycles: 3, density: 48, length: 0.25, width: 0.03,
+      opacity: 0.9, seed: 42, splash: 0, mist: 1 };
+    const mistFrame = (phase: number) => {
+      const { cv, ctx } = ctx2d(320, 200);
+      ctx.translate(0, 80);
+      drawFallPool(ctx as never, 320, 80, geo, f, phase, 1);
+      return pixels(cv, ctx);
+    };
+    const m1 = mistFrame(0.1), m2 = mistFrame(0.35), mLoop = mistFrame(1.1);
+    let above = 0, drifting = 0, maxAlpha = 0, mistLoopDiff = 0;
+    for (let y = 0; y < 80; y++) for (let x = 0; x < 320; x++) {
+      const i = (y * 320 + x) * 4;
+      if (m1[i + 3] > 0) above++;
+      if (Math.abs(m1[i + 3] - m2[i + 3]) > 1) drifting++;
+      maxAlpha = Math.max(maxAlpha, m1[i + 3]);
+      mistLoopDiff = Math.max(mistLoopDiff, Math.abs(m1[i + 3] - mLoop[i + 3]));
+    }
+    expect(above, 'mist should hover above the pool').toBeGreaterThan(100);
+    expect(drifting, 'mist should move and dissipate').toBeGreaterThan(100);
+    expect(maxAlpha, 'mist should remain translucent').toBeLessThan(80);
+    expect(mistLoopDiff).toBeLessThanOrEqual(1);
+
+    // Crop into the pool: its animation must follow the image crop rather
+    // than stay at its old full-image coordinates or leak beyond the node.
+    s.node.crop = { x: 0.25, y: 0.8, w: 0.5, h: 0.2 };
+    const withPool = s.draw(0.4);
+    s.m.rig!.poolRegion = undefined;
+    const withoutPool = s.draw(0.4);
+    s.m.rig!.poolRegion = pool;
+    let cropMotion = 0, outsideMotion = 0;
+    for (let y = 0; y < s.scene.canvas.height; y++) for (let x = 0; x < s.scene.canvas.width; x++) {
+      const i = (y * s.scene.canvas.width + x) * 4;
+      const delta = Math.abs(withPool[i] - withoutPool[i]) + Math.abs(withPool[i + 1] - withoutPool[i + 1])
+        + Math.abs(withPool[i + 2] - withoutPool[i + 2]);
+      if (delta < 4) continue;
+      if (x >= Math.floor(left) && x <= Math.ceil(left + s.node.width)
+        && y >= Math.floor(top) && y < top + s.node.height * 0.86) cropMotion++;
+      else outsideMotion++;
+    }
+    expect(cropMotion, 'pool effects should follow the cropped artwork').toBeGreaterThan(30);
+    expect(outsideMotion, 'pool effects should not escape the cropped node').toBe(0);
+  }, 60_000);
+
+  it('moves the photographed pool surface itself, not just the overlaid foam', async () => {
+    const s = await stageFall('realistic.middle.waterfall');
+    if (!s || !s.m.rig?.poolRegion) throw new Error('Clearwater pool rig is missing');
+    const W = 360, H = 80;
+    const poolPainter = s.comp as unknown as { drawPoolWater: (
+      ctx: unknown, source: unknown, imageWidth: number, imageHeight: number,
+      region: [number, number, number, number], width: number, height: number,
+      u: number, strength: number, opts: { scale: number; quality: 'export'; time: number },
+    ) => void };
+    const frame = (u: number) => {
+      const { cv, ctx } = ctx2d(W, H);
+      poolPainter.drawPoolWater(ctx, s.img, s.img.width, s.img.height, s.m.rig!.poolRegion!,
+        W, H, u, 1, { scale: 1, quality: 'export', time: u });
+      return pixels(cv, ctx);
+    };
+    const a = frame(0.13), b = frame(0.33), loop = frame(1.13);
+    // Optical flow from the real rendered texture, across both cross-fades:
+    // left water travels left, right water right, and the pool flows forward.
+    for (const t of [0.05, 0.11, 0.18, 0.24, 0.30, 0.36, 0.43, 0.49]) {
+      const ap = frame(t), bp = frame(t + 0.002);
+      const velocityY = flowDown(lumaPlane(ap, W, 90, 270, 25, 56), lumaPlane(bp, W, 90, 270, 25, 56), 0.002);
+      const left = flowRight(lumaPlane(ap, W, 85, 145, 25, 56), lumaPlane(bp, W, 85, 145, 25, 56), 0.002);
+      const right = flowRight(lumaPlane(ap, W, 215, 275, 25, 56), lumaPlane(bp, W, 215, 275, 25, 56), 0.002);
+      expect(velocityY, `phase ${t}: water should flow toward the foreground`).toBeGreaterThan(0);
+      expect(left, `phase ${t}: left-hand water should spread left`).toBeLessThan(0);
+      expect(right, `phase ${t}: right-hand water should spread right`).toBeGreaterThan(0);
+    }
+    let changed = 0, foreground = 0, outside = 0, seam = 0;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = (y * W + x) * 4;
+      const delta = Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
+      if (delta > 10 && a[i + 3] > 100 && b[i + 3] > 100) {
+        changed++;
+        if (y > H * 0.55) foreground++;
+      }
+      if (x < 5 || x >= W - 5 || y < 3 || y >= H - 3) outside = Math.max(outside, a[i + 3]);
+      for (let k = 0; k < 4; k++) seam = Math.max(seam, Math.abs(a[i + k] - loop[i + k]));
+    }
+    expect(changed, 'painted water texture should visibly undulate').toBeGreaterThan(3000);
+    expect(foreground, 'movement must reach the water in front').toBeGreaterThan(500);
+    expect(outside, 'the textured water must fade before the pool boundary').toBeLessThan(24);
+    expect(seam, 'the texture must loop seamlessly').toBeLessThanOrEqual(1);
   }, 60_000);
 
   it('runs water over the painted lip instead of switching on below it', async () => {
@@ -412,7 +611,12 @@ describe('painted water, not a picture of water', () => {
         for (let x = 0; x < W; x++) {
           const i = (y * W + x) * 4;
           const d = Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
-          const inRegion = x >= x0 && x < x1 && y >= y0 && y < y1;
+          const pool = s.m.rig?.poolRegion;
+          const inPool = pool && x >= Math.round(left + pool[0] * s.node.width)
+            && x < Math.round(left + (pool[0] + pool[2]) * s.node.width)
+            && y >= Math.round(top + pool[1] * s.node.height)
+            && y < Math.round(top + (pool[1] + pool[3]) * s.node.height);
+          const inRegion = (x >= x0 && x < x1 && y >= y0 && y < y1) || inPool;
           if (inRegion) { inside += d; insideN++; }
           else if (d > maxOutside) { maxOutside = d; outX = x; outY = y; }
         }

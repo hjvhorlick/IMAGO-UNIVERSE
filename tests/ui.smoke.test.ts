@@ -473,6 +473,131 @@ describe('application shell', () => {
     app.dispose();
   }, 60_000);
 
+  it('places, selects, adjusts and duplicates a gentle water overlay', async () => {
+    const app = await mountApp({ start: 'composed' });
+    click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
+    chooseCategory('natural');
+    click(document.querySelector('[data-effect="gentle-water-waves"]'));
+    const node = app.store.primary!;
+    expect(node.effect?.effectId).toBe('gentle-water-waves');
+    expect(node.width).toBeLessThan(app.store.scene.canvas.width);
+    expect(node.height).toBeLessThan(app.store.scene.canvas.height * 0.3);
+    expect(app.preview.playing).toBe(true);
+    expect(app.stage.hitTest(node.x, node.y)?.id).toBe(node.id);
+    expect(app.stage.hitTest(node.x - node.width * 0.49, node.y - node.height * 0.49)?.id).not.toBe(node.id);
+    openSection('animate');
+    const labels = Array.from(document.querySelectorAll('[data-body="animate"] .field-label')).map((n) => n.textContent ?? '');
+    for (const label of ['Ripple strength', 'Ripple density', 'Ripple speed']) {
+      expect(labels.some((l) => l.includes(label)), label).toBe(true);
+    }
+    app.store.duplicateSelected();
+    expect(app.store.scene.nodes.filter((n) => n.effect?.effectId === 'gentle-water-waves')).toHaveLength(2);
+    click(document.querySelector('.layer-tab[data-layer="middle"]'));
+    expect(app.stage.hitTest(node.x, node.y)?.id).not.toBe(node.id);
+    app.dispose();
+  }, 60_000);
+
+  it('drags lake vertices freely, preserving the other points and supporting undo and redo', async () => {
+    const app = await mountApp({ start: 'composed' });
+    click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
+    click(document.querySelector('[data-effect="gentle-water-waves"]'));
+    const node = app.store.primary!;
+    const id = node.id;
+    app.store.mutate(() => { node.rotation = 25; node.flipX = true; }, 'Turn lake');
+    const stage = app.stage as unknown as { waterPointPositions: (n: typeof node) => { x: number; y: number }[] };
+    const before = stage.waterPointPositions(node);
+    const initialWidth = node.width, initialHeight = node.height;
+    expect(before).toHaveLength(8);
+    const toClient = (p: { x: number; y: number }) => ({
+      clientX: p.x / app.store.scene.canvas.width * 1200,
+      clientY: p.y / app.store.scene.canvas.height * 700,
+    });
+    const target = { x: before[0].x - 260, y: before[0].y - 180 };
+    document.querySelector('.stage')!.dispatchEvent(new MouseEvent('pointerdown', {
+      ...toClient(before[0]), button: 0, bubbles: true,
+    }));
+    window.dispatchEvent(new MouseEvent('pointermove', { ...toClient(target), bubbles: true }));
+    window.dispatchEvent(new MouseEvent('pointerup', { ...toClient(target), bubbles: true }));
+    const changed = app.store.node(id)!;
+    expect(changed.effect!.params.waterShape).toBeTypeOf('string');
+    const after = stage.waterPointPositions(changed);
+    expect(after[0].x).toBeCloseTo(target.x, 4);
+    expect(after[0].y).toBeCloseTo(target.y, 4);
+    for (let i = 1; i < 8; i++) {
+      expect(after[i].x).toBeCloseTo(before[i].x, 4);
+      expect(after[i].y).toBeCloseTo(before[i].y, 4);
+    }
+    expect(changed.width > initialWidth || changed.height > initialHeight).toBe(true);
+    expect(app.store.undo()).toBe(true);
+    expect(app.store.node(id)!.effect!.params.waterShape).toBeUndefined();
+    expect(app.store.redo()).toBe(true);
+    expect(stage.waterPointPositions(app.store.node(id)!)[0].x).toBeCloseTo(target.x, 4);
+    openSection('object');
+    const reset = Array.from(body('object')!.querySelectorAll('button')).find((b) => b.textContent?.includes('Reset water shape'));
+    click(reset ?? null);
+    expect(app.store.node(id)!.effect!.params.waterShape).toBeUndefined();
+    expect(app.store.undo()).toBe(true);
+    expect(stage.waterPointPositions(app.store.node(id)!)[0].x).toBeCloseTo(target.x, 4);
+    app.dispose();
+  }, 60_000);
+
+  it('places the bird flock high in the sky with animation enabled', async () => {
+    const app = await mountApp({ start: 'composed' });
+    click(document.querySelector('.layer-tab[data-layer="middle"]'));
+    chooseCategory('creatures');
+    click(document.querySelector('[data-asset="enchanted.middle.songbird-flock"]'));
+    const node = app.store.primary!;
+    expect(node.assetId).toBe('enchanted.middle.songbird-flock');
+    expect(node.y / app.store.scene.canvas.height).toBeCloseTo(0.19);
+    expect(node.animation?.enabled).toBe(true);
+    expect(node.animation?.type).toBe('flutter');
+    expect(node.animation?.amplitude).toBe(0.9);
+    openSection('animate');
+    expect(body('animate')!.textContent).toContain('Wing flutter');
+    app.dispose();
+  }, 60_000);
+
+  it('offers a separate Lake Waves overlay with eight editable points', async () => {
+    const app = await mountApp({ start: 'composed' });
+    click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
+    chooseCategory('natural');
+    expect(document.querySelector('[data-effect="gentle-water-waves"]')?.textContent).toContain('Rain Ripples');
+    click(document.querySelector('[data-effect="lake-water-waves"]'));
+    const node = app.store.primary!;
+    expect(node.effect?.effectId).toBe('lake-water-waves');
+    const stage = app.stage as unknown as { waterPointPositions: (n: typeof node) => unknown[] };
+    expect(stage.waterPointPositions(node)).toHaveLength(8);
+    expect(app.stage.hitTest(node.x, node.y)?.id).toBe(node.id);
+    openSection('animate');
+    expect(body('animate')!.textContent).toContain('Wave strength');
+    expect(body('animate')!.textContent).not.toContain('Flow direction');
+    app.dispose();
+  }, 60_000);
+
+  it('offers a separate river flow with a direction control and editable outline', async () => {
+    const app = await mountApp({ start: 'composed' });
+    click(document.querySelector('.layer-tab[data-layer="atmosphere"]'));
+    chooseCategory('natural');
+    click(document.querySelector('[data-effect="river-water-flow"]'));
+    const node = app.store.primary!;
+    expect(node.effect?.effectId).toBe('river-water-flow');
+    expect(node.effect!.params.direction).toBe('right');
+    expect(app.stage.hitTest(node.x, node.y)?.id).toBe(node.id);
+    openSection('animate');
+    expect(body('animate')!.textContent).toContain('Flow direction');
+    const direction = Array.from(body('animate')!.querySelectorAll('select')).find((select) =>
+      Array.from(select.options).some((option) => option.value === 'right'));
+    expect(direction).toBeDefined();
+    expect(Array.from(direction!.options, (option) => option.value)).toEqual(['right', 'left', 'down', 'up']);
+    direction!.value = 'down';
+    direction!.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(app.store.primary!.effect!.params.direction).toBe('down');
+    openSection('object');
+    expect(body('object')!.textContent).toContain('Drag the eight round points');
+    expect(body('object')!.textContent).toContain('Reset water shape');
+    app.dispose();
+  }, 60_000);
+
   it('shows three artworks per row by default and cycles to two or four', async () => {
     const app = await mountApp({ start: null });
     const grid = () => document.querySelector('#asset-grid') as HTMLElement;

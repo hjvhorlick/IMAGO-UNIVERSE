@@ -205,7 +205,7 @@ describe('the published library', () => {
   it('every asset declares a known origin and points at a real file', () => {
     const lib = shipped();
     const root = path.resolve(import.meta.dirname, '..');
-    const origins = new Set(['painted', 'graded', 'composed', 'derived', 'imported']);
+    const origins = new Set(['painted', 'graded', 'composed', 'derived', 'imported', 'generated']);
     for (const a of lib.assets) {
       expect(origins.has(a.origin), `${a.id} has unknown origin "${a.origin}"`).toBe(true);
       expect(fs.existsSync(path.join(root, 'public/library', a.file)), `${a.id} file missing`).toBe(true);

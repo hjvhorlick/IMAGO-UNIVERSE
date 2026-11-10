@@ -9,6 +9,8 @@
  * (u, seed, params) which guarantees exact looping.
  */
 import { clamp, frac, rad, TAU } from '../core/util';
+import { readWaterShape, traceWaterShape, waterShapeFeather } from '../core/waterShape';
+import { waterCrestPosition, waterCrestSpan, waterCrestStrokeWidths } from '../core/waterSurface';
 import {
   butterflyShape, bool, coreDot, envelope, featherShape, glowDot, leafShape, life,
   num, petalShape, pr, runeGlyph, snowflake, sparkleStar, str, withAlpha,
@@ -34,6 +36,12 @@ export interface EffectDef {
   name: string;
   family: EffectFamily;
   subcategory?: string;
+  /** Individually placeable effect, rather than a full-scene atmosphere. */
+  bounded?: boolean;
+  /** Animate the already-composited image beneath this effect. */
+  waterDistortion?: 'lake' | 'lake-waves' | 'river';
+  /** The canvas exposes eight draggable vertices for this water region. */
+  waterShape?: boolean;
   description: string;
   defaultLoop: number;
   blend: GlobalCompositeOperation;
@@ -54,7 +62,162 @@ const GLOW = R('glow', 'Glow', 0, 3, 0.05, 1.2, 'x');
 
 /* ====================================================================== */
 
+/** Heavy rain, including effects already saved with the original density. */
+export function rainRippleCount(density: number): number {
+  return Math.round(clamp(density, 3, 30)) * 20;
+}
+
+/** Three times the earlier number of crests, including saved effects. */
+export function waterCrestCount(density: number): number {
+  return Math.round(clamp(density, 4, 100)) * 6;
+}
+
+/** Broken, shaded crests travel over the deformed water, rather than merely
+ * moving the photographed reflection. Both crest and trough fade at the mask. */
+function drawChoppySurface(ctx: Ctx2D, d: EffectDrawContext, river: boolean) {
+  const strength = clamp(num(d.params, 'strength', river ? 0.60 : 0.55), 0, 1);
+  if (strength <= 0) return;
+  const points = readWaterShape(d.params.waterShape);
+  const count = waterCrestCount(num(d.params, 'density', river ? 52 : 56));
+  const length = clamp(num(d.params, 'length', 1), 0.4, 2);
+  const rate = Math.round(clamp(num(d.params, 'rate', 2), 1, 4));
+  const color = str(d.params, 'color', '#d9edf0');
+  const direction = str(d.params, 'direction', 'right');
+  ctx.save(); traceWaterShape(ctx, points, d.w, d.h); ctx.clip('evenodd');
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  for (let i = 0; i < count; i++) {
+    const seedX = pr(d.seed, i, 921), seedY = pr(d.seed, i, 923);
+    const t = d.u * rate;
+    const position = waterCrestPosition(seedX, seedY, pr(d.seed, i, 933), d.u, rate,
+      river ? 'river' : 'lake-waves', direction);
+    const x = d.w * position.x, y = d.h * position.y;
+    const fade = waterShapeFeather(x, y, d.w, d.h, points);
+    const alpha = strength * fade * position.life;
+    if (alpha < 0.01) continue;
+    const span = waterCrestSpan(d.w, length, pr(d.seed, i, 927));
+    const height = d.h * (0.007 + 0.014 * pr(d.seed, i, 929));
+    const strokes = waterCrestStrokeWidths(height, d.scale);
+    const agitation = Math.sin(TAU * (t * 2 + pr(d.seed, i, 931)));
+    ctx.save(); ctx.translate(x, y);
+    // Tapered dark trough and broken bright crest give each little wave a
+    // surface and depth, rather than a field of arrow-shaped strokes.
+    const shade = ctx.createLinearGradient(-span / 2, 0, span / 2, 0);
+    shade.addColorStop(0, 'rgba(22,62,72,0)');
+    shade.addColorStop(0.3, `rgba(22,62,72,${alpha * 0.25})`);
+    shade.addColorStop(0.7, `rgba(22,62,72,${alpha * 0.25})`);
+    shade.addColorStop(1, 'rgba(22,62,72,0)');
+    ctx.fillStyle = shade;
+    ctx.beginPath(); ctx.moveTo(-span * 0.5, 0);
+    ctx.quadraticCurveTo(-span * 0.22, -height * (0.8 + agitation * 0.25), span * 0.05, -height * 0.45);
+    ctx.quadraticCurveTo(span * 0.3, height * 0.1, span * 0.5, 0);
+    ctx.quadraticCurveTo(span * 0.25, height * 0.8, span * 0.05, height * 0.65);
+    ctx.quadraticCurveTo(-span * 0.25, height * 0.2, -span * 0.5, 0); ctx.fill();
+    const light = ctx.createLinearGradient(-span / 2, 0, span / 2, 0);
+    light.addColorStop(0, withAlpha(color, 0));
+    light.addColorStop(0.3, withAlpha(color, alpha * 0.98));
+    light.addColorStop(0.7, withAlpha(color, alpha * 0.98));
+    light.addColorStop(1, withAlpha(color, 0));
+    ctx.strokeStyle = light;
+    ctx.lineWidth = strokes.edge;
+    ctx.beginPath(); ctx.moveTo(-span * 0.5, -height * 0.05);
+    ctx.quadraticCurveTo(-span * 0.22, -height * (0.8 + agitation * 0.25), span * 0.05, -height * 0.45);
+    ctx.quadraticCurveTo(span * 0.3, height * 0.1, span * 0.5, 0); ctx.stroke();
+    // A narrow intermittent specular glint sits on the crest, rather than
+    // painting the whole wave white. Its shimmer remains exactly loopable.
+    const gleam = (0.35 + 0.65 * (0.5 + 0.5 * Math.sin(TAU * (t * 2 + pr(d.seed, i, 937))))) * alpha;
+    const shine = ctx.createLinearGradient(-span * 0.3, 0, span * 0.22, 0);
+    shine.addColorStop(0, 'rgba(255,255,255,0)');
+    shine.addColorStop(0.48, `rgba(255,255,255,${gleam * 0.8})`);
+    shine.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.strokeStyle = shine;
+    ctx.lineWidth = strokes.glint;
+    ctx.beginPath(); ctx.moveTo(-span * 0.5, -height * 0.05);
+    ctx.quadraticCurveTo(-span * 0.22, -height * (0.8 + agitation * 0.25), span * 0.05, -height * 0.45);
+    ctx.quadraticCurveTo(span * 0.3, height * 0.1, span * 0.5, 0); ctx.stroke();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
 export const EFFECTS: EffectDef[] = [
+  {
+    // Keep the old ID so water overlays already saved in projects become lakes.
+    id: 'gentle-water-waves', name: 'Rain Ripples', family: 'natural', bounded: true,
+    waterDistortion: 'lake', waterShape: true, defaultLoop: 12, blend: 'source-over',
+    description: 'Dense expanding raindrop ripples on the water. Drag the eight round points to fit the lake; combine with rain for a rainy scene.',
+    params: [
+      R('strength', 'Ripple strength', 0, 1, 0.01, 0.42, '', 'Lower for calmer water; zero hides the effect.'),
+      R('density', 'Ripple density', 3, 30, 1, 9, '', 'Increase for heavier rain.'),
+      R('length', 'Ripple size', 0.4, 2, 0.05, 1, 'x'),
+      R('rate', 'Ripple speed', 1, 4, 1, 2, ' cycles'),
+      C('color', 'Highlight colour', '#d9edf0'),
+    ],
+    draw(ctx, d) {
+      const strength = clamp(num(d.params, 'strength', 0.42), 0, 1);
+      if (strength <= 0) return;
+      const points = readWaterShape(d.params.waterShape);
+      const count = rainRippleCount(num(d.params, 'density', 9));
+      const length = clamp(num(d.params, 'length', 1), 0.4, 2);
+      const rate = Math.round(clamp(num(d.params, 'rate', 2), 1, 4));
+      const color = str(d.params, 'color', '#d9edf0');
+      ctx.save();
+      traceWaterShape(ctx, points, d.w, d.h);
+      ctx.clip('evenodd');
+      for (let i = 0; i < count; i++) {
+        const p = frac(d.u * rate + pr(d.seed, i, 901));
+        const life = Math.sin(Math.PI * p);
+        const x = d.w * (0.04 + pr(d.seed, i, 907) * 0.92);
+        const y = d.h * (0.04 + pr(d.seed, i, 911) * 0.92);
+        const alpha = strength * life * waterShapeFeather(x, y, d.w, d.h, points);
+        if (alpha < 0.005) continue;
+        const rx = d.w * (0.004 + p * 0.032) * length;
+        const ry = d.h * (0.003 + p * 0.022) * length;
+        ctx.strokeStyle = withAlpha(color, alpha * 0.72);
+        ctx.lineWidth = Math.max(0.8 / Math.max(d.scale, 0.1), d.h * 0.009);
+        ctx.beginPath();
+        ctx.ellipse(x, y, rx, ry, 0, 0, TAU);
+        ctx.stroke();
+        if (p < 0.28) {
+          // A brief bright impact, followed by a second, smaller expanding ring.
+          ctx.fillStyle = withAlpha(color, strength * (1 - p / 0.28) * 0.75 * waterShapeFeather(x, y, d.w, d.h, points));
+          ctx.beginPath(); ctx.ellipse(x, y, Math.max(0.8 / d.scale, d.w * 0.0025), Math.max(0.6 / d.scale, d.h * 0.004), 0, 0, TAU); ctx.fill();
+        }
+        if (p > 0.22) {
+          ctx.strokeStyle = withAlpha(color, alpha * 0.42);
+          ctx.beginPath(); ctx.ellipse(x, y, rx * 0.62, ry * 0.62, 0, 0, TAU); ctx.stroke();
+        }
+      }
+      ctx.restore();
+    },
+  },
+  {
+    id: 'lake-water-waves', name: 'Lake Waves', family: 'natural', bounded: true,
+    waterDistortion: 'lake-waves', waterShape: true, defaultLoop: 12, blend: 'source-over',
+    description: 'Small lake waves sway sideways with a gentle rise and fall, without raindrop rings. Drag the eight round points to fit the water.',
+    params: [
+      R('strength', 'Wave strength', 0, 1, 0.01, 0.55, '', 'Lower for calmer water; zero hides the effect.'),
+      R('density', 'Wave count', 12, 96, 1, 56),
+      R('length', 'Wave length', 0.4, 2, 0.05, 1, 'x'),
+      R('rate', 'Wave speed', 1, 4, 1, 2, ' cycles'),
+      C('color', 'Highlight colour', '#d9edf0'),
+    ],
+    draw(ctx, d) { drawChoppySurface(ctx, d, false); },
+  },
+  {
+    id: 'river-water-flow', name: 'River Flow', family: 'natural', bounded: true,
+    waterDistortion: 'river', waterShape: true, defaultLoop: 12, blend: 'source-over',
+    description: 'Side-swaying waves travel along the river in a chosen direction. Drag the eight round points to fit the river; rotate the area to follow its course.',
+    params: [
+      R('strength', 'Flow strength', 0, 1, 0.01, 0.60, '', 'Lower for gentler flow; zero hides the effect.'),
+      R('density', 'Wave count', 4, 100, 1, 52),
+      R('length', 'Wave length', 0.4, 2, 0.05, 1, 'x'),
+      R('rate', 'Flow speed', 1, 4, 1, 2, ' cycles'),
+      S('direction', 'Flow direction', 'right', [['right', 'Right'], ['left', 'Left'], ['down', 'Down'], ['up', 'Up']]),
+      C('color', 'Highlight colour', '#d9edf0'),
+    ],
+    draw(ctx, d) { drawChoppySurface(ctx, d, true); },
+  },
+
   {
     id: 'fairy-dust', name: 'Fairy Dust', family: 'magical', defaultLoop: 10, blend: 'lighter',
     description: 'Glowing motes that blow sideways, rise, scatter and vanish.',

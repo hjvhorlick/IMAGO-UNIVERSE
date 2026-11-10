@@ -133,7 +133,10 @@ export class PreviewRenderer {
     const avg = this.frameTimes.reduce((a, b) => a + b, 0) / this.frameTimes.length;
     this.stats.fps = avg > 0 ? Math.min(120, 1000 / Math.max(avg, 1000 / 60)) : 0;
     if (this.pendingLoads.size) {
-      void this.images.ensure(Array.from(this.pendingLoads)).then(() => this.invalidate());
+      // Only redraw when an image actually arrived: re-rendering on a failed
+      // or still-queued load would spin the render loop against nothing.
+      void this.images.ensure(Array.from(this.pendingLoads))
+        .then((loaded) => { if (loaded > 0) this.invalidate(); });
     }
   }
 

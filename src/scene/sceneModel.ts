@@ -57,6 +57,13 @@ export function createAssetNode(
     width = meta.width * cover;
     height = meta.height * cover;
     x = cw / 2; y = ch / 2;
+  } else if (meta.rig?.type === 'flying-flock') {
+    const depthScale = lerp(0.62, 1.25, clamp(depth, 0, 1));
+    height = ch * meta.defaultScale * depthScale * (opts.scale ?? 1);
+    // The box is the flock's flight path, not just a stationary cluster.
+    // Extend it slightly beyond both sides so birds enter and leave off-screen.
+    width = cw * 1.18 * (opts.scale ?? 1);
+    x = opts.x ?? cw * 0.5; y = opts.y ?? ch * 0.19;
   } else if (meta.rig?.type === 'window-overlay') {
     // A room is a full-frame view, not a ground-level prop. Cover the canvas
     // so the outdoor world appears only through its transparent window.
@@ -90,15 +97,17 @@ function defaultAnimationFor(meta: AssetMeta): SceneNode['animation'] {
   const first = meta.animations[0] as AnimationType | undefined;
   if (!first) return null;
   const a = makeAnimation(first, Math.floor(Math.random() * 1e6));
-  // Waterfalls are inherently in motion, so they arrive flowing right out of
-  // the library; still objects (trees, plants) stay static until opted in.
+  // Waterfalls start flowing; other artwork starts still unless its rig
+  // explicitly opts in to autoplay (for example a gentle water surface).
   if (first === 'waterfall-flow') {
     a.enabled = true;
     a.amplitude = 0.85;
     a.turbulence = 0.7;
   } else {
     a.enabled = meta.rig?.autoplay === true;
+    if (a.enabled && meta.rig?.type === 'flying-flock') { a.amplitude = 0.9; a.loop = 24; }
     if (a.enabled && (first === 'hearth-fire' || first === 'coffee-steam')) a.amplitude = 0.8;
+    if (a.enabled && (first === 'water-flow' || first === 'water-shimmer')) a.amplitude = 0.22;
   }
   return a;
 }

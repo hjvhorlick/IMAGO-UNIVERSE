@@ -35,6 +35,38 @@ The app opens empty with the **world picker** showing. A world is a background t
 autumn) change the palette within that world. Choosing a world puts only its background in the
 scene; you add everything else yourself. The "Demo" starting point still builds the composed sample.
 
+### Flying bird flock
+
+Find **Songbird Flock** in **Layer 2 → Artwork → Creatures**. Newly placed flocks
+start high in the sky as a loose clustered group of 18 level, forward-facing
+birds with deliberately uneven spacing. Like real songbirds, each cruises on
+wings held out level with its side, breaking into brief flap bursts on its own
+random sequence - some birds beating while others glide in any given frame -
+and keeps its
+own slight speed, so birds overtake each other and the group breathes. The flock
+makes a slow, unhurried crossing of its sky area — about twenty-four seconds
+there and back — riding further away and closer again, leaving the frame on the
+long leg and coming back, looping seamlessly. Move, resize or flip
+the flock as a single object — the flight area follows the node bounds. Use
+Animation to adjust or turn off its motion. In an older project where the flock
+was placed while animation was off, enable **Wing flutter** to see the glide,
+the flap bursts and the crossing flight.
+
+### Gentle water movement
+
+In **Layer 4 → Atmosphere → Natural**, choose **Rain Ripples** for heavy, densely overlapping raindrop impacts,
+**Lake Waves** for waves that sway sideways with a slight rise and fall, or **River Flow** for the same waves travelling in a chosen direction with reflective crests. You can
+combine Rain Ripples with the Rain effect. Select a water effect and drag its **eight round points**
+to trace the water; the square handles resize the whole area. Move points outside the frame to extend
+it, or duplicate an effect for separate areas. In Animation, adjust strength, size and speed. River Flow
+can travel left, right, up or down; rotate the area to follow the river's course.
+
+These effects animate the image beneath them and add moving wave highlights and shadows. River waves travel downstream while the reflected image moves only slightly, mostly up and down rather than sideways. They do not automatically
+detect shorelines, so trace only the water and keep the effect above its artwork in the layer order.
+The Clearwater **Clear Water Surface** and **Shallow Ripples and Caustics** artwork also starts with
+gentle motion. Other water artwork can use its recommended **Water shimmer** or **Flowing water**
+technique. Press Play to see motion in the preview.
+
 ---
 
 ## The four layers
@@ -70,7 +102,14 @@ breathing, swimming or fluttering motion.
 frozen lake and an icicle pavilion — rather than another recolouring of the fantasy plates.
 **Clearwater** is a fifth, ultra-realistic photographic look built around water: refraction, caustics on
 the bed, and a **sparkle** animation that scatters specular glints which wink in and out across wet
-surfaces. A photographic **Clearwater Falls** pours over a mossy cliff: the painted water itself is
+surfaces. It also ships ten photographic scene backgrounds for meditation and open-air worlds:
+**Zen Pond**, **Misty Dawn Lake**, **Bamboo Stream**, **Zen Garden**, **Wildflower Meadow**,
+**Lavender Fields**, **Creek Meadow**, **Granite Tarn**, **Rocky Coast Cove** and **Still Forest
+Pool**. Each starts animating as soon as it is placed, and each moves only where nature would:
+lakes, pools and the sea carry small travelling shimmer waves inside a rigged band; the bamboo
+stream and the meadow creek use a directional flow that runs downstream; the two meadows get a
+gentle breeze limited to the grass and flower band. Sky, rock and raked gravel never move, and
+every scene loops seamlessly. A photographic **Clearwater Falls** pours over a mossy cliff: the painted water itself is
 lifted onto its own layer and pushed down the cascades while the rock stays still, with spray,
 hovering mist and plunge-pool ripples. It ships five photographic rooms — modern Japanese and open-plan, in wood and stone, with
 floor-to-roof glass that keys out into a real opening — each with a fireplace whose fire is optional,

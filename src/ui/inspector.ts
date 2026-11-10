@@ -270,7 +270,7 @@ export class Inspector {
         }
       }, v ? 'Enable animation' : 'Disable animation');
       this.render();
-    }, 'Objects are placed static; switch motion on when you want it.'));
+    }, 'Most objects start still. Switch motion on or off here; some water features start gently animated.'));
 
     head.appendChild(selectField('Technique', anim.type,
       available.map((t) => ({ value: t, label: ANIMATION_LABEL[t] + (recommended.includes(t) ? ' (recommended)' : '') })),
@@ -374,7 +374,7 @@ export class Inspector {
 
     const area = this.section('Area & placement', '<span class="field-value">distribution</span>');
     area.appendChild(el(`<div class="field-hint" style="margin-bottom:8px">
-      The effect lives inside this rectangle. Resize or move it to control where particles appear.
+      ${def?.waterShape ? 'Drag the eight round points to follow the water edge. Use square handles to resize the whole area. Duplicate for separate areas.' : def?.bounded ? 'Move and resize the overlay to fit the water. Duplicate it for separate areas.' : 'The effect lives inside this rectangle. Resize or move it to control where particles appear.'}
     </div>`));
     const g = el(`<div class="grid-2"></div>`);
     g.append(
@@ -384,6 +384,11 @@ export class Inspector {
       numberField('Height', Math.round(node.height), (v) => this.update(node, (n) => { n.height = Math.max(20, v); }, 'Resize effect'), { min: 20 }),
     );
     area.appendChild(g);
+    if (def?.waterShape) {
+      const resetShape = el(`<button class="btn small block" style="margin-top:6px">Reset water shape</button>`);
+      on(resetShape, 'click', () => this.store.mutate(() => { delete inst.params.waterShape; }, 'Reset water shape'));
+      area.appendChild(resetShape);
+    }
     this.slider(area, node, 'Rotation', 'rotation', -180, 180, 0.5, { unit: 'deg' });
     this.slider(area, node, 'Opacity', 'opacity', 0, 1, 0.01, { format: (v) => `${Math.round(v * 100)}%` });
     area.appendChild(selectField('Blending', node.blend === 'source-over' ? (def?.blend ?? 'source-over') : node.blend,
@@ -435,7 +440,7 @@ export class Inspector {
     const l = this.section('Loop & timing');
     l.appendChild(rangeField({
       label: 'Cycle length', value: inst.loop, min: 1, max: 60, step: 0.5, unit: 's',
-      hint: 'Particles complete whole lifetimes inside this window, so the effect re-enters seamlessly.',
+      hint: def.waterShape ? 'The water motion repeats seamlessly over this cycle.' : 'Particles complete whole lifetimes inside this window, so the effect re-enters seamlessly.',
       onCommit: () => this.store.pushHistory('Change effect cycle'),
       onInput: (v) => { inst.loop = v; this.store.mutate(() => {}); },
     }));
@@ -496,9 +501,9 @@ export function makeEffectNode(effectId: string, scene: { canvas: { width: numbe
   const ornamentSize = Math.min(scene.canvas.width, scene.canvas.height) * 0.55;
   return {
     id: uid('fx'), kind: 'effect', layer: 'atmosphere', name: def.name,
-    x: scene.canvas.width / 2, y: scene.canvas.height / 2,
-    width: def.family === 'spiritual' ? ornamentSize : scene.canvas.width,
-    height: def.family === 'spiritual' ? ornamentSize : scene.canvas.height,
+    x: scene.canvas.width / 2, y: def.bounded ? scene.canvas.height * 0.68 : scene.canvas.height / 2,
+    width: def.family === 'spiritual' ? ornamentSize : def.bounded ? scene.canvas.width * 0.5 : scene.canvas.width,
+    height: def.family === 'spiritual' ? ornamentSize : def.bounded ? scene.canvas.height * 0.22 : scene.canvas.height,
     rotation: 0, flipX: false, opacity: 1, visible: true, locked: false,
     order, depth: 1,
     crop: { x: 0, y: 0, w: 1, h: 1 },
