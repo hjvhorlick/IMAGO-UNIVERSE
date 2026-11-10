@@ -110,8 +110,10 @@ lakes, pools and the sea carry small travelling shimmer waves inside a rigged ba
 stream and the meadow creek use a directional flow that runs downstream; the two meadows get a
 gentle breeze limited to the grass and flower band. Sky, rock and raked gravel never move, and
 every scene loops seamlessly. Photographic **grass and flower cutouts** — meadow tufts, wild and
-feather grasses, fescue, sedge, dew blades, poppies and more to come — place into any look as
-detailed foreground plants. Each is keyed off its studio backdrop and rigged with a calm
+feather grasses, fescue, sedge, dew blades, and wildflower clumps of poppies, cornflowers,
+lavender, bluebells, buttercups, daisies, thistles, yarrow, clover, foxglove and chamomile —
+place into any look as detailed foreground plants, grown as irregular field clumps with a planted
+soil base so they sit naturally in a scene. Each is keyed off its studio backdrop and rigged with a calm
 **grass-wind** sway: one slow bending wave that lags with height, so tips travel a few percent of
 the width while the base stays planted. They sway; they never wobble. A photographic **Clearwater Falls** pours over a mossy cliff: the painted water itself is
 lifted onto its own layer and pushed down the cascades while the rock stays still, with spray,

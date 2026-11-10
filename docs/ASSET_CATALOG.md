@@ -12,7 +12,7 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | Enchanted Realms (`enchanted`) | 10 | 25 | 54 | 89 |
 | Moonlit Reverie (`moonlit`) | 9 | 23 | 48 | 80 |
 | Harvest Season (`autumn`) | 9 | 24 | 50 | 83 |
-| Clearwater (`realistic`) | 12 | 9 | 25 | 46 |
+| Clearwater (`realistic`) | 12 | 9 | 35 | 56 |
 | Frostfall (`winter`) | 2 | 3 | 24 | 29 |
 
 ## Enchanted Realms (`enchanted`)
@@ -351,7 +351,7 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/realistic/middle/thumbs/water-rocks.webp" width="96" alt="Rocks in Clear Water"> | Rocks in Clear Water | rocks | painted | 1332×675 | [`realistic/middle/water-rocks.webp`](../public/library/realistic/middle/water-rocks.webp) |
 | <img src="../public/library/realistic/middle/thumbs/waterfall.webp" width="96" alt="Clearwater Falls"> | Clearwater Falls | water | painted | 925×646 | [`realistic/middle/waterfall.webp`](../public/library/realistic/middle/waterfall.webp) |
 
-### Foreground (25)
+### Foreground (35)
 
 | Preview | Name | Category | Origin | Size | File |
 | --- | --- | --- | --- | ---: | --- |
@@ -376,6 +376,16 @@ The same layout exists on disk as `public/library/<style>/<layer>/`.
 | <img src="../public/library/realistic/foreground/thumbs/dew-grass-blades.webp" width="96" alt="Dew Grass Blades"> | Dew Grass Blades | plants | generated | 1352×724 | [`realistic/foreground/dew-grass-blades.webp`](../public/library/realistic/foreground/dew-grass-blades.webp) |
 | <img src="../public/library/realistic/foreground/thumbs/wheat-grass-spikes.webp" width="96" alt="Wheat Grass Spikes"> | Wheat Grass Spikes | plants | generated | 1355×709 | [`realistic/foreground/wheat-grass-spikes.webp`](../public/library/realistic/foreground/wheat-grass-spikes.webp) |
 | <img src="../public/library/realistic/foreground/thumbs/red-poppy-cluster.webp" width="96" alt="Red Poppy Cluster"> | Red Poppy Cluster | plants | generated | 1048×730 | [`realistic/foreground/red-poppy-cluster.webp`](../public/library/realistic/foreground/red-poppy-cluster.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/cornflower-cluster.webp" width="96" alt="Cornflower Cluster"> | Cornflower Cluster | plants | generated | 919×735 | [`realistic/foreground/cornflower-cluster.webp`](../public/library/realistic/foreground/cornflower-cluster.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/lavender-sprigs.webp" width="96" alt="Lavender Sprigs"> | Lavender Sprigs | plants | generated | 1094×730 | [`realistic/foreground/lavender-sprigs.webp`](../public/library/realistic/foreground/lavender-sprigs.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/bluebell-cluster.webp" width="96" alt="Bluebell Cluster"> | Bluebell Cluster | plants | generated | 1289×705 | [`realistic/foreground/bluebell-cluster.webp`](../public/library/realistic/foreground/bluebell-cluster.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/buttercup-cluster.webp" width="96" alt="Buttercup Cluster"> | Buttercup Cluster | plants | generated | 1357×730 | [`realistic/foreground/buttercup-cluster.webp`](../public/library/realistic/foreground/buttercup-cluster.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/wild-daisy-cluster.webp" width="96" alt="Wild Daisy Cluster"> | Wild Daisy Cluster | plants | generated | 896×728 | [`realistic/foreground/wild-daisy-cluster.webp`](../public/library/realistic/foreground/wild-daisy-cluster.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/purple-thistle-heads.webp" width="96" alt="Purple Thistle Heads"> | Purple Thistle Heads | plants | generated | 1367×743 | [`realistic/foreground/purple-thistle-heads.webp`](../public/library/realistic/foreground/purple-thistle-heads.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/pink-yarrow-cluster.webp" width="96" alt="Pink Yarrow Cluster"> | Pink Yarrow Cluster | plants | generated | 1347×708 | [`realistic/foreground/pink-yarrow-cluster.webp`](../public/library/realistic/foreground/pink-yarrow-cluster.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/red-clover-heads.webp" width="96" alt="Red Clover Heads"> | Red Clover Heads | plants | generated | 1287×699 | [`realistic/foreground/red-clover-heads.webp`](../public/library/realistic/foreground/red-clover-heads.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/wild-foxglove-spike.webp" width="96" alt="Wild Foxglove Spike"> | Wild Foxglove Spike | plants | generated | 947×748 | [`realistic/foreground/wild-foxglove-spike.webp`](../public/library/realistic/foreground/wild-foxglove-spike.webp) |
+| <img src="../public/library/realistic/foreground/thumbs/chamomile-cluster.webp" width="96" alt="Chamomile Cluster"> | Chamomile Cluster | plants | generated | 1333×716 | [`realistic/foreground/chamomile-cluster.webp`](../public/library/realistic/foreground/chamomile-cluster.webp) |
 | <img src="../public/library/realistic/foreground/thumbs/river-stones.webp" width="96" alt="Wet River Stones"> | Wet River Stones | rocks | painted | 1197×676 | [`realistic/foreground/river-stones.webp`](../public/library/realistic/foreground/river-stones.webp) |
 | <img src="../public/library/realistic/foreground/thumbs/water-surface.webp" width="96" alt="Clear Water Surface"> | Clear Water Surface | water | painted | 1408×768 | [`realistic/foreground/water-surface.webp`](../public/library/realistic/foreground/water-surface.webp) |
 | <img src="../public/library/realistic/foreground/thumbs/shallow-ripples.webp" width="96" alt="Shallow Ripples and Caustics"> | Shallow Ripples and Caustics | water | painted | 1408×768 | [`realistic/foreground/shallow-ripples.webp`](../public/library/realistic/foreground/shallow-ripples.webp) |

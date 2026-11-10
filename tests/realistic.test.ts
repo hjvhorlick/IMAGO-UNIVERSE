@@ -487,7 +487,10 @@ describe('the ten realistic scene backgrounds', () => {
 describe('the realistic grass and flower cutouts', () => {
   const FLORA = ['meadow-grass-tuft', 'tall-wild-grass', 'feather-grass-plumes', 'golden-oat-spikes',
     'bronze-sedge-tuft', 'blue-fescue-mound', 'fountain-grass-plumes', 'dew-grass-blades',
-    'wheat-grass-spikes', 'red-poppy-cluster'];
+    'wheat-grass-spikes', 'red-poppy-cluster',
+    'cornflower-cluster', 'lavender-sprigs', 'bluebell-cluster', 'buttercup-cluster',
+    'wild-daisy-cluster', 'purple-thistle-heads', 'pink-yarrow-cluster', 'red-clover-heads',
+    'wild-foxglove-spike', 'chamomile-cluster'];
 
   it('ships keyed plant cutouts rigged for a calm sway', () => {
     const lib = library();

@@ -17674,6 +17674,606 @@
    "variants": [],
    "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
    "bytes": 555344
+  },
+  {
+   "id": "realistic.foreground.cornflower-cluster",
+   "name": "Cornflower Cluster",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "cornflower",
+    "blue",
+    "frilly",
+    "wildflower",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/cornflower-cluster.webp",
+   "thumb": "realistic/foreground/thumbs/cornflower-cluster.webp",
+   "format": "image/webp",
+   "width": 919,
+   "height": 735,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707050",
+    "#7070d0",
+    "#5050b0",
+    "#707070",
+    "#909070"
+   ],
+   "defaultScale": 0.28,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.05,
+    "bend": 2.2,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 541408
+  },
+  {
+   "id": "realistic.foreground.lavender-sprigs",
+   "name": "Lavender Sprigs",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "garden",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "lavender",
+    "violet",
+    "spikes",
+    "herb",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/lavender-sprigs.webp",
+   "thumb": "realistic/foreground/thumbs/lavender-sprigs.webp",
+   "format": "image/webp",
+   "width": 1094,
+   "height": 730,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909070",
+    "#707050",
+    "#709050",
+    "#709070",
+    "#101010"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.045,
+    "bend": 2.0,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 618780
+  },
+  {
+   "id": "realistic.foreground.bluebell-cluster",
+   "name": "Bluebell Cluster",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "woodland",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "bluebell",
+    "bells",
+    "violet-blue",
+    "spring",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/bluebell-cluster.webp",
+   "thumb": "realistic/foreground/thumbs/bluebell-cluster.webp",
+   "format": "image/webp",
+   "width": 1289,
+   "height": 705,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#507030",
+    "#507010",
+    "#303030",
+    "#707050"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.05,
+    "bend": 2.1,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 670814
+  },
+  {
+   "id": "realistic.foreground.buttercup-cluster",
+   "name": "Buttercup Cluster",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "buttercup",
+    "yellow",
+    "glossy",
+    "wildflower",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/buttercup-cluster.webp",
+   "thumb": "realistic/foreground/thumbs/buttercup-cluster.webp",
+   "format": "image/webp",
+   "width": 1357,
+   "height": 730,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0d010",
+    "#507030",
+    "#505030",
+    "#707050",
+    "#305010"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.05,
+    "bend": 2.2,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 816668
+  },
+  {
+   "id": "realistic.foreground.wild-daisy-cluster",
+   "name": "Wild Daisy Cluster",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "daisy",
+    "white",
+    "yellow centre",
+    "wildflower",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/wild-daisy-cluster.webp",
+   "thumb": "realistic/foreground/thumbs/wild-daisy-cluster.webp",
+   "format": "image/webp",
+   "width": 896,
+   "height": 728,
+   "alpha": true,
+   "depth": 0.92,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#f0f0f0",
+    "#505030",
+    "#303010",
+    "#507030",
+    "#707050"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.045,
+    "bend": 2.3,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 536590
+  },
+  {
+   "id": "realistic.foreground.purple-thistle-heads",
+   "name": "Purple Thistle Heads",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "thistle",
+    "purple",
+    "spiny",
+    "wildflower",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/purple-thistle-heads.webp",
+   "thumb": "realistic/foreground/thumbs/purple-thistle-heads.webp",
+   "format": "image/webp",
+   "width": 1367,
+   "height": 743,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#707050",
+    "#505030",
+    "#707070",
+    "#303030",
+    "#505050"
+   ],
+   "defaultScale": 0.28,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.04,
+    "bend": 2.2,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 789200
+  },
+  {
+   "id": "realistic.foreground.pink-yarrow-cluster",
+   "name": "Pink Yarrow Cluster",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "yarrow",
+    "pink",
+    "umbel",
+    "wildflower",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/pink-yarrow-cluster.webp",
+   "thumb": "realistic/foreground/thumbs/pink-yarrow-cluster.webp",
+   "format": "image/webp",
+   "width": 1347,
+   "height": 708,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507030",
+    "#505030",
+    "#305010",
+    "#305030",
+    "#303010"
+   ],
+   "defaultScale": 0.27,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.05,
+    "bend": 2.2,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 845310
+  },
+  {
+   "id": "realistic.foreground.red-clover-heads",
+   "name": "Red Clover Heads",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "clover",
+    "crimson",
+    "globe",
+    "wildflower",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/red-clover-heads.webp",
+   "thumb": "realistic/foreground/thumbs/red-clover-heads.webp",
+   "format": "image/webp",
+   "width": 1287,
+   "height": 699,
+   "alpha": true,
+   "depth": 0.92,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507030",
+    "#505030",
+    "#709050",
+    "#303010",
+    "#509050"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.04,
+    "bend": 2.4,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 545996
+  },
+  {
+   "id": "realistic.foreground.wild-foxglove-spike",
+   "name": "Wild Foxglove Spike",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "woodland",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "foxglove",
+    "bells",
+    "pink-purple",
+    "spike",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/wild-foxglove-spike.webp",
+   "thumb": "realistic/foreground/thumbs/wild-foxglove-spike.webp",
+   "format": "image/webp",
+   "width": 947,
+   "height": 748,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#90b070",
+    "#709050",
+    "#505030",
+    "#90b090",
+    "#905070"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.045,
+    "bend": 2.0,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 578730
+  },
+  {
+   "id": "realistic.foreground.chamomile-cluster",
+   "name": "Chamomile Cluster",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "chamomile",
+    "white",
+    "feathery",
+    "herb",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/chamomile-cluster.webp",
+   "thumb": "realistic/foreground/thumbs/chamomile-cluster.webp",
+   "format": "image/webp",
+   "width": 1333,
+   "height": 716,
+   "alpha": true,
+   "depth": 0.91,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507030",
+    "#707050",
+    "#505030",
+    "#707030",
+    "#f0f0f0"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.05,
+    "bend": 2.2,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 778326
   }
  ]
 }
