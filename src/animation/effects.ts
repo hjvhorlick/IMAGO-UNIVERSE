@@ -307,6 +307,297 @@ export const EFFECTS: EffectDef[] = [
   },
 
   {
+    id: 'pixie-swirls', name: 'Pixie Dust Swirls', family: 'magical', defaultLoop: 14, blend: 'lighter',
+    description: 'Strings of glitter whose heads trace looping twirls, each string a comet trail of motes along the path it just flew.',
+    params: [
+      R('strings', 'Glitter strings', 1, 12, 1, 4),
+      R('length', 'Motes per string', 8, 80, 1, 34),
+      R('twirls', 'Twirls per loop', 1, 6, 1, 3, ' cycles'),
+      R('radius', 'Twirl size', 0.04, 0.3, 0.01, 0.13, ' of area'),
+      R('drift', 'Drift', 0, 0.5, 0.01, 0.22, ' of area'),
+      R('size', 'Mote size', 0.2, 4, 0.05, 1, 'x'), GLOW,
+      R('twinkle', 'Twinkle rate', 1, 10, 1, 4, ' cycles'),
+      C('color', 'Colour', '#ffd9a0'), C('color2', 'Secondary colour', '#b8f0ff'),
+      T('trails', 'Connect the string', true),
+    ],
+    draw(ctx, d) {
+      const S = Math.round(num(d.params, 'strings', 4));
+      const L = Math.round(num(d.params, 'length', 34));
+      const twirls = Math.round(num(d.params, 'twirls', 3));
+      const drift = num(d.params, 'drift', 0.22);
+      const size = num(d.params, 'size', 1) * Math.min(d.w, d.h) * 0.005;
+      const glow = num(d.params, 'glow', 1.2);
+      const tw = Math.round(num(d.params, 'twinkle', 4));
+      const c1 = str(d.params, 'color', '#ffd9a0');
+      const c2 = str(d.params, 'color2', '#b8f0ff');
+      const trails = bool(d.params, 'trails', true);
+      // A string's head position at cycle time v: a closed drift Lissajous
+      // plus a breathing spiral, all at integer cycles so the loop closes.
+      const head = (i: number, v: number): [number, number] => {
+        // Low-discrepancy spacing keeps the strings spread over the frame
+        // for any seed; the per-string randoms only add a little jitter.
+        const ox = frac(0.21 + i * 0.618 + (pr(d.seed, i, 1) - 0.5) * 0.14);
+        const oy = frac(0.29 + i * 0.377 + (pr(d.seed, i, 2) - 0.5) * 0.14);
+        const ax = 1 + Math.floor(pr(d.seed, i, 3) * 2), ay = 1 + Math.floor(pr(d.seed, i, 4) * 2);
+        // Each string rides a closed orbit as well as a small Lissajous, so
+        // over a loop the twirls travel around the screen instead of spinning
+        // in one corner.
+        const orb = drift * (0.6 + 0.8 * pr(d.seed, i, 15));
+        const cx = ox + orb * Math.cos(TAU * (v + pr(d.seed, i, 16)))
+          + drift * 0.25 * Math.sin(TAU * (ax * v + pr(d.seed, i, 5)));
+        const cy = oy + orb * 0.8 * Math.sin(TAU * (v + pr(d.seed, i, 16)))
+          + drift * 0.2 * Math.sin(TAU * (ay * v + pr(d.seed, i, 6)));
+        const dir = pr(d.seed, i, 7) > 0.5 ? 1 : -1;
+        const th = TAU * (twirls * v + pr(d.seed, i, 8)) * dir;
+        const r0 = num(d.params, 'radius', 0.13) * (0.6 + 0.8 * pr(d.seed, i, 9));
+        const r = r0 * (0.35 + 0.65 * (0.5 + 0.5 * Math.sin(TAU * (2 * v + pr(d.seed, i, 10)))));
+        return [cx + r * Math.cos(th), cy + r * 0.7 * Math.sin(th)];
+      };
+      for (let i = 0; i < S; i++) {
+        const gap = 0.0035 + 0.004 * pr(d.seed, i, 11);
+        let prev: [number, number] | null = null;
+        for (let j = L - 1; j >= 0; j--) {
+          const [x, y] = head(i, d.u - j * gap);
+          const fade = Math.pow(1 - j / L, 1.4);
+          const twinkle = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(TAU * (tw * d.u + pr(d.seed, i * 97 + j, 12))));
+          const a = fade * twinkle;
+          const col = pr(d.seed, i * 97 + j, 13) > 0.7 ? c2 : c1;
+          const px = x * d.w, py = y * d.h;
+          if (trails && prev) {
+            ctx.strokeStyle = withAlpha(col, a * 0.3);
+            ctx.lineWidth = Math.max(0.6, size * 0.5 * fade);
+            ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(px, py); ctx.stroke();
+          }
+          glowDot(ctx, px, py, size * 3.6 * glow * (0.4 + fade), col, a * 0.55);
+          if (j === 0 || pr(d.seed, i * 97 + j, 14) > 0.86) sparkleStar(ctx, px, py, size * (0.9 + fade), col, a);
+          else coreDot(ctx, px, py, size * 0.5 * (0.4 + fade), '#ffffff', a * 0.9);
+          prev = [px, py];
+        }
+      }
+    },
+  },
+
+  {
+    id: 'glitter-streamers', name: 'Glitter Streamers', family: 'magical', defaultLoop: 12, blend: 'lighter',
+    description: 'Ribbons of glitter that flow across the scene in slow waves, beads of light strung along each stream.',
+    params: [
+      R('streamers', 'Streamers', 1, 8, 1, 3),
+      R('density', 'Beads per stream', 10, 160, 1, 70),
+      R('wave', 'Wave height', 0, 0.3, 0.005, 0.1, ' of area'),
+      R('waves', 'Waves across', 1, 6, 1, 3, ' cycles'),
+      R('flow', 'Flow speed', 1, 4, 1, 1, ' cycles'),
+      R('size', 'Bead size', 0.2, 4, 0.05, 1, 'x'), GLOW,
+      R('twinkle', 'Twinkle rate', 1, 10, 1, 5, ' cycles'),
+      C('color', 'Colour', '#ffe9c4'), C('color2', 'Secondary colour', '#a8dcff'),
+      T('ribbon', 'Show the ribbon', true),
+    ],
+    draw(ctx, d) {
+      const S = Math.round(num(d.params, 'streamers', 3));
+      const N = Math.round(num(d.params, 'density', 70));
+      const wave = num(d.params, 'wave', 0.1);
+      const waves = Math.round(num(d.params, 'waves', 3));
+      const flow = Math.round(num(d.params, 'flow', 1));
+      const size = num(d.params, 'size', 1) * Math.min(d.w, d.h) * 0.005;
+      const glow = num(d.params, 'glow', 1.2);
+      const tw = Math.round(num(d.params, 'twinkle', 5));
+      const c1 = str(d.params, 'color', '#ffe9c4');
+      const c2 = str(d.params, 'color2', '#a8dcff');
+      const ribbon = bool(d.params, 'ribbon', true);
+      for (let sIdx = 0; sIdx < S; sIdx++) {
+        const ys = (sIdx + 0.5) / S + (pr(d.seed, sIdx, 1) - 0.5) * 0.12;
+        const amp = wave * (0.6 + 0.8 * pr(d.seed, sIdx, 2));
+        const ph = pr(d.seed, sIdx, 3);
+        const dir = pr(d.seed, sIdx, 4) > 0.5 ? 1 : -1;
+        const yAt = (x: number, v: number) =>
+          ys + amp * Math.sin(TAU * (waves * x + flow * v + ph)) + amp * 0.3 * Math.sin(TAU * (2 * waves * x - flow * v + ph * 2));
+        if (ribbon) {
+          ctx.strokeStyle = withAlpha(c1, 0.1);
+          ctx.lineWidth = Math.max(0.8, size * 0.8);
+          ctx.beginPath();
+          for (let k = 0; k <= 48; k++) {
+            const x = k / 48;
+            const px = x * d.w, py = yAt(x, d.u) * d.h;
+            if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+        }
+        for (let k = 0; k < N; k++) {
+          const x = frac(k / N + pr(d.seed, sIdx * 131 + k, 5) * 0.015 + d.u * flow * dir);
+          const y = yAt(x, d.u) + (pr(d.seed, sIdx * 131 + k, 6) - 0.5) * 0.02;
+          const twinkle = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(TAU * (tw * d.u + pr(d.seed, sIdx * 131 + k, 7))));
+          const col = pr(d.seed, sIdx * 131 + k, 8) > 0.72 ? c2 : c1;
+          const r = size * (0.45 + pr(d.seed, sIdx * 131 + k, 9));
+          glowDot(ctx, x * d.w, y * d.h, r * 3.4 * glow, col, twinkle * 0.5);
+          if (pr(d.seed, sIdx * 131 + k, 10) > 0.9) sparkleStar(ctx, x * d.w, y * d.h, r, col, twinkle);
+          else coreDot(ctx, x * d.w, y * d.h, r * 0.55, '#ffffff', twinkle * 0.85);
+        }
+      }
+    },
+  },
+
+  {
+    id: 'fairy-rings', name: 'Fairy Ring Dance', family: 'magical', defaultLoop: 16, blend: 'lighter',
+    description: 'Tilted rings of glitter that spin and breathe, like dust dancing in a circle before it settles.',
+    params: [
+      R('rings', 'Rings', 1, 6, 1, 3),
+      R('motes', 'Motes per ring', 12, 120, 1, 48),
+      R('radius', 'Ring size', 0.05, 0.4, 0.01, 0.18, ' of area'),
+      R('spin', 'Spins per loop', 1, 4, 1, 2, ' cycles'),
+      R('pulse', 'Breathing', 0, 0.5, 0.01, 0.16),
+      R('size', 'Mote size', 0.2, 4, 0.05, 1, 'x'), GLOW,
+      R('twinkle', 'Twinkle rate', 1, 10, 1, 4, ' cycles'),
+      C('color', 'Colour', '#ffe3b0'), C('color2', 'Secondary colour', '#c9b6ff'),
+    ],
+    draw(ctx, d) {
+      const S = Math.round(num(d.params, 'rings', 3));
+      const M = Math.round(num(d.params, 'motes', 48));
+      const radius = num(d.params, 'radius', 0.18);
+      const spin = Math.round(num(d.params, 'spin', 2));
+      const pulse = num(d.params, 'pulse', 0.16);
+      const size = num(d.params, 'size', 1) * Math.min(d.w, d.h) * 0.005;
+      const glow = num(d.params, 'glow', 1.2);
+      const tw = Math.round(num(d.params, 'twinkle', 4));
+      const c1 = str(d.params, 'color', '#ffe3b0');
+      const c2 = str(d.params, 'color2', '#c9b6ff');
+      for (let rIdx = 0; rIdx < S; rIdx++) {
+        const ox = frac(0.24 + rIdx * 0.618 + (pr(d.seed, rIdx, 1) - 0.5) * 0.12);
+        const oy = frac(0.32 + rIdx * 0.377 + (pr(d.seed, rIdx, 2) - 0.5) * 0.12);
+        const cx = ox + 0.06 * Math.sin(TAU * (d.u + pr(d.seed, rIdx, 3)));
+        const cy = oy + 0.05 * Math.sin(TAU * (2 * d.u + pr(d.seed, rIdx, 4)));
+        const tilt = pr(d.seed, rIdx, 5) * Math.PI;
+        const squash = 0.35 + 0.4 * pr(d.seed, rIdx, 6);
+        const dir = pr(d.seed, rIdx, 7) > 0.5 ? 1 : -1;
+        const rr = radius * (0.7 + 0.6 * pr(d.seed, rIdx, 8)) * (1 + pulse * Math.sin(TAU * (2 * d.u + pr(d.seed, rIdx, 9))));
+        const ct = Math.cos(tilt), st = Math.sin(tilt);
+        for (let k = 0; k < M; k++) {
+          const ang = TAU * (k / M + spin * d.u * dir) + pr(d.seed, rIdx, 10);
+          const jitter = 1 + 0.12 * (pr(d.seed, rIdx * 211 + k, 11) - 0.5);
+          const ex = rr * jitter * Math.cos(ang), ey = rr * jitter * squash * Math.sin(ang);
+          const x = (cx + ex * ct - ey * st) * d.w;
+          const y = (cy + ex * st + ey * ct) * d.h;
+          const depth = 0.55 + 0.45 * Math.sin(ang);           // near side brighter
+          const twinkle = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(TAU * (tw * d.u + pr(d.seed, rIdx * 211 + k, 12))));
+          const a = depth * twinkle;
+          const col = pr(d.seed, rIdx * 211 + k, 13) > 0.7 ? c2 : c1;
+          glowDot(ctx, x, y, size * 3.2 * glow, col, a * 0.5);
+          if (k % 6 === 0) sparkleStar(ctx, x, y, size * 0.9, col, a);
+          else coreDot(ctx, x, y, size * 0.5, '#ffffff', a * 0.85);
+        }
+      }
+    },
+  },
+
+  {
+    id: 'dust-twirls', name: 'Twirling Dust Columns', family: 'magical', defaultLoop: 12, blend: 'lighter',
+    description: 'Little dust devils of glitter: corkscrew strings of motes climbing, twirling and fading overhead.',
+    params: [
+      R('columns', 'Columns', 1, 6, 1, 3),
+      R('motes', 'Motes per column', 20, 140, 1, 70),
+      R('twist', 'Helix turns', 1, 6, 1, 3, ' turns'),
+      R('spin', 'Spin speed', 1, 4, 1, 2, ' cycles'),
+      R('rise', 'Rise speed', 1, 3, 1, 1, ' cycles'),
+      R('radius', 'Helix width', 0.02, 0.15, 0.005, 0.07, ' of area'),
+      R('sway', 'Column sway', 0, 0.2, 0.005, 0.06, ' of area'),
+      R('size', 'Mote size', 0.2, 4, 0.05, 1, 'x'), GLOW,
+      C('color', 'Colour', '#ffdfae'), C('color2', 'Secondary colour', '#bff3e2'),
+    ],
+    draw(ctx, d) {
+      const Cn = Math.round(num(d.params, 'columns', 3));
+      const M = Math.round(num(d.params, 'motes', 70));
+      const twist = Math.round(num(d.params, 'twist', 3));
+      const spin = Math.round(num(d.params, 'spin', 2));
+      const rise = Math.round(num(d.params, 'rise', 1));
+      const radius = num(d.params, 'radius', 0.07);
+      const sway = num(d.params, 'sway', 0.06);
+      const size = num(d.params, 'size', 1) * Math.min(d.w, d.h) * 0.005;
+      const glow = num(d.params, 'glow', 1.2);
+      const c1 = str(d.params, 'color', '#ffdfae');
+      const c2 = str(d.params, 'color2', '#bff3e2');
+      for (let c = 0; c < Cn; c++) {
+        const bx = (c + 0.5) / Cn + (pr(d.seed, c, 1) - 0.5) * 0.18;
+        const dir = pr(d.seed, c, 2) > 0.5 ? 1 : -1;
+        const ph = pr(d.seed, c, 3);
+        for (let k = 0; k < M; k++) {
+          const p = frac(k / M + d.u * rise * dir + pr(d.seed, c * 173 + k, 4) * 0.01);
+          const a0 = envelope(p, 0.3, 0.3);
+          if (a0 <= 0.01) continue;
+          const y = 1.06 - p * 1.12;
+          const ang = TAU * (twist * p + spin * d.u * dir + ph);
+          const widen = 0.5 + 0.9 * p;                       // wider as it rises
+          const r = radius * widen * (0.6 + 0.7 * pr(d.seed, c * 173 + k, 5));
+          const xc = bx + sway * Math.sin(TAU * (d.u + ph)) + (p - 0.5) * sway * 1.5;
+          const depth = 0.5 + 0.5 * Math.sin(ang);
+          const x = (xc + r * Math.cos(ang)) * d.w;
+          const yy = (y + r * 0.25 * Math.sin(ang)) * d.h;
+          const a = a0 * (0.45 + 0.55 * depth);
+          const col = pr(d.seed, c * 173 + k, 6) > 0.75 ? c2 : c1;
+          glowDot(ctx, x, yy, size * 3 * glow * (0.5 + 0.5 * p), col, a * 0.5);
+          coreDot(ctx, x, yy, size * 0.5 * (0.5 + 0.5 * p), '#ffffff', a * 0.85);
+        }
+      }
+    },
+  },
+
+  {
+    id: 'wandering-motes', name: 'Wandering Stardust', family: 'magical', defaultLoop: 18, blend: 'lighter',
+    description: 'Loose glitter motes that wander the whole screen on curling paths, each twirling on its own small eddy.',
+    params: [
+      DENSITY,
+      R('wander', 'Wander range', 0.05, 0.5, 0.01, 0.22, ' of area'),
+      R('twirl', 'Twirl eddies', 0, 0.12, 0.005, 0.05, ' of area'),
+      R('speed', 'Wander speed', 1, 3, 1, 1, ' cycles'),
+      R('size', 'Mote size', 0.2, 4, 0.05, 1, 'x'), GLOW,
+      R('twinkle', 'Twinkle rate', 1, 10, 1, 4, ' cycles'),
+      C('color', 'Colour', '#fff2cf'), C('color2', 'Secondary colour', '#d4c2ff'),
+      T('trails', 'Motion trails', true),
+    ],
+    draw(ctx, d) {
+      const n = Math.round(num(d.params, 'density', 90));
+      const wander = num(d.params, 'wander', 0.22);
+      const epi = num(d.params, 'twirl', 0.05);
+      const speed = Math.round(num(d.params, 'speed', 1));
+      const size = num(d.params, 'size', 1) * Math.min(d.w, d.h) * 0.005;
+      const glow = num(d.params, 'glow', 1.2);
+      const tw = Math.round(num(d.params, 'twinkle', 4));
+      const c1 = str(d.params, 'color', '#fff2cf');
+      const c2 = str(d.params, 'color2', '#d4c2ff');
+      const trails = bool(d.params, 'trails', true);
+      const at = (i: number, v: number): [number, number] => {
+        const ox = 0.08 + 0.84 * pr(d.seed, i, 1), oy = 0.08 + 0.84 * pr(d.seed, i, 2);
+        const f1 = speed * (1 + Math.floor(pr(d.seed, i, 3) * 2));
+        const f2 = speed * (1 + Math.floor(pr(d.seed, i, 4) * 2));
+        const f3 = 3 + Math.floor(pr(d.seed, i, 5) * 3);
+        const a1 = wander * (0.4 + 0.8 * pr(d.seed, i, 6));
+        const a2 = wander * (0.4 + 0.8 * pr(d.seed, i, 7));
+        const e = epi * (0.5 + pr(d.seed, i, 8));
+        const th = TAU * (f3 * v + pr(d.seed, i, 9));
+        return [
+          ox + a1 * Math.sin(TAU * (f1 * v + pr(d.seed, i, 10))) + e * Math.cos(th),
+          oy + a2 * Math.sin(TAU * (f2 * v + pr(d.seed, i, 11))) + e * Math.sin(th),
+        ];
+      };
+      for (let i = 0; i < n; i++) {
+        const [x, y] = at(i, d.u);
+        const twinkle = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(TAU * (tw * d.u + pr(d.seed, i, 12))));
+        const col = pr(d.seed, i, 13) > 0.7 ? c2 : c1;
+        const r = size * (0.45 + pr(d.seed, i, 14));
+        if (trails) {
+          const [px, py] = at(i, d.u - 0.012);
+          const g = ctx.createLinearGradient(px * d.w, py * d.h, x * d.w, y * d.h);
+          g.addColorStop(0, withAlpha(col, 0));
+          g.addColorStop(1, withAlpha(col, twinkle * 0.3));
+          ctx.strokeStyle = g; ctx.lineWidth = r * 0.8; ctx.lineCap = 'round';
+          ctx.beginPath(); ctx.moveTo(px * d.w, py * d.h); ctx.lineTo(x * d.w, y * d.h); ctx.stroke();
+        }
+        glowDot(ctx, x * d.w, y * d.h, r * 3.4 * glow, col, twinkle * 0.5);
+        if (pr(d.seed, i, 15) > 0.9) sparkleStar(ctx, x * d.w, y * d.h, r, col, twinkle);
+        else coreDot(ctx, x * d.w, y * d.h, r * 0.55, '#ffffff', twinkle * 0.85);
+      }
+    },
+  },
+
+  {
     id: 'fireflies', name: 'Fireflies', family: 'natural', defaultLoop: 12, blend: 'lighter',
     description: 'Warm insects wandering on independent curved paths, blinking softly.',
     params: [
@@ -1584,6 +1875,8 @@ export const THEME_PRESETS: ThemePreset[] = [
       { id: 'mythic-emblem', params: { motif: 'fae-seal', color: '#edb9ff', color2: '#a9f7df' } },
       { id: 'wind-currents', params: { color: '#d4ffe7', opacity: 0.16, sway: 0.12 } },
       { id: 'sparkles', params: { density: 60 } },
+      { id: 'pixie-swirls', params: { strings: 5 } },
+      { id: 'wandering-motes', params: { density: 70 } },
     ],
   },
   {

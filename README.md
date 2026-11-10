@@ -84,7 +84,12 @@ Every scene is built from exactly four layers, painted back to front:
 cannot be duplicated. Every other element (trees, rocks, bushes, flowers, effects) can repeat as often as you need.
 
 Artwork is gated by the selected artistic style, including rooms on Layer 4. Incompatible artwork is
-not shown in the library, while effects remain available with every look.
+not shown in the library, while effects remain available with every look. Layer 4 also carries five
+pixie-dust glitter overlays — **Pixie Dust Swirls** (strings of glitter whose heads trace looping
+twirls), **Glitter Streamers** (beaded ribbons flowing in waves), **Fairy Ring Dance** (spinning,
+breathing rings of dust), **Twirling Dust Columns** (corkscrew dust devils) and **Wandering
+Stardust** (loose motes curling around the screen) — each fully loopable and editable in the
+inspector.
 
 ---
 
