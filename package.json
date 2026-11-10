@@ -1,7 +1,7 @@
 {
   "name": "imago-universe",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "Imago Universe - browser-based visual world building, environment composition and animation. Create worlds. Bring them to life.",
   "scripts": {

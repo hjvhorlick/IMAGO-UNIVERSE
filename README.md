@@ -1,4 +1,5 @@
 # Imago Universe
+[![CI](https://github.com/hjvhorlick/IMAGO-UNIVERSE/actions/workflows/ci.yml/badge.svg)](https://github.com/hjvhorlick/IMAGO-UNIVERSE/actions/workflows/ci.yml)
 
 **Create worlds. Bring them to life.**
 
@@ -95,7 +96,7 @@ inspector.
 
 ## What is implemented
 
-**Asset library** — 307 assets across 5 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
+**Asset library** — 347 assets across 5 styles, with fairy/Norse/Chinese/Japanese-inspired vistas,
 a celestial observatory, a moonlit waterside and a lotus sanctuary with animated water, a timber
 meditation pavilion and close-up lotus blossoms. Placeable Chinese-inspired moon gate, Japanese-inspired
 stone lantern and Norse-inspired dragon boat add garden and waterside details. A fairy mushroom cottage, Japanese-inspired garden bridge and Norse-inspired stone well are also separately placeable.
@@ -164,7 +165,7 @@ A tree is never rotated as a whole.
 honestly whether the scene returns *exactly* to its initial state. Video duration is completely
 decoupled from cycle length.
 
-**Effects** — 52 universal atmospheric effects in 7 families, plus 8 theme presets, including Norse,
+**Effects** — 60 universal atmospheric effects in 7 families, plus 8 theme presets, including Norse,
 Greek, Chinese-inspired fantasy, a Japanese moon garden, fairy tale, and a mythic zodiac. The new
 **Spiritual & Mystical Overlays** category offers 25 individually placeable vector ornaments across
 eight subcategories, with materials, movement, rotation, glow, particles and timing controls. Select
