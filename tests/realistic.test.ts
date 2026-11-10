@@ -483,3 +483,93 @@ describe('the ten realistic scene backgrounds', () => {
     expect(render(0).equals(render(3.3))).toBe(true);
   });
 });
+
+describe('the realistic grass and flower cutouts', () => {
+  const FLORA = ['meadow-grass-tuft', 'tall-wild-grass', 'feather-grass-plumes', 'golden-oat-spikes',
+    'bronze-sedge-tuft', 'blue-fescue-mound', 'fountain-grass-plumes', 'dew-grass-blades',
+    'wheat-grass-spikes', 'red-poppy-cluster'];
+
+  it('ships keyed plant cutouts rigged for a calm sway', () => {
+    const lib = library();
+    for (const id of FLORA) {
+      const meta = lib.get(`realistic.foreground.${id}`)!;
+      expect(meta, id).toBeDefined();
+      expect(meta.layer).toBe('foreground');
+      expect(meta.category).toBe('plants');
+      expect(meta.animations[0]).toBe('grass-wind');
+      expect(meta.rig.autoplay, `${id} sways as soon as it is placed`).toBe(true);
+      expect(typeof meta.rig.sway, `${id} uses the calm sway mode`).toBe('number');
+      expect(meta.rig.sway, `${id} moves only slightly`).toBeLessThan(0.1);
+      expect(fs.existsSync(path.join(ROOT, 'public/library', meta.file))).toBe(true);
+      expect(fs.existsSync(path.join(ROOT, 'public/library', meta.thumb))).toBe(true);
+    }
+  });
+
+  it('cuts every plant clean of its studio backdrop', async () => {
+    for (const id of FLORA) {
+      const meta = library().get(`realistic.foreground.${id}`)!;
+      const img = await loadImage(path.join(ROOT, 'public/library', meta.file));
+      const cv = createCanvas(img.width, img.height);
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const d = ctx.getImageData(0, 0, img.width, img.height).data;
+      const at = (x: number, y: number) => d[(y * img.width + x) * 4 + 3];
+      expect(at(0, 0), `${id} top-left`).toBe(0);
+      expect(at(img.width - 1, 0), `${id} top-right`).toBe(0);
+      expect(at(0, img.height - 1), `${id} bottom-left`).toBe(0);
+      expect(at(img.width - 1, img.height - 1), `${id} bottom-right`).toBe(0);
+      let solid = 0;
+      for (let i = 3; i < d.length; i += 16) if (d[i] > 128) solid++;
+      const cover = solid / (d.length / 16);
+      expect(cover, `${id} is a cutout, not a rectangle`).toBeGreaterThan(0.05);
+      expect(cover, `${id} keeps a real subject`).toBeLessThan(0.9);
+    }
+  });
+
+  it('sways from the base: planted feet, moving tips, exact loop', async () => {
+    for (const id of FLORA) {
+      const { node, render } = await stage(`realistic.foreground.${id}`);
+      expect(node.animation, `${id} autoplays`).not.toBeNull();
+      expect(node.animation!.enabled).toBe(true);
+      const loop = node.animation!.loop;
+      const a = render(0), b = render(loop / 2);
+      expect(a.equals(b), `${id} must move`).toBe(false);
+      expect(a.equals(render(loop)), `${id} must loop exactly`).toBe(true);
+      const base = Math.round(node.y + node.height / 2 - 0.03 * node.height);
+      const top = Math.round(node.y - node.height / 2 + 0.3 * node.height);
+      let baseMoved = 0, tipMoved = 0;
+      for (let y = 0; y < 260; y++) for (let x = 0; x < 360; x++) {
+        const i = (y * 360 + x) * 4;
+        const d = Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
+        if (d > 4) { if (y >= base) baseMoved++; else if (y < top) tipMoved++; }
+      }
+      expect(baseMoved, `${id}: the base stays planted`).toBe(0);
+      expect(tipMoved, `${id}: the tips sway`).toBeGreaterThan(200);
+    }
+  });
+
+  it('sways in one slow lateral wave - no wobble', async () => {
+    for (const id of FLORA) {
+      const { meta, scene, node, loops } = await stage(`realistic.foreground.${id}`);
+      const loop = node.animation!.loop;
+      const xs: number[] = [], ys: number[] = [];
+      for (let k = 0; k < 64; k++) {
+        const st = animationEngine.evaluate(scene, node, (k / 64) * loop, loops, meta, 'export', false);
+        const d = st.warp!.field(0.5, 0.05);
+        xs.push(d.dx); ys.push(d.dy);
+      }
+      const lo = Math.min(...xs), hi = Math.max(...xs), range = hi - lo, mid = (lo + hi) / 2;
+      expect(range, `${id} tips move`).toBeGreaterThan(2);
+      expect(range, `${id} stays slight`).toBeLessThanOrEqual(0.14 * node.width);
+      let crosses = 0, maxStep = 0;
+      for (let k = 1; k < 64; k++) {
+        if ((xs[k] - mid) * (xs[k - 1] - mid) < 0) crosses++;
+        maxStep = Math.max(maxStep, Math.abs(xs[k] - xs[k - 1]));
+      }
+      expect(crosses, `${id} one slow oscillation per loop`).toBeLessThanOrEqual(4);
+      expect(maxStep, `${id} no frame-to-frame jitter`).toBeLessThanOrEqual(0.2 * range);
+      const mean = (v: number[]) => v.reduce((s, x) => s + Math.abs(x), 0) / v.length;
+      expect(mean(ys), `${id} sways sideways, not vertically`).toBeLessThanOrEqual(0.2 * mean(xs));
+    }
+  });
+});

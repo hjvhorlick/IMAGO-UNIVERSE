@@ -17079,6 +17079,601 @@
    "variants": [],
    "notes": "A mirror-still woodland pool; only faint ripples cross the reflections.",
    "bytes": 523892
+  },
+  {
+   "id": "realistic.foreground.meadow-grass-tuft",
+   "name": "Meadow Grass Tuft",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "photoreal"
+   ],
+   "tags": [
+    "grass",
+    "tuft",
+    "blades",
+    "meadow",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/meadow-grass-tuft.webp",
+   "thumb": "realistic/foreground/thumbs/meadow-grass-tuft.webp",
+   "format": "image/webp",
+   "width": 1211,
+   "height": 696,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#305010",
+    "#507030",
+    "#709050",
+    "#509030",
+    "#909070"
+   ],
+   "defaultScale": 0.26,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.055,
+    "bend": 1.7,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 637416
+  },
+  {
+   "id": "realistic.foreground.tall-wild-grass",
+   "name": "Tall Wild Grass",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "photoreal"
+   ],
+   "tags": [
+    "grass",
+    "tall",
+    "seed heads",
+    "arching",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/tall-wild-grass.webp",
+   "thumb": "realistic/foreground/thumbs/tall-wild-grass.webp",
+   "format": "image/webp",
+   "width": 1210,
+   "height": 678,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#505030",
+    "#507030",
+    "#707050",
+    "#305030",
+    "#b09090"
+   ],
+   "defaultScale": 0.32,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.07,
+    "bend": 1.5,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 723222
+  },
+  {
+   "id": "realistic.foreground.feather-grass-plumes",
+   "name": "Feather Grass Plumes",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "photoreal"
+   ],
+   "tags": [
+    "grass",
+    "plumes",
+    "silvery",
+    "stipa",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/feather-grass-plumes.webp",
+   "thumb": "realistic/foreground/thumbs/feather-grass-plumes.webp",
+   "format": "image/webp",
+   "width": 1064,
+   "height": 705,
+   "alpha": true,
+   "depth": 0.86,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d0d0d0",
+    "#d0b0b0",
+    "#b0b090",
+    "#d0b0d0",
+    "#d0d0b0"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.08,
+    "bend": 1.4,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 667474
+  },
+  {
+   "id": "realistic.foreground.golden-oat-spikes",
+   "name": "Golden Oat Spikes",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "harvest",
+    "photoreal"
+   ],
+   "tags": [
+    "grass",
+    "oats",
+    "golden",
+    "spikes",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/golden-oat-spikes.webp",
+   "thumb": "realistic/foreground/thumbs/golden-oat-spikes.webp",
+   "format": "image/webp",
+   "width": 464,
+   "height": 684,
+   "alpha": true,
+   "depth": 0.87,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d09050",
+    "#b07030",
+    "#f0b070",
+    "#b05030",
+    "#d09030"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.07,
+    "bend": 1.5,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 299534
+  },
+  {
+   "id": "realistic.foreground.bronze-sedge-tuft",
+   "name": "Bronze Sedge Tuft",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "photoreal"
+   ],
+   "tags": [
+    "sedge",
+    "carex",
+    "bronze",
+    "fine",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/bronze-sedge-tuft.webp",
+   "thumb": "realistic/foreground/thumbs/bronze-sedge-tuft.webp",
+   "format": "image/webp",
+   "width": 1286,
+   "height": 716,
+   "alpha": true,
+   "depth": 0.9,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#705030",
+    "#905050",
+    "#503010",
+    "#503030",
+    "#703030"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.05,
+    "bend": 1.8,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 860568
+  },
+  {
+   "id": "realistic.foreground.blue-fescue-mound",
+   "name": "Blue Fescue Mound",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "garden",
+    "photoreal"
+   ],
+   "tags": [
+    "fescue",
+    "blue",
+    "mound",
+    "ornamental",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/blue-fescue-mound.webp",
+   "thumb": "realistic/foreground/thumbs/blue-fescue-mound.webp",
+   "format": "image/webp",
+   "width": 1306,
+   "height": 679,
+   "alpha": true,
+   "depth": 0.92,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#709090",
+    "#507070",
+    "#90b0b0",
+    "#b0b0b0",
+    "#9090b0"
+   ],
+   "defaultScale": 0.22,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.04,
+    "bend": 2.0,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 725564
+  },
+  {
+   "id": "realistic.foreground.fountain-grass-plumes",
+   "name": "Fountain Grass Plumes",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "garden",
+    "photoreal"
+   ],
+   "tags": [
+    "fountain grass",
+    "plumes",
+    "soft",
+    "mauve",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/fountain-grass-plumes.webp",
+   "thumb": "realistic/foreground/thumbs/fountain-grass-plumes.webp",
+   "format": "image/webp",
+   "width": 867,
+   "height": 677,
+   "alpha": true,
+   "depth": 0.87,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#b09090",
+    "#b07070",
+    "#d0b0b0",
+    "#705050",
+    "#d09090"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.075,
+    "bend": 1.5,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 524326
+  },
+  {
+   "id": "realistic.foreground.dew-grass-blades",
+   "name": "Dew Grass Blades",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "morning",
+    "photoreal"
+   ],
+   "tags": [
+    "grass",
+    "dew",
+    "drops",
+    "macro",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/dew-grass-blades.webp",
+   "thumb": "realistic/foreground/thumbs/dew-grass-blades.webp",
+   "format": "image/webp",
+   "width": 1278,
+   "height": 640,
+   "alpha": true,
+   "depth": 0.93,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#507030",
+    "#709050",
+    "#709030",
+    "#305010",
+    "#b0d0b0"
+   ],
+   "defaultScale": 0.24,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.06,
+    "bend": 1.6,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 809436
+  },
+  {
+   "id": "realistic.foreground.wheat-grass-spikes",
+   "name": "Wheat Grass Spikes",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "harvest",
+    "photoreal"
+   ],
+   "tags": [
+    "wheat",
+    "spikes",
+    "awns",
+    "green-gold",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/wheat-grass-spikes.webp",
+   "thumb": "realistic/foreground/thumbs/wheat-grass-spikes.webp",
+   "format": "image/webp",
+   "width": 882,
+   "height": 707,
+   "alpha": true,
+   "depth": 0.88,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#909050",
+    "#707030",
+    "#909030",
+    "#b09050",
+    "#907050"
+   ],
+   "defaultScale": 0.3,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.065,
+    "bend": 1.6,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 555216
+  },
+  {
+   "id": "realistic.foreground.red-poppy-cluster",
+   "name": "Red Poppy Cluster",
+   "style": "realistic",
+   "layer": "foreground",
+   "category": "plants",
+   "themes": [
+    "meadow",
+    "flowers",
+    "photoreal"
+   ],
+   "tags": [
+    "poppy",
+    "red",
+    "petals",
+    "wildflower",
+    "photoreal"
+   ],
+   "origin": "generated",
+   "file": "realistic/foreground/red-poppy-cluster.webp",
+   "thumb": "realistic/foreground/thumbs/red-poppy-cluster.webp",
+   "format": "image/webp",
+   "width": 717,
+   "height": 697,
+   "alpha": true,
+   "depth": 0.89,
+   "groundContact": 1.0,
+   "perspective": "eye-level",
+   "lighting": "upper-left",
+   "palette": [
+    "#d01010",
+    "#b01010",
+    "#d03030",
+    "#707030",
+    "#f05030"
+   ],
+   "defaultScale": 0.28,
+   "placement": {
+    "grounded": true,
+    "minDepth": 0.15,
+    "maxDepth": 0.9
+   },
+   "animations": [
+    "grass-wind"
+   ],
+   "rig": {
+    "type": "bend",
+    "anchor": [
+     0.5,
+     1.0
+    ],
+    "sway": 0.05,
+    "bend": 2.2,
+    "gusts": 2,
+    "autoplay": true
+   },
+   "variants": [],
+   "notes": "Photographic cutout; sways calmly from the base in slow gusts.",
+   "bytes": 354106
   }
  ]
 }

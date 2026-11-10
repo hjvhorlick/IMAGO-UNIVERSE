@@ -43,7 +43,7 @@ import math
 import os
 import random
 from dataclasses import dataclass, field
-from typing import Callable
+from typing import Sequence, Callable
 
 import numpy as np
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
@@ -89,6 +89,44 @@ def key_magenta(img: Image.Image, lo: float = 28.0, hi: float = 150.0) -> Image.
     obj[..., 0] = np.clip(sr - spill * 0.85, 0, 255)
     obj[..., 2] = np.clip(sb - spill * 0.85, 0, 255)
 
+    alpha[alpha < 0.05] = 0.0
+    alpha[alpha > 0.96] = 1.0
+    out = np.dstack([obj, alpha * 255.0]).astype(np.uint8)
+    return Image.fromarray(out, "RGBA")
+
+
+def key_flat(img: Image.Image, lo: float = 48.0, hi: float = 115.0) -> Image.Image:
+    """Difference-key a subject off whatever flat backdrop colour it was shot on.
+
+    The generated flora plates ask for a magenta backdrop, but the exact tone
+    drifts plate to plate (some come back as a light orchid that a fixed
+    magenta ramp only half keys, leaving a faint haze rectangle). Sampling the
+    backdrop from the border ring and keying by colour distance keys every
+    plate cleanly while leaving pink, violet and white subjects untouched.
+    """
+    rgb = np.asarray(img.convert("RGB"), dtype=np.float32)
+    ring = np.concatenate([rgb[0:6].reshape(-1, 3), rgb[-6:].reshape(-1, 3),
+                           rgb[:, 0:6].reshape(-1, 3), rgb[:, -6:].reshape(-1, 3)])
+    bg = np.median(ring, axis=0)
+    d = np.sqrt(((rgb - bg) ** 2).sum(axis=-1))
+    t = np.clip((d - lo) / (hi - lo), 0.0, 1.0)
+    t = t * t * (3.0 - 2.0 * t)
+    alpha = t
+    a3 = alpha[..., None]
+    safe = np.maximum(a3, 1e-3)
+    obj = np.clip((rgb - bg * (1.0 - a3)) / safe, 0, 255)
+    # Backdrop bounce on thin blades and rim-lit edges. Semi-transparent
+    # pixels are blade/backdrop blends, so any magenta cast in them is the
+    # key's own and is cancelled hard; solid pixels keep a 28-point allowance
+    # so genuinely mauve or violet subjects (plumes ~30, violet ~40) keep
+    # their hue while rim cast is removed.
+    sr, sg, sb = obj[..., 0], obj[..., 1], obj[..., 2]
+    cast = np.minimum(sr, sb) - sg
+    semi = (alpha > 0.05) & (alpha < 0.95)
+    spill = np.where(semi, np.maximum(0.0, cast - 12.0),
+                     np.maximum(0.0, cast - 28.0)) * (alpha > 0.05)
+    obj[..., 0] = np.clip(sr - spill, 0, 255)
+    obj[..., 2] = np.clip(sb - spill, 0, 255)
     alpha[alpha < 0.05] = 0.0
     alpha[alpha > 0.96] = 1.0
     out = np.dstack([obj, alpha * 255.0]).astype(np.uint8)
@@ -978,6 +1016,55 @@ def publish_realistic_scenes(p: Publisher, src: str, style: str):
                         max_dim=1920, quality=93))
 
 
+def publish_realistic_flora(p: Publisher, src: str, style: str,
+                            ids: "Sequence[str] | None" = None):
+    """Photographic grass and flower cutouts for the realistic looks.
+
+    Every plate is a studio cutout on a flat magenta backdrop, keyed to alpha
+    and autocropped to the plant. The rig carries an explicit `sway` reach,
+    which puts grass-wind into its calm bending-wave mode: tips travel a few
+    percent of the width in one slow wave that lags with height, so each plant
+    sways from its base instead of wobbling.
+    """
+
+    def obj(name: str) -> Image.Image:
+        return clean_edges(autocrop(key_flat(Image.open(plate_path(src, f"fg-{name}.png")))))
+
+    DEFS = [
+        # aid, name, themes, tags, depth, scale, sway, bend
+        ("meadow-grass-tuft", "Meadow Grass Tuft", ["meadow"],
+         ["grass", "tuft", "blades", "meadow", "photoreal"], 0.90, 0.26, 0.055, 1.7),
+        ("tall-wild-grass", "Tall Wild Grass", ["meadow"],
+         ["grass", "tall", "seed heads", "arching", "photoreal"], 0.88, 0.32, 0.070, 1.5),
+        ("feather-grass-plumes", "Feather Grass Plumes", ["meadow"],
+         ["grass", "plumes", "silvery", "stipa", "photoreal"], 0.86, 0.30, 0.080, 1.4),
+        ("golden-oat-spikes", "Golden Oat Spikes", ["meadow", "harvest"],
+         ["grass", "oats", "golden", "spikes", "photoreal"], 0.87, 0.30, 0.070, 1.5),
+        ("bronze-sedge-tuft", "Bronze Sedge Tuft", ["meadow"],
+         ["sedge", "carex", "bronze", "fine", "photoreal"], 0.90, 0.24, 0.050, 1.8),
+        ("blue-fescue-mound", "Blue Fescue Mound", ["garden"],
+         ["fescue", "blue", "mound", "ornamental", "photoreal"], 0.92, 0.22, 0.040, 2.0),
+        ("fountain-grass-plumes", "Fountain Grass Plumes", ["meadow", "garden"],
+         ["fountain grass", "plumes", "soft", "mauve", "photoreal"], 0.87, 0.30, 0.075, 1.5),
+        ("dew-grass-blades", "Dew Grass Blades", ["meadow", "morning"],
+         ["grass", "dew", "drops", "macro", "photoreal"], 0.93, 0.24, 0.060, 1.6),
+        ("wheat-grass-spikes", "Wheat Grass Spikes", ["meadow", "harvest"],
+         ["wheat", "spikes", "awns", "green-gold", "photoreal"], 0.88, 0.30, 0.065, 1.6),
+        ("red-poppy-cluster", "Red Poppy Cluster", ["meadow", "flowers"],
+         ["poppy", "red", "petals", "wildflower", "photoreal"], 0.89, 0.28, 0.050, 2.2),
+    ]
+    for aid, name, themes, tags, depth, scale, sway, bend in DEFS:
+        if ids is not None and aid not in ids:
+            continue
+        p.publish(Asset(f"{style}.foreground.{aid}", name, style, "foreground", "plants", obj(aid),
+                        themes=themes + ["photoreal"], tags=tags, depth=depth, default_scale=scale,
+                        animations=["grass-wind"],
+                        rig={"type": "bend", "anchor": [0.5, 1.0], "sway": sway, "bend": bend,
+                             "gusts": 2, "autoplay": True},
+                        notes="Photographic cutout; sways calmly from the base in slow gusts.",
+                        origin="generated", max_dim=1400, quality=95))
+
+
 def publish_realistic_rooms(p: Publisher, src: str, style: str):
     """Photographic rooms: floor-to-roof glass, wood and stone, minimal.
 
@@ -1737,6 +1824,7 @@ def build(src: str, out: str, catalog: str = "docs/ASSET_CATALOG.md") -> dict:
     R = "realistic"
     publish_realistic(p, src, R)
     publish_realistic_scenes(p, src, R)
+    publish_realistic_flora(p, src, R)
     publish_realistic_rooms(p, src, R)
     publish_realistic_people(p, src, R)
 

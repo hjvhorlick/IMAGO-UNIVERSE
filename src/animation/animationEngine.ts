@@ -187,14 +187,34 @@ export class AnimationEngine {
         // grass band and tips sway most; without one (plant assets) the whole
         // subject sways from its base as before.
         const region = meta?.rig?.region;
-        const reach = w * (region ? 0.03 : 0.20) * amp;
+        // A rig with an explicit `sway` reach is a plant cutout that asks for
+        // the calm mode: one slow bending wave, no high-frequency content.
+        const calm = typeof meta?.rig?.sway === 'number';
+        const reach = w * (region ? 0.03 : calm ? (meta?.rig?.sway as number) : 0.20) * amp;
         const gusts = Math.max(1, Math.round(meta?.rig?.gusts ?? 4));
         const field: FieldFn = (_uu, vv) => {
-          let weight = (1 - vv) ** 1.7, mask = 1;
+          let weight = (1 - vv) ** (meta?.rig?.bend ?? 1.7), mask = 1;
           if (region) {
             const [, ry, , rh] = region;
             weight = clamp((vv - ry) / rh, 0, 1) ** 1.7;
             mask = regionMask(vv, ry, rh, 0.12);
+          }
+          if (calm && !region) {
+            // Sway, not wobble: a single slow sine whose phase lags a little
+            // with height, so the stem flexes through its length instead of
+            // pivoting at the base. The gust envelope only breathes the
+            // amplitude by +/-14%, and the organic term is kept to two low
+            // harmonics at a fifth of the turbulence so tips never jitter.
+            // The bottom 3% of the cutout is the planted base: pin it exactly
+            // so feet never creep, and fade the pin in over the next 3%.
+            weight *= clamp((0.97 - vv) / 0.03, 0, 1);
+            const lag = (1 - vv) * 0.22;
+            const gust = 0.86 + 0.14 * Math.sin(TAU * gusts * u + 0.7);
+            const sway = (Math.sin(TAU * (u - lag)) + periodic(u, seed, 2) * turb * 0.2) * gust;
+            return {
+              dx: sway * reach * weight * (dirX >= 0 ? 1 : -1),
+              dy: -Math.abs(sway) * reach * 0.06 * weight,
+            };
           }
           const gust = 0.62 + 0.38 * Math.sin(TAU * gusts * u + 0.7);
           const organic = periodic(u, seed, 4) * turb;

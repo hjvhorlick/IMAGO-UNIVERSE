@@ -199,6 +199,10 @@ export interface AssetRig {
   canopyStart?: number;
   stiffness?: number;
   gusts?: number;
+  /** Calm plant sway: tip reach as a fraction of the asset width. */
+  sway?: number;
+  /** Calm plant sway: bend exponent; higher concentrates the bend near the tip. */
+  bend?: number;
   region?: [number, number, number, number];
   /** Optional steam origin and size for a cup painted into a room overlay. */
   steamRegion?: [number, number, number, number];

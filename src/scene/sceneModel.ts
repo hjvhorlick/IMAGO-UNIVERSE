@@ -108,6 +108,7 @@ function defaultAnimationFor(meta: AssetMeta): SceneNode['animation'] {
     if (a.enabled && meta.rig?.type === 'flying-flock') { a.amplitude = 0.9; a.loop = 24; }
     if (a.enabled && (first === 'hearth-fire' || first === 'coffee-steam')) a.amplitude = 0.8;
     if (a.enabled && (first === 'water-flow' || first === 'water-shimmer')) a.amplitude = 0.22;
+    if (a.enabled && first === 'grass-wind' && typeof meta.rig?.sway === 'number') a.amplitude = 0.9;
   }
   return a;
 }

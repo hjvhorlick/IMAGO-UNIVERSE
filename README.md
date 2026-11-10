@@ -109,7 +109,11 @@ Pool**. Each starts animating as soon as it is placed, and each moves only where
 lakes, pools and the sea carry small travelling shimmer waves inside a rigged band; the bamboo
 stream and the meadow creek use a directional flow that runs downstream; the two meadows get a
 gentle breeze limited to the grass and flower band. Sky, rock and raked gravel never move, and
-every scene loops seamlessly. A photographic **Clearwater Falls** pours over a mossy cliff: the painted water itself is
+every scene loops seamlessly. Photographic **grass and flower cutouts** — meadow tufts, wild and
+feather grasses, fescue, sedge, dew blades, poppies and more to come — place into any look as
+detailed foreground plants. Each is keyed off its studio backdrop and rigged with a calm
+**grass-wind** sway: one slow bending wave that lags with height, so tips travel a few percent of
+the width while the base stays planted. They sway; they never wobble. A photographic **Clearwater Falls** pours over a mossy cliff: the painted water itself is
 lifted onto its own layer and pushed down the cascades while the rock stays still, with spray,
 hovering mist and plunge-pool ripples. It ships five photographic rooms — modern Japanese and open-plan, in wood and stone, with
 floor-to-roof glass that keys out into a real opening — each with a fireplace whose fire is optional,
