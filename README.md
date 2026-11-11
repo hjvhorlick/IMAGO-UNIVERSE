@@ -91,6 +91,10 @@ twirls), **Glitter Streamers** (beaded ribbons flowing in waves), **Fairy Ring D
 breathing rings of dust), **Twirling Dust Columns** (corkscrew dust devils) and **Wandering
 Stardust** (loose motes curling around the screen) — each fully loopable and editable in the
 inspector.
+Press **F9** (or File → Present mode) to step inside a creation: fullscreen, chrome-free looping
+playback with a single quiet exit chip. Work autosaves to the browser shelf every 45 seconds and
+whenever the tab is hidden, and reopens from the Projects dialog; if your system prefers reduced
+motion the preview starts paused instead of playing.
 
 ---
 

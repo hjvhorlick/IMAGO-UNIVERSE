@@ -909,3 +909,34 @@ describe('application shell', () => {
     app.dispose();
   }, 60_000);
 });
+
+describe('present mode and accessibility chrome', () => {
+  it('enters and leaves present mode without fullscreen support', async () => {
+    const app = await mountApp({ start: null });
+    expect(document.body.classList.contains('present')).toBe(false);
+    const btn = document.querySelector<HTMLElement>('#btn-present');
+    expect(btn, 'present button in the top bar').not.toBeNull();
+    btn!.click();
+    expect(document.body.classList.contains('present'), 'chrome-free playback').toBe(true);
+    const exit = document.querySelector<HTMLElement>('#present-exit');
+    expect(exit).not.toBeNull();
+    exit!.click();
+    expect(document.body.classList.contains('present'), 'back to the editor').toBe(false);
+    // F9 toggles it again, Escape leaves it
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'F9', bubbles: true }));
+    expect(document.body.classList.contains('present')).toBe(true);
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(document.body.classList.contains('present')).toBe(false);
+    expect(app).toBeTruthy();
+  });
+
+  it('announces status messages and labels icon-only controls', async () => {
+    await mountApp({ start: null });
+    const live = document.querySelector('.toast-root');
+    expect(live?.getAttribute('aria-live'), 'status toasts are announced').toBe('polite');
+    for (const id of ['btn-play', 'btn-restart', 'btn-present', 'btn-rail', 'btn-export']) {
+      const b = document.querySelector(`#${id}`);
+      expect(b?.getAttribute('aria-label'), `${id} label`).toBeTruthy();
+    }
+  });
+});

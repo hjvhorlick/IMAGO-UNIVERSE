@@ -4,6 +4,18 @@ All notable changes to IMAGO UNIVERSE are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Present mode** (F9): fullscreen, chrome-free looping playback of the scene
+  with a single exit chip; Esc or F9 returns to the editor.
+- Autosave now also fires when the tab is hidden, on top of the 45-second
+  interval, so a closed tab loses nothing that the shelf can keep.
+- Reduced-motion support: with the OS `prefers-reduced-motion` setting the
+  preview starts paused and interface transitions are disabled.
+- Accessibility: status toasts are a polite live region, icon-only top-bar
+  controls carry labels, and keyboard focus is always visible.
+
 ## [1.0.0] - 2026-11-09
 
 First full release: a complete four-layer world composer with a photographic

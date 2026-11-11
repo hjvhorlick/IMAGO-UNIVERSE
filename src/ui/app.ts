@@ -67,10 +67,11 @@ const SHELL = `
     <label class="search topbar-search">${icon('search', 13)}<input id="library-search" type="search" aria-label="Search artwork and effects" placeholder="Search..."></label>
     <span class="topbar-spacer"></span>
     <button class="loop-chip" id="loop-chip" title="Loop analysis"><span class="loop-dot"></span><span id="loop-text">Loop</span></button>
-    <button class="btn icon" id="btn-play" title="Play / pause (Space)">${icon('play', 14)}</button>
-    <button class="btn icon" id="btn-restart" title="Restart from the beginning">${icon('restart', 14)}</button>
-    <button class="btn icon" id="btn-rail" title="Show / hide the side panel (\\)">${icon('right', 14)}</button>
-    <button class="btn primary" id="btn-export" title="Download or export">${icon('download', 13)} Download</button>
+    <button class="btn icon" id="btn-play" title="Play / pause (Space)" aria-label="Play or pause the preview">${icon('play', 14)}</button>
+    <button class="btn icon" id="btn-restart" title="Restart from the beginning" aria-label="Restart the preview">${icon('restart', 14)}</button>
+    <button class="btn icon" id="btn-present" title="Present mode (F9) - the looping scene, fullscreen and calm" aria-label="Enter present mode">${icon('present', 14)}</button>
+    <button class="btn icon" id="btn-rail" title="Show / hide the side panel (\\)" aria-label="Show or hide the side panel">${icon('right', 14)}</button>
+    <button class="btn primary" id="btn-export" title="Download or export" aria-label="Download or export">${icon('download', 13)} Download</button>
   </header>
 
   <main class="workspace">
@@ -94,7 +95,8 @@ const SHELL = `
   </main>
 </div>
 <div class="modal-root"></div>
-<div class="toast-root"></div>
+<div class="toast-root" aria-live="polite"></div>
+<button class="present-exit" id="present-exit" aria-label="Exit present mode">${icon('close', 12)} Exit present</button>
 `;
 
 export class App {
@@ -120,6 +122,7 @@ export class App {
   private menubar!: MenuBar;
   private activeLayer: LayerId = 'background';
   private autosaveTimer = 0;
+  private present = false;
   private hudTimer = 0;
   private windowListeners: (() => void)[] = [];
   private soloNode: string | null = null;
@@ -165,7 +168,18 @@ export class App {
     this.preview.invalidate();
     this.refreshChrome();
     this.preview.play();
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) {
+      this.preview.pause();
+      this.store.status('Your system prefers reduced motion, so the preview starts paused. Press Space to play.', 'info');
+    }
     this.openWorldPicker(true);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') void this.autosave();
+    });
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement && this.present) this.togglePresent();
+      this.stage.refit();
+    });
 
     this.autosaveTimer = window.setInterval(() => { void this.autosave(); }, 45_000);
     this.hudTimer = window.setInterval(() => this.updateHud(), 500);
@@ -291,6 +305,8 @@ export class App {
           { separator: true },
           { label: 'Export image or video…', icon: 'download', shortcut: 'Ctrl+E', action: () => this.openExport() },
           { separator: true },
+          { label: 'Present mode', icon: 'present', shortcut: 'F9', action: () => this.togglePresent() },
+          { separator: true },
           { label: 'About & shortcuts', icon: 'info', action: () => aboutDialog() },
         ],
       },
@@ -375,8 +391,30 @@ export class App {
 
   /* --------------------------------------------------------------- topbar */
 
+  /** Fullscreen, chrome-free playback of the looping scene. */
+  togglePresent() {
+    this.present = !this.present;
+    document.body.classList.toggle('present', this.present);
+    if (this.present) {
+      this.preview.play();
+      const holder = qs<HTMLElement>('.stage-wrap');
+      try {
+        if (holder && typeof holder.requestFullscreen === 'function' && !document.fullscreenElement) {
+          void holder.requestFullscreen().catch(() => {});
+        }
+      } catch { /* fullscreen is a nicety, present mode works without it */ }
+      this.store.status('Present mode. F9 or Esc returns to the editor.', 'info');
+    } else if (document.fullscreenElement) {
+      try { void document.exitFullscreen().catch(() => {}); } catch { /* ignore */ }
+    }
+    this.stage.refit();
+    this.updateHud();
+  }
+
   private wireTopbar(root: HTMLElement) {
     const nameInput = qs<HTMLInputElement>('#project-name', root)!;
+    on(qs<HTMLElement>('#btn-present', root)!, 'click', () => this.togglePresent());
+    on(qs<HTMLElement>('#present-exit')!, 'click', () => { if (this.present) this.togglePresent(); });
     on(nameInput, 'change', () => this.store.mutate((s) => { s.name = nameInput.value || 'Untitled world'; }, 'Rename project'));
     const search = qs<HTMLInputElement>('#library-search', root)!;
     on(search, 'input', () => {
@@ -468,8 +506,12 @@ export class App {
         this.store.select(this.store.scene.nodes.filter((n) => !n.locked && n.kind === 'asset').map((n) => n.id));
         return;
       }
+      if (e.key === 'F9') { e.preventDefault(); this.togglePresent(); return; }
       if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); this.store.removeSelected(); return; }
-      if (e.key === 'Escape') { this.menubar.close(); this.store.select([]); this.setSolo(null); return; }
+      if (e.key === 'Escape') {
+        if (this.present && !document.fullscreenElement) { this.togglePresent(); return; }
+        this.menubar.close(); this.store.select([]); this.setSolo(null); return;
+      }
       if (e.key === '\\') { e.preventDefault(); this.toggleRail(); return; }
       if (e.key >= '1' && e.key <= '4') { this.setLayer(LAYERS[Number(e.key) - 1]); return; }
       if (e.key.toLowerCase() === 'l') { this.toggleSelected('locked'); return; }
