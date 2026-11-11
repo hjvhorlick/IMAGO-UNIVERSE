@@ -15,6 +15,9 @@ import type { ExportManager } from '../export/exportManager';
 import type { Capabilities, ExportProgress } from '../render/videoRenderer';
 import type { ProjectShelf } from '../project/projectShelf';
 import { formatBytes, clamp, downloadBlob } from '../core/util';
+import type { AmbienceEngine } from '../audio/ambience';
+import { BEDS, BREATH_PATTERNS, DEFAULT_AMBIENCE } from '../audio/ambience';
+import type { AmbienceBedId, BreathPattern } from '../core/types';
 import { el, escapeHtml, icon, numberField, on, qs, qsa, rangeField, selectField, toggleField } from './dom';
 
 /* ---------------------------------------------------------------- modal */
@@ -894,6 +897,67 @@ export function exportDialog(
 }
 
 /* ------------------------------------------------------------------ about */
+
+/* -------------------------------------------------------------- ambience */
+
+export function ambienceDialog(store: Store, engine: AmbienceEngine) {
+  const scene = store.scene;
+  const cur = scene.ambience ?? DEFAULT_AMBIENCE;
+  const med = scene.meditation ?? { pattern: 'calm' as BreathPattern, guide: false, sessionMin: 0 };
+  const set = (fn: (a: typeof cur) => void) => {
+    const next = { master: cur.master, beds: { ...cur.beds } };
+    fn(next);
+    cur.master = next.master; cur.beds = next.beds;
+    store.mutate((sc) => { sc.ambience = { master: next.master, beds: { ...next.beds } }; });
+    if (engine.running) engine.update(next);
+  };
+  const body = el(`<div>
+    ${engine.supported ? '' : '<div class="info-box">This browser has no WebAudio, so ambience stays silent here. The settings still travel with the project.</div>'}
+    <div class="info-box">Synthesised live with WebAudio - no audio files, no network.
+      Beds mix together; present mode (F9) starts them automatically.</div>
+    <div id="amb-beds"></div>
+    <div id="amb-extra" style="margin-top:12px"></div>
+  </div>`);
+  const bedsHost = qs<HTMLElement>('#amb-beds', body)!;
+  bedsHost.appendChild(rangeField({
+    label: 'Master volume', value: cur.master, min: 0, max: 1, step: 0.01,
+    format: (v: number) => `${Math.round(v * 100)}%`,
+    onInput: (v: number) => set((a) => { a.master = v; }),
+  }));
+  for (const bed of BEDS) {
+    bedsHost.appendChild(rangeField({
+      label: `${bed.label} - ${bed.hint}`, value: cur.beds[bed.id as AmbienceBedId] ?? 0,
+      min: 0, max: 1, step: 0.01, format: (v: number) => `${Math.round(v * 100)}%`,
+      onInput: (v: number) => set((a) => { a.beds[bed.id as AmbienceBedId] = v; }),
+    }));
+  }
+  const extra = qs<HTMLElement>('#amb-extra', body)!;
+  extra.appendChild(selectField('Breathing pattern', med.pattern,
+    Object.entries(BREATH_PATTERNS).map(([value, p]) => ({ value, label: p.label })),
+    (v: string) => store.mutate((sc) => {
+      sc.meditation = { ...(sc.meditation ?? { guide: false, sessionMin: 0 }), pattern: v as BreathPattern, guide: sc.meditation?.guide ?? false, sessionMin: sc.meditation?.sessionMin ?? 0 };
+    }, 'Breathing pattern')));
+  extra.appendChild(selectField('Session timer', String(med.sessionMin),
+    [{ value: '0', label: 'No timer' }, { value: '5', label: '5 minutes' }, { value: '10', label: '10 minutes' },
+     { value: '20', label: '20 minutes' }, { value: '30', label: '30 minutes' }],
+    (v: string) => store.mutate((sc) => {
+      sc.meditation = { ...(sc.meditation ?? { pattern: 'calm' as BreathPattern, guide: false }), pattern: (sc.meditation?.pattern ?? 'calm') as BreathPattern, guide: sc.meditation?.guide ?? false, sessionMin: Number(v) };
+    }, 'Session timer')));
+  extra.appendChild(toggleField('Breathing guide in present mode', med.guide,
+    (v: boolean) => store.mutate((sc) => {
+      sc.meditation = { ...(sc.meditation ?? { pattern: 'calm' as BreathPattern, sessionMin: 0 }), pattern: (sc.meditation?.pattern ?? 'calm') as BreathPattern, guide: v, sessionMin: sc.meditation?.sessionMin ?? 0 };
+    }, 'Breathing guide'),
+    'A slow ring that expands and settles with your breath while presenting.'));
+  const preview = el(`<button class="btn small" style="margin-top:12px">${icon('play', 12)} <span data-pt>${engine.running ? 'Stop preview' : 'Preview ambience'}</span></button>`);
+  on(preview, 'click', () => {
+    if (engine.running) engine.stop();
+    else engine.start({ master: cur.master, beds: { ...cur.beds } });
+    const label = qs<HTMLElement>('[data-pt]', preview);
+    if (label) label.textContent = engine.running ? 'Stop preview' : 'Preview ambience';
+  });
+  body.appendChild(preview);
+  openModal({ title: 'Ambience & breathing', subtitle: 'Synthesised soundscapes and the meditation guide', body });
+}
 
 export function aboutDialog() {
   const body = el(`<div>

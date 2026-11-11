@@ -940,3 +940,177 @@ describe('present mode and accessibility chrome', () => {
     }
   });
 });
+
+describe('meditation: ambience, breathing guide and session timer', () => {
+  const present = () => document.querySelector<HTMLElement>('#btn-present')!;
+
+  it('puts ambience, breathing and a timer in the present bar', async () => {
+    const app = await mountApp({ start: null });
+    for (const id of ['#pb-sound', '#pb-breath', '#pb-mix', '#pb-timer']) {
+      expect(document.querySelector(id), `${id} in the present bar`).not.toBeNull();
+    }
+    for (const id of ['#pb-sound', '#pb-breath', '#pb-mix']) {
+      expect(document.querySelector(id)!.getAttribute('aria-label'), `${id} is labelled`).toBeTruthy();
+    }
+
+    present().click();
+    const breath = document.querySelector<HTMLElement>('#pb-breath')!;
+    breath.click();
+    expect(app.store.scene.meditation?.guide, 'the guide is a scene setting').toBe(true);
+    expect(document.querySelector('.stage .breath-guide.on'), 'the ring sits on the stage').toBeTruthy();
+    expect(document.querySelector('.breath-ring')).toBeTruthy();
+    expect(document.querySelector('.breath-label')).toBeTruthy();
+    expect(breath.classList.contains('active'), 'the button shows its state').toBe(true);
+
+    breath.click();
+    expect(app.store.scene.meditation?.guide).toBe(false);
+    expect(document.querySelector('.breath-guide.on'), 'the ring is hidden again').toBeNull();
+    expect(breath.classList.contains('active')).toBe(false);
+
+    // Non-destructive: the toggles are ordinary edits, so Undo restores them.
+    app.store.undo();
+    expect(app.store.scene.meditation?.guide).toBe(true);
+    app.store.redo();
+    expect(app.store.scene.meditation?.guide).toBe(false);
+
+    present().click();                                   // leave present mode
+    expect(document.querySelector('.breath-guide.on'), 'leaving stops the guide').toBeNull();
+    expect(app.ambience.running, 'leaving stops the soundscape').toBe(false);
+    app.dispose();
+  });
+
+  it('never lets a missing audio stack break the picture', async () => {
+    const app = await mountApp({ start: null });
+    expect(app.ambience.supported, 'this environment has no WebAudio').toBe(false);
+    present().click();
+    document.querySelector<HTMLElement>('#pb-sound')!.click();
+    expect(app.ambience.running).toBe(false);
+    expect(document.querySelector('#pb-sound')!.classList.contains('active')).toBe(false);
+    // It says so honestly instead of pretending to play, and still stores the
+    // mix. Toasts are hidden while presenting, so the bar itself carries it.
+    expect(document.querySelector('#pb-note')!.textContent ?? '')
+      .toMatch(/no webaudio here/i);
+    expect(document.querySelector('.toast-root')!.textContent ?? '')
+      .toMatch(/cannot play synthesised ambience/i);
+    expect(app.store.scene.ambience?.beds.birds, 'a real mix was written to the scene').toBeGreaterThan(0);
+    expect(document.querySelector('#scene-canvas'), 'the visual scene is untouched').toBeTruthy();
+    app.dispose();
+  });
+
+  it('edits the mix, the pattern and the timer from the View menu', async () => {
+    const app = await mountApp({ start: null });
+    menuClick('view', 'Ambience & breathing');
+    const modal = document.querySelector('.modal');
+    expect(modal, 'the dialog opens').toBeTruthy();
+    expect(modal!.textContent).toMatch(/no audio files, no network/i);
+    expect(modal!.textContent, 'honest about a browser without WebAudio').toMatch(/no WebAudio/i);
+
+    const ranges = Array.from(document.querySelectorAll<HTMLInputElement>('.modal input[type=range]'));
+    expect(ranges.length, 'master plus five beds').toBe(6);
+    const birds = ranges[4];                             // water, wind, rain, birds, crickets
+    birds.value = '0.66';
+    birds.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(app.store.scene.ambience?.beds.birds).toBeCloseTo(0.66, 5);
+    expect(app.store.scene.ambience?.master, 'the other beds are untouched').toBeCloseTo(0.7, 5);
+
+    const selects = Array.from(document.querySelectorAll<HTMLSelectElement>('.modal select'));
+    expect(selects.length, 'pattern and session timer').toBe(2);
+    selects[0].value = 'box';
+    selects[0].dispatchEvent(new Event('change', { bubbles: true }));
+    expect(app.store.scene.meditation?.pattern).toBe('box');
+    selects[1].value = '20';
+    selects[1].dispatchEvent(new Event('change', { bubbles: true }));
+    expect(app.store.scene.meditation?.sessionMin).toBe(20);
+    expect(app.store.scene.meditation?.pattern, 'each edit keeps the rest').toBe('box');
+
+    const toggle = document.querySelector<HTMLInputElement>('.modal input[type=checkbox]')!;
+    expect(toggle, 'the guide has a switch here too').toBeTruthy();
+    toggle.checked = true;
+    toggle.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(app.store.scene.meditation?.guide).toBe(true);
+
+    // The preview button is real, and honest where there is no audio device.
+    const previewBtn = Array.from(document.querySelectorAll<HTMLButtonElement>('.modal .btn'))
+      .find((b) => /preview ambience/i.test(b.textContent ?? ''));
+    expect(previewBtn, 'a preview button').toBeTruthy();
+    previewBtn!.click();
+    expect(app.ambience.running, 'nothing to preview without WebAudio').toBe(false);
+
+    click(document.querySelector('.modal [data-close]'));
+    expect(document.querySelector('.modal'), 'the dialog closes').toBeNull();
+    app.dispose();
+  });
+
+  it('is reachable from the Sound panel, beside imported audio', async () => {
+    const app = await mountApp({ start: null });
+    openSection('sound');
+    const panel = body('sound')!;
+    expect(panel, 'the sound panel rendered').toBeTruthy();
+    expect(panel.textContent).toMatch(/ships no music/i);
+    const btn = panel.querySelector<HTMLElement>('[data-ambience]');
+    expect(btn, 'the ambience entry point sits with sound').toBeTruthy();
+    expect(panel.textContent).toMatch(/no beds playing yet/i);
+    click(btn);
+    expect(document.querySelector('.modal')!.textContent).toMatch(/Ambience & breathing/i);
+    click(document.querySelector('.modal [data-close]'));
+
+    // A changed mix is reflected in the panel instead of leaving stale text.
+    app.store.mutate((sc) => {
+      sc.ambience = { master: 0.5, beds: { water: 0.6, wind: 0, rain: 0.3, birds: 0, crickets: 0 } };
+      sc.meditation = { pattern: 'coherent', guide: true, sessionMin: 20 };
+    }, 'Mix');
+    const text = body('sound')!.textContent ?? '';
+    expect(text).toMatch(/water, rain at 50%/i);
+    expect(text).toMatch(/breathing guide on/i);
+    expect(text).toMatch(/20-minute session/i);
+    app.dispose();
+  });
+
+  it('reaches the mix from present mode, where the editor chrome is hidden', async () => {
+    const app = await mountApp({ start: null });
+    present().click();
+    expect(document.body.classList.contains('present'), 'the editor chrome is hidden by CSS').toBe(true);
+    click(document.querySelector('#pb-mix'));
+    const modal = document.querySelector('.modal');
+    expect(modal, 'settings open over the scene').toBeTruthy();
+    const ranges = Array.from(document.querySelectorAll<HTMLInputElement>('.modal input[type=range]'));
+    ranges[1].value = '0.8';                             // the water bed
+    ranges[1].dispatchEvent(new Event('input', { bubbles: true }));
+    expect(app.store.scene.ambience?.beds.water).toBeCloseTo(0.8, 5);
+    click(document.querySelector('.modal [data-close]'));
+    expect(document.querySelector('.modal')).toBeNull();
+    expect(document.body.classList.contains('present'), 'still presenting').toBe(true);
+    app.dispose();
+  });
+
+  it('counts a timed session and closes it with a card', async () => {
+    // Fake timers from the start, so the app's own half-second HUD clock is faked too.
+    vi.useFakeTimers();
+    let app: Awaited<ReturnType<typeof mountApp>>;
+    try {
+      app = await mountApp({ start: null });
+      app.store.mutate((s) => { s.meditation = { pattern: 'calm', guide: true, sessionMin: 1 }; }, 'Timer');
+      expect(document.querySelector('#pb-timer')!.textContent).toBe('00:00');
+      present().click();
+      expect(document.querySelector('.stage .breath-guide.on'), 'the guide starts with the scene').toBeTruthy();
+      vi.advanceTimersByTime(30_500);                      // the HUD clock ticks every 500 ms
+      expect(document.querySelector('#pb-timer')!.textContent, 'it counts up while presenting').toBe('00:30');
+      expect(document.querySelector('.session-done'), 'half way, not yet rung').toBeNull();
+      vi.advanceTimersByTime(30_000);                      // past the minute
+      const card = document.querySelector<HTMLElement>('.session-done');
+      expect(card, 'the session card appears').toBeTruthy();
+      expect(document.querySelector('#pb-note')!.textContent).toMatch(/session complete/i);
+      expect(card!.textContent).toMatch(/session complete/i);
+      expect(card!.textContent).toMatch(/1 minutes of stillness/i);
+      click(card!.querySelector('[data-stay]'));
+      expect(document.querySelector('.session-done'), 'staying dismisses it').toBeNull();
+      vi.advanceTimersByTime(60_000);
+      expect(document.querySelector('.session-done'), 'it is shown once, not nagging').toBeNull();
+      present().click();                                   // leaving clears everything
+      expect(document.querySelector('.breath-guide.on')).toBeNull();
+      app.dispose();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});

@@ -117,9 +117,18 @@ favourably, but this was not measured.
   and autoplay handling are logic-checked only. Browsers may block playback until a user gesture;
   the panel shows a notice when that happens. The project round trip is tested: the bytes travel
   inside the `.sceneproject`, and the settings come back unchanged.
-- **Seasons, day/night cycles, weather systems, water simulation and generated audio ambience** are not
-  implemented. The data model anticipates them (per-node adjustments, the lighting block, effect
-  parameters) but the brief said not to delay the core product for them.
+- **Synthesised ambience is live only.** Water, wind, rain, birds and crickets are generated with
+  WebAudio while you present; nothing is recorded, so exported video stays silent and the
+  `.sceneproject` carries the mix as numbers rather than audio bytes. It also depends on WebAudio
+  being available: where it is not, the app says so in the dialog and in a status message, keeps the
+  settings, and the picture is unaffected. The scheduling mathematics (phrase gaps, whistle
+  registers, droplet rates, breathing phases) is unit-tested, and the engine lifecycle — every
+  source stopped and the context released on stop, no burst of catch-up events after a throttled
+  tab — is tested against a mock audio context. What has *not* happened in this sandbox is
+  listening to it: the graph itself is unverified on real audio hardware.
+- **Seasons, day/night cycles, weather systems and water simulation** are not implemented. The data
+  model anticipates them (per-node adjustments, the lighting block, effect parameters) but the brief
+  said not to delay the core product for them.
 - **No multi-select, no grouping, no keyframe timeline.** Animation is procedural per node with a
   loop length, not a keyframed timeline. This is a design choice consistent with the brief's
   "natural, non-mechanical, desynchronised motion", but it means you cannot hand-animate a specific

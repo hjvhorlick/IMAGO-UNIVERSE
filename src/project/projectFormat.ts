@@ -16,6 +16,7 @@
  * Copy the file to another machine and it opens identically.
  */
 import { unzipSync, zipSync, strToU8, strFromU8 } from 'fflate';
+import { clamp } from '../core/util';
 import type { AssetLibrary } from '../assets/library';
 import type { AssetMeta, Scene, SceneAudio, SceneNode } from '../core/types';
 import {
@@ -199,6 +200,19 @@ function migrateAudio(raw: unknown): SceneAudio | null {
   };
 }
 
+const BED_IDS = ['water', 'wind', 'rain', 'birds', 'crickets'];
+function migrateAmbience(input: Scene['ambience']): Scene['ambience'] {
+  if (!input || typeof input !== 'object') return null;
+  const beds = {} as Record<string, number>;
+  for (const id of BED_IDS) beds[id] = clamp(Number((input.beds as Record<string, unknown> | undefined)?.[id] ?? 0), 0, 1);
+  return { master: clamp(Number(input.master ?? 0.7), 0, 1), beds: beds as never };
+}
+function migrateMeditation(input: Scene['meditation']): Scene['meditation'] {
+  if (!input || typeof input !== 'object') return null;
+  const pattern = input.pattern === 'box' || input.pattern === 'coherent' ? input.pattern : 'calm';
+  return { pattern, guide: input.guide === true, sessionMin: clamp(Number(input.sessionMin ?? 0), 0, 180) };
+}
+
 /** Fill in anything a older/partial file may be missing, so loading never throws. */
 function migrate(input: Scene, warnings: string[]): Scene {
   if (!input || typeof input !== 'object') throw new Error('The project has no scene data.');
@@ -217,6 +231,8 @@ function migrate(input: Scene, warnings: string[]): Scene {
     nodes: [],
     lighting: { ...DEFAULT_LIGHTING, ...(input.lighting || {}) },
     audio: migrateAudio(input.audio),
+    ambience: migrateAmbience(input.ambience),
+    meditation: migrateMeditation(input.meditation),
     worldId: typeof input.worldId === 'string' ? input.worldId : null,
     exportSettings: { ...DEFAULT_EXPORT, ...(input.exportSettings || {}) },
     createdAt: input.createdAt || new Date().toISOString(),

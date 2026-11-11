@@ -40,7 +40,7 @@ scene/
 animation/
   loopManager.ts    Cycle analysis, grid snapping, LCM master cycle, exactness report, plan()
   animationEngine.ts  evaluate(scene, node, t) -> NodeRenderState (transform + warp + scroll + glow)
-  effects.ts        52 effect definitions, parameter schemas, 8 theme presets
+  effects.ts        60 effect definitions (35 universal + 25 spiritual), schemas, 8 theme presets
   spiritualOverlays.ts  25 modular vector ornaments and their shared periodic motion controls
   effectPrimitives.ts  Deterministic per-particle randomness, shapes, life envelopes
 
@@ -53,12 +53,18 @@ render/
   stillRenderer.ts    One frame at export resolution, <= 40 MP
   videoRenderer.ts    WebCodecs encode, loop tiling, muxing, sinks, MediaRecorder fallback
 
+audio/
+  audioStore.ts     Imported tracks: object URLs, metadata, IndexedDB persistence
+  audioPlayer.ts    Preview playback of an imported track, loop crossfade, gesture handling
+  ambience.ts       Synthesised soundscapes (WebAudio) + the breathing-phase mathematics
+
 export/exportManager.ts  Presets, dimensions, capability text, still/video orchestration
 project/projectFormat.ts  .sceneproject ZIP: packageProject / readProject / migrate
 project/projectShelf.ts   Browser-local project list
 
 ui/                 app shell, stage (zoom/pan/handles), asset / layers / inspector / scene
-                    panels, dialogs, DOM helpers, design system
+                    panels, dialogs, DOM helpers, design system, breathGuide (present-mode
+                    breathing ring)
 ```
 
 ## Data flow

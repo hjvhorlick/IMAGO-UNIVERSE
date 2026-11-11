@@ -7,6 +7,22 @@ the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 ## [Unreleased]
 
 ### Added
+- **Synthesised ambience**: five beds — water, wind, rain, birdsong and
+  crickets — generated live with WebAudio and mixed per scene (master plus one
+  level per bed) in *View ▸ Ambience & breathing*. No audio files, no network,
+  no AI; the mix travels inside the `.sceneproject` as numbers.
+- **Breathing guide**: a ring in present mode that expands on the inhale, rests
+  on the hold and settles on the exhale, in calm 4-6, box 4-4-4-4 or coherent
+  5-5, with the phase named underneath.
+- **Session timer**: an optional 5/10/20/30-minute session that ends with a soft
+  bell and a single quiet card offering to stay or to leave present mode.
+- **Present bar**: sound, breathing-guide, mix-settings and elapsed-time
+  controls that fade in at the bottom of present mode, so the scene stays
+  chrome-free until you need them. Messages that matter while presenting — a
+  browser with no audio stack, a finished session — appear in the bar, because
+  status toasts are hidden there.
+- The Sound panel now also reports the synthesised mix and links to its
+  settings, so imported audio and generated ambience are found in one place.
 - **Present mode** (F9): fullscreen, chrome-free looping playback of the scene
   with a single exit chip; Esc or F9 returns to the editor.
 - Autosave now also fires when the tab is hidden, on top of the 45-second

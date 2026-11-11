@@ -174,6 +174,20 @@ export interface SceneAudio {
   bytes: number;
 }
 
+/** Synthesised ambience beds; volumes 0..1, master 0..1. */
+export type AmbienceBedId = 'water' | 'wind' | 'rain' | 'birds' | 'crickets';
+export interface AmbienceSettings {
+  master: number;
+  beds: Record<AmbienceBedId, number>;
+}
+export type BreathPattern = 'calm' | 'box' | 'coherent';
+export interface MeditationSettings {
+  pattern: BreathPattern;
+  /** Show the breathing guide overlay in present mode. */
+  guide: boolean;
+  /** Optional session length in minutes; 0 = no timer. */
+  sessionMin: number;
+}
 export interface Scene {
   id: string;
   name: string;
@@ -184,6 +198,10 @@ export interface Scene {
   lighting: Lighting;
   /** Optional imported music. Absent = silent, which is the default. */
   audio?: SceneAudio | null;
+  /** Optional synthesised ambience (water, wind, rain, birds, crickets). */
+  ambience?: AmbienceSettings | null;
+  /** Optional breathing guide and session timer settings for present mode. */
+  meditation?: MeditationSettings | null;
   /** The world this scene was started from (its background's place). Informational. */
   worldId?: string | null;
   exportSettings: ExportSettings;

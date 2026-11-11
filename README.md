@@ -181,9 +181,20 @@ via WebCodecs with a MediaRecorder fallback. 16:9, 9:16, 1:1, 4:3, 21:9 and cust
 720p / 1080p / 1440p / 4K; 24 / 30 / 60 fps; four quality tiers with a live size estimate, progress
 and cancellation.
 
-**Sound** — an import slot, not a library. The app ships no audio. A track you import plays in the
-preview, loops with a configurable crossfade at the join, and is embedded in the `.sceneproject`
+**Sound** — an import slot, not a library. The app ships no audio files. A track you import plays in
+the preview, loops with a configurable crossfade at the join, and is embedded in the `.sceneproject`
 so it reopens with the scene. Exported video is still silent.
+
+**Meditation** — five ambient beds synthesised live with WebAudio (water, wind, rain, birdsong and
+crickets), mixed per scene with a master level in *View ▸ Ambience & breathing* or from the Sound
+panel; no audio assets, no network, no AI. Present mode (F9) starts the mix automatically and adds a
+small bar with sound, breathing-guide, mix-settings and elapsed-time controls. Because the editor
+chrome is hidden there, any warning the viewer needs — a browser with no audio stack, a session that
+ended — is spoken in that bar rather than in a toast. The breathing guide is a ring that expands on the inhale, rests on the hold and settles on
+the exhale, in three patterns: calm 4-6, box 4-4-4-4 and coherent 5-5. An optional session timer
+(5/10/20/30 minutes) closes with a soft bell and a quiet card, once, without interrupting the scene.
+Ambience is live only — nothing is recorded into exported video — and where a browser has no
+WebAudio the app says so and the picture carries on unchanged.
 
 **Projects** — `.sceneproject` is a ZIP containing the full editable scene graph plus every asset
 byte the scene uses. Never flattened. Save, Save As, open, and an in-browser project shelf.
@@ -225,7 +236,10 @@ npm run render-check  loop boundary: 0 differing subpixels
 library against a native canvas and writes PNGs to `.render-check/`. `tests/ui.smoke.test.ts`
 mounts the **real** application in jsdom and drives it: adding assets, transforming, undoing,
 switching layers and styles, applying themes, opening every dialog, round-tripping a project and
-exporting a PNG.
+exporting a PNG. `tests/meditation.test.ts` checks the breathing phases and the soundscape
+schedules (phrase gaps, whistle registers, droplet and chirrup rates) as pure mathematics, drives the
+engine against a mock audio context to prove that stopping releases every source and the context,
+and confirms it degrades to silence where there is no audio stack at all.
 
 **Please read [docs/LIMITATIONS.md](docs/LIMITATIONS.md) before relying on video export.** The
 sandbox this was built in has no browser and no ffmpeg, so the WebCodecs/MediaRecorder paths are

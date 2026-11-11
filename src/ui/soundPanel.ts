@@ -4,10 +4,15 @@
  * The application ships no music. This section is empty until the user brings
  * a file in, and the scene stays silent unless they do. Rights to any imported
  * track are the user's responsibility.
+ *
+ * Synthesised ambience is offered here too, because this is where anyone
+ * looking for sound will come. It is a separate engine (audio/ambience.ts):
+ * imported tracks and generated beds play side by side and never interfere.
  */
 import type { Store } from '../core/store';
 import type { PreviewRenderer } from '../render/previewRenderer';
 import { AUDIO_ACCEPT, importAudio, removeAudio } from '../audio/audioStore';
+import { BEDS } from '../audio/ambience';
 import { AudioPlayer } from '../audio/audioPlayer';
 import { escapeHtml, icon, on, qs } from './dom';
 
@@ -19,6 +24,7 @@ export class SoundPanel {
     private root: HTMLElement,
     private store: Store,
     preview: PreviewRenderer,
+    private onAmbience?: () => void,
   ) {
     this.player = new AudioPlayer(store, preview);
     store.on('scene', () => { if (this.active) this.render(); });
@@ -37,8 +43,10 @@ export class SoundPanel {
           <p class="field-hint">mp3, wav, ogg, m4a, aac or flac. You need the rights to
           anything you import. You can add, replace or remove sound at any time.</p>
         </div>
+        ${this.ambienceBlock()}
       </div>`;
       on(qs('[data-import]', this.root), 'click', () => this.pick());
+      this.wireAmbience();
       return;
     }
 
@@ -66,6 +74,7 @@ export class SoundPanel {
       ${this.player.blocked ? `<div class="note warn">Your browser blocked audio until you interact with the page. Press play again.</div>` : ''}
       <div class="note">Sound plays in the preview and is saved inside the project file.
       Exported video is still silent.</div>
+      ${this.ambienceBlock()}
     </div>`;
 
     const vol = qs<HTMLInputElement>('[data-volume]', this.root);
@@ -87,6 +96,37 @@ export class SoundPanel {
       if (id) void removeAudio(id);
       this.store.status('Sound removed. The scene is silent again.', 'info');
     });
+    this.wireAmbience();
+  }
+
+  /**
+   * A live summary of the synthesised mix, plus the way in. Rendered only when
+   * the app supplied a handler, so the button is never decorative.
+   */
+  private ambienceBlock(): string {
+    if (!this.onAmbience) return '';
+    const amb = this.store.scene.ambience;
+    const playing = amb ? BEDS.filter((b) => (amb.beds[b.id] ?? 0) > 0.004) : [];
+    const med = this.store.scene.meditation;
+    const parts: string[] = [];
+    parts.push(playing.length
+      ? `${playing.map((b) => b.label.toLowerCase()).join(', ')} at ${Math.round(amb!.master * 100)}%`
+      : 'no beds playing yet');
+    if (med?.guide) parts.push('breathing guide on');
+    if (med && med.sessionMin > 0) parts.push(`${med.sessionMin}-minute session`);
+    return `<div class="note">
+      <strong>Synthesised ambience</strong>
+      <p>Water, wind, rain, birdsong and crickets, generated live in the browser -
+      no audio files, and it starts with present mode (F9).</p>
+      <div class="field-hint">${escapeHtml(parts.join(' · '))}</div>
+      <button class="btn small" data-ambience style="margin-top:8px">${icon('sparkles', 12)}
+      Ambience &amp; breathing…</button>
+    </div>`;
+  }
+
+  private wireAmbience() {
+    const btn = qs<HTMLElement>('[data-ambience]', this.root);
+    if (btn && this.onAmbience) on(btn, 'click', () => this.onAmbience!());
   }
 
   private pick() {

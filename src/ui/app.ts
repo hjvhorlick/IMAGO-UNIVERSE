@@ -42,9 +42,11 @@ import type { MenuDef } from './menubar';
 import { Rail } from './rail';
 import { el, escapeHtml, icon, on, qs, qsa } from './dom';
 import {
-  aboutDialog, composeDialog, cropDialog, exportDialog, historyDialog,
+  aboutDialog, ambienceDialog, composeDialog, cropDialog, exportDialog, historyDialog,
   importDialog, newWorldDialog, projectsDialog, replaceDialog,
 } from './dialogs';
+import { AmbienceEngine, MEADOW_AMBIENCE } from '../audio/ambience';
+import { BreathGuide } from './breathGuide';
 import type { ModalHandle, StartingPoint } from './dialogs';
 
 const LAYERS: LayerId[] = ['background', 'middle', 'foreground', 'atmosphere'];
@@ -97,6 +99,13 @@ const SHELL = `
 <div class="modal-root"></div>
 <div class="toast-root" aria-live="polite"></div>
 <button class="present-exit" id="present-exit" aria-label="Exit present mode">${icon('close', 12)} Exit present</button>
+<div class="present-bar" id="present-bar" role="toolbar" aria-label="Present mode controls">
+  <button class="btn icon" id="pb-sound" title="Ambience on / off" aria-label="Toggle ambience">${icon('loop', 14)}</button>
+  <button class="btn icon" id="pb-breath" title="Breathing guide on / off" aria-label="Toggle breathing guide">${icon('sun', 14)}</button>
+  <button class="btn icon" id="pb-mix" title="Ambience & breathing settings" aria-label="Ambience and breathing settings">${icon('settings', 14)}</button>
+  <span class="pb-timer" id="pb-timer">00:00</span>
+  <span class="pb-note" id="pb-note" role="status"></span>
+</div>
 `;
 
 export class App {
@@ -123,6 +132,13 @@ export class App {
   private activeLayer: LayerId = 'background';
   private autosaveTimer = 0;
   private present = false;
+  readonly ambience = new AmbienceEngine();
+  private guide = new BreathGuide();
+  private presentT0 = 0;
+  private sessionEndsAt = 0;
+  private sessionDoneShown = false;
+  private presentAudio = false;
+  private noteTimer = 0;
   private hudTimer = 0;
   private windowListeners: (() => void)[] = [];
   private soloNode: string | null = null;
@@ -281,7 +297,8 @@ export class App {
       badge: () => this.store.scene.audio?.name ?? 'none',
       onToggle: (open) => { this.soundPanel.active = open; if (open) this.soundPanel.render(); },
     });
-    this.soundPanel = new SoundPanel(soundBody, this.store, this.preview);
+    this.soundPanel = new SoundPanel(soundBody, this.store, this.preview,
+      () => ambienceDialog(this.store, this.ambience));
 
     this.rail.build();
     this.rail.setOpen('assets');
@@ -338,6 +355,8 @@ export class App {
           { label: 'Show all layers', icon: 'layers', action: () => this.setSolo(null) },
           { separator: true },
           { label: 'Side panel', shortcut: '\\', checked: !this.railCollapsed, action: () => this.toggleRail() },
+          { separator: true },
+          { label: 'Ambience & breathing…', icon: 'sparkles', action: () => ambienceDialog(this.store, this.ambience) },
         ],
       },
     ];
@@ -393,6 +412,7 @@ export class App {
 
   /** Fullscreen, chrome-free playback of the looping scene. */
   togglePresent() {
+    const entering = !this.present;
     this.present = !this.present;
     document.body.classList.toggle('present', this.present);
     if (this.present) {
@@ -407,14 +427,99 @@ export class App {
     } else if (document.fullscreenElement) {
       try { void document.exitFullscreen().catch(() => {}); } catch { /* ignore */ }
     }
+    if (entering) {
+      this.guide.attach(qs<HTMLElement>('.stage')!);
+      const med = this.store.scene.meditation;
+      if (med?.guide) this.guide.start(med.pattern);
+      this.presentT0 = Date.now();
+      this.sessionEndsAt = med && med.sessionMin > 0 ? this.presentT0 + med.sessionMin * 60000 : 0;
+      this.sessionDoneShown = false;
+      const amb = this.store.scene.ambience;
+      if (amb && Object.values(amb.beds).some((v) => v > 0.004)) this.presentAudio = this.ambience.start(amb);
+    } else {
+      this.guide.stop();
+      if (this.presentAudio) { this.ambience.stop(); this.presentAudio = false; }
+      this.sessionEndsAt = 0;
+      if (this.noteTimer) { window.clearTimeout(this.noteTimer); this.noteTimer = 0; }
+      const note = qs<HTMLElement>('#pb-note');
+      if (note) note.textContent = '';
+      qs<HTMLElement>('.session-done')?.remove();
+    }
+    this.refreshPresentBar();
     this.stage.refit();
     this.updateHud();
+  }
+
+  private refreshPresentBar() {
+    this.presentAudio = this.ambience.running;
+    qs<HTMLElement>('#pb-sound')?.classList.toggle('active', this.ambience.running);
+    qs<HTMLElement>('#pb-breath')?.classList.toggle('active', this.guide.running);
+  }
+
+  /**
+   * A short message inside the present bar. Status toasts are deliberately
+   * hidden while presenting, so anything the viewer needs to know - a browser
+   * with no audio stack, a session that ended - has to be said here instead.
+   */
+  private presentNote(text: string, ms = 5000) {
+    const note = qs<HTMLElement>('#pb-note');
+    if (!note) return;
+    note.textContent = text;
+    if (this.noteTimer) window.clearTimeout(this.noteTimer);
+    this.noteTimer = window.setTimeout(() => { note.textContent = ''; this.noteTimer = 0; }, ms);
+  }
+
+  /** Gentle bell and a quiet card when a timed session completes. */
+  private sessionComplete() {
+    this.sessionDoneShown = true;
+    this.ambience.chime();
+    this.presentNote('Session complete.', 8000);
+    const mins = this.store.scene.meditation?.sessionMin ?? 0;
+    const wrap = el(`<div class="session-done"><div class="card">
+      <h3>Session complete</h3>
+      <p>${mins} minutes of stillness. Whenever you are ready.</p>
+      <div class="row">
+        <button class="btn" data-stay>Stay a while</button>
+        <button class="btn primary" data-leave>Exit present mode</button>
+      </div></div></div>`);
+    on(qs<HTMLElement>('[data-stay]', wrap)!, 'click', () => wrap.remove());
+    on(qs<HTMLElement>('[data-leave]', wrap)!, 'click', () => { wrap.remove(); this.togglePresent(); });
+    document.body.appendChild(wrap);
   }
 
   private wireTopbar(root: HTMLElement) {
     const nameInput = qs<HTMLInputElement>('#project-name', root)!;
     on(qs<HTMLElement>('#btn-present', root)!, 'click', () => this.togglePresent());
     on(qs<HTMLElement>('#present-exit')!, 'click', () => { if (this.present) this.togglePresent(); });
+    on(qs<HTMLElement>('#pb-sound', root)!, 'click', () => {
+      if (this.ambience.running) { this.ambience.stop(); this.presentAudio = false; }
+      else {
+        let amb = this.store.scene.ambience;
+        if (!amb || !Object.values(amb.beds).some((v) => v > 0.004)) {
+          this.store.mutate((sc) => { sc.ambience = { master: MEADOW_AMBIENCE.master, beds: { ...MEADOW_AMBIENCE.beds } }; }, 'Ambience');
+          amb = this.store.scene.ambience ?? undefined;
+        }
+        if (amb) this.presentAudio = this.ambience.start(amb);
+        if (!this.ambience.running) {
+          // Toasts are hidden while presenting, so the bar carries the warning.
+          this.presentNote('No WebAudio here - ambience stays silent.');
+          this.store.status('This browser cannot play synthesised ambience.', 'warn');
+        }
+      }
+      this.refreshPresentBar();
+    });
+    on(qs<HTMLElement>('#pb-breath', root)!, 'click', () => {
+      if (this.guide.running) {
+        this.guide.stop();
+        this.store.mutate((sc) => { sc.meditation = { pattern: sc.meditation?.pattern ?? 'calm', guide: false, sessionMin: sc.meditation?.sessionMin ?? 0 }; }, 'Breathing guide');
+      } else {
+        this.store.mutate((sc) => { sc.meditation = { pattern: sc.meditation?.pattern ?? 'calm', guide: true, sessionMin: sc.meditation?.sessionMin ?? 0 }; }, 'Breathing guide');
+        this.guide.attach(qs<HTMLElement>('.stage', root)!);
+        this.guide.start(this.store.scene.meditation!.pattern);
+      }
+      this.refreshPresentBar();
+    });
+    on(qs<HTMLElement>('#pb-mix', root)!, 'click', () => ambienceDialog(this.store, this.ambience));
     on(nameInput, 'change', () => this.store.mutate((s) => { s.name = nameInput.value || 'Untitled world'; }, 'Rename project'));
     const search = qs<HTMLInputElement>('#library-search', root)!;
     on(search, 'input', () => {
@@ -555,6 +660,21 @@ export class App {
       this.refreshChrome();
       this.loops.invalidate();
       this.rail.sync();
+      if (this.present) {
+        // Whatever the scene says now is what present mode should be doing:
+        // undo, a dialog edit or the bar buttons all land here.
+        const med = this.store.scene.meditation;
+        if (!med?.guide) { if (this.guide.running) this.guide.stop(); } else if (!this.guide.running) {
+          this.guide.attach(qs<HTMLElement>('.stage')!);
+          this.guide.start(med.pattern);
+        } else if (med.pattern !== this.guide.pattern) this.guide.start(med.pattern);
+        const amb = this.store.scene.ambience;
+        if (this.ambience.running) {
+          if (amb) this.ambience.update(amb);
+          else this.ambience.stop();
+        }
+        this.refreshPresentBar();
+      }
     });
     this.store.on('selection', () => {
       if (this.objectPanel.active) this.objectPanel.render();
@@ -576,6 +696,14 @@ export class App {
   }
 
   private updateHud() {
+    if (this.present) {
+      const timer = qs<HTMLElement>('#pb-timer');
+      if (timer) {
+        const sec = Math.max(0, Math.floor((Date.now() - this.presentT0) / 1000));
+        timer.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+      }
+      if (this.sessionEndsAt && !this.sessionDoneShown && Date.now() >= this.sessionEndsAt) this.sessionComplete();
+    }
     const report = this.loops.analyse(this.store.scene);
     const hud = qs<HTMLElement>('#stage-hud');
     if (hud) {
@@ -906,6 +1034,10 @@ export class App {
     this.windowListeners.splice(0).forEach((remove) => remove());
     window.clearInterval(this.autosaveTimer);
     window.clearInterval(this.hudTimer);
+    if (this.noteTimer) window.clearTimeout(this.noteTimer);
+    // Never leave an AudioContext or a frame loop running behind a disposed app.
+    this.guide.stop();
+    this.ambience.stop();
     this.menubar?.dispose();
     this.soundPanel?.dispose();
     this.preview.dispose();

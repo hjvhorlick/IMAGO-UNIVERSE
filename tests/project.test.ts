@@ -9,7 +9,7 @@ import { makeEffectNode } from '../src/ui/inspector';
 import { autoCompose, DEFAULT_COMPOSE } from '../src/scene/composition';
 import { makeAnimation } from '../src/core/types';
 import { testLibrary, TINY_WEBP } from './helpers';
-import { strFromU8, unzipSync } from 'fflate';
+import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 
 function loadedLibrary() {
   const lib = testLibrary();
@@ -188,6 +188,69 @@ describe('.sceneproject', () => {
       const blob = await packageProject(scene, lib);
       const loaded = await readProject(await blob.arrayBuffer(), testLibrary());
       expect(loaded.scene.audio ?? null).toBeNull();
+    });
+  });
+
+  describe('synthesised ambience and meditation settings', () => {
+    const calmScene = () => {
+      const scene = createScene('enchanted', 'Still water');
+      scene.ambience = { master: 0.62, beds: { water: 0.4, wind: 0.15, rain: 0, birds: 0.55, crickets: 0.25 } };
+      scene.meditation = { pattern: 'box', guide: true, sessionMin: 10 };
+      return scene;
+    };
+
+    it('travels inside the project file and comes back exactly', async () => {
+      const lib = loadedLibrary();
+      const scene = calmScene();
+      const blob = await packageProject(scene, lib);
+      const doc = JSON.parse(strFromU8(unzipSync(new Uint8Array(await blob.arrayBuffer()))['project.json']));
+      expect(doc.scene.ambience, 'stored as data, not as audio bytes').toEqual(scene.ambience);
+      expect(Object.keys(unzipSync(new Uint8Array(await blob.arrayBuffer())))
+        .some((k) => k.startsWith('audio/')), 'synthesis needs no audio entry').toBe(false);
+
+      const loaded = await readProject(await blob.arrayBuffer(), testLibrary());
+      expect(loaded.scene.ambience).toEqual(scene.ambience);
+      expect(loaded.scene.meditation).toEqual(scene.meditation);
+    });
+
+    it('a world without ambience opens without it', async () => {
+      const lib = loadedLibrary();
+      const blob = await packageProject(createScene('enchanted', 'Silent'), lib);
+      const loaded = await readProject(await blob.arrayBuffer(), testLibrary());
+      expect(loaded.scene.ambience ?? null).toBeNull();
+      expect(loaded.scene.meditation ?? null).toBeNull();
+    });
+
+    it('sanitises an out-of-range mix and an unknown breathing pattern', async () => {
+      const lib = loadedLibrary();
+      const scene = createScene('enchanted', 'Loud');
+      scene.ambience = { master: 4, beds: { water: -2, wind: 9, sparkles: 0.5 } } as never;
+      scene.meditation = { pattern: 'wim-hof', guide: 'yes', sessionMin: 999 } as never;
+      const blob = await packageProject(scene, lib);
+      const loaded = await readProject(await blob.arrayBuffer(), testLibrary());
+      expect(loaded.scene.ambience).toEqual({
+        master: 1, beds: { water: 0, wind: 1, rain: 0, birds: 0, crickets: 0 },
+      });
+      expect(loaded.scene.meditation).toEqual({ pattern: 'calm', guide: false, sessionMin: 180 });
+    });
+
+    it('a project saved before ambience existed still opens', async () => {
+      const lib = loadedLibrary();
+      const scene = createScene('enchanted', 'Old file');
+      scene.ambience = { master: 0.5, beds: { water: 0.5, wind: 0, rain: 0, birds: 0, crickets: 0 } };
+      // Rebuild the archive as an older build would have written it: no such keys.
+      const files = unzipSync(new Uint8Array(await (await packageProject(scene, lib)).arrayBuffer()));
+      const doc = JSON.parse(strFromU8(files['project.json']));
+      delete doc.scene.ambience;
+      delete doc.scene.meditation;
+      files['project.json'] = strToU8(JSON.stringify(doc));
+      const legacy = zipSync(files);
+
+      const loaded = await readProject(legacy.buffer as ArrayBuffer, testLibrary());
+      expect(loaded.missingAssets).toEqual([]);
+      expect(loaded.scene.ambience ?? null, 'nothing is invented for an old file').toBeNull();
+      expect(loaded.scene.meditation ?? null).toBeNull();
+      expect(loaded.scene.name).toBe('Old file');
     });
   });
 
